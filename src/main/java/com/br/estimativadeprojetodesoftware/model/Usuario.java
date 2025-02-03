@@ -1,8 +1,6 @@
 package com.br.estimativadeprojetodesoftware.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 public class Usuario {
@@ -11,8 +9,8 @@ public class Usuario {
     private String email;
     private String senha;
     private boolean isAutorizado;
-    private Date created_at;
-    private Date deleted_at;
+    private LocalDateTime created_at;
+    private LocalDateTime deleted_at;
     private List<Projeto> projetos;
     private List<Perfil> perfis;
 
@@ -23,7 +21,7 @@ public class Usuario {
         this.senha = senha;
         this.isAutorizado = isAutorizado;
 
-        this.created_at = new Date();
+        this.created_at = LocalDateTime.now();
     }
 
 
