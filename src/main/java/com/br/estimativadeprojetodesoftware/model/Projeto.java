@@ -4,30 +4,28 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 public class Projeto {
-    private UUID id;
+    private int id;
     private String nome;
     private LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
     private Estimativa estimativa;
-    private boolean isCompartilhado;
     private List<Usuario> usuarioCompartilhado;
 
-    public Projeto(String nome) {
-        this.id = UUID.randomUUID();
+    public Projeto(int id, String nome) {
+        this.id = id;
         this.nome = nome;
         this.created_at = LocalDateTime.now();
         this.usuarioCompartilhado = new ArrayList();
     }
 
-    public UUID getIdProjeto() {
+    public int getId() {
         return id;
     }
 
-    public String getNomeProjeto() {
+    public String getNome() {
         return nome;
     }
 
@@ -47,36 +45,20 @@ public class Projeto {
         return estimativa;
     }
 
-    public boolean isIsCompartilhado() {
-        return isCompartilhado;
-    }
-
     public List<Usuario> getUsuarioCompartilhado() {
         return Collections.unmodifiableList(usuarioCompartilhado);
     }
 
-    public void setIdProjeto(UUID id) {
-        this.id = id;
+    public void setUpdate_at(LocalDateTime deleted_at) {
+        this.deleted_at = deleted_at;
     }
-
-    public void setNomeProjeto(String nome) {
-        this.nome = nome;
-    }
-
-    public void setCreated_at(LocalDateTime created_at) {
-        this.created_at = created_at;
-    }
-
+     
     public void setDeleted_at(LocalDateTime deleted_at) {
         this.deleted_at = deleted_at;
     }
 
     public void setEstimativa(Estimativa estimativa) {
         this.estimativa = estimativa;
-    }
-    
-    public void setIsCompartilhado(Boolean isCompartilhado) {
-        this.isCompartilhado = isCompartilhado;
     }
     
     public void adicionarUsuarioCompartilhado(Usuario usuario){

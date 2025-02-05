@@ -3,11 +3,10 @@ package com.br.estimativadeprojetodesoftware.model;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
-import java.util.UUID;
 
 public class Perfil {
     
-    private UUID id;
+    private int id;
     private String nome;
     private Map<String, Double> tamDispositivos;
     private Map<String, Double> nivelUI;
@@ -16,16 +15,16 @@ public class Perfil {
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
     
-    public Perfil(UUID idProjeto, String nomePerfil, Map<String, Double> tamDispositivos, Map<String, Double> nivelUI, Map<String, Double> funcionalidades) {
-        this.id= idProjeto;
-        this.nome = nomePerfil;
+    public Perfil(int id, String nome, Map<String, Double> tamDispositivos, Map<String, Double> nivelUI, Map<String, Double> funcionalidades) {
+        this.id = id;
+        this.nome = nome;
         this.tamDispositivos = tamDispositivos;
         this.nivelUI = nivelUI;
         this.funcionalidades = funcionalidades;
         this.created_at = LocalDateTime.now();
     }
 
-    public UUID getId() {
+    public int getId() {
         return id;
     }
 
@@ -57,14 +56,6 @@ public class Perfil {
         return deleted_at;
     }
 
-    public void setIdProjeto(UUID id) {
-        this.id = id;
-    }
-
-    public void setNomePerfil(String nome) {
-        this.nome = nome;
-    }
-
     public void adicionarTamDispositivo(String nome, double valor) {
        tamDispositivos.put(nome, valor);
     }
@@ -74,11 +65,7 @@ public class Perfil {
     }
 
     public void adicionarFuncionalidades(String nome, double valor) {
-         funcionalidades.put(nome, valor);
-    }
-
-    public void setCreated_at(LocalDateTime created_at) {
-        this.created_at = created_at;
+        funcionalidades.put(nome, valor);
     }
     
     public void setUpdate_at(LocalDateTime update_at) {

@@ -4,23 +4,22 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 public class Usuario {
 
-    private UUID idUsuario;
+    private int id;
     private String nome;
     private String email;
     private String senha;
-    private Boolean isAutorizado;
+    private boolean isAutorizado;
     private LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
     private List<Projeto> projetos;
     private List<Perfil> perfis;
 
-    public Usuario(String nome, String email, String senha) {
-        this.idUsuario = UUID.randomUUID();
+    public Usuario(int id, String nome, String email, String senha) {
+        this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
@@ -30,8 +29,8 @@ public class Usuario {
         this.perfis = new ArrayList();
     }
 
-    public UUID getId() {
-        return idUsuario;
+    public int getId() {
+        return id;
     }
 
     public String getNome() {
@@ -46,7 +45,7 @@ public class Usuario {
         return senha;
     }
 
-    public Boolean isIsAutorizado() {
+    public boolean getIsAutorizado() {
         return isAutorizado;
     }
 
@@ -70,47 +69,11 @@ public class Usuario {
         return Collections.unmodifiableList(this.perfis);
     }
 
-    public void setId(UUID idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
-    public void setNome(String nome) {
-        if (nome == null) {
-            throw new RuntimeException("Erro: Nome nula");
-        }
-        this.nome = nome;
-    }
-
-    public void setEmail(String email) {
-        if (email == null) {
-            throw new RuntimeException("Erro: E-mail nula");
-        }
-        this.email = email;
-    }
-
-    public void setSenha(String senha) {
-        if (senha == null) {
-            throw new RuntimeException("Erro: Senha nula");
-        }
-        this.senha = senha;
-    }
-
-    public void setIsAutorizado(Boolean isAutorizado) {
-        this.isAutorizado = isAutorizado;
-    }
-
-    public void setCreated_at(LocalDateTime created_at) {
-        if (created_at == null) {
+    public void setUpdate_at(LocalDateTime update_at) {
+        if (update_at == null) {
             throw new RuntimeException("Erro: Data e hora de criação nula");
         }
-        this.created_at = created_at;
-    }
-    
-    public void setUpdate_at(LocalDateTime created_at) {
-        if (created_at == null) {
-            throw new RuntimeException("Erro: Data e hora de criação nula");
-        }
-        this.created_at = created_at;
+        this.update_at = update_at;
     }
 
     public void setDeleted_at(LocalDateTime deleted_at) {
