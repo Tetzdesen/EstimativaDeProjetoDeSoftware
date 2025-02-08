@@ -82,6 +82,10 @@ public class Usuario {
     public List<Perfil> getPerfis() {
         return Collections.unmodifiableList(this.perfis);
     }
+    
+    public void setIsAutorizado(Boolean isAutorizado) {
+        this.isAutorizado = isAutorizado;
+    }
 
     public void setUpdate_at(LocalDateTime update_at) {
         if (update_at == null) {
@@ -101,14 +105,13 @@ public class Usuario {
         if (projeto == null) {
             throw new IllegalArgumentException("Erro: Projeto não pode ser nulo.");
         }
-        this.projetos.add(projeto);
+        projetos.add(projeto);
     }
 
     public void adicionarPerfil(Perfil perfil) {
         if (perfil == null) {
             throw new IllegalArgumentException("Erro: Perfil não pode ser nulo.");
         }
-        this.perfis.add(perfil);
+        perfis.add(perfil);
     }
-
 }

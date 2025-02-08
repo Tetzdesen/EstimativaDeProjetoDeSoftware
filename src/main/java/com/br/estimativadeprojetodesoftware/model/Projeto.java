@@ -86,7 +86,6 @@ public class Projeto {
         if (usuario == null) {
             throw new IllegalArgumentException("Erro: Usuário não pode ser nulo.");
         }
-        this.usuarioCompartilhado.add(usuario);
+        usuarioCompartilhado.add(usuario);
     }
-
 }
