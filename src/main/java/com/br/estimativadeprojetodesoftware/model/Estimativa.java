@@ -30,7 +30,7 @@ public class Estimativa {
 
     public void adicionarCampo(String chave, double valor) {
         if (chave == null || chave.isEmpty()) {
-            throw new IllegalArgumentException("Erro: Chave não pode ser vazia");
+            throw new IllegalArgumentException("Erro: Chave não pode ser vazia ou nula.");
         }
         if (valor < 0) {
             throw new IllegalArgumentException("Erro: Valor não pode ser negativo. Chave: " + chave + " Valor: " + valor);
