@@ -37,5 +37,4 @@ public class Estimativa {
         }
         campos.put(chave, valor);
     }
-
 }
