@@ -3,6 +3,7 @@ package com.br.estimativadeprojetodesoftware.model;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -10,31 +11,29 @@ public class Perfil {
 
     private UUID id;
     private String nome;
-    private Map<String, Double> tamDispositivos;
-    private Map<String, Double> nivelUI;
-    private Map<String, Map<String, Double>> funcionalidades;
+    private List<Dispositivo> dispositivos;
     private LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
 
-    public Perfil(String nome, Map<String, Double> tamDispositivos, Map<String, Double> nivelUI, Map<String, Map<String, Double>> funcionalidades) {
+    public Perfil(String nome, List<Dispositivo> dispositivos) {
         this.id = UUID.randomUUID();
         this.nome = nome;
-        this.tamDispositivos = new HashMap<>();
-        this.nivelUI = new HashMap<>();
-        this.funcionalidades = new HashMap<>();
+        for (Dispositivo dispositivo : dispositivos) {
+            this.dispositivos.add(dispositivo);
+        }
+        
         this.created_at = LocalDateTime.now();
     }
 
-    public Perfil(UUID id, String nome, Map<String, Double> tamDispositivos, Map<String, Double> nivelUI, Map<String, Map<String, Double>> funcionalidades, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at) {
+    public Perfil(UUID id, String nome, List<Dispositivo> dispositivos) {
         this.id = id;
         this.nome = nome;
-        this.tamDispositivos = tamDispositivos;
-        this.nivelUI = nivelUI;
-        this.funcionalidades = funcionalidades;
-        this.created_at = created_at;
-        this.update_at = update_at;
-        this.deleted_at = deleted_at;
+        for (Dispositivo dispositivo : dispositivos) {
+            this.dispositivos.add(dispositivo);
+        }
+        
+        this.created_at = LocalDateTime.now();
     }
 
     public UUID getId() {
@@ -45,16 +44,8 @@ public class Perfil {
         return nome;
     }
 
-    public Map<String, Double> getTamDispositivos() {
-        return Collections.unmodifiableMap(tamDispositivos);
-    }
-
-    public Map<String, Double> getNivelUI() {
-        return Collections.unmodifiableMap(nivelUI);
-    }
-
-    public Map<String, Map<String, Double>> getFuncionalidades() {
-        return Collections.unmodifiableMap(funcionalidades);
+    public List<Dispositivo> getDispositivos () {
+        return dispositivos;
     }
 
     public LocalDateTime getCreated_at() {
@@ -83,24 +74,8 @@ public class Perfil {
         this.deleted_at = deleted_at;
     }
 
-    public void adicionarTamDispositivo(String nome, double valor) {
-        if (nome == null || nome.isEmpty() || valor < 0) {
-            throw new IllegalArgumentException("Erro: Dados inválidos para dispositivo.");
-        }
-        tamDispositivos.put(nome, valor);
+    public void adicionarDispositivo(List<Dispositivo> dispositivos) {
+        
     }
 
-    public void adicionarNivelUI(String nome, double valor) {
-        if (nome == null || nome.isEmpty() || valor < 0) {
-            throw new IllegalArgumentException("Erro: Dados inválidos para nível UI.");
-        }
-        nivelUI.put(nome, valor);
-    }
-
-    public void adicionarFuncionalidade(String plataforma, String funcionalidade, double valor) {
-        if (plataforma == null || funcionalidade == null || valor < 0) {
-            throw new IllegalArgumentException("Erro: Dados inválidos para funcionalidade.");
-        }
-        funcionalidades.computeIfAbsent(plataforma, k -> new HashMap<>()).put(funcionalidade, valor);
-    }
 }
