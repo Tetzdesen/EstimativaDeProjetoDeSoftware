@@ -17,12 +17,6 @@ public class Perfil {
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
 
-    public Perfil() {
-        this.tamDispositivos = new HashMap<>();
-        this.nivelUI = new HashMap<>();
-        this.funcionalidades = new HashMap<>();
-    }
-
     public Perfil(String nome, Map<String, Double> tamDispositivos, Map<String, Double> nivelUI, Map<String, Map<String, Double>> funcionalidades) {
         this.id = UUID.randomUUID();
         this.nome = nome;
@@ -109,11 +103,4 @@ public class Perfil {
         }
         funcionalidades.computeIfAbsent(plataforma, k -> new HashMap<>()).put(funcionalidade, valor);
     }
-
-    /**
-     * TamDispositivos: (pequeno: 10) (médio: 30) (grande: 50)
-     *
-     *
-     * nivelUI (MVP: 0.3) (basico: 0.5) profissional: 0.7
-     */
 }

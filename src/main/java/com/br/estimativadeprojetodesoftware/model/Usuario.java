@@ -20,7 +20,8 @@ public class Usuario {
     private List<Perfil> perfis;
 
     public Usuario() {
-
+        this.projetos = new ArrayList();
+        this.perfis = new ArrayList();
     }
 
     public Usuario(String nome, String email, String senha) {
