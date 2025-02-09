@@ -2,6 +2,7 @@ package com.br.estimativadeprojetodesoftware.singleton;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -29,12 +30,12 @@ public class ConexaoSingleton {
         try {
             this.conexao = DriverManager.getConnection(url, user, senha);
             System.out.println("Conexão ok");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new RuntimeException("Erro ao conectar com o banco de dados: " + e.getMessage());
         }
     }
 
-    public static ConexaoSingleton getInstancia() {
+    public static synchronized ConexaoSingleton getInstancia() {
         if (instancia == null) {
             instancia = new ConexaoSingleton();
         }
@@ -45,7 +46,13 @@ public class ConexaoSingleton {
         return this.conexao;
     }
 
-    public static void main(String[] args) {
-        Connection con = ConexaoSingleton.getInstancia().getConexao();
+    public void closeConnection() {
+        try {
+            if (conexao != null && !conexao.isClosed()) {
+                conexao.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error ao fechar conexão com o banco de dados: " + e.getMessage());
+        }
     }
 }
