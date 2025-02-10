@@ -11,6 +11,7 @@ public class Projeto {
     private UUID id;
     private String nome;
     private String criador;
+    private String tipo;
     private LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
@@ -20,10 +21,11 @@ public class Projeto {
     private List<Perfil> perfis;
     private Estimativa estimativa;
 
-    public Projeto(String nome, String criador) {
+    public Projeto(String nome, String criador, String tipo) {
         this.id = UUID.randomUUID();
         this.nome = nome;
         this.criador = criador;
+        this.tipo = tipo;
         this.created_at = LocalDateTime.now();
         this.update_at = null;
         this.deleted_at = null;
@@ -34,10 +36,11 @@ public class Projeto {
         this.estimativa = null;
     }
 
-    public Projeto(UUID id, String nome, String criador, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, String status, boolean compartilhado, String compartilhadoPor, List<Perfil> perfis, Estimativa estimativa) {
+    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, String status, boolean compartilhado, String compartilhadoPor, List<Perfil> perfis, Estimativa estimativa) {
         this.id = id;
         this.nome = nome;
         this.criador = criador;
+        this.tipo = tipo;
         this.created_at = created_at;
         this.update_at = update_at;
         this.deleted_at = deleted_at;
@@ -58,6 +61,10 @@ public class Projeto {
     
     public String getCriador() {
         return criador;
+    }
+
+    public String getTipo() {
+        return tipo;
     }
 
     public LocalDateTime getCreated_at() {
