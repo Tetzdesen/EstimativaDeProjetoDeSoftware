@@ -12,21 +12,25 @@ public class Perfil {
     private String nome;
     private Map<String, Double> tamDispositivos;
     private Map<String, Double> nivelUI;
-    private Map<String, Map<String, Double>> funcionalidades;
+    private Map<String, Double> funcionalidades;
+    private Map<String, Double> taxasDiarias;
     private LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
 
-    public Perfil(String nome, Map<String, Double> tamDispositivos, Map<String, Double> nivelUI, Map<String, Map<String, Double>> funcionalidades) {
+    public Perfil(String nome) {
         this.id = UUID.randomUUID();
         this.nome = nome;
         this.tamDispositivos = new HashMap<>();
         this.nivelUI = new HashMap<>();
         this.funcionalidades = new HashMap<>();
+        this.taxasDiarias = new HashMap<>();
         this.created_at = LocalDateTime.now();
+        this.update_at = null;
+        this.deleted_at = null;
     }
 
-    public Perfil(UUID id, String nome, Map<String, Double> tamDispositivos, Map<String, Double> nivelUI, Map<String, Map<String, Double>> funcionalidades, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at) {
+    public Perfil(UUID id, String nome, Map<String, Double> tamDispositivos, Map<String, Double> nivelUI, Map<String, Double> funcionalidades, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at) {
         this.id = id;
         this.nome = nome;
         this.tamDispositivos = tamDispositivos;
@@ -53,10 +57,14 @@ public class Perfil {
         return Collections.unmodifiableMap(nivelUI);
     }
 
-    public Map<String, Map<String, Double>> getFuncionalidades() {
+    public Map<String, Double> getFuncionalidades() {
         return Collections.unmodifiableMap(funcionalidades);
     }
 
+    public Map<String, Double> getTaxasDiarias() {
+        return Collections.unmodifiableMap(taxasDiarias);
+    }
+    
     public LocalDateTime getCreated_at() {
         return created_at;
     }
@@ -84,23 +92,42 @@ public class Perfil {
     }
 
     public void adicionarTamDispositivo(String nome, double valor) {
-        if (nome == null || nome.isEmpty() || valor < 0) {
-            throw new IllegalArgumentException("Erro: Dados inválidos para dispositivo.");
+        if (nome == null || nome.isEmpty()) {
+            throw new IllegalArgumentException("Erro: Nome do tamanho do dispositivo não pode ser vazio ou nula.");
+        }
+        if (valor < 0) {
+            throw new IllegalArgumentException("Erro: Valor não pode ser negativo. Nome do tamanho do dispositivo : " + nome + " Valor: " + valor);
         }
         tamDispositivos.put(nome, valor);
     }
 
     public void adicionarNivelUI(String nome, double valor) {
-        if (nome == null || nome.isEmpty() || valor < 0) {
-            throw new IllegalArgumentException("Erro: Dados inválidos para nível UI.");
+        if (nome == null || nome.isEmpty()) {
+            throw new IllegalArgumentException("Erro: Nome de nível de UI não pode ser vazio ou nula.");
+        }
+        if (valor < 0) {
+            throw new IllegalArgumentException("Erro: Valor não pode ser negativo. Nome da nível UI: " + nome + " Valor: " + valor);
         }
         nivelUI.put(nome, valor);
     }
 
-    public void adicionarFuncionalidade(String plataforma, String funcionalidade, double valor) {
-        if (plataforma == null || funcionalidade == null || valor < 0) {
-            throw new IllegalArgumentException("Erro: Dados inválidos para funcionalidade.");
+    public void adicionarFuncionalidade(String nomeFuncionalidade, double valor) {
+        if (nome == null || nome.isEmpty()) {
+            throw new IllegalArgumentException("Erro: Nome da funcionalidade não pode ser vazio ou nula.");
         }
-        funcionalidades.computeIfAbsent(plataforma, k -> new HashMap<>()).put(funcionalidade, valor);
+        if (valor < 0) {
+            throw new IllegalArgumentException("Erro: Valor não pode ser negativo. Nome da funcionalidade: " + nome + " Valor: " + valor);
+        }
+        funcionalidades.put(nomeFuncionalidade, valor);
+    }
+   
+    public void adicionarTaxaDiaria(String nomeTaxa, double valor) {
+        if (nome == null || nome.isEmpty()) {
+            throw new IllegalArgumentException("Erro: Nome da taxa não pode ser vazia ou nula.");
+        }
+        if (valor < 0) {
+            throw new IllegalArgumentException("Erro: Valor não pode ser negativo. Nome da taxa: " + nome + " Valor: " + valor);
+        }
+        taxasDiarias.put(nomeTaxa, valor);
     }
 }

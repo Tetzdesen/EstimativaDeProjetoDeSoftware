@@ -23,6 +23,18 @@
 hs_err_pid*
 replay_pid*
 
+# Package principal
+principal
+
+# Folder vscode
+.vscode
+./vscode
+
+# Folder target
+target
+target/
+*/target
+
 # vs code package
 .vscode
 

@@ -10,27 +10,41 @@ public class Projeto {
 
     private UUID id;
     private String nome;
+    private String tipo;
     private LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
+    private String status;
+    private boolean compartilhado;
+    private String compartilhadoPor;
+    private List<Perfil> perfis;
     private Estimativa estimativa;
-    private List<Usuario> usuarioCompartilhado;
 
     public Projeto(String nome) {
         this.id = UUID.randomUUID();
         this.nome = nome;
         this.created_at = LocalDateTime.now();
-        this.usuarioCompartilhado = new ArrayList();
+        this.update_at = null;
+        this.deleted_at = null;
+        this.status = "Não estimado";
+        this.compartilhado = false;
+        this.compartilhadoPor = null;
+        this.perfis = new ArrayList<>();
+        this.estimativa = null;
     }
 
-    public Projeto(UUID id, String nome, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, Estimativa estimativa, List<Usuario> usuarioCompartilhado) {
+    public Projeto(UUID id, String nome, String tipo, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, String status, boolean compartilhado, String compartilhadoPor, List<Perfil> perfis, Estimativa estimativa) {
         this.id = id;
         this.nome = nome;
+        this.tipo = tipo;
         this.created_at = created_at;
         this.update_at = update_at;
         this.deleted_at = deleted_at;
+        this.status = status;
+        this.compartilhado = compartilhado;
+        this.compartilhadoPor = compartilhadoPor;
+        this.perfis = perfis;
         this.estimativa = estimativa;
-        this.usuarioCompartilhado = usuarioCompartilhado;
     }
 
     public UUID getId() {
@@ -39,6 +53,10 @@ public class Projeto {
 
     public String getNome() {
         return nome;
+    }
+    
+    public String getTipo() {
+        return tipo;
     }
 
     public LocalDateTime getCreated_at() {
@@ -53,12 +71,24 @@ public class Projeto {
         return deleted_at;
     }
 
-    public Estimativa getEstimativa() {
-        return estimativa;
+    public String getStatus() {
+        return status;
     }
 
-    public List<Usuario> getUsuarioCompartilhado() {
-        return Collections.unmodifiableList(usuarioCompartilhado);
+    public boolean getCompartilhado() {
+        return compartilhado;
+    }
+
+    public String getCompartilhadoPor() {
+        return compartilhadoPor;
+    }
+    
+    public List<Perfil> getPerfis() {
+        return Collections.unmodifiableList(perfis);
+    }
+
+    public Estimativa getEstimativa() {
+        return estimativa;
     }
 
     public void setUpdate_at(LocalDateTime update_at) {
@@ -82,10 +112,21 @@ public class Projeto {
         this.estimativa = estimativa;
     }
 
-    public void adicionarUsuarioCompartilhado(Usuario usuario) {
-        if (usuario == null) {
-            throw new IllegalArgumentException("Erro: Usuário não pode ser nulo.");
+    public void setCompartilhado(boolean compartilhado) {
+        this.compartilhado = compartilhado;
+    }
+
+    public void setCompartilhadoPor(String compartilhadoPor) {
+        if(compartilhadoPor.isEmpty() || compartilhadoPor == null){
+            throw new IllegalArgumentException("Erro: Compartilhado Por vazio ou nulo. ");
         }
-        usuarioCompartilhado.add(usuario);
+        this.compartilhadoPor = compartilhadoPor;
+    }
+    
+    public void adicionarPerfil(Perfil perfil){
+        if(perfil == null){
+            throw new IllegalArgumentException("Erro: Perfil de projeto não pode ser nulo.");
+        }   
+        perfis.add(perfil);
     }
 }
