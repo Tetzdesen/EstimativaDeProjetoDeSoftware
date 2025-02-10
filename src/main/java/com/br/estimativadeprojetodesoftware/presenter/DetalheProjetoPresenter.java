@@ -1,9 +1,9 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
-import br.projeto.model.Projeto;
-import br.projeto.repository.ProjetoRepositoryMock;
+import com.br.estimativadeprojetodesoftware.model.Projeto;
+import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
-import br.projeto.view.DetalheProjetoView;
+import com.br.estimativadeprojetodesoftware.view.DetalheProjetoView;
 
 import java.util.List;
 import java.util.stream.Collectors;
