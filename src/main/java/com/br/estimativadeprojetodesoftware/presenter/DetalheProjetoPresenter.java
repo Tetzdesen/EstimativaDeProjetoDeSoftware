@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
+import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
@@ -34,7 +35,8 @@ public class DetalheProjetoPresenter implements Observer {
 
     private void carregarCabecalho(Projeto projeto) {
         String tiposConcatenados = projeto.getPerfis().stream()
-                .collect(Collectors.joining(", "));
+            .map(Perfil::getNome) 
+            .collect(Collectors.joining(", "));
 
         view.atualizarCabecalho(
                 projeto.getNome(),
@@ -46,7 +48,7 @@ public class DetalheProjetoPresenter implements Observer {
     }
 
     private void carregarDetalhes(Projeto projeto) {
-        Object[][] dadosTabela = projeto.getFuncionalidadesEscolhidas()
+        Object[][] dadosTabela = projeto.getEstimativa().getCampos()
                 .entrySet()
                 .stream()
                 .map(entry -> {
