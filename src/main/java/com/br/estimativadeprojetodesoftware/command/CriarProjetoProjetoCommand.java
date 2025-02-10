@@ -1,13 +1,18 @@
 package com.br.estimativadeprojetodesoftware.command;
 
+import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.CriarProjetoMock;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.*;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CriarProjetoProjetoCommand implements ProjetoCommand {
+
     private final ProjetoRepositoryMock repository;
     private final JDesktopPane desktop;
     private final CriarProjetoMock criarProjetoMock;
@@ -24,18 +29,24 @@ public class CriarProjetoProjetoCommand implements ProjetoCommand {
 
         projetoCriado.ifPresentOrElse(
                 projeto -> {
+                    
+                    List<String> nomesPerfis = projeto.getPerfis().stream()
+                            .map(Perfil::getNome)
+                            .collect(Collectors.toList());
+
                     repository.adicionarProjeto(
                             projeto.getNome(),
                             projeto.getCriador(),
-                            projeto.getCreated_at().toString(),
+                            nomesPerfis, 
+                            projeto.getEstimativa() != null ? projeto.getEstimativa().getCampos() : new HashMap<>(),
                             projeto.getStatus(),
                             projeto.getCompartilhado(),
-                            projeto.getCompartilhadoPor(),
-                            projeto.getPerfis(),
-                            projeto.getEstimativa().getCampos()
+                            projeto.getCompartilhadoPor()
                     );
+
                     new MostrarMensagemProjetoCommand("Projeto \"" + projeto.getNome() + "\" criado com sucesso!").execute();
                 },
-                () -> new MostrarMensagemProjetoCommand("Falha ao criar o projeto.").execute());
+                () -> new MostrarMensagemProjetoCommand("Falha ao criar o projeto.").execute()
+        );
     }
 }
