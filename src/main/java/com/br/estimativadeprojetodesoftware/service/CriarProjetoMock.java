@@ -19,7 +19,8 @@ public class CriarProjetoMock {
 
     public Optional<Projeto> criarProjetoAleatorio() {
         List<Projeto> projetosExistentes = repository.getProjetos();
-
+        List<Perfil> perfis = new ArrayList<>();
+        
         if (projetosExistentes.isEmpty()) {
             return Optional.empty();
         }
@@ -38,9 +39,11 @@ public class CriarProjetoMock {
         String status = random.nextBoolean() ? "Estimado" : "Em andamento";
         boolean compartilhado = random.nextBoolean();
         String compartilhadoPor = compartilhado ? projetoBase.getCriador() : null;
+        Perfil perfil = new Perfil("Android");
+        perfis.add(perfil);
         Map<String, Integer> funcionalidades = combinarFuncionalidades(projetosExistentes, random);
         Estimativa estimativa = new Estimativa(UUID.randomUUID(), LocalDateTime.now(), funcionalidades);
-        return Optional.of(new Projeto(UUID.randomUUID(), nome, criador, LocalDateTime.now(), null, null, status, compartilhado, compartilhadoPor, tipos, estimativa));
+        return Optional.of(new Projeto(UUID.randomUUID(), nome, criador, "Android", LocalDateTime.now(), null, null, status, compartilhado, compartilhadoPor, perfis, estimativa));
     }
 
     private String gerarNomeDoProjeto(List<String> tipos) {
