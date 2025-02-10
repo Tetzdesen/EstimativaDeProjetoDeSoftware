@@ -8,8 +8,8 @@ import com.br.estimativadeprojetodesoftware.presenter.window_command.ConfigurarV
 import br.projeto.command.*;
 import br.projeto.model.Projeto;
 import br.projeto.repository.ProjetoRepositoryMock;
-import br.projeto.service.ConstrutorDeArvoreNavegacaoService;
-import br.projeto.service.NoArvoreComposite;
+import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
+import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
 import br.projeto.view.GlobalWindowManager;
 import br.projeto.view.PrincipalView;
 
