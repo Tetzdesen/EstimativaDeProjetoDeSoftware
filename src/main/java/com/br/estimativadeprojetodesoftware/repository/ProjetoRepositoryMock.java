@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.repository;
 
+import com.br.estimativadeprojetodesoftware.model.Estimativa;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Subject;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
@@ -15,29 +16,25 @@ public class ProjetoRepositoryMock implements Subject {
         observers = new ArrayList<>();
 
         // Projeto 1: Web/Back-end
+        Estimativa estimativa1 = new Estimativa();
+        
         Map<String, Integer> funcionalidades1 = new HashMap<>();
-        funcionalidades1.put("Tamanho do App: Médio", 30);
-        funcionalidades1.put("Cadastro por E-mail e Senha", 1);
-        funcionalidades1.put("Painel (Dashboard)", 5);
-        funcionalidades1.put("Contas Multi-tenant", 3);
-        funcionalidades1.put("Subdomínios", 4);
-        funcionalidades1.put("E-mails Transacionais", 2);
-        funcionalidades1.put("Gerente de Projeto", 10);
-        funcionalidades1.put("Nível de UI: Básico", 50);
-        funcionalidades1.put("Integração com CMS", 7);
-        funcionalidades1.put("Monitoramento de Performance", 1);
-        funcionalidades1.put("Relatórios de Erros", 1);
-
-        projetos.add(new Projeto(
-                "Gerenciamento Corporativo",
-                "Usuario 1",
-                "01/01/2023",
-                "Estimado",
-                false,
-                null,
-                Arrays.asList("Web/Back-end"),
-                funcionalidades1
-        ));
+        
+        estimativa1.adicionarCampo"Tamanho do App: Médio", 30);
+        estimativa1.adicionarCampo("Cadastro por E-mail e Senha", 1);
+        estimativa1.adicionarCampo("Painel (Dashboard)", 5);
+        estimativa1.adicionarCampo("Contas Multi-tenant", 3);
+        estimativa1.adicionarCampo("Subdomínios", 4);
+        estimativa1.adicionarCampo("E-mails Transacionais", 2);
+        estimativa1.adicionarCampo("Gerente de Projeto", 10);
+        estimativa1.adicionarCampo("Nível de UI: Básico", 50);
+        estimativa1.adicionarCampo("Integração com CMS", 7);
+        estimativa1.adicionarCampo("Monitoramento de Performance", 1);
+        estimativa1.adicionarCampo("Relatórios de Erros", 1);
+        
+        Projeto projeto1 = new Projeto("Gerenciamento Corporativo", "Usuario 1");
+        projeto1.setEstimativa(estimativa1);
+        projetos.add(projeto1);
 
         // Projeto 2: iOS
         Map<String, Integer> funcionalidades2 = new HashMap<>();
