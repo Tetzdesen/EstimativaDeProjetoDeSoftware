@@ -1,11 +1,16 @@
 package com.br.estimativadeprojetodesoftware.service;
 
+import com.br.estimativadeprojetodesoftware.model.Estimativa;
+import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
+import java.time.LocalDateTime;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CriarProjetoMock {
+
     private final ProjetoRepositoryMock repository;
 
     public CriarProjetoMock(ProjetoRepositoryMock repository) {
@@ -29,13 +34,13 @@ public class CriarProjetoMock {
 
         String nome = gerarNomeDoProjeto(tipos);
         String criador = projetoBase.getCriador();
-        String dataCriacao = gerarDataAleatoria();
+        //String dataCriacao = gerarDataAleatoria();
         String status = random.nextBoolean() ? "Estimado" : "Em andamento";
         boolean compartilhado = random.nextBoolean();
         String compartilhadoPor = compartilhado ? projetoBase.getCriador() : null;
         Map<String, Integer> funcionalidades = combinarFuncionalidades(projetosExistentes, random);
-
-        return Optional.of(new Projeto(nome, criador, dataCriacao, status, compartilhado, compartilhadoPor, tipos, funcionalidades));
+        Estimativa estimativa = new Estimativa(UUID.randomUUID(), LocalDateTime.now(), funcionalidades);
+        return Optional.of(new Projeto(UUID.randomUUID(), nome, criador, LocalDateTime.now(), null, null, status, compartilhado, compartilhadoPor, tipos, estimativa));
     }
 
     private String gerarNomeDoProjeto(List<String> tipos) {
@@ -67,7 +72,9 @@ public class CriarProjetoMock {
         List<String> todosOsTipos = new ArrayList<>();
 
         for (Projeto projeto : projetos) {
-            todosOsTipos.addAll(projeto.getPerfis());
+            todosOsTipos.addAll(projeto.getPerfis().stream()
+                    .map(Perfil::getNome) 
+                    .collect(Collectors.toList()));
         }
 
         Collections.shuffle(todosOsTipos, random);
@@ -86,7 +93,7 @@ public class CriarProjetoMock {
 
         for (int i = 0; i < numProjetosParaCombinar; i++) {
             Projeto projeto = projetos.get(random.nextInt(projetos.size()));
-            Map<String, Integer> funcionalidades = projeto.getFuncionalidadesEscolhidas();
+            Map<String, Integer> funcionalidades = projeto.getEstimativa().getCampos();
 
             int numFuncionalidades = 1 + random.nextInt(funcionalidades.size());
             List<String> chaves = new ArrayList<>(funcionalidades.keySet());

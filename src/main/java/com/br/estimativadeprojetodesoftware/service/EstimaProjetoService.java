@@ -10,7 +10,7 @@ public class EstimaProjetoService {
     private static final double VALOR_DIARIA_UI_UX = 550.0;
 
     public int calcularDiasTotais(Projeto projeto) {
-        return calcularDiasFuncionalidades(projeto.getFuncionalidadesEscolhidas());
+        return calcularDiasFuncionalidades(projeto.getEstimativa().getCampos());
     }
 
     public double calcularCusto(Projeto projeto) {
