@@ -1,11 +1,17 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.AbrirInternalFrameGenericoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.AbrirDashboardProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.ExcluirProjetoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.AbrirDetalhesProjetoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.CriarProjetoProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.ConfigurarMenuJanelaCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.WindowCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.FecharJanelasRelacionadasCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.ConfigurarViewCommand;
-import br.projeto.command.*;
 import br.projeto.model.Projeto;
 import br.projeto.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;

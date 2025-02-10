@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.service;
 
-import com.br.estimativadeprojetodesoftware.ProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 
 import javax.swing.*;
 import java.util.Map;
