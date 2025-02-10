@@ -27,7 +27,7 @@ public class CriarProjetoProjetoCommand implements ProjetoCommand {
                     repository.adicionarProjeto(
                             projeto.getNome(),
                             projeto.getCriador(),
-                            projeto.getCreated_at(),
+                            projeto.getCreated_at().toString(),
                             projeto.getStatus(),
                             projeto.getCompartilhado(),
                             projeto.getCompartilhadoPor(),
