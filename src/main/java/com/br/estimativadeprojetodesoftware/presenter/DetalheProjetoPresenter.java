@@ -39,7 +39,7 @@ public class DetalheProjetoPresenter implements Observer {
         view.atualizarCabecalho(
                 projeto.getNome(),
                 projeto.getCriador(),
-                projeto.getDataCriacao(),
+                projeto.getCreated_at().toString(),
                 tiposConcatenados,
                 projeto.getStatus()
         );
@@ -62,7 +62,7 @@ public class DetalheProjetoPresenter implements Observer {
     }
 
     private double calcularValorTotal(Projeto projeto) {
-        return projeto.getFuncionalidadesEscolhidas()
+        return projeto.getEstimativa().getCampos()
                 .entrySet()
                 .stream()
                 .mapToDouble(entry -> {
