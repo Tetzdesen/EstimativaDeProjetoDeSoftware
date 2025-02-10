@@ -35,3 +35,11 @@ target
 target/
 */target
 
+# vs code package
+.vscode
+
+# databases
+*.db
+
+# .env file
+.env
