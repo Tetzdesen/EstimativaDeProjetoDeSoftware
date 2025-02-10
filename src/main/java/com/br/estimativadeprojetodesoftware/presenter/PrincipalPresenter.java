@@ -12,12 +12,12 @@ import com.br.estimativadeprojetodesoftware.presenter.window_command.WindowComma
 import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.FecharJanelasRelacionadasCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.ConfigurarViewCommand;
-import br.projeto.model.Projeto;
-import br.projeto.repository.ProjetoRepositoryMock;
+import com.br.estimativadeprojetodesoftware.model.Projeto;
+import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
 import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
-import br.projeto.view.GlobalWindowManager;
-import br.projeto.view.PrincipalView;
+import com.br.estimativadeprojetodesoftware.view.GlobalWindowManager;
+import com.br.estimativadeprojetodesoftware.view.PrincipalView;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -174,11 +174,9 @@ public final class PrincipalPresenter implements Observer {
         }
     }
 
-
     public Map<String, ProjetoCommand> getComandos() {
         return comandos;
     }
-
 
     public ProjetoRepositoryMock getRepository() {
         return repository;

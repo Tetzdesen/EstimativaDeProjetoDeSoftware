@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
-import br.projeto.model.Projeto;
+import com.br.estimativadeprojetodesoftware.model.Projeto;
 
 import java.util.List;
 
