@@ -1,8 +1,12 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
+import com.br.estimativadeprojetodesoftware.presenter.window_command.ConfigurarMenuJanelaCommand;
+import com.br.estimativadeprojetodesoftware.presenter.window_command.WindowCommand;
+import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
+import com.br.estimativadeprojetodesoftware.presenter.window_command.FecharJanelasRelacionadasCommand;
+import com.br.estimativadeprojetodesoftware.presenter.window_command.ConfigurarViewCommand;
 import br.projeto.command.*;
 import br.projeto.model.Projeto;
-import br.projeto.presenter.window_command.*;
 import br.projeto.repository.ProjetoRepositoryMock;
 import br.projeto.service.ConstrutorDeArvoreNavegacaoService;
 import br.projeto.service.NoArvoreComposite;
