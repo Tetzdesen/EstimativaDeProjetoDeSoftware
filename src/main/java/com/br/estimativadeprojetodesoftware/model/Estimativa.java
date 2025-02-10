@@ -10,7 +10,7 @@ public class Estimativa {
 
     private UUID id;
     private LocalDateTime created_at;
-    private Map<String, Double> campos;
+    private Map<String, Integer> campos;
     
     public Estimativa() {
         this.id = UUID.randomUUID();
@@ -18,7 +18,7 @@ public class Estimativa {
         this.campos = new HashMap<>();
     }
 
-    public Estimativa(UUID id, LocalDateTime created_at, Map<String, Double> campos) {
+    public Estimativa(UUID id, LocalDateTime created_at, Map<String, Integer> campos) {
         this.id = id;
         this.created_at = created_at;
         this.campos = campos;
@@ -32,17 +32,17 @@ public class Estimativa {
         return created_at;
     }
 
-    public Map<String, Double> getCampos() {
+    public Map<String, Integer> getCampos() {
         return Collections.unmodifiableMap(campos);
     }
 
-    public void adicionarCampo(String chave, double valor) {
-        if (chave == null || chave.isEmpty()) {
-            throw new IllegalArgumentException("Erro: Chave não pode ser vazia ou nula.");
+    public void adicionarCampo(String nomeFuncionalidade, int dias) {
+        if (nomeFuncionalidade == null || nomeFuncionalidade.isEmpty()) {
+            throw new IllegalArgumentException("Erro: Nome da funcionalidade não pode ser vazia ou nula.");
         }
-        if (valor < 0) {
-            throw new IllegalArgumentException("Erro: Valor não pode ser negativo. Chave: " + chave + " Valor: " + valor);
+        if (dias < 0) {
+            throw new IllegalArgumentException("Erro: Quantidade de dias não pode ser negativo. Chave: " + nomeFuncionalidade + " Valor: " + dias);
         }
-        campos.put(chave, valor);
+        campos.put(nomeFuncionalidade, dias);
     }
 }
