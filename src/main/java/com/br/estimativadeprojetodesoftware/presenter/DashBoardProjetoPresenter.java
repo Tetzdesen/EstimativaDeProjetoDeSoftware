@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DashBoardProjetoPresenter implements Observer {
+
     private final DashBoardProjetoView view;
     private final EstimaProjetoService estimaService;
     private final ProjetoRepositoryMock repository;
@@ -56,10 +57,10 @@ public class DashBoardProjetoPresenter implements Observer {
         DefaultPieDataset dataset = new DefaultPieDataset();
         Map<String, Long> tipos = projetos.stream()
                 .flatMap(projeto -> projeto.getPerfis().stream())
-                .collect(Collectors.groupingBy(tipo -> tipo, Collectors.counting()));
+                .collect(Collectors.groupingBy(perfil -> perfil.getNome(), Collectors.counting())); 
 
         for (Map.Entry<String, Long> entry : tipos.entrySet()) {
-            dataset.setValue(entry.getKey(), entry.getValue());
+            dataset.setValue(entry.getKey(), entry.getValue().doubleValue()); 
         }
         return dataset;
     }
