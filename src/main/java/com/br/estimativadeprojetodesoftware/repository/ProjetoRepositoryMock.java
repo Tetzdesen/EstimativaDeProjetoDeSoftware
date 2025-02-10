@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository;
 
 import com.br.estimativadeprojetodesoftware.model.Estimativa;
+import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Subject;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
@@ -8,6 +9,7 @@ import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import java.util.*;
 
 public class ProjetoRepositoryMock implements Subject {
+
     private final List<Projeto> projetos;
     private final List<Observer> observers;
 
@@ -17,10 +19,8 @@ public class ProjetoRepositoryMock implements Subject {
 
         // Projeto 1: Web/Back-end
         Estimativa estimativa1 = new Estimativa();
-        
-        Map<String, Integer> funcionalidades1 = new HashMap<>();
-        
-        estimativa1.adicionarCampo"Tamanho do App: Médio", 30);
+
+        estimativa1.adicionarCampo("Tamanho do App: Médio", 30);
         estimativa1.adicionarCampo("Cadastro por E-mail e Senha", 1);
         estimativa1.adicionarCampo("Painel (Dashboard)", 5);
         estimativa1.adicionarCampo("Contas Multi-tenant", 3);
@@ -31,127 +31,97 @@ public class ProjetoRepositoryMock implements Subject {
         estimativa1.adicionarCampo("Integração com CMS", 7);
         estimativa1.adicionarCampo("Monitoramento de Performance", 1);
         estimativa1.adicionarCampo("Relatórios de Erros", 1);
-        
-        Projeto projeto1 = new Projeto("Gerenciamento Corporativo", "Usuario 1");
+
+        Projeto projeto1 = new Projeto("Gerenciamento Corporativo", "Usuario 1", "Web/Back-End");
         projeto1.setEstimativa(estimativa1);
         projetos.add(projeto1);
 
         // Projeto 2: iOS
-        Map<String, Integer> funcionalidades2 = new HashMap<>();
-        funcionalidades2.put("Tamanho do App: Pequeno", 10);
-        funcionalidades2.put("Cadastro pelo Facebook", 2);
-        funcionalidades2.put("Feed de Atividades", 4);
-        funcionalidades2.put("Upload de Mídia", 4);
-        funcionalidades2.put("Perfis de Usuário", 2);
-        funcionalidades2.put("Notificações Push", 3);
-        funcionalidades2.put("Design de Ícone do App", 7);
-        funcionalidades2.put("Nível de UI: Profissional", 70);
-        funcionalidades2.put("Apple Watch", 7);
-        funcionalidades2.put("Sincronização em Nuvem", 5);
+        Estimativa estimativa2 = new Estimativa();
 
-        projetos.add(new Projeto(
-                "Aplicativo Social iOS",
-                "Usuario 2",
-                "02/02/2023",
-                "Em andamento",
-                true,
-                "Usuario 1",
-                Arrays.asList("iOS"),
-                funcionalidades2
-        ));
+        estimativa2.adicionarCampo("Tamanho do App: Pequeno", 10);
+        estimativa2.adicionarCampo("Cadastro pelo Facebook", 2);
+        estimativa2.adicionarCampo("Feed de Atividades", 4);
+        estimativa2.adicionarCampo("Upload de Mídia", 4);
+        estimativa2.adicionarCampo("Perfis de Usuário", 2);
+        estimativa2.adicionarCampo("Notificações Push", 3);
+        estimativa2.adicionarCampo("Design de Ícone do App", 7);
+        estimativa2.adicionarCampo("Nível de UI: Profissional", 70);
+        estimativa2.adicionarCampo("Apple Watch", 7);
+        estimativa2.adicionarCampo("Sincronização em Nuvem", 5);
+
+        Projeto projeto2 = new Projeto("Aplicativo Social iOS", "Usuario 2", "iOS");
+        projeto2.setEstimativa(estimativa2);
+        projetos.add(projeto2);
 
         // Projeto 3: Android
-        Map<String, Integer> funcionalidades3 = new HashMap<>();
-        funcionalidades3.put("Tamanho do App: Médio", 30);
-        funcionalidades3.put("Cadastro pelo Google", 2);
-        funcionalidades3.put("Feed de Atividades", 4);
-        funcionalidades3.put("Compartilhamento Social", 1);
-        funcionalidades3.put("Pesquisa", 3);
-        funcionalidades3.put("Mensagens", 5);
-        funcionalidades3.put("Nível de UI: Básico", 50);
-        funcionalidades3.put("Dados de Sensores do Dispositivo", 5);
-        funcionalidades3.put("Códigos de Barras ou QR Codes", 2);
+        Estimativa estimativa3 = new Estimativa();
 
-        projetos.add(new Projeto(
-                "Aplicativo de Marketplace Android",
-                "Usuario 3",
-                "03/03/2023",
-                "Estimado",
-                false,
-                null,
-                Arrays.asList("Android"),
-                funcionalidades3
-        ));
+        estimativa3.adicionarCampo("Tamanho do App: Médio", 30);
+        estimativa3.adicionarCampo("Cadastro pelo Google", 2);
+        estimativa3.adicionarCampo("Feed de Atividades", 4);
+        estimativa3.adicionarCampo("Compartilhamento Social", 1);
+        estimativa3.adicionarCampo("Pesquisa", 3);
+        estimativa3.adicionarCampo("Mensagens", 5);
+        estimativa3.adicionarCampo("Nível de UI: Básico", 50);
+        estimativa3.adicionarCampo("Dados de Sensores do Dispositivo", 5);
+        estimativa3.adicionarCampo("Códigos de Barras ou QR Codes", 2);
+
+        Projeto projeto3 = new Projeto("Aplicativo de Marketplace Android", "Usuario 3", "Android");
+        projeto3.setEstimativa(estimativa3);
+        projetos.add(projeto3);
 
         // Projeto 4: Web/Back-end e iOS
-        Map<String, Integer> funcionalidades4 = new HashMap<>();
-        funcionalidades4.put("Tamanho do App: Grande", 50);
-        funcionalidades4.put("Cadastro por E-mail e Senha", 1);
-        funcionalidades4.put("Feed de Atividades", 4);
-        funcionalidades4.put("Painel (Dashboard)", 5);
-        funcionalidades4.put("Notificações Push", 3);
-        funcionalidades4.put("Upload de Mídia", 4);
-        funcionalidades4.put("Gerente de Projeto", 10);
-        funcionalidades4.put("Nível de UI: Profissional", 70);
-        funcionalidades4.put("Planos de Assinatura", 8);
-        funcionalidades4.put("Envio de SMS", 4);
+        Estimativa estimativa4 = new Estimativa();
 
-        projetos.add(new Projeto(
-                "Aplicativo Financeiro Completo",
-                "Usuario 4",
-                "04/04/2023",
-                "Em andamento",
-                true,
-                "Usuario 2",
-                Arrays.asList("Web/Back-end", "iOS"),
-                funcionalidades4
-        ));
+        estimativa4.adicionarCampo("Tamanho do App: Grande", 50);
+        estimativa4.adicionarCampo("Cadastro por E-mail e Senha", 1);
+        estimativa4.adicionarCampo("Feed de Atividades", 4);
+        estimativa4.adicionarCampo("Painel (Dashboard)", 5);
+        estimativa4.adicionarCampo("Notificações Push", 3);
+        estimativa4.adicionarCampo("Upload de Mídia", 4);
+        estimativa4.adicionarCampo("Gerente de Projeto", 10);
+        estimativa4.adicionarCampo("Nível de UI: Profissional", 70);
+        estimativa4.adicionarCampo("Planos de Assinatura", 8);
+        estimativa4.adicionarCampo("Envio de SMS", 4);
+
+        Projeto projeto4 = new Projeto("Aplicativo Financeiro Completo", "Usuario 4", "Web/Back-end e iOS");
+        projeto4.setEstimativa(estimativa4);
+        projetos.add(projeto4);
 
         // Projeto 5: Android com Web/Back-end
-        Map<String, Integer> funcionalidades5 = new HashMap<>();
-        funcionalidades5.put("Tamanho do App: Médio", 30);
-        funcionalidades5.put("Cadastro pelo Facebook", 2);
-        funcionalidades5.put("Feed de Atividades", 4);
-        funcionalidades5.put("Mensagens", 5);
-        funcionalidades5.put("Compartilhamento Social", 1);
-        funcionalidades5.put("Pesquisa", 3);
-        funcionalidades5.put("Painel (Dashboard)", 5);
-        funcionalidades5.put("Nível de UI: Básico", 50);
-        funcionalidades5.put("Processamento de Pagamentos", 5);
-        funcionalidades5.put("Suporte Multilíngue", 4);
+        Estimativa estimativa5 = new Estimativa();
 
-        projetos.add(new Projeto(
-                "Plataforma de Compras Android",
-                "Usuario 5",
-                "05/05/2023",
-                "Estimado",
-                false,
-                null,
-                Arrays.asList("Android", "Web/Back-end"),
-                funcionalidades5
-        ));
+        estimativa5.adicionarCampo("Tamanho do App: Médio", 30);
+        estimativa5.adicionarCampo("Cadastro pelo Facebook", 2);
+        estimativa5.adicionarCampo("Feed de Atividades", 4);
+        estimativa5.adicionarCampo("Mensagens", 5);
+        estimativa5.adicionarCampo("Compartilhamento Social", 1);
+        estimativa5.adicionarCampo("Pesquisa", 3);
+        estimativa5.adicionarCampo("Painel (Dashboard)", 5);
+        estimativa5.adicionarCampo("Nível de UI: Básico", 50);
+        estimativa5.adicionarCampo("Processamento de Pagamentos", 5);
+        estimativa5.adicionarCampo("Suporte Multilíngue", 4);
+
+        Projeto projeto5 = new Projeto("Plataforma de Compras Android", "Usuario 5", "Android e Web/Back-end");
+        projeto5.setEstimativa(estimativa5);
+        projetos.add(projeto5);
 
         // Projeto 6: Web/Back-end com funcionalidades extras
-        Map<String, Integer> funcionalidades6 = new HashMap<>();
-        funcionalidades6.put("Tamanho do App: Pequeno", 10);
-        funcionalidades6.put("Painel (Dashboard)", 5);
-        funcionalidades6.put("E-mails Transacionais", 2);
-        funcionalidades6.put("Subdomínios", 4);
-        funcionalidades6.put("Contas Multi-tenant", 3);
-        funcionalidades6.put("Nível de UI: MVP", 30);
-        funcionalidades6.put("Conectar a um ou mais serviços de terceiros", 6);
-        funcionalidades6.put("Moderação / Aprovação de Conteúdo", 4);
+        Estimativa estimativa6 = new Estimativa();
 
-        projetos.add(new Projeto(
-                "Sistema de Suporte Web",
-                "Usuario 6",
-                "06/06/2023",
-                "Em andamento",
-                true,
-                "Usuario 4",
-                Arrays.asList("Web/Back-end"),
-                funcionalidades6
-        ));
+        estimativa6.adicionarCampo("Tamanho do App: Pequeno", 10);
+        estimativa6.adicionarCampo("Painel (Dashboard)", 5);
+        estimativa6.adicionarCampo("E-mails Transacionais", 2);
+        estimativa6.adicionarCampo("Subdomínios", 4);
+        estimativa6.adicionarCampo("Contas Multi-tenant", 3);
+        estimativa6.adicionarCampo("Nível de UI: MVP", 30);
+        estimativa6.adicionarCampo("Conectar a um ou mais serviços de terceiros", 6);
+        estimativa6.adicionarCampo("Moderação / Aprovação de Conteúdo", 4);
+
+        Projeto projeto6 = new Projeto("Sistema de Suporte Web", "Usuario 6", "Web/Back-end");
+        projeto6.setEstimativa(estimativa6);
+        projetos.add(projeto6);
     }
 
     public List<Projeto> getProjetos() {
@@ -165,11 +135,29 @@ public class ProjetoRepositoryMock implements Subject {
                 .orElse(null);
     }
 
-    public void adicionarProjeto(String nome, String criador, String dataCriacao, String status,
-                                 boolean compartilhado, String compartilhadoPor,
-                                 List<String> tipos, Map<String, Integer> funcionalidadesEscolhidas) {
-        Projeto novoProjeto = new Projeto(nome, criador, dataCriacao, status, compartilhado,
-                compartilhadoPor, tipos, funcionalidadesEscolhidas);
+    public void adicionarProjeto(String nome, String criador, List<String> tipos, Map<String, Integer> funcionalidadesEscolhidas,
+            String status, boolean compartilhado, String compartilhadoPor) {
+
+        Projeto novoProjeto = new Projeto(nome, criador, tipos.get(0)); 
+
+        for (String tipo : tipos) {
+            novoProjeto.adicionarPerfil(new Perfil(tipo));
+        }
+
+        novoProjeto.setCompartilhado(compartilhado);
+
+        if (compartilhado && compartilhadoPor != null && !compartilhadoPor.isEmpty()) {
+            novoProjeto.setCompartilhadoPor(compartilhadoPor);
+        }
+ 
+        if (funcionalidadesEscolhidas != null && !funcionalidadesEscolhidas.isEmpty()) {
+            Estimativa estimativa = new Estimativa();
+            for (Map.Entry<String, Integer> entry : funcionalidadesEscolhidas.entrySet()) {
+                estimativa.adicionarCampo(entry.getKey(), entry.getValue());
+            }
+            novoProjeto.setEstimativa(estimativa);
+        }
+
         projetos.add(novoProjeto);
         notifyObservers();
     }
