@@ -25,3 +25,13 @@ replay_pid*
 
 # Package principal
 principal
+
+# Folder vscode
+.vscode
+./vscode
+
+# Folder target
+target
+target/
+*/target
+

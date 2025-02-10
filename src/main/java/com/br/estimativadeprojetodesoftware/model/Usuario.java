@@ -26,6 +26,8 @@ public class Usuario {
         this.senha = senha;
         this.isAutorizado = false;
         this.created_at = LocalDateTime.now();
+        this.update_at = null;
+        this.deleted_at = null;
         this.projetos = new ArrayList();
         this.perfis = new ArrayList();
     }
@@ -76,13 +78,13 @@ public class Usuario {
     }
 
     public List<Projeto> getProjetos() {
-        return Collections.unmodifiableList(this.projetos);
+        return Collections.unmodifiableList(projetos);
     }
 
     public List<Perfil> getPerfis() {
-        return Collections.unmodifiableList(this.perfis);
+        return Collections.unmodifiableList(perfis);
     }
-    
+
     public void setIsAutorizado(Boolean isAutorizado) {
         this.isAutorizado = isAutorizado;
     }
