@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.command;
 
 import com.br.estimativadeprojetodesoftware.presenter.DashBoardProjetoPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.view.DashBoardProjetoView;
 
@@ -17,13 +18,21 @@ public class AbrirDashboardProjetoCommand implements ProjetoCommand {
 
     @Override
     public void execute() {
-        DashBoardProjetoView dashboardView = new DashBoardProjetoView();
-        new DashBoardProjetoPresenter(dashboardView, repository);
-        desktop.add(dashboardView);
-        dashboardView.setVisible(true);
-        try {
-            dashboardView.setMaximum(true);
-        } catch (Exception ignored) {
+        String tituloJanela = "Dashboard de Projetos";
+        WindowManager windowManager = WindowManager.getInstance();
+
+        if (windowManager.isFrameAberto(tituloJanela)) {
+            windowManager.bringToFront(tituloJanela);
+        } else {
+            DashBoardProjetoView dashboardView = new DashBoardProjetoView();
+            new DashBoardProjetoPresenter(dashboardView, repository);
+            dashboardView.setTitle(tituloJanela);
+            desktop.add(dashboardView);
+            dashboardView.setVisible(true);
+            try {
+                dashboardView.setMaximum(true);
+            } catch (Exception ignored) {
+            }
         }
     }
 }
