@@ -1,6 +1,9 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
 import com.br.estimativadeprojetodesoftware.model.Usuario;
+import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
+import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
+import com.br.estimativadeprojetodesoftware.view.DashBoardProjetoView;
 import com.br.estimativadeprojetodesoftware.view.LoginView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,30 +16,18 @@ import javax.swing.JDesktopPane;
  */
 public class LoginPresenter {
 
-    private Usuario usuarioLogado;
     private LoginView view;
-    private JDesktopPane desktopPane;
+    private UsuarioRepositoryMock repository;
 
-    public LoginPresenter(JDesktopPane desktopPane) {
-        this.desktopPane = desktopPane;
-        this.view = new LoginView();
+    public LoginPresenter(LoginView view, UsuarioRepositoryMock repository) {
+        this.view = view;
+        this.repository = repository;
         configuraView();
     }
 
     private void configuraView() {
         configuraActionsListerns();
-    //    desktopPane.add(view);
-      //  view.setVisible(true);
-    }
-
-    public void exibir() {
-        desktopPane.add(view);
         view.setVisible(true);
-        try {
-            view.setSelected(true);
-        } catch (PropertyVetoException e) {
-            e.printStackTrace();
-        }
     }
 
     private void configuraActionsListerns() {
@@ -62,12 +53,6 @@ public class LoginPresenter {
 
     private void realizaCadastro() {
         // command
-    }
-
-    private void inicializarInterfacePrincipalProjetos() {
-        desktopPane.removeAll();
-        desktopPane.repaint();
-        // new PrincipalPresenter();
     }
 
     public LoginView getView() {

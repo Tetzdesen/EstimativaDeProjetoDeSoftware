@@ -50,7 +50,6 @@ public final class PrincipalPresenter implements Observer {
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
         comandos.put("Login", new AbrirLoginUsuarioCommand(view.getDesktop(), repository));
-        comandos.put("Cadastro", new AbrirCadastroUsuarioCommand(view.getDesktop(), repository));
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), repository));
         comandos.put("Usuário", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Usuário"));
         comandos.put("Ver perfis de projeto", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Ver Perfis de Projetos"));
