@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DetalheProjetoPresenter implements Observer {
+
     private final DetalheProjetoView view;
     private final EstimaProjetoService estimaService;
     private final ProjetoRepositoryMock repository;
@@ -35,8 +36,8 @@ public class DetalheProjetoPresenter implements Observer {
 
     private void carregarCabecalho(Projeto projeto) {
         String tiposConcatenados = projeto.getPerfis().stream()
-            .map(Perfil::getNome) 
-            .collect(Collectors.joining(", "));
+                .map(Perfil::getNome)
+                .collect(Collectors.joining(", "));
 
         view.atualizarCabecalho(
                 projeto.getNome(),
@@ -54,7 +55,11 @@ public class DetalheProjetoPresenter implements Observer {
                 .map(entry -> {
                     String nomeFuncionalidade = entry.getKey();
                     int dias = entry.getValue();
-                    double valor = estimaService.calcularValorUnitario(projeto.getPerfis().get(0), dias);
+                    
+                    Perfil perfil = projeto.getPerfis().isEmpty() ? null : projeto.getPerfis().get(0);
+
+                    double valor = (perfil != null) ? estimaService.calcularValorUnitario(perfil.getNome(), dias) : 0.0;
+
                     return new Object[]{nomeFuncionalidade, dias, String.format("R$ %.2f", valor)};
                 })
                 .toArray(Object[][]::new);
@@ -69,7 +74,10 @@ public class DetalheProjetoPresenter implements Observer {
                 .stream()
                 .mapToDouble(entry -> {
                     int dias = entry.getValue();
-                    return estimaService.calcularValorUnitario(projeto.getPerfis().get(0), dias);
+                    
+                    Perfil perfil = projeto.getPerfis().isEmpty() ? null : projeto.getPerfis().get(0);
+
+                    return (perfil != null) ? estimaService.calcularValorUnitario(perfil.getNome(), dias) : 0.0;
                 })
                 .sum();
     }
