@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
+import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -12,15 +15,11 @@ import com.br.estimativadeprojetodesoftware.model.Perfil;
 public class Principal {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+       // System.out.println("Hello World!");
 
-        Perfil ios = new Perfil("Perfil iOS");
-
-        ios.adicionarTamDispositivo("Pequeno", 10);
-        ios.adicionarTamDispositivo("Médio", 30);
-        ios.adicionarTamDispositivo("Grande", 50);
-        
-        System.out.println(ios.getTamDispositivos());
+        SwingUtilities.invokeLater(() -> {
+            PrincipalPresenter presenter = new PrincipalPresenter(new ProjetoRepositoryMock());
+        });
 
 
        // Dispositivo android = new Dispositivo("Android");
