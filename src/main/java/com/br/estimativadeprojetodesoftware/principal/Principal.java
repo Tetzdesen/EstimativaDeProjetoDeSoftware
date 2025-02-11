@@ -23,12 +23,5 @@ public class Principal {
             WindowManager.getInstance().initialize(presenter);
         });
 
-        // Dispositivo android = new Dispositivo("Android");
-        //  android.addCampo(new Campo("Tamanho do app", "pequeno", 10));
-        //  android.addCampo(new Campo("Tamanho do app", "Médio", 30));
-        //  android.addCampo(new Campo("Tamanho do app", "grande", 50));
-        //  Perfil perfil1 = new Perfil("principal");
-        //   perfil1.adicionarDispositivo(ios);
-        //  perfil1.adicionarDispositivo(android);
     }
 }

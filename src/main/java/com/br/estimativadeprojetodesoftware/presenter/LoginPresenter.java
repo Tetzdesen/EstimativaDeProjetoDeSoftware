@@ -4,6 +4,7 @@ import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.view.LoginView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyVetoException;
 import javax.swing.JDesktopPane;
 
 /**
@@ -15,18 +16,27 @@ public class LoginPresenter {
     private Usuario usuarioLogado;
     private LoginView view;
     private JDesktopPane desktopPane;
-    
+
     public LoginPresenter(JDesktopPane desktopPane) {
         this.desktopPane = desktopPane;
-        //this.usuarioLogado = usuario;
         this.view = new LoginView();
         configuraView();
     }
 
     private void configuraView() {
         configuraActionsListerns();
+    //    desktopPane.add(view);
+      //  view.setVisible(true);
+    }
+
+    public void exibir() {
         desktopPane.add(view);
         view.setVisible(true);
+        try {
+            view.setSelected(true);
+        } catch (PropertyVetoException e) {
+            e.printStackTrace();
+        }
     }
 
     private void configuraActionsListerns() {
@@ -45,23 +55,23 @@ public class LoginPresenter {
             }
         });
     }
-    
-    private void realizaLogin(){
+
+    private void realizaLogin() {
         // command
     }
-    
-    private void realizaCadastro(){
+
+    private void realizaCadastro() {
         // command
-    } 
-    
-    private void inicializarInterfacePrincipalProjetos(){
+    }
+
+    private void inicializarInterfacePrincipalProjetos() {
         desktopPane.removeAll();
         desktopPane.repaint();
-       // new PrincipalPresenter();
+        // new PrincipalPresenter();
     }
 
     public LoginView getView() {
         return view;
     }
-   
+
 }
