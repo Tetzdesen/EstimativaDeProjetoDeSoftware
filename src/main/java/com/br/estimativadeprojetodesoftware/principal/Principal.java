@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import javax.swing.SwingUtilities;
 
@@ -19,6 +20,8 @@ public class Principal {
 
         SwingUtilities.invokeLater(() -> {
             PrincipalPresenter presenter = new PrincipalPresenter(new ProjetoRepositoryMock());
+            WindowManager.getInstance().initialize(presenter);
+
         });
 
 
