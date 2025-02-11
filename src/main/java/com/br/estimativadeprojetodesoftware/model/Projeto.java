@@ -3,7 +3,9 @@ package com.br.estimativadeprojetodesoftware.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class Projeto {
@@ -19,6 +21,7 @@ public class Projeto {
     private boolean compartilhado;
     private String compartilhadoPor;
     private List<Perfil> perfis;
+    private Map<String, Double> taxasDiarias;
     private Estimativa estimativa;
 
     public Projeto(String nome, String criador, String tipo) {
@@ -33,10 +36,11 @@ public class Projeto {
         this.compartilhado = false;
         this.compartilhadoPor = null;
         this.perfis = new ArrayList<>();
+        this.taxasDiarias = new HashMap<>();
         this.estimativa = null;
     }
 
-    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, String status, boolean compartilhado, String compartilhadoPor, List<Perfil> perfis, Estimativa estimativa) {
+    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, String status, boolean compartilhado, String compartilhadoPor, List<Perfil> perfis, Map<String, Double> taxasDiarias, Estimativa estimativa) {
         this.id = id;
         this.nome = nome;
         this.criador = criador;
@@ -48,9 +52,10 @@ public class Projeto {
         this.compartilhado = compartilhado;
         this.compartilhadoPor = compartilhadoPor;
         this.perfis = perfis;
+        this.taxasDiarias = taxasDiarias;
         this.estimativa = estimativa;
     }
-
+    
     public UUID getId() {
         return id;
     }
@@ -94,6 +99,10 @@ public class Projeto {
     public List<Perfil> getPerfis() {
         return Collections.unmodifiableList(perfis);
     }
+    
+    public Map<String, Double> getTaxasDiarias() {
+        return Collections.unmodifiableMap(taxasDiarias);
+    }
 
     public Estimativa getEstimativa() {
         return estimativa;
@@ -136,5 +145,15 @@ public class Projeto {
             throw new IllegalArgumentException("Erro: Perfil de projeto não pode ser nulo.");
         }   
         perfis.add(perfil);
+    }
+    
+    public void adicionarTaxaDiaria(String nomeTaxa, double valor) {
+        if (nome == null || nome.isEmpty()) {
+            throw new IllegalArgumentException("Erro: Nome da taxa não pode ser vazia ou nula.");
+        }
+        if (valor < 0) {
+            throw new IllegalArgumentException("Erro: Valor não pode ser negativo. Nome da taxa: " + nome + " Valor: " + valor);
+        }
+        taxasDiarias.put(nomeTaxa, valor);
     }
 }

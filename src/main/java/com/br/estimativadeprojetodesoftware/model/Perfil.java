@@ -13,7 +13,6 @@ public class Perfil {
     private Map<String, Double> tamDispositivos;
     private Map<String, Double> nivelUI;
     private Map<String, Double> funcionalidades;
-    private Map<String, Double> taxasDiarias;
     private LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
@@ -24,7 +23,6 @@ public class Perfil {
         this.tamDispositivos = new HashMap<>();
         this.nivelUI = new HashMap<>();
         this.funcionalidades = new HashMap<>();
-        this.taxasDiarias = new HashMap<>();
         this.created_at = LocalDateTime.now();
         this.update_at = null;
         this.deleted_at = null;
@@ -61,9 +59,6 @@ public class Perfil {
         return Collections.unmodifiableMap(funcionalidades);
     }
 
-    public Map<String, Double> getTaxasDiarias() {
-        return Collections.unmodifiableMap(taxasDiarias);
-    }
     
     public LocalDateTime getCreated_at() {
         return created_at;
@@ -121,13 +116,4 @@ public class Perfil {
         funcionalidades.put(nomeFuncionalidade, valor);
     }
    
-    public void adicionarTaxaDiaria(String nomeTaxa, double valor) {
-        if (nome == null || nome.isEmpty()) {
-            throw new IllegalArgumentException("Erro: Nome da taxa não pode ser vazia ou nula.");
-        }
-        if (valor < 0) {
-            throw new IllegalArgumentException("Erro: Valor não pode ser negativo. Nome da taxa: " + nome + " Valor: " + valor);
-        }
-        taxasDiarias.put(nomeTaxa, valor);
-    }
 }
