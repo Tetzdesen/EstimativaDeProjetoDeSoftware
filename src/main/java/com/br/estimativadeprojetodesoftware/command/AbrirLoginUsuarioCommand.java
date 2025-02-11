@@ -27,16 +27,19 @@ public class AbrirLoginUsuarioCommand implements ProjetoCommand {
         String tituloJanela = "Login de desenvolvedor";
         WindowManager windowManager = WindowManager.getInstance();
 
+           
+        
         if (windowManager.isFrameAberto(tituloJanela)) {
             windowManager.bringToFront(tituloJanela);
         } else {
             LoginView loginView = new LoginView();
             new LoginPresenter(loginView, usuarioRepository);
             loginView.setTitle(tituloJanela);
+            
             desktop.add(loginView);
             loginView.setVisible(true);
             try {
-                loginView.setMaximum(true);
+             //   loginView.setMaximum(true);
             } catch (Exception ignored) {
             }
         }
