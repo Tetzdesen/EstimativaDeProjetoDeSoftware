@@ -25,15 +25,21 @@ public final class PrincipalPresenter implements Observer {
         this.view = new PrincipalView();
         this.repository = repository;
         this.repository.addObserver(this);
-
+        inicializarTelaLogin();
         this.construtorDeArvoreNavegacaoService = new ConstrutorDeArvoreNavegacaoService();
 
-        GlobalWindowManager.initialize(view);
+      //  GlobalWindowManager.initialize(view);
 
         this.comandos = inicializarComandos();
 
-        inicializarEExecutarWindowCommands();
+      //  inicializarEExecutarWindowCommands();
         view.setVisible(true);
+    }
+    
+    private void inicializarTelaLogin(){
+        LoginPresenter loginPresenter = new LoginPresenter(view.getDesktop());
+        view.getDesktop().add(loginPresenter.getView()); 
+        
     }
 
     private void inicializarEExecutarWindowCommands() {
