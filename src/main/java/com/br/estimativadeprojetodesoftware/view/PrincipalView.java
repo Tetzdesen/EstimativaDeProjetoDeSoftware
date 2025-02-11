@@ -48,5 +48,4 @@ public final class PrincipalView extends JFrame {
         return treeScrollPane;
     }
 
-
 }
