@@ -8,13 +8,16 @@ import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
 import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
 import com.br.estimativadeprojetodesoftware.view.GlobalWindowManager;
+import com.br.estimativadeprojetodesoftware.view.LoginView;
 import com.br.estimativadeprojetodesoftware.view.PrincipalView;
+import java.beans.PropertyVetoException;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.*;
 
 public final class PrincipalPresenter implements Observer {
+
     private final PrincipalView view;
     private final ProjetoRepositoryMock repository;
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
@@ -25,21 +28,15 @@ public final class PrincipalPresenter implements Observer {
         this.view = new PrincipalView();
         this.repository = repository;
         this.repository.addObserver(this);
-        inicializarTelaLogin();
+
         this.construtorDeArvoreNavegacaoService = new ConstrutorDeArvoreNavegacaoService();
 
-      //  GlobalWindowManager.initialize(view);
-
+        GlobalWindowManager.initialize(view);
         this.comandos = inicializarComandos();
 
-      //  inicializarEExecutarWindowCommands();
+        inicializarEExecutarWindowCommands();
         view.setVisible(true);
-    }
-    
-    private void inicializarTelaLogin(){
-        LoginPresenter loginPresenter = new LoginPresenter(view.getDesktop());
-        view.getDesktop().add(loginPresenter.getView()); 
-        
+
     }
 
     private void inicializarEExecutarWindowCommands() {
@@ -49,9 +46,11 @@ public final class PrincipalPresenter implements Observer {
                 new SetLookAndFeelCommand()
         ).forEach(WindowCommand::execute);
     }
-    
+
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
+        comandos.put("Login", new AbrirLoginUsuarioCommand(view.getDesktop(), repository));
+        comandos.put("Cadastro", new AbrirCadastroUsuarioCommand(view.getDesktop(), repository));
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), repository));
         comandos.put("Usuário", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Usuário"));
         comandos.put("Ver perfis de projeto", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Ver Perfis de Projetos"));
