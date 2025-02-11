@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.command;
 
 import com.br.estimativadeprojetodesoftware.presenter.DetalheProjetoPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.view.DetalheProjetoView;
 
@@ -26,16 +27,21 @@ public class AbrirDetalhesProjetoProjetoCommand implements ProjetoCommand {
             throw new IllegalStateException("O nome do projeto não foi definido para este comando.");
         }
 
-        DetalheProjetoView detalheView = new DetalheProjetoView();
+        String tituloJanela = "Detalhes do Projeto: " + projetoNome;
+        WindowManager windowManager = WindowManager.getInstance();
 
-        new DetalheProjetoPresenter(detalheView, repository, projetoNome);
-
-        desktop.add(detalheView);
-        detalheView.setTitle("Detalhes do Projeto: " + projetoNome);
-        detalheView.setVisible(true);
-        try {
-            detalheView.setMaximum(true);
-        } catch (Exception ignored) {
+        if (windowManager.isFrameAberto(tituloJanela)) {
+            windowManager.bringToFront(tituloJanela);
+        } else {
+            DetalheProjetoView detalheView = new DetalheProjetoView();
+            detalheView.setTitle(tituloJanela);
+            new DetalheProjetoPresenter(detalheView, repository, projetoNome);
+            desktop.add(detalheView);
+            detalheView.setVisible(true);
+            try {
+                detalheView.setMaximum(true);
+            } catch (Exception ignored) {
+            }
         }
     }
 }
