@@ -1,8 +1,9 @@
 package com.br.estimativadeprojetodesoftware.command;
 
 import com.br.estimativadeprojetodesoftware.presenter.DashBoardProjetoPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.LoginPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
-import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
+import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.view.DashBoardProjetoView;
 import com.br.estimativadeprojetodesoftware.view.LoginView;
 import javax.swing.JDesktopPane;
@@ -14,11 +15,11 @@ import javax.swing.JDesktopPane;
 public class AbrirLoginUsuarioCommand implements ProjetoCommand {
 
     private final JDesktopPane desktop;
-    private final ProjetoRepositoryMock repository;
+    private final UsuarioRepositoryMock usuarioRepository;
 
-    public AbrirLoginUsuarioCommand(JDesktopPane desktop, ProjetoRepositoryMock repository) {
+    public AbrirLoginUsuarioCommand(JDesktopPane desktop, UsuarioRepositoryMock usuarioRepository) {
         this.desktop = desktop;
-        this.repository = repository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
@@ -30,7 +31,7 @@ public class AbrirLoginUsuarioCommand implements ProjetoCommand {
             windowManager.bringToFront(tituloJanela);
         } else {
             LoginView loginView = new LoginView();
-            new LoginPresenter(loginView, repository);
+            new LoginPresenter(loginView, usuarioRepository);
             loginView.setTitle(tituloJanela);
             desktop.add(loginView);
             loginView.setVisible(true);
