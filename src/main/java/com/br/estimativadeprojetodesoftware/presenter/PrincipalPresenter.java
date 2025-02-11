@@ -1,18 +1,9 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.AbrirInternalFrameGenericoProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.AbrirDashboardProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.ExcluirProjetoProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.AbrirDetalhesProjetoProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.CriarProjetoProjetoCommand;
-import com.br.estimativadeprojetodesoftware.presenter.window_command.ConfigurarMenuJanelaCommand;
-import com.br.estimativadeprojetodesoftware.presenter.window_command.WindowCommand;
-import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
-import com.br.estimativadeprojetodesoftware.presenter.window_command.FecharJanelasRelacionadasCommand;
-import com.br.estimativadeprojetodesoftware.presenter.window_command.ConfigurarViewCommand;
+import com.br.estimativadeprojetodesoftware.command.*;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
+import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
+import com.br.estimativadeprojetodesoftware.presenter.window_command.*;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
 import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
@@ -52,8 +43,7 @@ public final class PrincipalPresenter implements Observer {
                 new SetLookAndFeelCommand()
         ).forEach(WindowCommand::execute);
     }
-
-
+    
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), repository));
@@ -97,9 +87,14 @@ public final class PrincipalPresenter implements Observer {
             AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(repository, view.getDesktop()) {
                 @Override
                 public void execute() {
-                    if (!isFrameAberto("Detalhes do Projeto: " + projeto.getNome())) {
+                    String tituloJanela = "Detalhes do Projeto: " + projeto.getNome();
+                    WindowManager windowManager = WindowManager.getInstance();
+
+                    if (!windowManager.isFrameAberto(tituloJanela)) {
                         super.execute();
-                        bloquearMinimizacao("Detalhes do Projeto: " + projeto.getNome());
+                        bloquearMinimizacao(tituloJanela);
+                    } else {
+                        windowManager.bringToFront(tituloJanela);
                     }
                 }
             };
@@ -133,7 +128,6 @@ public final class PrincipalPresenter implements Observer {
         });
     }
 
-
     @Override
     public void update(final List<Projeto> listaProjetos) {
         SwingUtilities.invokeLater(() -> {
@@ -141,17 +135,6 @@ public final class PrincipalPresenter implements Observer {
             fecharJanelasCommand.execute();
             configurarArvore();
         });
-    }
-
-
-    private boolean isFrameAberto(String titulo) {
-        JInternalFrame[] frames = view.getDesktop().getAllFrames();
-        for (JInternalFrame frame : frames) {
-            if (frame.getTitle().equals(titulo)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void bloquearMinimizacao(String titulo) {
