@@ -21,7 +21,8 @@ public class ConfigurarViewCommand implements WindowCommand {
         presenter.getView().setMainComponents(barraDeBotoes);
 
         SwingUtilities.invokeLater(() -> {
-            ProjetoCommand comandoPrincipal = presenter.getComandos().get("Principal");
+         //   ProjetoCommand comandoPrincipal = presenter.getComandos().get("Principal");
+            ProjetoCommand comandoPrincipal = presenter.getComandos().get("Login");
             if (comandoPrincipal != null) {
                 comandoPrincipal.execute();
             } else {
