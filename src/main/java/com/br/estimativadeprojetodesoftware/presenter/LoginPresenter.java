@@ -14,16 +14,18 @@ public class LoginPresenter {
 
     private Usuario usuarioLogado;
     private LoginView view;
-
-    public LoginPresenter(Usuario usuario, LoginView view, JDesktopPane desktopPane) {
-        this.usuarioLogado = usuario;
+    private JDesktopPane desktopPane;
+    
+    public LoginPresenter(JDesktopPane desktopPane) {
+        this.desktopPane = desktopPane;
+        //this.usuarioLogado = usuario;
         this.view = new LoginView();
-        desktopPane.add(view);
         configuraView();
     }
 
     private void configuraView() {
         configuraActionsListerns();
+        desktopPane.add(view);
         view.setVisible(true);
     }
 
@@ -51,5 +53,15 @@ public class LoginPresenter {
     private void realizaCadastro(){
         // command
     } 
+    
+    private void inicializarInterfacePrincipalProjetos(){
+        desktopPane.removeAll();
+        desktopPane.repaint();
+       // new PrincipalPresenter();
+    }
+
+    public LoginView getView() {
+        return view;
+    }
    
 }
