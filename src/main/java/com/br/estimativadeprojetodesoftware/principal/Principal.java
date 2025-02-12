@@ -7,6 +7,7 @@ import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
+import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import javax.swing.SwingUtilities;
 
 /**
@@ -16,26 +17,12 @@ import javax.swing.SwingUtilities;
 public class Principal {
 
     public static void main(String[] args) {
-       // System.out.println("Hello World!");
+        // System.out.println("Hello World!");
 
         SwingUtilities.invokeLater(() -> {
-            PrincipalPresenter presenter = new PrincipalPresenter(new ProjetoRepositoryMock());
+            PrincipalPresenter presenter = new PrincipalPresenter(new ProjetoRepositoryMock(), new UsuarioRepositoryMock());
             WindowManager.getInstance().initialize(presenter);
-
         });
 
-
-       // Dispositivo android = new Dispositivo("Android");
-      //  android.addCampo(new Campo("Tamanho do app", "pequeno", 10));
-      //  android.addCampo(new Campo("Tamanho do app", "Médio", 30));
-      //  android.addCampo(new Campo("Tamanho do app", "grande", 50));
-
-   
-      //  Perfil perfil1 = new Perfil("principal");
-     //   perfil1.adicionarDispositivo(ios);
-      //  perfil1.adicionarDispositivo(android);
-        
-    
-        
     }
 }

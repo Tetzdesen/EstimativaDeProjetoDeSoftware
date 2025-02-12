@@ -5,47 +5,54 @@ import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.*;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
+import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
 import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
 import com.br.estimativadeprojetodesoftware.view.GlobalWindowManager;
+import com.br.estimativadeprojetodesoftware.view.LoginView;
 import com.br.estimativadeprojetodesoftware.view.PrincipalView;
+import java.beans.PropertyVetoException;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.*;
 
 public final class PrincipalPresenter implements Observer {
+
     private final PrincipalView view;
     private final ProjetoRepositoryMock repository;
+    private final UsuarioRepositoryMock usuarioRepository;
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
     private final Map<String, ProjetoCommand> comandos;
     private final List<WindowCommand> windowCommands = new ArrayList<>();
 
-    public PrincipalPresenter(ProjetoRepositoryMock repository) {
+    public PrincipalPresenter(ProjetoRepositoryMock repository, UsuarioRepositoryMock usuarioRepository) {
         this.view = new PrincipalView();
         this.repository = repository;
+        this.usuarioRepository = usuarioRepository;
         this.repository.addObserver(this);
 
         this.construtorDeArvoreNavegacaoService = new ConstrutorDeArvoreNavegacaoService();
 
         GlobalWindowManager.initialize(view);
-
         this.comandos = inicializarComandos();
 
         inicializarEExecutarWindowCommands();
         view.setVisible(true);
+
     }
 
     private void inicializarEExecutarWindowCommands() {
         Arrays.asList(
                 new ConfigurarViewCommand(this),
-                new ConfigurarMenuJanelaCommand(this),
+                //new ConfigurarMenuJanelaCommand(this),
                 new SetLookAndFeelCommand()
         ).forEach(WindowCommand::execute);
     }
-    
+
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
+        comandos.put("Login", new AbrirLoginUsuarioCommand(view.getDesktop(), usuarioRepository));
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), repository));
         comandos.put("Usuário", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Usuário"));
         comandos.put("Ver perfis de projeto", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Ver Perfis de Projetos"));
