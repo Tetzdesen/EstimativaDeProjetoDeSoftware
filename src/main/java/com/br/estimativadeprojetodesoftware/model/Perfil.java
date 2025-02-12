@@ -10,9 +10,9 @@ public class Perfil {
 
     private UUID id;
     private String nome;
-    private Map<String, Double> tamDispositivos;
+    private Map<String, Integer> tamDispositivos;
     private Map<String, Double> nivelUI;
-    private Map<String, Double> funcionalidades;
+    private Map<String, Integer> funcionalidades;
     private LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
@@ -28,7 +28,7 @@ public class Perfil {
         this.deleted_at = null;
     }
 
-    public Perfil(UUID id, String nome, Map<String, Double> tamDispositivos, Map<String, Double> nivelUI, Map<String, Double> funcionalidades, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at) {
+    public Perfil(UUID id, String nome, Map<String, Integer> tamDispositivos, Map<String, Double> nivelUI, Map<String, Integer> funcionalidades, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at) {
         this.id = id;
         this.nome = nome;
         this.tamDispositivos = tamDispositivos;
@@ -47,7 +47,7 @@ public class Perfil {
         return nome;
     }
 
-    public Map<String, Double> getTamDispositivos() {
+    public Map<String, Integer> getTamDispositivos() {
         return Collections.unmodifiableMap(tamDispositivos);
     }
 
@@ -55,7 +55,7 @@ public class Perfil {
         return Collections.unmodifiableMap(nivelUI);
     }
 
-    public Map<String, Double> getFuncionalidades() {
+    public Map<String, Integer> getFuncionalidades() {
         return Collections.unmodifiableMap(funcionalidades);
     }
 
@@ -86,14 +86,14 @@ public class Perfil {
         this.deleted_at = deleted_at;
     }
 
-    public void adicionarTamDispositivo(String nome, double valor) {
+    public void adicionarTamDispositivo(String nome, int dias) {
         if (nome == null || nome.isEmpty()) {
             throw new IllegalArgumentException("Erro: Nome do tamanho do dispositivo não pode ser vazio ou nula.");
         }
-        if (valor < 0) {
-            throw new IllegalArgumentException("Erro: Valor não pode ser negativo. Nome do tamanho do dispositivo : " + nome + " Valor: " + valor);
+        if (dias < 0) {
+            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Nome do tamanho do dispositivo : " + nome + " dias: " + dias);
         }
-        tamDispositivos.put(nome, valor);
+        tamDispositivos.put(nome, dias);
     }
 
     public void adicionarNivelUI(String nome, double valor) {
@@ -106,14 +106,14 @@ public class Perfil {
         nivelUI.put(nome, valor);
     }
 
-    public void adicionarFuncionalidade(String nomeFuncionalidade, double valor) {
+    public void adicionarFuncionalidade(String nomeFuncionalidade, int dias) {
         if (nome == null || nome.isEmpty()) {
             throw new IllegalArgumentException("Erro: Nome da funcionalidade não pode ser vazio ou nula.");
         }
-        if (valor < 0) {
-            throw new IllegalArgumentException("Erro: Valor não pode ser negativo. Nome da funcionalidade: " + nome + " Valor: " + valor);
+        if (dias < 0) {
+            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Nome da funcionalidade: " + nome + " dias: " + dias);
         }
-        funcionalidades.put(nomeFuncionalidade, valor);
+        funcionalidades.put(nomeFuncionalidade, dias);
     }
    
 }
