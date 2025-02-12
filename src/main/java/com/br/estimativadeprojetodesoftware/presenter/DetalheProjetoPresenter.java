@@ -49,6 +49,7 @@ public class DetalheProjetoPresenter implements Observer {
     }
 
     private void carregarDetalhes(Projeto projeto) {
+        //projeto.setEstimativa(new ProjetoRepositoryMock());
         Object[][] dadosTabela = projeto.getEstimativa().getCampos()
                 .entrySet()
                 .stream()
@@ -57,6 +58,7 @@ public class DetalheProjetoPresenter implements Observer {
                     int dias = entry.getValue();
                     
                     Perfil perfil = projeto.getPerfis().isEmpty() ? null : projeto.getPerfis().get(0);
+                    System.out.println(perfil.getNome());
 
                     double valor = (perfil != null) ? estimaService.calcularValorUnitario(perfil.getNome(), dias) : 0.0;
 

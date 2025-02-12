@@ -17,6 +17,21 @@ public class ProjetoRepositoryMock implements Subject {
         projetos = new ArrayList<>();
         observers = new ArrayList<>();
 
+        //criação do perfil 1
+        Perfil perfil1 = new Perfil("Web/Back-end");
+
+        perfil1.adicionarTamDispositivo("Médio", 30);
+        perfil1.adicionarNivelUI("Básico", 450);
+        perfil1.adicionarFuncionalidade("Cadastro por E-mail e Senha", 1);
+        perfil1.adicionarFuncionalidade("Painel (Dashboard)", 5);
+        perfil1.adicionarFuncionalidade("Contas Multi-tenant", 3);
+        perfil1.adicionarFuncionalidade("Subdomínios", 4);
+        perfil1.adicionarFuncionalidade("E-mails Transacionais", 2);
+        perfil1.adicionarFuncionalidade("Gerente de Projeto", 10);
+        perfil1.adicionarFuncionalidade("Integração com CMS", 50);
+        perfil1.adicionarFuncionalidade("Monitoramento de Performance", 7);
+        perfil1.adicionarFuncionalidade("Relatórios de Erros", 1);
+
         // Projeto 1: Web/Back-end
         Estimativa estimativa1 = new Estimativa();
 
@@ -34,6 +49,7 @@ public class ProjetoRepositoryMock implements Subject {
 
         Projeto projeto1 = new Projeto("Gerenciamento Corporativo", "Usuario 1", "Web/Back-End");
         projeto1.setEstimativa(estimativa1);
+        projeto1.adicionarPerfil(perfil1);
         projetos.add(projeto1);
 
         // Projeto 2: iOS
@@ -52,6 +68,7 @@ public class ProjetoRepositoryMock implements Subject {
 
         Projeto projeto2 = new Projeto("Aplicativo Social iOS", "Usuario 2", "iOS");
         projeto2.setEstimativa(estimativa2);
+        projeto2.adicionarPerfil(perfil1);
         projetos.add(projeto2);
 
         // Projeto 3: Android
@@ -69,6 +86,7 @@ public class ProjetoRepositoryMock implements Subject {
 
         Projeto projeto3 = new Projeto("Aplicativo de Marketplace Android", "Usuario 3", "Android");
         projeto3.setEstimativa(estimativa3);
+        projeto3.adicionarPerfil(perfil1);
         projetos.add(projeto3);
 
         // Projeto 4: Web/Back-end e iOS
@@ -87,6 +105,7 @@ public class ProjetoRepositoryMock implements Subject {
 
         Projeto projeto4 = new Projeto("Aplicativo Financeiro Completo", "Usuario 4", "Web/Back-end e iOS");
         projeto4.setEstimativa(estimativa4);
+        projeto4.adicionarPerfil(perfil1);
         projetos.add(projeto4);
 
         // Projeto 5: Android com Web/Back-end
@@ -105,6 +124,7 @@ public class ProjetoRepositoryMock implements Subject {
 
         Projeto projeto5 = new Projeto("Plataforma de Compras Android", "Usuario 5", "Android e Web/Back-end");
         projeto5.setEstimativa(estimativa5);
+        projeto5.adicionarPerfil(perfil1);
         projetos.add(projeto5);
 
         // Projeto 6: Web/Back-end com funcionalidades extras
@@ -121,6 +141,7 @@ public class ProjetoRepositoryMock implements Subject {
 
         Projeto projeto6 = new Projeto("Sistema de Suporte Web", "Usuario 6", "Web/Back-end");
         projeto6.setEstimativa(estimativa6);
+        projeto6.adicionarPerfil(perfil1);
         projetos.add(projeto6);
     }
 
