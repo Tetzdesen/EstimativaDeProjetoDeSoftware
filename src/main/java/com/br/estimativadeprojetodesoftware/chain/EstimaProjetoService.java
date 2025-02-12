@@ -2,9 +2,31 @@ package com.br.estimativadeprojetodesoftware.chain;
 
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 
-import java.util.Map;
-
 public class EstimaProjetoService {
+    private FormaCalculoEstimativaHandler formaCalculoEstimativaHandler;
+
+    public EstimaProjetoService() {
+        formaCalculoEstimativaHandler = new CalculoTipoDesenvolvedor();
+        FormaCalculoEstimativaHandler tipoDesigner = new CalculoTipoDesigner();
+        FormaCalculoEstimativaHandler tipoGerente = new CalculoTipoGerente();
+
+        formaCalculoEstimativaHandler.setProximo(tipoDesigner);
+        tipoDesigner.setProximo(tipoGerente);
+    }
+
+    public void calcularProjeto(Projeto projeto) {
+        if (projeto == null) {
+            throw new RuntimeException("Informe o projeto desejado");
+        }
+
+        formaCalculoEstimativaHandler.calcularEstimativa(projeto);
+
+        //jogar para o banco
+        double valorTotal = formaCalculoEstimativaHandler.getValorTotal();
+        System.out.println(valorTotal);
+    }
+
+    /*
     private static final double VALOR_DIARIA_DESENVOLVIMENTO = 450.0;
     private static final double VALOR_DIARIA_GERENCIA = 300.0;
     private static final double VALOR_DIARIA_UI_UX = 550.0;
@@ -57,4 +79,5 @@ public class EstimaProjetoService {
     public double calcularMediaPorMes(double precoFinal, double meses) {
         return precoFinal / meses;
     }
+    */
 }

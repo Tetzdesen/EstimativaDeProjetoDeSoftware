@@ -5,7 +5,11 @@ import com.br.estimativadeprojetodesoftware.model.Projeto;
 public class CalculoTipoGerente extends FormaCalculoEstimativaHandler {
     @Override
     public void calcularEstimativa(Projeto projeto) {
-        double valor = projeto.getEstimativa().getCampos().get("Gerente de Projeto");
-        adicionarValor(valor);
+        double dias = projeto.getEstimativa().getCampos().get("Gerente de Projeto");
+        valor = (projeto.getTaxasDiarias().get("Gerente de Projetos")) * dias;
+
+        if (proximo != null) {
+            proximo.calcularEstimativa(projeto);
+        }
     }
 }

@@ -14,7 +14,10 @@ public class CalculoTipoDesenvolvedor extends FormaCalculoEstimativaHandler {
             }
             dias += campo.getValue();
         }
-        double valor = dias * projeto.getPerfis().get(0).getTaxasDiarias().get("Desenvolvimento");
-        adicionarValor(valor);
+        valor = dias * projeto.getTaxasDiarias().get("Desenvolvimento");
+
+        if (proximo != null) {
+            proximo.calcularEstimativa(projeto);
+        }
     }
 }
