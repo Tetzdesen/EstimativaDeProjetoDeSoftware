@@ -21,15 +21,13 @@ public final class PrincipalPresenter implements Observer {
 
     private final PrincipalView view;
     private final ProjetoRepositoryMock repository;
-    private final UsuarioRepositoryMock usuarioRepository;
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
     private final Map<String, ProjetoCommand> comandos;
     private final List<WindowCommand> windowCommands = new ArrayList<>();
 
-    public PrincipalPresenter(ProjetoRepositoryMock repository, UsuarioRepositoryMock usuarioRepository) {
+    public PrincipalPresenter(ProjetoRepositoryMock repository) {
         this.view = new PrincipalView();
         this.repository = repository;
-        this.usuarioRepository = usuarioRepository;
         this.repository.addObserver(this);
 
         this.construtorDeArvoreNavegacaoService = new ConstrutorDeArvoreNavegacaoService();
@@ -45,14 +43,13 @@ public final class PrincipalPresenter implements Observer {
     private void inicializarEExecutarWindowCommands() {
         Arrays.asList(
                 new ConfigurarViewCommand(this),
-                //new ConfigurarMenuJanelaCommand(this),
+                new ConfigurarMenuJanelaCommand(this),
                 new SetLookAndFeelCommand()
         ).forEach(WindowCommand::execute);
     }
 
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
-        comandos.put("Login", new AbrirLoginUsuarioCommand(view.getDesktop(), usuarioRepository));
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), repository));
         comandos.put("Usuário", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Usuário"));
         comandos.put("Ver perfis de projeto", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Ver Perfis de Projetos"));
