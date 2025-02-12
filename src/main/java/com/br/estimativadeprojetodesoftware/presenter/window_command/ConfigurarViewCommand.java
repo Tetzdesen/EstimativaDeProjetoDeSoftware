@@ -20,8 +20,7 @@ public class ConfigurarViewCommand implements WindowCommand {
         JToolBar barraDeBotoes = new CriarBarraBotaoService(presenter.getComandos()).criarBarraDeBotoes();
         presenter.getView().setMainComponents(barraDeBotoes);
         SwingUtilities.invokeLater(() -> {
-         //   ProjetoCommand comandoPrincipal = presenter.getComandos().get("Principal");
-            ProjetoCommand comandoPrincipal = presenter.getComandos().get("Login");
+            ProjetoCommand comandoPrincipal = presenter.getComandos().get("Principal");
             if (comandoPrincipal != null) {
                 comandoPrincipal.execute();
             } else {
