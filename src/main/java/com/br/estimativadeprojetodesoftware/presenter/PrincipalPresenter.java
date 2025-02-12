@@ -5,13 +5,10 @@ import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.*;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
-import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
 import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
 import com.br.estimativadeprojetodesoftware.view.GlobalWindowManager;
-import com.br.estimativadeprojetodesoftware.view.LoginView;
 import com.br.estimativadeprojetodesoftware.view.PrincipalView;
-import java.beans.PropertyVetoException;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
