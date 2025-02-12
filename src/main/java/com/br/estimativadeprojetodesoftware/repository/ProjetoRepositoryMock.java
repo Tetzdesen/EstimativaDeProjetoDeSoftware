@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.repository;
 
+import com.br.estimativadeprojetodesoftware.model.DiariaDesigner;
 import com.br.estimativadeprojetodesoftware.model.Estimativa;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
@@ -35,7 +36,7 @@ public class ProjetoRepositoryMock implements Subject {
         // Projeto 1: Web/Back-end
         Estimativa estimativa1 = new Estimativa();
 
-        estimativa1.adicionarCampo("Tamanho do App: Médio", 30);
+        estimativa1.adicionarCampo("Tamanho do App: Médio", 30, new DiariaDesigner());
         estimativa1.adicionarCampo("Cadastro por E-mail e Senha", 1);
         estimativa1.adicionarCampo("Painel (Dashboard)", 5);
         estimativa1.adicionarCampo("Contas Multi-tenant", 3);
