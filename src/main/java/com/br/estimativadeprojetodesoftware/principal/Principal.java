@@ -19,7 +19,7 @@ public class Principal {
     public static void main(String[] args) {
         // System.out.println("Hello World!");
         SwingUtilities.invokeLater(() -> {
-            PrincipalPresenter presenter = new PrincipalPresenter(new ProjetoRepositoryMock(), new UsuarioRepositoryMock());
+            PrincipalPresenter presenter = new PrincipalPresenter(new ProjetoRepositoryMock());
             WindowManager.getInstance().initialize(presenter);
         });
 
