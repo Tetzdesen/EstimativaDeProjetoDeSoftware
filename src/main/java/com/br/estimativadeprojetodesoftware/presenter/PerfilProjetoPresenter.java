@@ -32,6 +32,11 @@ public class PerfilProjetoPresenter implements Observer {
         List<Perfil> perfis = repository.getPerfis();
 
         view.atualizarCabecalho(perfis.size());
+
+        for(Perfil perfil : perfis) {
+            boolean status = perfil.getDeleted_at() == null ? true : false;
+            view.adicionarPerfis(perfil.getNome(), perfil.getId(), perfil.getCreated_at(), status);
+        }
     }
 
     @Override
