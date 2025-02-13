@@ -47,7 +47,7 @@ public class LoginPresenter {
         view.setResizable(false); 
     
         view.setLocationRelativeTo(null); 
-        view.setExtendedState(JFrame.NORMAL);
+      //  view.setExtendedState(JFrame.NORMAL);
         configuraActionsListerns();
         view.setVisible(true);
     }
@@ -60,7 +60,10 @@ public class LoginPresenter {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
         });
-        view.getBtnCadastrar().addActionListener(e -> view.dispose());
+        view.getBtnCadastrar().addActionListener(e -> { 
+           // view.dispose();
+            new CadastroPresenter(repositoryUsuario);     
+        });
     }
 
     private void efetuarLogin() throws Exception {

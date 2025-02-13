@@ -47,13 +47,13 @@ public class UsuarioRepositoryMock /* implements Subject */ {
                 .orElse(null);
     }
 
-    public void adicionarUsuario(String nome, String email, String senha, boolean isAutorizado, List<String> perfis) {
+    public void adicionarUsuario(String nome, String email, String senha) {
         Usuario novoUsuario = new Usuario(nome, email, senha);
-        novoUsuario.setIsAutorizado(isAutorizado);
+       // novoUsuario.setIsAutorizado(isAutorizado);
 
-        for (String tipo : perfis) {
-            novoUsuario.adicionarPerfil(new Perfil(tipo));
-        }
+       // for (String tipo : perfis) {
+           // novoUsuario.adicionarPerfil(new Perfil(tipo));
+        //}
 
         usuarios.add(novoUsuario);
         //notifyObservers();
