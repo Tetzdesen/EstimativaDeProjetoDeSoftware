@@ -14,13 +14,12 @@ import java.text.DecimalFormat;
  * @author kauac
  */
 public class PerfilProjetoView extends JInternalFrame {
-    private JLabel lblTotalProjetosValor;
-    private JLabel lblDiasTotaisValor;
-    private JLabel lblCustoTotalValor;
+    private JLabel lblTotalPerfis;
+    private JButton btnCriarPerfil;
     private JPanel painelGraficos;
 
     public PerfilProjetoView() {
-        setTitle("Dashboard de Projetos");
+        setTitle("Ver Perfis de Projeto");
         setClosable(true);
         setMaximizable(true);
         setIconifiable(false);
@@ -30,46 +29,28 @@ public class PerfilProjetoView extends JInternalFrame {
         JPanel painelPrincipal = new JPanel(new BorderLayout());
         add(painelPrincipal);
 
-        JPanel painelMetricas = new JPanel(new GridLayout(1, 3, 20, 10));
-        painelMetricas.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel painelCabecalho = new JPanel(new BorderLayout());
+        add(painelCabecalho);
 
-        painelMetricas.add(criarPainelMetrica("Total de Projetos", "0"));
-        painelMetricas.add(criarPainelMetrica("Dias Totais", "0"));
-        painelMetricas.add(criarPainelMetrica("Custo Total", "R$ 0,00"));
+        painelCabecalho.setLayout(new GridLayout(3, 2, 10, 15));
+        //painelCabecalho.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        painelPrincipal.add(painelMetricas, BorderLayout.NORTH);
 
-        painelGraficos = new JPanel(new GridLayout(1, 2, 20, 10));
-        painelGraficos.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        painelPrincipal.add(painelGraficos, BorderLayout.CENTER);
+        lblTotalPerfis = new JLabel("Total de Perfis: ");
+        btnCriarPerfil = new JButton("Criar Perfil");
+
+        painelCabecalho.add(lblTotalPerfis);
+        painelCabecalho.add(btnCriarPerfil);
+
+        painelPrincipal.add(painelCabecalho, BorderLayout.NORTH);
+
+        
     }
 
-    private JPanel criarPainelMetrica(String titulo, String valor) {
-        JPanel painel = new JPanel(new BorderLayout());
-        JLabel lblTitulo = new JLabel(titulo, JLabel.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
-        JLabel lblValor = new JLabel(valor, JLabel.CENTER);
-        lblValor.setFont(new Font("Arial", Font.BOLD, 20));
-
-        painel.add(lblTitulo, BorderLayout.NORTH);
-        painel.add(lblValor, BorderLayout.CENTER);
-        painel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-
-        if (titulo.equals("Total de Projetos")) {
-            lblTotalProjetosValor = lblValor;
-        } else if (titulo.equals("Dias Totais")) {
-            lblDiasTotaisValor = lblValor;
-        } else if (titulo.equals("Custo Total")) {
-            lblCustoTotalValor = lblValor;
-        }
-
-        return painel;
-    }
+    
 
     public void exibirDadosConsolidados() {
-        lblTotalProjetosValor.setText("teste");
-        lblDiasTotaisValor.setText("teste");
-        lblCustoTotalValor.setText("teste");
+        
     }
 
     public void atualizarGraficos(DefaultPieDataset datasetCustos, DefaultPieDataset datasetProjetos) {

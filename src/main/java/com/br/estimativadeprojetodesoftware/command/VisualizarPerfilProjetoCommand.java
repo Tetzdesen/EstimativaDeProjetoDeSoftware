@@ -1,10 +1,8 @@
 package com.br.estimativadeprojetodesoftware.command;
 
-import com.br.estimativadeprojetodesoftware.presenter.DashBoardProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.PerfilProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
-import com.br.estimativadeprojetodesoftware.view.DashBoardProjetoView;
 import com.br.estimativadeprojetodesoftware.view.PerfilProjetoView;
 
 import javax.swing.*;
@@ -20,7 +18,7 @@ public class VisualizarPerfilProjetoCommand implements ProjetoCommand {
 
     @Override
     public void execute() {
-        String tituloJanela = "Ver Perfis de Projetos";
+        String tituloJanela = "Ver Perfis de Projeto";
         WindowManager windowManager = WindowManager.getInstance();
 
         if (windowManager.isFrameAberto(tituloJanela)) {
