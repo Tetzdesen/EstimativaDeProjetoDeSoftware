@@ -77,8 +77,8 @@ public final class ConstrutorDeArvoreNavegacaoService {
             }
         });
 
-        expandirTodosOsNos(arvore);
-        return arvore;
+       expandirTodosOsNos(arvore);
+       return arvore;
     }
 
     private void expandirTodosOsNos(JTree arvore) {

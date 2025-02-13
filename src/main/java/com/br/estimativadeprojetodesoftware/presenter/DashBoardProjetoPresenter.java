@@ -66,7 +66,7 @@ public class DashBoardProjetoPresenter implements Observer {
     }
 
     @Override
-    public void update(List<Projeto> projetos) {
+    public void update() {
         carregarDashboard();
     }
 }
