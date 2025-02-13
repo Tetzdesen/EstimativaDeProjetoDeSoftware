@@ -26,7 +26,7 @@ public class CriarBarraService {
 
         // Adicionando espaço flexível para empurrar o usuário logado para a direita
         toolBar.add(Box.createHorizontalGlue());
-        adicionarLabel(toolBar, "Usuário Logado: Desconhecido");
+        adicionarLabel(toolBar, UsuarioLogadoSingleton.getInstancia().getUsuario().getNome());
         
         toolBar.add(Box.createHorizontalStrut(25));
                  
