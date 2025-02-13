@@ -6,6 +6,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.text.DecimalFormat;
 
@@ -15,11 +17,10 @@ import java.text.DecimalFormat;
  */
 public class PerfilProjetoView extends JInternalFrame {
     private JLabel lblTotalPerfis;
-    private JButton btnCriarPerfil;
-    private JPanel painelGraficos;
+    private JButton btnNovoPerfil;
 
     public PerfilProjetoView() {
-        setTitle("Ver Perfis de Projeto");
+        setTitle("Detalhes do Projeto");
         setClosable(true);
         setMaximizable(true);
         setIconifiable(false);
@@ -29,40 +30,30 @@ public class PerfilProjetoView extends JInternalFrame {
         JPanel painelPrincipal = new JPanel(new BorderLayout());
         add(painelPrincipal);
 
-        JPanel painelCabecalho = new JPanel(new BorderLayout());
-        add(painelCabecalho);
-
-        painelCabecalho.setLayout(new GridLayout(3, 2, 10, 15));
-        //painelCabecalho.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+        JPanel painelCabecalho = new JPanel();
+        painelCabecalho.setLayout(new GridLayout(1, 2, 10, 15));
+        painelCabecalho.setBorder(BorderFactory.createTitledBorder("Informações do Projeto"));
 
         lblTotalPerfis = new JLabel("Total de Perfis: ");
-        btnCriarPerfil = new JButton("Criar Perfil");
+        btnNovoPerfil = new JButton("Criar Perfil");
 
         painelCabecalho.add(lblTotalPerfis);
-        painelCabecalho.add(btnCriarPerfil);
+        painelCabecalho.add(btnNovoPerfil);
 
         painelPrincipal.add(painelCabecalho, BorderLayout.NORTH);
-
-        
     }
 
-    
-
-    public void exibirDadosConsolidados() {
-        
+    public void atualizarCabecalho(int quantidade) {
+        lblTotalPerfis.setText("Total de Perfis: " + quantidade);
     }
-
-    public void atualizarGraficos(DefaultPieDataset datasetCustos, DefaultPieDataset datasetProjetos) {
-        painelGraficos.removeAll();
-
-        JFreeChart graficoCustos = ChartFactory.createPieChart("Distribuição de Custos", datasetCustos, true, true, false);
-        JFreeChart graficoProjetos = ChartFactory.createPieChart("Tipos de Projetos", datasetProjetos, true, true, false);
-
-        painelGraficos.add(new ChartPanel(graficoCustos));
-        painelGraficos.add(new ChartPanel(graficoProjetos));
-
-        painelGraficos.revalidate();
-        painelGraficos.repaint();
+/*
+    public void atualizarTabela(Object[][] dados, double valorTotal) {
+        modeloTabela.setRowCount(0);
+        for (Object[] linha : dados) {
+            modeloTabela.addRow(linha);
+        }
+        DecimalFormat df = new DecimalFormat("R$ #,##0.00");
+        lblValorTotal.setText("Valor Total: " + df.format(valorTotal));
     }
+    */
 }

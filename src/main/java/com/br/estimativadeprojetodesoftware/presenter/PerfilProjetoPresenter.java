@@ -29,9 +29,9 @@ public class PerfilProjetoPresenter implements Observer {
     }
 
     private void carregarDashboard() {
-        List<Perfil> projetos = repository.getPerfis();
+        List<Perfil> perfis = repository.getPerfis();
 
-        view.exibirDadosConsolidados();
+        view.atualizarCabecalho(perfis.size());
     }
 
     @Override
