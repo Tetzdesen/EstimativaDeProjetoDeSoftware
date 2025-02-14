@@ -29,8 +29,23 @@ public class PerfilRepositoryMock {
         perfil1.adicionarFuncionalidade("Integração com CMS", 50);
         perfil1.adicionarFuncionalidade("Monitoramento de Performance", 7);
         perfil1.adicionarFuncionalidade("Relatórios de Erros", 1);
-
         perfis.add(perfil1);
+
+        //perfil 2
+        Perfil perfil2 = new Perfil("Android");
+
+        perfil2.adicionarTamDispositivo("Grande", 30);
+        perfil2.adicionarNivelUI("Avançado", 450);
+        perfil2.adicionarFuncionalidade("Cadastro por E-mail e Senha", 1);
+        perfil2.adicionarFuncionalidade("Painel (Dashboard)", 5);
+        perfil2.adicionarFuncionalidade("Contas Multi-tenant", 3);
+        perfil2.adicionarFuncionalidade("Subdomínios", 4);
+        perfil2.adicionarFuncionalidade("E-mails Transacionais", 2);
+        perfil2.adicionarFuncionalidade("Gerente de Projeto", 10);
+        perfil2.adicionarFuncionalidade("Integração com CMS", 50);
+        perfil2.adicionarFuncionalidade("Monitoramento de Performance", 7);
+        perfil2.adicionarFuncionalidade("Relatórios de Erros", 1);
+        perfis.add(perfil2);
     }
 
     public List<Perfil> getPerfis() {

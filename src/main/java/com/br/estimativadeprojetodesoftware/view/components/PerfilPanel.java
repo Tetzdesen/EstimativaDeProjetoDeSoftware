@@ -25,6 +25,10 @@ public class PerfilPanel extends JPanel {
         ));
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+        setPreferredSize(new Dimension(250, 100)); // Largura x Altura desejada
+        setMinimumSize(new Dimension(250, 80)); // Largura mínima x Altura mínima
+        setMaximumSize(new Dimension(250, 150)); // Largura máxima x Altura máxima
+
         // Título
         JLabel lblTitulo = new JLabel(nome, JLabel.CENTER);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 14));

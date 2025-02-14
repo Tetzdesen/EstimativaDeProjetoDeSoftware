@@ -43,3 +43,6 @@ target/
 
 # .env file
 .env
+
+# pasta state temporária (para adaptação futuramente com o do Tetz)
+src/main/java/com/br/estimativadeprojetodesoftware/state
