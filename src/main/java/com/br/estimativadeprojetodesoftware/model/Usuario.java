@@ -116,4 +116,6 @@ public class Usuario {
         }
         perfis.add(perfil);
     }
+    
+    
 }
