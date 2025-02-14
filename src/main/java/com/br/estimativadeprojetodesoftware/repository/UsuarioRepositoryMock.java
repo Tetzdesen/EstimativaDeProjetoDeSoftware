@@ -6,15 +6,14 @@ import com.br.estimativadeprojetodesoftware.model.Subject;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
  *
  * @author tetzner
  */
+public class UsuarioRepositoryMock implements Subject {
 
-public class UsuarioRepositoryMock /* implements Subject */ {
     private final List<Usuario> usuarios;
     private final List<Observer> observers;
 
@@ -36,10 +35,12 @@ public class UsuarioRepositoryMock /* implements Subject */ {
         usuarios.add(usuario2);
     }
 
+    // Retorna a lista completa de usuários
     public List<Usuario> getUsuarios() {
-        return usuarios;
+        return new ArrayList<>(usuarios); // Retorna uma cópia para evitar modificações externas
     }
 
+    // Busca um usuário pelo e-mail
     public Usuario getUsuarioPorEmail(String email) {
         return usuarios.stream()
                 .filter(usuario -> usuario.getEmail().equals(email))
@@ -47,41 +48,62 @@ public class UsuarioRepositoryMock /* implements Subject */ {
                 .orElse(null);
     }
 
+    // Adiciona um novo usuário
     public void adicionarUsuario(String nome, String email, String senha) {
+        if (getUsuarioPorEmail(email) != null) {
+            throw new IllegalArgumentException("Já existe um usuário com este e-mail.");
+        }
+
         Usuario novoUsuario = new Usuario(nome, email, senha);
-       // novoUsuario.setIsAutorizado(isAutorizado);
-
-       // for (String tipo : perfis) {
-           // novoUsuario.adicionarPerfil(new Perfil(tipo));
-        //}
-
         usuarios.add(novoUsuario);
-        //notifyObservers();
+        notifyObservers();
     }
 
+    // Remove um usuário pelo e-mail
     public boolean removerUsuarioPorEmail(String email) {
         boolean removido = usuarios.removeIf(usuario -> usuario.getEmail().equals(email));
         if (removido) {
-            //notifyObservers();
+            notifyObservers();
         }
         return removido;
     }
 
-   // @Override
-   // public void addObserver(Observer observer) {
-       // observers.add(observer);
-   // }
+    // Atualiza os dados de um usuário existente
+    public boolean atualizarUsuario(Usuario usuario, String novoEmail, String novoNome) {
 
-   // @Override
-   // public void removeObserver(Observer observer) {
-        //observers.remove(observer);
-   // }
+        if (usuario == null) {
+            return false; // Usuário não encontrado
+        }
 
-    /*
+        for (int i = 0; i < usuarios.size(); i++) {
+            Usuario usuarioExistente = usuarios.get(i);
+            if (usuarioExistente.getId().equals(usuario.getId())) {
+                usuarios.remove(i);
+                notifyObservers();
+                return true;
+            }
+        }
+
+        notifyObservers();
+        return true;
+    }
+
+    // Implementação do padrão Observer
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
     @Override
     public void notifyObservers() {
         for (Observer observer : observers) {
-            observer.update(usuarios);
+            // observer.update(usuarios);
+            observer.update();
         }
-    } */
+    }
 }

@@ -51,7 +51,7 @@ public final class PrincipalPresenter implements Observer {
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), projetoRepository));
-        comandos.put("Usuário", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Usuário"));
+        comandos.put("Usuário", new UsuarioCommand(view.getDesktop(), comandos));
         comandos.put("Ver perfis de projeto", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Ver Perfis de Projetos"));
         comandos.put("Elaborar estimativa", new MostrarMensagemProjetoCommand("Elaborar estimativa ainda não implementada"));
         comandos.put("Visualizar estimativa", new MostrarMensagemProjetoCommand("Visualizar estimativa ainda não implementada"));
@@ -136,11 +136,10 @@ public final class PrincipalPresenter implements Observer {
     @Override
     public void update() {
         SwingUtilities.invokeLater(() -> {
-            
             WindowCommand fecharJanelasCommand = new FecharJanelasRelacionadasCommand(view.getDesktop(), projetoRepository.getProjetos());
             fecharJanelasCommand.execute();
-            configurarArvore();   
-           
+            configurarArvore();
+
         });
     }
 
@@ -161,16 +160,6 @@ public final class PrincipalPresenter implements Observer {
             getView().repaint();
         } else {
             new MostrarMensagemProjetoCommand("Nenhum estado anterior salvo para restaurar.").execute();
-        }
-    }
-
-    private void bloquearComandos() {
-        if (view.getTree() != null) {
-            view.getTree().setEnabled(false);
-
-            for (MouseListener listener : view.getTree().getMouseListeners()) {
-                view.getTree().removeMouseListener(listener);
-            }
         }
     }
 

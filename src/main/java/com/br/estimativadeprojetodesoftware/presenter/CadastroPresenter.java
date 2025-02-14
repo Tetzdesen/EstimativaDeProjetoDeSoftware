@@ -25,8 +25,9 @@ public class CadastroPresenter {
     }
 
     private void configuraView() {
-        view.setResizable(false);
-        view.setLocationRelativeTo(null);
+        //view.setResizable(false);
+       // view.setLocationRelativeTo(null);
+        
         configuraActionsListerns();
         view.setVisible(true);
     }
@@ -36,7 +37,7 @@ public class CadastroPresenter {
             try {
                 efetuarCadastro();
             } catch (Exception ex) {
-                new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+                exibirMensagem(ex.getMessage());
             }
         });
     }
@@ -57,11 +58,10 @@ public class CadastroPresenter {
             }
 
             if (senha.equals(senhaConfirmada)) {
-                // usar o validador
                 try {
                     if (validadorDeSenha.validarSenha(senha)) {
                         repositoryUsuario.adicionarUsuario(nome, email, senha);
-
+                        exibirMensagem("Cadastro realizado com sucesso!");
                         view.dispose();
                     }
                 } catch (Exception ex) {
@@ -82,5 +82,9 @@ public class CadastroPresenter {
 
     private boolean camposInvalidos(String email, String nome, String senha, String senhaConfirmada) {
         return email == null || email.trim().isEmpty() || senha == null || senha.trim().isEmpty() || nome == null || nome.trim().isEmpty() || senhaConfirmada == null || senhaConfirmada.isEmpty();
+    }
+    
+    public void exibirMensagem(String mensagem){
+        new MostrarMensagemProjetoCommand(mensagem).execute();
     }
 }

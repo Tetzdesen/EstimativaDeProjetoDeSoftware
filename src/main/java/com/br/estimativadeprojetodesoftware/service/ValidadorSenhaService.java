@@ -1,8 +1,6 @@
 package com.br.estimativadeprojetodesoftware.service;
 
 import com.br.estimativadeprojetodesoftware.adapter.ValidadorSenhaAdapter;
-import com.pss.senha.validacao.ValidadorSenha;
-
 /**
  *
  * @author tetzner
