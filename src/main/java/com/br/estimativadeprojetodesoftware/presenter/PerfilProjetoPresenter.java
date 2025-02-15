@@ -90,7 +90,7 @@ public class PerfilProjetoPresenter implements Observer {
     }
 
     @Override
-    public void update(List<Projeto> projetos) {
+    public void update() {
         carregarDetalhesPerfil();
     }
 

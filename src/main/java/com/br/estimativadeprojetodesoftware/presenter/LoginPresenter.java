@@ -3,6 +3,7 @@ package com.br.estimativadeprojetodesoftware.presenter;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
+import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
@@ -72,7 +73,7 @@ public class LoginPresenter {
             view.dispose();
             
             SwingUtilities.invokeLater(() -> {
-                PrincipalPresenter presenter = new PrincipalPresenter(new ProjetoRepositoryMock(), new UsuarioRepositoryMock());
+                PrincipalPresenter presenter = new PrincipalPresenter(new ProjetoRepositoryMock(), new UsuarioRepositoryMock(), new PerfilRepositoryMock());
                 WindowManager.getInstance().initialize(presenter);
             });
      
