@@ -33,6 +33,7 @@ public class UsuarioRepositoryMock implements Subject {
         usuario2.adicionarPerfil(new Perfil("Desenvolvedor Mobile"));
         usuario2.adicionarProjeto(new Projeto("App Delivery", "Carlos Souza", "Android"));
         usuarios.add(usuario2);
+       
     }
 
     // Retorna a lista completa de usuários

@@ -1,26 +1,22 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
-import com.br.estimativadeprojetodesoftware.command.AbrirDashboardProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.AbrirDetalhesProjetoProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.AbrirInternalFrameGenericoProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.CriarProjetoProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.EditarUsuarioCommand;
-import com.br.estimativadeprojetodesoftware.command.ExcluirProjetoProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ExcluirUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.SalvarUsuarioCommand;
-import com.br.estimativadeprojetodesoftware.command.UsuarioCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.CriarBarraService;
 import com.br.estimativadeprojetodesoftware.state.UsuarioPresenterState;
 import com.br.estimativadeprojetodesoftware.state.VisualizacaoState;
 import com.br.estimativadeprojetodesoftware.view.UsuarioView;
+import java.awt.BorderLayout;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
 
 /**
  *
@@ -63,7 +59,7 @@ public class UsuarioPresenter implements Observer {
         try {
             estado.excluir();
         } catch (Exception ex) {
-             new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+            new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
         }
     }
 
@@ -76,6 +72,17 @@ public class UsuarioPresenter implements Observer {
     }
 
     private void configuraView() {
+        JPanel painelPrincipal = new JPanel(new BorderLayout());
+
+        JToolBar toolbar = new CriarBarraService(this.getComandos()).criarBarraVisualizacaoUsuario();
+        painelPrincipal.add(toolbar, BorderLayout.NORTH);
+        painelPrincipal.add(view.getContentPane(), BorderLayout.CENTER);
+        view.setContentPane(painelPrincipal);
+
+        view.setClosable(true);
+        view.setIconifiable(true);
+        view.setResizable(false);
+        view.setMaximizable(false);
         atualizarCampos();
     }
 
@@ -123,6 +130,7 @@ public class UsuarioPresenter implements Observer {
         view.getTxtNome().setText(usuario.getNome());
         view.getTxtDataCriacao().setText(formatarData(usuario.getCreated_at()));
         view.getTxtEmail().setText(usuario.getEmail());
+        view.getTxtSenhaAtual().setText(usuario.getSenha());
         view.getTxtTotalProjetos().setText(String.valueOf(getQtdProjetos()));
         view.getTxtTotalPerfis().setText(String.valueOf(getQtdPerfis()));
     }
