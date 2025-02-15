@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class IconService {
+
     private static final Map<String, ImageIcon> icons = new HashMap<>();
 
     static {
@@ -14,6 +15,12 @@ public class IconService {
         icons.put("perfil", loadIcon("perfil-icon.png"));
         icons.put("projeto", loadIcon("projeto-icon-tree.png"));
         icons.put("action", loadIcon("action-icon.png"));
+        icons.put("logout", loadIcon("logout-icon.png"));
+        icons.put("olho", loadIcon("olho-icon.png"));
+        icons.put("olho-exibido", loadIcon("olho-exibido-icon.png"));
+        icons.put("salvar", loadIcon("salvar-icon.png"));
+        icons.put("editar", loadIcon("editar-icon.png"));
+        icons.put("excluir", loadIcon("excluir-icon.png"));
     }
 
     private static ImageIcon loadIcon(String path) {

@@ -23,7 +23,7 @@ import javax.swing.JToolBar;
  * @author tetzner
  */
 public class UsuarioPresenter implements Observer {
-
+    
     private UsuarioView view;
     private Usuario usuario;
     private UsuarioRepositoryMock repository;

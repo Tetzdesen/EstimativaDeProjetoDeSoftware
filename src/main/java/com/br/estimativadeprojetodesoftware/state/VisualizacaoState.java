@@ -1,9 +1,8 @@
 package com.br.estimativadeprojetodesoftware.state;
 
-import com.br.estimativadeprojetodesoftware.command.LoginCommand;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.UsuarioPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.window_command.FecharTodasJanelasCommand;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import javax.swing.JOptionPane;
 
@@ -22,7 +21,7 @@ public class VisualizacaoState extends UsuarioPresenterState {
     @Override
     public void editar() {
         usuarioPresenter.getView().getTxtNome().setEnabled(true);
-        usuarioPresenter.getView().getTxtEmail().setEnabled(true);
+        usuarioPresenter.getView().getTxtSenhaAtual().setEnabled(true);
         usuarioPresenter.setState(new EdicaoState(usuarioPresenter));
     }
 
@@ -42,7 +41,7 @@ public class VisualizacaoState extends UsuarioPresenterState {
                 new MostrarMensagemProjetoCommand("Usuário \"" + usuarioPresenter.getUsuario().getNome() + "\" removido com sucesso!").execute();
                 usuarioPresenter.setUsuario(null);
                 UsuarioLogadoSingleton.getInstancia().setUsuario(usuarioPresenter.getUsuario());
-              //  new LogoutCommand().execute();
+                
             } else {
                 new MostrarMensagemProjetoCommand("Erro ao remover o usuário \"" + usuarioPresenter.getUsuario().getNome() + "\".").execute();
             }

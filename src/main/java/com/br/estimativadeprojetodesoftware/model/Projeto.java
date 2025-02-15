@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Projeto {
@@ -20,8 +21,9 @@ public class Projeto {
     private String status;
     private boolean compartilhado;
     private String compartilhadoPor;
-    private List<Perfil> perfis;
     private Map<String, Double> taxasDiarias;
+    private List<Perfil> perfis;
+    private List<Usuario> usuarios;
     private Estimativa estimativa;
 
     public Projeto(String nome, String criador, String tipo) {
@@ -36,11 +38,12 @@ public class Projeto {
         this.compartilhado = false;
         this.compartilhadoPor = null;
         this.perfis = new ArrayList<>();
+        this.usuarios = new ArrayList<>();
         this.taxasDiarias = new HashMap<>();
         this.estimativa = null;
     }
 
-    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, String status, boolean compartilhado, String compartilhadoPor, List<Perfil> perfis, Map<String, Double> taxasDiarias, Estimativa estimativa) {
+    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, String status, boolean compartilhado, String compartilhadoPor, Map<String, Double> taxasDiarias, List<Perfil> perfis, List<Usuario> usuarios, Estimativa estimativa) {
         this.id = id;
         this.nome = nome;
         this.criador = criador;
@@ -51,11 +54,12 @@ public class Projeto {
         this.status = status;
         this.compartilhado = compartilhado;
         this.compartilhadoPor = compartilhadoPor;
-        this.perfis = perfis;
         this.taxasDiarias = taxasDiarias;
+        this.perfis = perfis;
+        this.usuarios = usuarios;
         this.estimativa = estimativa;
     }
-    
+
     public UUID getId() {
         return id;
     }
@@ -63,7 +67,7 @@ public class Projeto {
     public String getNome() {
         return nome;
     }
-    
+
     public String getCriador() {
         return criador;
     }
@@ -95,13 +99,17 @@ public class Projeto {
     public String getCompartilhadoPor() {
         return compartilhadoPor;
     }
-    
+
+    public Map<String, Double> getTaxasDiarias() {
+        return Collections.unmodifiableMap(taxasDiarias);
+    }
+
     public List<Perfil> getPerfis() {
         return Collections.unmodifiableList(perfis);
     }
-    
-    public Map<String, Double> getTaxasDiarias() {
-        return Collections.unmodifiableMap(taxasDiarias);
+
+    public List<Usuario> getUsuarios() {
+        return Collections.unmodifiableList(usuarios);
     }
 
     public Estimativa getEstimativa() {
@@ -134,19 +142,12 @@ public class Projeto {
     }
 
     public void setCompartilhadoPor(String compartilhadoPor) {
-        if(compartilhadoPor.isEmpty() || compartilhadoPor == null){
+        if (compartilhadoPor.isEmpty() || compartilhadoPor == null) {
             throw new IllegalArgumentException("Erro: Compartilhado Por vazio ou nulo. ");
         }
         this.compartilhadoPor = compartilhadoPor;
     }
-    
-    public void adicionarPerfil(Perfil perfil){
-        if(perfil == null){
-            throw new IllegalArgumentException("Erro: Perfil de projeto não pode ser nulo.");
-        }   
-        perfis.add(perfil);
-    }
-    
+
     public void adicionarTaxaDiaria(String nomeTaxa, double valor) {
         if (nome == null || nome.isEmpty()) {
             throw new IllegalArgumentException("Erro: Nome da taxa não pode ser vazia ou nula.");
@@ -156,4 +157,84 @@ public class Projeto {
         }
         taxasDiarias.put(nomeTaxa, valor);
     }
+
+    public void adicionarPerfil(Perfil perfil) {
+        if (perfil == null) {
+            throw new IllegalArgumentException("Erro: Perfil de projeto não pode ser nulo.");
+        }
+        perfis.add(perfil);
+    }
+    
+    public void adicionarUsuario(Usuario usuario) {
+        if (usuario == null) {
+            throw new IllegalArgumentException("Erro: Perfil de projeto não pode ser nulo.");
+        }
+        usuarios.add(usuario);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Projeto other = (Projeto) obj;
+        if (this.compartilhado != other.compartilhado) {
+            return false;
+        }
+        if (!Objects.equals(this.nome, other.nome)) {
+            return false;
+        }
+        if (!Objects.equals(this.criador, other.criador)) {
+            return false;
+        }
+        if (!Objects.equals(this.tipo, other.tipo)) {
+            return false;
+        }
+        if (!Objects.equals(this.status, other.status)) {
+            return false;
+        }
+        if (!Objects.equals(this.compartilhadoPor, other.compartilhadoPor)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.created_at, other.created_at)) {
+            return false;
+        }
+        if (!Objects.equals(this.update_at, other.update_at)) {
+            return false;
+        }
+        if (!Objects.equals(this.deleted_at, other.deleted_at)) {
+            return false;
+        }
+        if (!Objects.equals(this.taxasDiarias, other.taxasDiarias)) {
+            return false;
+        }
+        if (!Objects.equals(this.perfis, other.perfis)) {
+            return false;
+        }
+        if (!Objects.equals(this.usuarios, other.usuarios)) {
+            return false;
+        }
+        return Objects.equals(this.estimativa, other.estimativa);
+    }
+
+    @Override
+    public String toString() {
+        return "Projeto{" + "id=" + id + ", nome=" + nome + ", criador=" + criador + ", tipo=" + tipo + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + ", status=" + status + ", compartilhado=" + compartilhado + ", compartilhadoPor=" + compartilhadoPor + ", taxasDiarias=" + taxasDiarias + ", perfis=" + perfis + ", usuarios=" + usuarios + ", estimativa=" + estimativa + '}';
+    }
+
 }

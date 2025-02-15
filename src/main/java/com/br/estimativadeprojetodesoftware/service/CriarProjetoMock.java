@@ -3,7 +3,9 @@ package com.br.estimativadeprojetodesoftware.service;
 import com.br.estimativadeprojetodesoftware.model.Estimativa;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
+import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import java.time.LocalDateTime;
 
 import java.util.*;
@@ -45,7 +47,9 @@ public class CriarProjetoMock {
         Estimativa estimativa = new Estimativa(UUID.randomUUID(), LocalDateTime.now(), funcionalidades);
         Map<String, Double> taxasDiarias = new HashMap<>();
         taxasDiarias.put("Desenvolvimento", 450.00);
-        return Optional.of(new Projeto(UUID.randomUUID(), nome, criador, "Android", LocalDateTime.now(), null, null, status, compartilhado, compartilhadoPor, perfis, taxasDiarias, estimativa));
+        List<Usuario> usuarios = new ArrayList();
+        usuarios.add(UsuarioLogadoSingleton.getInstancia().getUsuario());
+        return Optional.of(new Projeto(UUID.randomUUID(), nome, criador, "Android", LocalDateTime.now(), null, null, status, compartilhado, compartilhadoPor, taxasDiarias, perfis, usuarios, estimativa));
     }
 
     private String gerarNomeDoProjeto(List<String> tipos) {

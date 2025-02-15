@@ -3,9 +3,14 @@ package com.br.estimativadeprojetodesoftware.presenter;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.IconService;
 import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
 import com.br.estimativadeprojetodesoftware.view.CadastroView;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Optional;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -25,9 +30,8 @@ public class CadastroPresenter {
     }
 
     private void configuraView() {
-        //view.setResizable(false);
-       // view.setLocationRelativeTo(null);
-        
+        view.setResizable(false);
+        view.setLocationRelativeTo(null);
         configuraActionsListerns();
         view.setVisible(true);
     }
@@ -38,6 +42,42 @@ public class CadastroPresenter {
                 efetuarCadastro();
             } catch (Exception ex) {
                 exibirMensagem(ex.getMessage());
+            }
+        });
+
+        view.getBtnCancelar().addActionListener(e -> {
+            try {
+                view.dispose();
+            } catch (Exception ex) {
+                exibirMensagem(ex.getMessage());
+            }
+        });
+
+        view.getBtnExibirSenha().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                view.getBtnExibirSenha().setIcon(IconService.getIcon("olho-exibido"));
+                view.getTxtSenha().setEchoChar('\0');
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                view.getBtnExibirSenha().setIcon(IconService.getIcon("olho"));
+                view.getTxtSenha().setEchoChar('*');
+            }
+        });
+
+        view.getBtnExibirConfirmarSenha().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                view.getBtnExibirConfirmarSenha().setIcon(IconService.getIcon("olho-exibido"));
+                view.getTxtConfirmarSenha().setEchoChar('\0');
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                view.getBtnExibirConfirmarSenha().setIcon(IconService.getIcon("olho"));
+                view.getTxtConfirmarSenha().setEchoChar('*');
             }
         });
     }
@@ -83,8 +123,8 @@ public class CadastroPresenter {
     private boolean camposInvalidos(String email, String nome, String senha, String senhaConfirmada) {
         return email == null || email.trim().isEmpty() || senha == null || senha.trim().isEmpty() || nome == null || nome.trim().isEmpty() || senhaConfirmada == null || senhaConfirmada.isEmpty();
     }
-    
-    public void exibirMensagem(String mensagem){
+
+    public void exibirMensagem(String mensagem) {
         new MostrarMensagemProjetoCommand(mensagem).execute();
     }
 }

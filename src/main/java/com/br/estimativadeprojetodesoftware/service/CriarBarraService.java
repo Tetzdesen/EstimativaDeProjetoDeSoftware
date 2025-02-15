@@ -1,11 +1,9 @@
 package com.br.estimativadeprojetodesoftware.service;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import java.awt.Font;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.*;
 import java.util.Map;
@@ -13,11 +11,9 @@ import java.util.Map;
 public class CriarBarraService {
 
     private final Map<String, ProjetoCommand> comandos;
-    private final List<JButton> botoesDaBarra;
     
     public CriarBarraService(Map<String, ProjetoCommand> comandos) {
         this.comandos = comandos;
-        botoesDaBarra = new ArrayList();
     }
 
     public JToolBar criarBarra() {
@@ -35,7 +31,7 @@ public class CriarBarraService {
         
         toolBar.add(Box.createHorizontalStrut(25));
                  
-        adicionarBotao(toolBar, "Logout", "usuario", "Logout");
+        adicionarBotao(toolBar, "Logout", "logout", "Logout");
 
         return toolBar;
     }
@@ -44,9 +40,9 @@ public class CriarBarraService {
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
         
-        adicionarBotao(toolBar, "Salvar", "principal", "Salvar usuário");
-        adicionarBotao(toolBar, "Editar", "projeto", "Editar usuário");
-        adicionarBotao(toolBar, "Excluir", "usuario", "Excluir usuário");
+        adicionarBotao(toolBar, "Salvar", "salvar", "Salvar usuário");
+        adicionarBotao(toolBar, "Editar", "editar", "Editar usuário");
+        adicionarBotao(toolBar, "Excluir", "excluir", "Excluir usuário");
 
         return toolBar;
     }
@@ -61,7 +57,6 @@ public class CriarBarraService {
             }
             comando.execute();
         });
-        botoesDaBarra.add(botao);
         toolBar.add(botao);
     }
 
@@ -69,10 +64,6 @@ public class CriarBarraService {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("Arial", Font.BOLD, 12));
         toolBar.add(label);
-    }
-
-    public List<JButton> getBotoesDaBarra() {
-        return botoesDaBarra;
     }
 
 }

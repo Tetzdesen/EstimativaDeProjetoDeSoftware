@@ -3,26 +3,40 @@ package com.br.estimativadeprojetodesoftware.state;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.UsuarioPresenter;
+import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author tetzner
  */
 public class EdicaoState extends UsuarioPresenterState {
-
+    
+    private ValidadorSenhaService validadorService;
+    
     public EdicaoState(UsuarioPresenter usuarioPresenter) {
         super(usuarioPresenter);
+        validadorService = new ValidadorSenhaService();
     }
 
     @Override
-    public void salvar() {
-        String nome = usuarioPresenter.getView().getTxtNome().getText();
-        String email = usuarioPresenter.getView().getTxtEmail().getText();
+    public void salvar() throws Exception {
 
+        String email = usuarioPresenter.getView().getTxtEmail().getText();
+        String nome = usuarioPresenter.getView().getTxtNome().getText();
+        String senha = usuarioPresenter.getView().getTxtSenhaAtual().getText();
+        
+        try {
+            validadorService.validarSenha(senha);
+        } catch (Exception ex) {
+            throw new Exception("Erro na validação da senha:\n" + ex.getMessage());
+        }
+        
         Usuario usuario = usuarioPresenter.getUsuario();
 
-        Usuario usuarioNovo = new Usuario(usuario.getId(), nome, email, usuario.getSenha(), usuario.getIsAutorizado(), usuario.getCreated_at(), usuario.getUpdate_at(), usuario.getDeleted_at(), usuario.getProjetos(), usuario.getPerfis());
+        Usuario usuarioNovo = new Usuario(usuario.getId(), nome, email, usuario.getSenha(), usuario.getIsAutorizado(), usuario.getCreated_at(), usuario.getUpdate_at(), usuario.getDeleted_at(), usuario.getProjetos(), usuario.getProjetosCompartilhados(), usuario.getPerfis());
 
         usuarioPresenter.getRepository().atualizarUsuario(usuario, email, nome);
         UsuarioLogadoSingleton.getInstancia().setUsuario(usuario);
@@ -31,13 +45,12 @@ public class EdicaoState extends UsuarioPresenterState {
         new MostrarMensagemProjetoCommand("Usuário salvo com sucesso").execute();
         usuarioPresenter.setState(new VisualizacaoState(usuarioPresenter));
 
-        
         // lançar mensagem JOPtionPane
-    //    if (salvarCommand != null) {
-          //  salvarCommand.execute();
-      //  }
+        //    if (salvarCommand != null) {
+        //  salvarCommand.execute();
+        //  }
     }
-    
+
     @Override
     public String toString() {
         return "edição";

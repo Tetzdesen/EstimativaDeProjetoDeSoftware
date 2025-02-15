@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Perfil {
@@ -58,7 +59,6 @@ public class Perfil {
     public Map<String, Integer> getFuncionalidades() {
         return Collections.unmodifiableMap(funcionalidades);
     }
-
     
     public LocalDateTime getCreated_at() {
         return created_at;
@@ -115,5 +115,51 @@ public class Perfil {
         }
         funcionalidades.put(nomeFuncionalidade, dias);
     }
-   
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Perfil other = (Perfil) obj;
+        if (!Objects.equals(this.nome, other.nome)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.tamDispositivos, other.tamDispositivos)) {
+            return false;
+        }
+        if (!Objects.equals(this.nivelUI, other.nivelUI)) {
+            return false;
+        }
+        if (!Objects.equals(this.funcionalidades, other.funcionalidades)) {
+            return false;
+        }
+        if (!Objects.equals(this.created_at, other.created_at)) {
+            return false;
+        }
+        if (!Objects.equals(this.update_at, other.update_at)) {
+            return false;
+        }
+        return Objects.equals(this.deleted_at, other.deleted_at);
+    }
+
+    @Override
+    public String toString() {
+        return "Perfil{" + "id=" + id + ", nome=" + nome + ", tamDispositivos=" + tamDispositivos + ", nivelUI=" + nivelUI + ", funcionalidades=" + funcionalidades + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + '}';
+    }
 }
