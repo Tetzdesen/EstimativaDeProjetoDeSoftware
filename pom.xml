@@ -11,10 +11,17 @@
         <maven.compiler.target>17</maven.compiler.target>
         <exec.mainClass>com.br.estimativadeprojetodesoftware.EstimativaDeProjetoDeSoftware</exec.mainClass>
     </properties>
+    
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         
-         <dependency>
+        <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
             <version>RELEASE210</version>
@@ -44,6 +51,11 @@
             <version>3.1</version>
         </dependency>
         
+        <dependency>
+            <groupId>com.github.claytonfraga</groupId>
+            <artifactId>validadorsenha</artifactId>
+            <version>master</version>
+        </dependency>
         
     </dependencies>
 </project>

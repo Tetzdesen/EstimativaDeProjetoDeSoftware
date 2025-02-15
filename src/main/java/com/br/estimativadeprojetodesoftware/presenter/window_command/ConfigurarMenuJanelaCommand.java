@@ -27,7 +27,9 @@ public class ConfigurarMenuJanelaCommand implements WindowCommand {
 
         menuJanela.add(itemLadoALado);
         menuJanela.add(itemRestaurar);
+        
         menuBar.add(menuJanela);
+
         presenter.getView().setJMenuBar(menuBar);
     }
 }

@@ -204,7 +204,7 @@ public class ProjetoRepositoryMock implements Subject {
     @Override
     public void notifyObservers() {
         for (Observer observer : observers) {
-            observer.update(projetos);
+            observer.update();
         }
     }
 

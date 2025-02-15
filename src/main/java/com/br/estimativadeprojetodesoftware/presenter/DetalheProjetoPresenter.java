@@ -83,7 +83,7 @@ public class DetalheProjetoPresenter implements Observer {
     }
 
     @Override
-    public void update(List<Projeto> projetos) {
+    public void update() {
         carregarDetalhesProjeto();
     }
 }
