@@ -1,17 +1,19 @@
 package com.br.estimativadeprojetodesoftware.command;
 
+import com.br.estimativadeprojetodesoftware.presenter.ManterPerfilPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.PerfilProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
+import com.br.estimativadeprojetodesoftware.view.ManterPerfilView;
 import com.br.estimativadeprojetodesoftware.view.PerfilProjetoView;
 
 import javax.swing.*;
 
-public class VisualizarPerfilProjetoCommand implements ProjetoCommand {
+public class VisualizarPerfisProjetoCommand implements ProjetoCommand {
     private final JDesktopPane desktop;
     private final PerfilRepositoryMock repository;
 
-    public VisualizarPerfilProjetoCommand(JDesktopPane desktop, PerfilRepositoryMock repository) {
+    public VisualizarPerfisProjetoCommand(JDesktopPane desktop, PerfilRepositoryMock repository) {
         this.desktop = desktop;
         this.repository = repository;
     }
@@ -24,13 +26,13 @@ public class VisualizarPerfilProjetoCommand implements ProjetoCommand {
         if (windowManager.isFrameAberto(tituloJanela)) {
             windowManager.bringToFront(tituloJanela);
         } else {
-            PerfilProjetoView dashboardView = new PerfilProjetoView();
-            new PerfilProjetoPresenter(dashboardView, repository);
-            dashboardView.setTitle(tituloJanela);
-            desktop.add(dashboardView);
-            dashboardView.setVisible(true);
+            ManterPerfilView manterPerfilView = new ManterPerfilView();
+            new ManterPerfilPresenter(manterPerfilView, repository);
+            manterPerfilView.setTitle(tituloJanela);
+            desktop.add(manterPerfilView);
+            manterPerfilView.setVisible(true);
             try {
-                dashboardView.setMaximum(true);
+                manterPerfilView.setMaximum(true);
             } catch (Exception ignored) {
             }
         }

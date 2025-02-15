@@ -1,13 +1,25 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
+import com.br.estimativadeprojetodesoftware.command.AbrirDashboardProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.AbrirDetalhesProjetoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.AbrirInternalFrameGenericoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.CriarNovoPerfilProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.CriarProjetoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.ExcluirProjetoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.VisualizarPerfisProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
+import com.br.estimativadeprojetodesoftware.view.ManterPerfilView;
 import com.br.estimativadeprojetodesoftware.view.PerfilProjetoView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -16,6 +28,7 @@ public class PerfilProjetoPresenter implements Observer {
 
     private final PerfilProjetoView view;
     private final PerfilRepositoryMock repository;
+    private final Map<String, ProjetoCommand> comandos;
 
     public PerfilProjetoPresenter(PerfilProjetoView view, PerfilRepositoryMock repository) {
         this.view = view;
@@ -24,6 +37,15 @@ public class PerfilProjetoPresenter implements Observer {
         //this.repository.addObserver(this);
         carregarDetalhesPerfil();
         configuraView();
+
+        this.comandos = inicializarComandos();
+    }
+
+    private Map<String, ProjetoCommand> inicializarComandos() {
+        Map<String, ProjetoCommand> comandos = new HashMap<>();
+        comandos.put("Novo Perfil", new CriarNovoPerfilProjetoCommand(view.getDesktop(), repository));
+        comandos.put("Visualizar", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Usuário"));
+        return comandos;
     }
 
     private void carregarDetalhesPerfil() {
@@ -50,7 +72,7 @@ public class PerfilProjetoPresenter implements Observer {
                 setStatusBotaoVisualizar(true);
             }
         });
-
+/*
         this.view.getBtnNovoPerfil().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -64,6 +86,7 @@ public class PerfilProjetoPresenter implements Observer {
                 new ManterPerfilPresenter();
             }
         });
+         */
     }
 
     @Override

@@ -12,19 +12,26 @@ import javax.swing.*;
  *
  * @author kauac
  */
-public class ManterPerfilView extends javax.swing.JFrame {
+public class ManterPerfilView extends javax.swing.JInternalFrame {
     private JLabel lblNome;
+    private JDesktopPane desktop;
 
     public ManterPerfilView() {
         setTitle("Manter Perfis");
         setResizable(true);
         setSize(1000, 700);
 
+        desktop = new JDesktopPane();
+
         JPanel painelPrincipal = new JPanel(new BorderLayout());
         add(painelPrincipal);
 
         lblNome = new JLabel("Teste");
         painelPrincipal.add(lblNome, BorderLayout.CENTER);
+    }
+
+    public JDesktopPane getDesktop() {
+        return desktop;
     }
 
     

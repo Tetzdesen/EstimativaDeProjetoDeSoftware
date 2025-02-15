@@ -1,7 +1,5 @@
 package com.br.estimativadeprojetodesoftware.view;
 
-import com.br.estimativadeprojetodesoftware.view.components.PerfilPanel;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -18,7 +16,7 @@ public class PerfilProjetoView extends JInternalFrame {
     private JTable tabelaDetalhes;
     private JButton btnNovoPerfil, btnVisualizar;
     private DefaultTableModel modeloTabela;
-    private JPanel painelPerfis;
+    private JDesktopPane desktop;
 
     public PerfilProjetoView() {
         setTitle("Visualizar Perfis");
@@ -27,6 +25,8 @@ public class PerfilProjetoView extends JInternalFrame {
         setIconifiable(false);
         setResizable(true);
         setSize(1000, 700);
+
+        desktop = new JDesktopPane();
 
         JPanel painelPrincipal = new JPanel(new BorderLayout());
         add(painelPrincipal);
@@ -61,9 +61,9 @@ public class PerfilProjetoView extends JInternalFrame {
     }
 
     public void adicionarPerfis(String nome, UUID id, LocalDateTime created_at, boolean status) {
-        PerfilPanel painelPerfil = new PerfilPanel(nome, id, created_at, status);
-        painelPerfis.add(painelPerfil);
-        painelPerfis.revalidate();
+        //PerfilPanel painelPerfil = new PerfilPanel(nome, id, created_at, status);
+        //painelPerfis.add(painelPerfil);
+        //painelPerfis.revalidate();
     }
 
     public void atualizarTabela(Object[] dados) {
@@ -80,5 +80,9 @@ public class PerfilProjetoView extends JInternalFrame {
 
     public JButton getBtnNovoPerfil() {
         return btnNovoPerfil;
+    }
+
+    public JDesktopPane getDesktop() {
+        return desktop;
     }
 }
