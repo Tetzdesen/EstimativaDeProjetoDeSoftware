@@ -1,7 +1,6 @@
-package com.br.estimativadeprojetodesoftware.command;
+package com.br.estimativadeprojetodesoftware.command.perfil;
 
-import javax.swing.JDesktopPane;
-
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.ManterPerfilPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.PerfilProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
@@ -9,34 +8,34 @@ import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.view.ManterPerfilView;
 import com.br.estimativadeprojetodesoftware.view.PerfilProjetoView;
 
-public class AbrirDetalhesPerfilProjetoCommand implements ProjetoCommand {
+import javax.swing.*;
+
+public class VisualizarPerfisProjetoCommand implements ProjetoCommand {
     private final JDesktopPane desktop;
     private final PerfilRepositoryMock repository;
 
-    public AbrirDetalhesPerfilProjetoCommand(JDesktopPane desktop, PerfilRepositoryMock repository) {
+    public VisualizarPerfisProjetoCommand(JDesktopPane desktop, PerfilRepositoryMock repository) {
         this.desktop = desktop;
         this.repository = repository;
     }
 
-
     @Override
     public void execute() {
-        String tituloJanela = "Detalhes do Perfil";
+        String tituloJanela = "Ver Perfis de Projeto";
         WindowManager windowManager = WindowManager.getInstance();
 
         if (windowManager.isFrameAberto(tituloJanela)) {
             windowManager.bringToFront(tituloJanela);
         } else {
-            ManterPerfilView manterPerfilView = new ManterPerfilView();
-            new ManterPerfilPresenter(manterPerfilView, repository);
-            manterPerfilView.setTitle(tituloJanela);
-            desktop.add(manterPerfilView);
-            manterPerfilView.setVisible(true);
+            PerfilProjetoView perfilProjetoView = new PerfilProjetoView();
+            new PerfilProjetoPresenter(perfilProjetoView, repository);
+            perfilProjetoView.setTitle(tituloJanela);
+            desktop.add(perfilProjetoView);
+            perfilProjetoView.setVisible(true);
             try {
-                manterPerfilView.setMaximum(true);
+                perfilProjetoView.setMaximum(true);
             } catch (Exception ignored) {
             }
         }
     }
-
 }

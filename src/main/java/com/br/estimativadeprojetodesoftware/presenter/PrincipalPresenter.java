@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
 import com.br.estimativadeprojetodesoftware.command.*;
+import com.br.estimativadeprojetodesoftware.command.perfil.VisualizarPerfisProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.*;

@@ -1,7 +1,8 @@
-package com.br.estimativadeprojetodesoftware.command;
+package com.br.estimativadeprojetodesoftware.command.perfil;
 
 import javax.swing.JDesktopPane;
 
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.ManterPerfilPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
