@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Usuario {
@@ -17,6 +18,7 @@ public class Usuario {
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
     private List<Projeto> projetos;
+    private List<Projeto> projetosCompartilhados;
     private List<Perfil> perfis;
 
     public Usuario(String nome, String email, String senha) {
@@ -29,10 +31,11 @@ public class Usuario {
         this.update_at = null;
         this.deleted_at = null;
         this.projetos = new ArrayList();
+        this.projetosCompartilhados = new ArrayList<>();
         this.perfis = new ArrayList();
     }
 
-    public Usuario(UUID id, String nome, String email, String senha, boolean isAutorizado, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, List<Projeto> projetos, List<Perfil> perfis) {
+    public Usuario(UUID id, String nome, String email, String senha, boolean isAutorizado, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, List<Projeto> projetos, List<Projeto> projetosCompartilhados, List<Perfil> perfis) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -42,6 +45,7 @@ public class Usuario {
         this.update_at = update_at;
         this.deleted_at = deleted_at;
         this.projetos = projetos;
+        this.projetosCompartilhados = projetosCompartilhados;
         this.perfis = perfis;
     }
 
@@ -81,6 +85,10 @@ public class Usuario {
         return Collections.unmodifiableList(projetos);
     }
 
+    public List<Projeto> getProjetosCompartilhados() {
+        return projetosCompartilhados;
+    }
+
     public List<Perfil> getPerfis() {
         return Collections.unmodifiableList(perfis);
     }
@@ -110,12 +118,70 @@ public class Usuario {
         projetos.add(projeto);
     }
 
+    public void adicionarProjetoCompartilhado(Projeto projetoCompartilhado) {
+        if (projetoCompartilhado == null) {
+            throw new IllegalArgumentException("Erro: Projeto compartilhado não pode ser nulo.");
+        }
+        projetosCompartilhados.add(projetoCompartilhado);
+    }
+
     public void adicionarPerfil(Perfil perfil) {
         if (perfil == null) {
             throw new IllegalArgumentException("Erro: Perfil não pode ser nulo.");
         }
         perfis.add(perfil);
     }
-    
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Usuario other = (Usuario) obj;
+        if (this.isAutorizado != other.isAutorizado) {
+            return false;
+        }
+        if (!Objects.equals(this.nome, other.nome)) {
+            return false;
+        }
+        if (!Objects.equals(this.email, other.email)) {
+            return false;
+        }
+        if (!Objects.equals(this.senha, other.senha)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.created_at, other.created_at)) {
+            return false;
+        }
+        if (!Objects.equals(this.update_at, other.update_at)) {
+            return false;
+        }
+        if (!Objects.equals(this.deleted_at, other.deleted_at)) {
+            return false;
+        }
+        if (!Objects.equals(this.projetos, other.projetos)) {
+            return false;
+        }
+        return Objects.equals(this.perfis, other.perfis);
+    }
+
+    @Override
+    public String toString() {
+        return "Usuario{" + "id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", isAutorizado=" + isAutorizado + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + ", projetos=" + projetos + ", projetosCompartilhados=" + projetosCompartilhados + ", perfis=" + perfis + '}';
+    }
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Estimativa {
@@ -44,5 +45,37 @@ public class Estimativa {
             throw new IllegalArgumentException("Erro: Quantidade de dias não pode ser negativo. Chave: " + nomeFuncionalidade + " Valor: " + dias);
         }
         campos.put(nomeFuncionalidade, dias);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Estimativa other = (Estimativa) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.created_at, other.created_at)) {
+            return false;
+        }
+        return Objects.equals(this.campos, other.campos);
+    }
+    
+    @Override
+    public String toString() {
+        return "Estimativa{" + "id=" + id + ", created_at=" + created_at + ", campos=" + campos + '}';
     }
 }

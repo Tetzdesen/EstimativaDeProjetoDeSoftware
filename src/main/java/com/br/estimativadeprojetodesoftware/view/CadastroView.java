@@ -34,6 +34,18 @@ public class CadastroView extends javax.swing.JFrame {
         return btnSalvar;
     }
 
+    public JButton getBtnCancelar() {
+        return btnCancelar;
+    }
+    
+    public JButton getBtnExibirSenha() {
+        return btnExibirSenha;
+    }
+
+    public JButton getBtnExibirConfirmarSenha() {
+        return btnExibirConfirmarSenha;
+    }  
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -43,31 +55,32 @@ public class CadastroView extends javax.swing.JFrame {
         txtSenha = new javax.swing.JPasswordField();
         txtConfirmarSenha = new javax.swing.JPasswordField();
         btnSalvar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
         lblCadastro = new javax.swing.JLabel();
         lblNomeUsuario = new javax.swing.JLabel();
         lblEmail = new javax.swing.JLabel();
         lblSenha = new javax.swing.JLabel();
         lblConfirmarSenha = new javax.swing.JLabel();
+        btnExibirSenha = new javax.swing.JButton();
+        btnExibirConfirmarSenha = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Desenvolvedor");
+        setIconImages(null);
 
-        txtNome.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtNome.setMaximumSize(new java.awt.Dimension(64, 22));
-        txtNome.setMinimumSize(new java.awt.Dimension(64, 22));
         txtNome.setName(""); // NOI18N
-        txtNome.setPreferredSize(new java.awt.Dimension(64, 22));
 
-        txtEmail.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         txtEmail.setMaximumSize(new java.awt.Dimension(64, 22));
-        txtEmail.setMinimumSize(new java.awt.Dimension(64, 22));
         txtEmail.setName(""); // NOI18N
-        txtEmail.setPreferredSize(new java.awt.Dimension(64, 22));
 
         txtSenha.setMaximumSize(new java.awt.Dimension(64, 22));
 
         btnSalvar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnSalvar.setText("Solicitar Cadastro");
+        btnSalvar.setText("Cadastrar Usuário");
+
+        btnCancelar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnCancelar.setText("Cancelar");
 
         lblCadastro.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lblCadastro.setText("Cadastro");
@@ -84,14 +97,35 @@ public class CadastroView extends javax.swing.JFrame {
         lblConfirmarSenha.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblConfirmarSenha.setText("Confirmar Senha:");
 
+        btnExibirSenha.setBackground(new java.awt.Color(242, 242, 242));
+        btnExibirSenha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/olho-icon.png"))); // NOI18N
+        btnExibirSenha.setBorder(null);
+
+        btnExibirConfirmarSenha.setBackground(new java.awt.Color(242, 242, 242));
+        btnExibirConfirmarSenha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/olho-icon.png"))); // NOI18N
+        btnExibirConfirmarSenha.setBorder(null);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(228, 228, 228)
-                .addComponent(lblCadastro)
-                .addContainerGap(247, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(228, 228, 228)
+                        .addComponent(lblCadastro))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(206, 206, 206)
+                        .addComponent(btnSalvar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(85, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnExibirConfirmarSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnExibirSenha))
+                .addGap(40, 40, 40))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(81, 81, 81)
@@ -107,15 +141,12 @@ public class CadastroView extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                             .addGap(0, 0, Short.MAX_VALUE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(btnSalvar)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(lblNomeUsuario)
-                                        .addComponent(lblEmail))
-                                    .addGap(18, 18, 18)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(txtEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
-                                        .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                .addComponent(lblNomeUsuario)
+                                .addComponent(lblEmail))
+                            .addGap(18, 18, 18)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(txtEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
+                                .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGap(82, 82, 82)))
         );
         layout.setVerticalGroup(
@@ -123,7 +154,15 @@ public class CadastroView extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(40, 40, 40)
                 .addComponent(lblCadastro)
-                .addContainerGap(325, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, Short.MAX_VALUE)
+                .addComponent(btnExibirSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addComponent(btnExibirConfirmarSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(19, 19, 19)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSalvar)
+                    .addComponent(btnCancelar))
+                .addGap(98, 98, 98))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(102, 102, 102)
@@ -145,15 +184,16 @@ public class CadastroView extends javax.swing.JFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lblConfirmarSenha)
                         .addComponent(txtConfirmarSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(18, 18, 18)
-                    .addComponent(btnSalvar)
-                    .addGap(102, 102, 102)))
+                    .addGap(147, 147, 147)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnExibirConfirmarSenha;
+    private javax.swing.JButton btnExibirSenha;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JLabel lblCadastro;
     private javax.swing.JLabel lblConfirmarSenha;
