@@ -4,6 +4,7 @@ import com.br.estimativadeprojetodesoftware.command.*;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.*;
+import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
@@ -21,15 +22,17 @@ public final class PrincipalPresenter implements Observer {
     private final PrincipalView view;
     private final ProjetoRepositoryMock projetoRepository;
     private final UsuarioRepositoryMock usuarioRepository;
+    private final PerfilRepositoryMock perfilRepositoryMock;
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
     private final Map<String, ProjetoCommand> comandos;
     private final List<WindowCommand> windowCommands = new ArrayList<>();
 
-    public PrincipalPresenter(ProjetoRepositoryMock projetoRepository, UsuarioRepositoryMock usuarioRepository) {
+    public PrincipalPresenter(ProjetoRepositoryMock projetoRepository, UsuarioRepositoryMock usuarioRepository, PerfilRepositoryMock perfilRepositoryMock) {
         this.view = new PrincipalView();
         this.projetoRepository = projetoRepository;
         this.usuarioRepository = usuarioRepository;
         this.projetoRepository.addObserver(this);
+        this.perfilRepositoryMock = perfilRepositoryMock;
 
         this.construtorDeArvoreNavegacaoService = new ConstrutorDeArvoreNavegacaoService();
 
@@ -52,7 +55,7 @@ public final class PrincipalPresenter implements Observer {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), projetoRepository));
         comandos.put("Usuário", new UsuarioCommand(view.getDesktop(), comandos));
-        comandos.put("Ver perfis de projeto", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Ver Perfis de Projetos"));
+        comandos.put("Ver perfis de projeto", new VisualizarPerfisProjetoCommand(view.getDesktop(), perfilRepositoryMock));
         comandos.put("Elaborar estimativa", new MostrarMensagemProjetoCommand("Elaborar estimativa ainda não implementada"));
         comandos.put("Visualizar estimativa", new MostrarMensagemProjetoCommand("Visualizar estimativa ainda não implementada"));
         comandos.put("Compartilhar projeto de estimativa", new MostrarMensagemProjetoCommand("Compartilhar ainda não implementado"));

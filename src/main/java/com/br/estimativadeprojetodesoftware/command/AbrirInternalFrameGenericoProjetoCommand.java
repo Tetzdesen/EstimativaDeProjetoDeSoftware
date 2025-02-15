@@ -1,6 +1,8 @@
 package com.br.estimativadeprojetodesoftware.command;
 
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
+import com.br.estimativadeprojetodesoftware.view.PerfilProjetoView;
+
 import javax.swing.*;
 
 public class AbrirInternalFrameGenericoProjetoCommand implements ProjetoCommand {
@@ -24,6 +26,7 @@ public class AbrirInternalFrameGenericoProjetoCommand implements ProjetoCommand 
             frame.setIconifiable(false);
             frame.setVisible(true);
             desktop.add(frame);
+            PerfilProjetoView perfilProjetoView = new PerfilProjetoView();
             try {
                 frame.setMaximum(true);
             } catch (Exception ignored) {
