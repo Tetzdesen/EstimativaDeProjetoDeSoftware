@@ -60,7 +60,7 @@ public final class PrincipalPresenter implements Observer {
         comandos.put("Novo projeto", new CriarProjetoProjetoCommand(projetoRepository, view.getDesktop()));
         comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
         comandos.put("Abrir detalhes", new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()));
-        comandos.put("Logout", new MostrarMensagemProjetoCommand("Logout ainda não implementado"));
+        comandos.put("Logout", new LogoutCommand(this));
         return comandos;
     }
 
@@ -138,8 +138,8 @@ public final class PrincipalPresenter implements Observer {
         SwingUtilities.invokeLater(() -> {
             WindowCommand fecharJanelasCommand = new FecharJanelasRelacionadasCommand(view.getDesktop(), projetoRepository.getProjetos());
             fecharJanelasCommand.execute();
+            new ConfigurarViewCommand(this).execute();
             configurarArvore();
-
         });
     }
 

@@ -1,10 +1,6 @@
 package com.br.estimativadeprojetodesoftware.principal;
 
-import com.br.estimativadeprojetodesoftware.presenter.LoginPresenter;
-import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
-import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
-import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
-import javax.swing.SwingUtilities;
+import com.br.estimativadeprojetodesoftware.command.LoginCommand;
 
 /**
  *
@@ -13,13 +9,6 @@ import javax.swing.SwingUtilities;
 public class Principal {
 
     public static void main(String[] args) {
- 
-        SwingUtilities.invokeLater(() -> {
-            new SetLookAndFeelCommand().execute();
-            LoginPresenter loginPresenter = new LoginPresenter(new ProjetoRepositoryMock(), new UsuarioRepositoryMock());
-        });
-
+        new LoginCommand().execute();
     }
 }
-
-

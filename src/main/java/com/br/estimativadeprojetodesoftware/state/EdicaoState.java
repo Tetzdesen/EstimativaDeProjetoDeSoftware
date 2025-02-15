@@ -1,7 +1,6 @@
 package com.br.estimativadeprojetodesoftware.state;
 
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.UsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
@@ -41,6 +40,6 @@ public class EdicaoState extends UsuarioPresenterState {
     
     @Override
     public String toString() {
-        return "Edição";
+        return "edição";
     }
 }

@@ -1,26 +1,12 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
-import com.br.estimativadeprojetodesoftware.view.DashBoardProjetoView;
 import com.br.estimativadeprojetodesoftware.view.LoginView;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyVetoException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 /**
@@ -43,11 +29,11 @@ public class LoginPresenter {
     }
 
     private void configuraView() {
-        view.setSize(546, 450); 
-        view.setResizable(false); 
-    
-        view.setLocationRelativeTo(null); 
-      //  view.setExtendedState(JFrame.NORMAL);
+        view.setSize(546, 450);
+        view.setResizable(false);
+
+        view.setLocationRelativeTo(null);
+        //  view.setExtendedState(JFrame.NORMAL);
         configuraActionsListerns();
         view.setVisible(true);
     }
@@ -60,9 +46,9 @@ public class LoginPresenter {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
         });
-        view.getBtnCadastrar().addActionListener(e -> { 
-           // view.dispose();
-            new CadastroPresenter(repositoryUsuario);     
+        view.getBtnCadastrar().addActionListener(e -> {
+            // view.dispose();
+            new CadastroPresenter(repositoryUsuario);
         });
     }
 
@@ -84,11 +70,12 @@ public class LoginPresenter {
             new MostrarMensagemProjetoCommand("Login realizado com sucesso!").execute();
             usuarioLogado.setUsuario(usuario);
             view.dispose();
-            // new na presenter principal
+            
             SwingUtilities.invokeLater(() -> {
                 PrincipalPresenter presenter = new PrincipalPresenter(new ProjetoRepositoryMock(), new UsuarioRepositoryMock());
                 WindowManager.getInstance().initialize(presenter);
             });
+     
         } else {
             throw new IllegalArgumentException("Senha incorreta");
         }
