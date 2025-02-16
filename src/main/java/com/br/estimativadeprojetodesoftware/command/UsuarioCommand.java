@@ -1,11 +1,12 @@
 package com.br.estimativadeprojetodesoftware.command;
 
 import com.br.estimativadeprojetodesoftware.model.Usuario;
+import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.UsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.UsuarioView;
-import com.br.estimativadeprojetodesoftware.service.CriarBarraService;
+import com.br.estimativadeprojetodesoftware.service.BarraService;
 import java.awt.BorderLayout;
 import java.util.Map;
 import javax.swing.JDesktopPane;
@@ -19,11 +20,12 @@ import javax.swing.JToolBar;
  */
 public class UsuarioCommand implements ProjetoCommand {
 
+    private final PrincipalPresenter principalPresenter;
     private final JDesktopPane desktop;
-    private Usuario usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
     private final Map<String, ProjetoCommand> comandos;
 
-    public UsuarioCommand(JDesktopPane desktop, Map<String, ProjetoCommand> comandos) {
+    public UsuarioCommand(PrincipalPresenter principalPresenter, JDesktopPane desktop, Map<String, ProjetoCommand> comandos) {
+        this.principalPresenter = principalPresenter;
         this.desktop = desktop;
         this.comandos = comandos;
     }
@@ -50,10 +52,10 @@ public class UsuarioCommand implements ProjetoCommand {
             }
         } else {
 
-            UsuarioPresenter usuarioPresenter = new UsuarioPresenter(usuario);
+            UsuarioPresenter usuarioPresenter = new UsuarioPresenter(principalPresenter);
             UsuarioView visualizacaoUsuarioView = usuarioPresenter.getView();
             visualizacaoUsuarioView.setTitle(tituloJanela);
-            visualizacaoUsuarioView.setSize(588, 380);
+            visualizacaoUsuarioView.setSize(564, 385);
             int x = (desktop.getWidth() - visualizacaoUsuarioView.getWidth()) / 2;
             int y = (desktop.getHeight() - visualizacaoUsuarioView.getHeight()) / 2;
             visualizacaoUsuarioView.setLocation(x, y);

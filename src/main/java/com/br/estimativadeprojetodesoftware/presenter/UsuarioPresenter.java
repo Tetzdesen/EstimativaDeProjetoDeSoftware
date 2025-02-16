@@ -7,11 +7,15 @@ import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.SalvarUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
-import com.br.estimativadeprojetodesoftware.service.CriarBarraService;
+import com.br.estimativadeprojetodesoftware.service.BarraService;
+import com.br.estimativadeprojetodesoftware.service.IconService;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.state.UsuarioPresenterState;
 import com.br.estimativadeprojetodesoftware.state.VisualizacaoState;
 import com.br.estimativadeprojetodesoftware.view.UsuarioView;
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,17 +27,20 @@ import javax.swing.JToolBar;
  * @author tetzner
  */
 public class UsuarioPresenter implements Observer {
-    
+
     private UsuarioView view;
     private Usuario usuario;
     private UsuarioRepositoryMock repository;
     private UsuarioPresenterState estado;
+    private PrincipalPresenter principalPresenter;
     private final Map<String, ProjetoCommand> comandos;
 
-    public UsuarioPresenter(Usuario usuario) {
+    public UsuarioPresenter(PrincipalPresenter principalPresenter) {
         this.view = new UsuarioView();
-        this.usuario = usuario;
-        this.repository = new UsuarioRepositoryMock();
+        this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
+        this.principalPresenter = principalPresenter;
+        this.repository = principalPresenter.getUsuarioRepository();
+        this.repository.addObserver(this);
         this.comandos = inicializarComandos();
         this.estado = new VisualizacaoState(this);
         configuraView();
@@ -74,7 +81,7 @@ public class UsuarioPresenter implements Observer {
     private void configuraView() {
         JPanel painelPrincipal = new JPanel(new BorderLayout());
 
-        JToolBar toolbar = new CriarBarraService(this.getComandos()).criarBarraVisualizacaoUsuario();
+        JToolBar toolbar = new BarraService(this.getComandos()).criarBarraUsuario();
         painelPrincipal.add(toolbar, BorderLayout.NORTH);
         painelPrincipal.add(view.getContentPane(), BorderLayout.CENTER);
         view.setContentPane(painelPrincipal);
@@ -83,11 +90,29 @@ public class UsuarioPresenter implements Observer {
         view.setIconifiable(true);
         view.setResizable(false);
         view.setMaximizable(false);
+
+        view.getBtnExibirSenha().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                view.getBtnExibirSenha().setIcon(IconService.getIcon("olho-exibido"));
+                view.getTxtSenhaAtual().setEchoChar('\0');
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                view.getBtnExibirSenha().setIcon(IconService.getIcon("olho"));
+                view.getTxtSenhaAtual().setEchoChar('*');
+            }
+        });
         atualizarCampos();
     }
 
     public UsuarioView getView() {
         return view;
+    }
+
+    public PrincipalPresenter getPrincipalPresenter() {
+        return principalPresenter;
     }
 
     public String formatarData(LocalDateTime dataHora) {

@@ -14,6 +14,7 @@ public class IconService {
         icons.put("usuario", loadIcon("usuario-icon.png"));
         icons.put("perfil", loadIcon("perfil-icon.png"));
         icons.put("projeto", loadIcon("projeto-icon-tree.png"));
+        icons.put("compartilhar-projeto", loadIcon("compartilhar-projeto-icon.png"));
         icons.put("action", loadIcon("action-icon.png"));
         icons.put("logout", loadIcon("logout-icon.png"));
         icons.put("olho", loadIcon("olho-icon.png"));

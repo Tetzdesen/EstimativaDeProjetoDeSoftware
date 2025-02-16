@@ -6,8 +6,11 @@ import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.IconService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.LoginView;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.SwingUtilities;
 
 /**
@@ -35,11 +38,11 @@ public class LoginPresenter {
 
         view.setLocationRelativeTo(null);
         //  view.setExtendedState(JFrame.NORMAL);
-        configuraActionsListerns();
+        configuraListerns();
         view.setVisible(true);
     }
 
-    private void configuraActionsListerns() {
+    private void configuraListerns() {
         view.getBtnEntrar().addActionListener(e -> {
             try {
                 efetuarLogin();
@@ -47,6 +50,21 @@ public class LoginPresenter {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
         });
+        
+        view.getBtnExibirSenha().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                view.getBtnExibirSenha().setIcon(IconService.getIcon("olho-exibido"));
+                view.getTxtSenha().setEchoChar('\0');
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                view.getBtnExibirSenha().setIcon(IconService.getIcon("olho"));
+                view.getTxtSenha().setEchoChar('*');
+            }
+        });
+        
         view.getBtnCadastrar().addActionListener(e -> {
             // view.dispose();
             new CadastroPresenter(repositoryUsuario);
@@ -71,12 +89,12 @@ public class LoginPresenter {
             new MostrarMensagemProjetoCommand("Login realizado com sucesso!").execute();
             usuarioLogado.setUsuario(usuario);
             view.dispose();
-            
+
             SwingUtilities.invokeLater(() -> {
                 PrincipalPresenter presenter = new PrincipalPresenter(new ProjetoRepositoryMock(), new UsuarioRepositoryMock(), new PerfilRepositoryMock());
                 WindowManager.getInstance().initialize(presenter);
             });
-     
+
         } else {
             throw new IllegalArgumentException("Senha incorreta");
         }

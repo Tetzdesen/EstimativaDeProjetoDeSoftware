@@ -5,6 +5,7 @@ import java.awt.*;
 
 public final class PrincipalView extends JFrame {
     private JDesktopPane desktop;
+    private JToolBar barraPrincipal;
     private JTree tree;
     private JScrollPane treeScrollPane;
 
@@ -28,6 +29,7 @@ public final class PrincipalView extends JFrame {
     }
 
     public void setMainComponents(JToolBar toolBar) {
+        barraPrincipal = toolBar;
         add(toolBar, BorderLayout.NORTH);
     }
 
@@ -35,6 +37,10 @@ public final class PrincipalView extends JFrame {
         return desktop;
     }
 
+    public JToolBar getBarraPrincipal() {
+        return barraPrincipal;
+    }
+   
     public JTree getTree() {
         return tree;
     }
