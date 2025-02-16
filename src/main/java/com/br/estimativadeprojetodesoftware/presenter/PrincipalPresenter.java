@@ -9,6 +9,7 @@ import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
+import com.br.estimativadeprojetodesoftware.service.BarraService;
 import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
 import com.br.estimativadeprojetodesoftware.view.GlobalWindowManager;
 import com.br.estimativadeprojetodesoftware.view.PrincipalView;
@@ -26,20 +27,21 @@ public final class PrincipalPresenter implements Observer {
     private final PerfilRepositoryMock perfilRepositoryMock;
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
     private final Map<String, ProjetoCommand> comandos;
+    private BarraService criarBarraService;
     private final List<WindowCommand> windowCommands = new ArrayList<>();
 
     public PrincipalPresenter(ProjetoRepositoryMock projetoRepository, UsuarioRepositoryMock usuarioRepository, PerfilRepositoryMock perfilRepositoryMock) {
         this.view = new PrincipalView();
         this.projetoRepository = projetoRepository;
         this.usuarioRepository = usuarioRepository;
-        this.projetoRepository.addObserver(this);
         this.perfilRepositoryMock = perfilRepositoryMock;
+        this.projetoRepository.addObserver(this);
+        this.usuarioRepository.addObserver(this);
 
         this.construtorDeArvoreNavegacaoService = new ConstrutorDeArvoreNavegacaoService();
 
         GlobalWindowManager.initialize(view);
         this.comandos = inicializarComandos();
-
         inicializarEExecutarWindowCommands();
         view.setVisible(true);
     }
@@ -55,7 +57,7 @@ public final class PrincipalPresenter implements Observer {
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), projetoRepository));
-        comandos.put("Usuário", new UsuarioCommand(view.getDesktop(), comandos));
+        comandos.put("Usuário", new UsuarioCommand(this, view.getDesktop(), comandos));
         comandos.put("Ver perfis de projeto", new VisualizarPerfisProjetoCommand(view.getDesktop(), perfilRepositoryMock));
         comandos.put("Elaborar estimativa", new MostrarMensagemProjetoCommand("Elaborar estimativa ainda não implementada"));
         comandos.put("Visualizar estimativa", new MostrarMensagemProjetoCommand("Visualizar estimativa ainda não implementada"));
@@ -92,7 +94,7 @@ public final class PrincipalPresenter implements Observer {
         raiz.adicionarFilho(noPerfis);
         raiz.adicionarFilho(noProjetos);
         raiz.adicionarFilho(noProjetosCompartilhados);
-        
+
         List<Projeto> listaProjetos = projetoRepository.getProjetos();
         for (final Projeto projeto : listaProjetos) {
             AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()) {
@@ -119,10 +121,10 @@ public final class PrincipalPresenter implements Observer {
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar projeto de estimativa", "action", comandos.get("Compartilhar projeto de estimativa")));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Exportar projeto de estimativa", "action", comandos.get("Exportar projeto de estimativa")));
             noProjetos.adicionarFilho(noProjeto);
-            
+
             NoArvoreComposite noProjetoCompartilhado = construtorDeArvoreNavegacaoService.criarNo(projeto.getNome(), "projeto", cmdDetalhes);
             adicionarMenuContextual(projeto, noProjetoCompartilhado);
-            
+
             noProjetoCompartilhado.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa", "action", comandos.get("Visualizar estimativa")));
             noProjetosCompartilhados.adicionarFilho(noProjetoCompartilhado);
         }
@@ -150,7 +152,7 @@ public final class PrincipalPresenter implements Observer {
         SwingUtilities.invokeLater(() -> {
             WindowCommand fecharJanelasCommand = new FecharJanelasRelacionadasCommand(view.getDesktop(), projetoRepository.getProjetos());
             fecharJanelasCommand.execute();
-            new ConfigurarViewCommand(this).execute();
+            new AtualizarViewCommand(this).execute();
             configurarArvore();
         });
     }
@@ -183,7 +185,24 @@ public final class PrincipalPresenter implements Observer {
         return projetoRepository;
     }
 
+    public UsuarioRepositoryMock getUsuarioRepository() {
+        return usuarioRepository;
+    }
+
+    public PerfilRepositoryMock getPerfilRepositoryMock() {
+        return perfilRepositoryMock;
+    }
+
     public PrincipalView getView() {
         return view;
     }
+
+    public BarraService getCriarBarraService() {
+        return criarBarraService;
+    }
+
+    public void setCriarBarraService(BarraService criarBarraService) {
+        this.criarBarraService = criarBarraService;
+    }
+
 }
