@@ -73,6 +73,7 @@ public final class PrincipalPresenter implements Observer {
         NoArvoreComposite noUsuario = construtorDeArvoreNavegacaoService.criarNo("Usuário", "usuario", comandos.get("Usuário"));
         NoArvoreComposite noPerfis = construtorDeArvoreNavegacaoService.criarNo("Ver perfis de projeto", "perfil", comandos.get("Ver perfis de projeto"));
         NoArvoreComposite noProjetos = construtorDeArvoreNavegacaoService.criarNo("Projetos", "projeto", null);
+        NoArvoreComposite noProjetosCompartilhados = construtorDeArvoreNavegacaoService.criarNo("Projetos Compartilhados", "compartilhar-projeto", null);
 
         noProjetos.setMenuContextual(() -> {
             JPopupMenu menu = new JPopupMenu();
@@ -90,7 +91,8 @@ public final class PrincipalPresenter implements Observer {
         raiz.adicionarFilho(noUsuario);
         raiz.adicionarFilho(noPerfis);
         raiz.adicionarFilho(noProjetos);
-
+        raiz.adicionarFilho(noProjetosCompartilhados);
+        
         List<Projeto> listaProjetos = projetoRepository.getProjetos();
         for (final Projeto projeto : listaProjetos) {
             AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()) {
@@ -117,6 +119,12 @@ public final class PrincipalPresenter implements Observer {
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar projeto de estimativa", "action", comandos.get("Compartilhar projeto de estimativa")));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Exportar projeto de estimativa", "action", comandos.get("Exportar projeto de estimativa")));
             noProjetos.adicionarFilho(noProjeto);
+            
+            NoArvoreComposite noProjetoCompartilhado = construtorDeArvoreNavegacaoService.criarNo(projeto.getNome(), "projeto", cmdDetalhes);
+            adicionarMenuContextual(projeto, noProjetoCompartilhado);
+            
+            noProjetoCompartilhado.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa", "action", comandos.get("Visualizar estimativa")));
+            noProjetosCompartilhados.adicionarFilho(noProjetoCompartilhado);
         }
 
         DefaultMutableTreeNode modeloArvore = construtorDeArvoreNavegacaoService.converterParaNoMutavel(raiz);

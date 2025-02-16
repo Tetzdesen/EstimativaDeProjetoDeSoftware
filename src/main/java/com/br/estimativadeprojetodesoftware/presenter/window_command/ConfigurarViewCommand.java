@@ -25,7 +25,7 @@ public class ConfigurarViewCommand implements WindowCommand {
             if (comandoPrincipal != null) {
                 comandoPrincipal.execute();
             } else {
-                new MostrarMensagemProjetoCommand("Comando 'Login' não encontrado.").execute();
+                new MostrarMensagemProjetoCommand("Comando 'Principal' não encontrado.").execute();
             }
         });
     }
