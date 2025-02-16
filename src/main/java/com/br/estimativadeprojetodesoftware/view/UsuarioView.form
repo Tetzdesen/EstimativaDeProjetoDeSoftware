@@ -24,41 +24,43 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="txtTotalProjetos" alignment="0" min="-2" pref="180" max="-2" attributes="0"/>
-                  <Component id="lblTotalProjetos" alignment="0" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="lblTotalPerfis" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtTotalPerfis" min="-2" pref="180" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="txtSenhaAtual" max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="lblSenhaAtual" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="lblNome" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="320" pref="320" max="-2" attributes="0"/>
-                              <Component id="lblDataCriacao" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="txtTotalProjetos" alignment="0" min="-2" pref="180" max="-2" attributes="0"/>
+                                  <Component id="lblTotalProjetos" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="lblTotalPerfis" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtTotalPerfis" min="-2" pref="180" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="txtNome" min="-2" pref="320" max="-2" attributes="0"/>
-                              <EmptySpace min="40" pref="40" max="-2" attributes="0"/>
-                              <Component id="txtDataCriacao" min="-2" pref="180" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="lblEmail" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtEmail" alignment="0" max="32767" attributes="0"/>
+                          <Component id="txtSenhaAtual" max="32767" attributes="0"/>
                       </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="btnExibirSenha" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="lblSenhaAtual" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="lblNome" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="320" pref="320" max="-2" attributes="0"/>
+                          <Component id="lblDataCriacao" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="txtNome" min="-2" pref="320" max="-2" attributes="0"/>
+                          <EmptySpace min="40" pref="40" max="-2" attributes="0"/>
+                          <Component id="txtDataCriacao" min="-2" pref="180" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="lblEmail" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtEmail" alignment="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="30" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -79,11 +81,14 @@
               <Component id="lblEmail" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
               <Component id="txtEmail" min="-2" pref="31" max="-2" attributes="0"/>
-              <EmptySpace pref="10" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="lblSenhaAtual" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="txtSenhaAtual" min="-2" pref="31" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="btnExibirSenha" min="-2" pref="22" max="-2" attributes="0"/>
+                  <Component id="txtSenhaAtual" min="-2" pref="29" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="lblTotalProjetos" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="lblTotalPerfis" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -93,7 +98,7 @@
                   <Component id="txtTotalProjetos" min="-2" pref="31" max="-2" attributes="0"/>
                   <Component id="txtTotalPerfis" min="-2" pref="31" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+              <EmptySpace pref="42" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -120,6 +125,11 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Segoe UI" size="14" style="0"/>
         </Property>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JPasswordField" name="txtSenhaAtual">
+      <Properties>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
@@ -179,20 +189,25 @@
         <Property name="text" type="java.lang.String" value="Total de Perfis: "/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtSenhaAtual">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Segoe UI" size="14" style="0"/>
-        </Property>
-        <Property name="enabled" type="boolean" value="false"/>
-      </Properties>
-    </Component>
     <Component class="javax.swing.JLabel" name="lblSenhaAtual">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Segoe UI" size="14" style="0"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Senha atual:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnExibirSenha">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="f2" green="f2" red="f2" type="rgb"/>
+        </Property>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/olho-icon.png"/>
+        </Property>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="null"/>
+        </Property>
       </Properties>
     </Component>
   </SubComponents>
