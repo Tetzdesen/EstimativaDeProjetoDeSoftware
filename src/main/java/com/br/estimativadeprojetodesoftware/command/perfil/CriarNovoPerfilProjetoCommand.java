@@ -1,6 +1,11 @@
 package com.br.estimativadeprojetodesoftware.command.perfil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.JDesktopPane;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
@@ -11,10 +16,12 @@ import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
 public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
     private final JDesktopPane desktop;
     private final PerfilRepositoryMock repository;
+    private final Map<JLabel, JTextField> campos;
 
     public CriarNovoPerfilProjetoCommand(JDesktopPane desktop, PerfilRepositoryMock repository) {
         this.desktop = desktop;
         this.repository = repository;
+        campos = new HashMap<>();
     }
 
     @Override
@@ -25,7 +32,8 @@ public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
         if (windowManager.isFrameAberto(tituloJanela)) {
             windowManager.bringToFront(tituloJanela);
         } else {
-            ManterPerfilView manterPerfilView = new ManterPerfilView(desktop);
+            configuraCampos();
+            ManterPerfilView manterPerfilView = new ManterPerfilView(desktop, campos);
             new ManterPerfilPresenter(manterPerfilView, repository);
             manterPerfilView.setTitle(tituloJanela);
             desktop.add(manterPerfilView);
@@ -37,5 +45,10 @@ public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
             } catch (Exception ignored) {
             }
         }
+    }
+
+    private void configuraCampos() {
+        var campos = perfilRepositoryMock.getPerfis();
+        for ()
     }
 }

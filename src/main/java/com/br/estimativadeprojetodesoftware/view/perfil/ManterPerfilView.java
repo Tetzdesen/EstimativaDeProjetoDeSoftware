@@ -5,6 +5,8 @@
 package com.br.estimativadeprojetodesoftware.view.perfil;
 
 import java.awt.BorderLayout;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.*;
 
@@ -13,10 +15,11 @@ import javax.swing.*;
  * @author kauac
  */
 public class ManterPerfilView extends javax.swing.JInternalFrame {
+    private Map<JLabel, JTextField> campos = new HashMap<>();
     private JLabel lblNome;
     private JDesktopPane desktop;
 
-    public ManterPerfilView(JDesktopPane desktop) {
+    public ManterPerfilView(JDesktopPane desktop, Map<JLabel, JTextField> campos) {
         setTitle("Manter Perfis");
         setResizable(true);
         setClosable(true);
@@ -26,6 +29,7 @@ public class ManterPerfilView extends javax.swing.JInternalFrame {
         setSize(1000, 700);
 
         this.desktop = desktop;
+        this.campos = campos;
 
         JPanel painelPrincipal = new JPanel(new BorderLayout());
         add(painelPrincipal);
@@ -36,6 +40,10 @@ public class ManterPerfilView extends javax.swing.JInternalFrame {
 
     public JDesktopPane getDesktop() {
         return desktop;
+    }
+
+    public void adicionarCampoView(Map<JLabel, JTextField> campos) {
+        this.campos = campos;
     }
 
     
