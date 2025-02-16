@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
+import com.br.estimativadeprojetodesoftware.command.CompartilharProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
@@ -35,7 +36,9 @@ public class CompartilharProjetoPresenter /*implements Observer*/ {
         });
         this.view.getBtnCompartilharProjeto().addActionListener(e -> {
             try {
-            //   realizarCompartilhamento():
+            // buscar usuario remetente
+            new CompartilharProjetoCommand(view.getDesktop(), usuarioRepository);
+            // command.execute()
             } catch (Exception ex) {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
