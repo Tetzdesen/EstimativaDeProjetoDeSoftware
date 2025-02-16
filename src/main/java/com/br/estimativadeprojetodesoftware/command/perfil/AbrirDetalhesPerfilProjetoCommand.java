@@ -3,12 +3,10 @@ package com.br.estimativadeprojetodesoftware.command.perfil;
 import javax.swing.JDesktopPane;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.presenter.ManterPerfilPresenter;
-import com.br.estimativadeprojetodesoftware.presenter.PerfilProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
+import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
-import com.br.estimativadeprojetodesoftware.view.ManterPerfilView;
-import com.br.estimativadeprojetodesoftware.view.PerfilProjetoView;
+import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
 
 public class AbrirDetalhesPerfilProjetoCommand implements ProjetoCommand {
     private final JDesktopPane desktop;
@@ -28,7 +26,7 @@ public class AbrirDetalhesPerfilProjetoCommand implements ProjetoCommand {
         if (windowManager.isFrameAberto(tituloJanela)) {
             windowManager.bringToFront(tituloJanela);
         } else {
-            ManterPerfilView manterPerfilView = new ManterPerfilView();
+            ManterPerfilView manterPerfilView = new ManterPerfilView(desktop);
             new ManterPerfilPresenter(manterPerfilView, repository);
             manterPerfilView.setTitle(tituloJanela);
             desktop.add(manterPerfilView);

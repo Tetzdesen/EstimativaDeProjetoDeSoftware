@@ -1,4 +1,4 @@
-package com.br.estimativadeprojetodesoftware.view;
+package com.br.estimativadeprojetodesoftware.view.perfil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -18,7 +18,7 @@ public class PerfilProjetoView extends JInternalFrame {
     private DefaultTableModel modeloTabela;
     private JDesktopPane desktop;
 
-    public PerfilProjetoView() {
+    public PerfilProjetoView(JDesktopPane desktop) {
         setTitle("Visualizar Perfis");
         setClosable(true);
         setMaximizable(true);
@@ -26,7 +26,7 @@ public class PerfilProjetoView extends JInternalFrame {
         setResizable(true);
         setSize(1000, 700);
 
-        desktop = new JDesktopPane();
+        this.desktop = desktop;
 
         JPanel painelPrincipal = new JPanel(new BorderLayout());
         add(painelPrincipal);

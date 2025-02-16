@@ -1,22 +1,26 @@
-package com.br.estimativadeprojetodesoftware.presenter;
+package com.br.estimativadeprojetodesoftware.presenter.perfil;
 
 import com.br.estimativadeprojetodesoftware.command.AbrirInternalFrameGenericoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.AbrirDetalhesPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.CriarNovoPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.presenter.CadastroPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.ConfigurarMenuJanelaCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.ConfigurarViewCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.WindowCommand;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
-import com.br.estimativadeprojetodesoftware.view.PerfilProjetoView;
+import com.br.estimativadeprojetodesoftware.view.perfil.PerfilProjetoView;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JDesktopPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -36,6 +40,7 @@ public class PerfilProjetoPresenter implements Observer {
 
         this.comandos = inicializarComandos();
         inicializarEExecutarWindowCommands();
+        configuraActionsListerns();
         view.setVisible(true);
     }
 
@@ -45,6 +50,23 @@ public class PerfilProjetoPresenter implements Observer {
                 //new ConfigurarMenuJanelaCommand(this),
                 new SetLookAndFeelCommand()
         ).forEach(WindowCommand::execute);
+    }
+
+    private void configuraActionsListerns() {
+        view.getBtnNovoPerfil().addActionListener(e -> {
+            try {
+                new CriarNovoPerfilProjetoCommand(view.getDesktop(), repository).execute();
+            } catch (Exception ex) {
+                new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+            }
+        });
+        view.getBtnVisualizar().addActionListener(e -> {
+            try {
+                new AbrirDetalhesPerfilProjetoCommand(view.getDesktop(), repository).execute();
+            } catch (Exception ex) {
+                new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+            }
+        });
     }
 
     private Map<String, ProjetoCommand> inicializarComandos() {
