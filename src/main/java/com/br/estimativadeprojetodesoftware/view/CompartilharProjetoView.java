@@ -3,11 +3,11 @@ package com.br.estimativadeprojetodesoftware.view;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.text.DecimalFormat;
 
 public class CompartilharProjetoView extends JInternalFrame {
-    private JLabel lblNome, lblEmail;
-    private JTable tabelaDetalhes;
+
+    private JButton btnCompartilharProjeto;
+    private JTable tabelaUsuarios;
     private DefaultTableModel modeloTabela;
 
     public CompartilharProjetoView() {
@@ -21,20 +21,15 @@ public class CompartilharProjetoView extends JInternalFrame {
         JPanel painelPrincipal = new JPanel(new BorderLayout());
         add(painelPrincipal);
 
-        JPanel painelCabecalho = new JPanel();
-        painelCabecalho.setLayout(new GridLayout(3, 2, 10, 15));
-        painelCabecalho.setBorder(BorderFactory.createTitledBorder("Informações do Projeto"));
+        JPanel painelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        btnCompartilharProjeto = new JButton("Compartilhar Projeto");
+        btnCompartilharProjeto.setSize(120, 20);
+        painelNorte.add(btnCompartilharProjeto);
 
-        lblNome = new JLabel("Nome: ");
-        lblEmail = new JLabel("E-mail: ");
-
-        painelCabecalho.add(lblNome);
-        painelCabecalho.add(lblEmail);
-
-        painelPrincipal.add(painelCabecalho, BorderLayout.NORTH);
+        painelPrincipal.add(painelNorte, BorderLayout.NORTH);
 
         JPanel painelTabela = new JPanel(new BorderLayout());
-        painelTabela.setBorder(BorderFactory.createTitledBorder("Usuários cadastrados"));
+        painelTabela.setBorder(BorderFactory.createTitledBorder("Usuários Cadastrados"));
 
         modeloTabela = new DefaultTableModel(new Object[]{"Nome", "E-mail"}, 0) {
             @Override
@@ -42,23 +37,26 @@ public class CompartilharProjetoView extends JInternalFrame {
                 return false;
             }
         };
-        tabelaDetalhes = new JTable(modeloTabela);
-        tabelaDetalhes.setFillsViewportHeight(true);
+        tabelaUsuarios = new JTable(modeloTabela);
+        tabelaUsuarios.setFillsViewportHeight(true);
 
-        JScrollPane scrollTabela = new JScrollPane(tabelaDetalhes);
+        JScrollPane scrollTabela = new JScrollPane(tabelaUsuarios);
         painelTabela.add(scrollTabela, BorderLayout.CENTER);
         painelPrincipal.add(painelTabela, BorderLayout.CENTER);
     }
 
-    public void atualizarCabecalho(String nome, String email) {
-        lblNome.setText("Nome: " + nome);
-        lblEmail.setText("E-mail: " + email);
+    public JTable getTabelaUsuarios() {
+        return tabelaUsuarios;
+    }
+
+    public JButton getBtnCompartilharProjeto() {
+        return btnCompartilharProjeto;
     }
 
     public void atualizarTabela(Object[][] dados) {
-        modeloTabela.setRowCount(0);
-        for (Object[]linha : dados) {
+        for (Object[] linha : dados) {
             modeloTabela.addRow(linha);
         }
     }
+
 }
