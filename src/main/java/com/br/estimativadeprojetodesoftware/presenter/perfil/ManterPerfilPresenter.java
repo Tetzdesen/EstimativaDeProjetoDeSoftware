@@ -19,7 +19,6 @@ public class ManterPerfilPresenter implements Observer {
 
     public ManterPerfilPresenter(ManterPerfilView view, PerfilRepositoryMock repository) {
         this.view = view;
-        this.view.setVisible(true);
         this.funcionalidades = new ArrayList<>();
         setFuncionalidades();
         this.campos = new LinkedHashMap<>();

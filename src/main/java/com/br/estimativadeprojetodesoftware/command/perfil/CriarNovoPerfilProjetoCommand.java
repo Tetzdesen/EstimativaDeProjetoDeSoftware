@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.perfil.PerfilProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
 
@@ -44,8 +45,8 @@ public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
             }
 
         } else {
-            //configuraCampos();
             ManterPerfilView manterPerfilView = new ManterPerfilView(desktop);
+            new ManterPerfilPresenter(manterPerfilView, repository);
             manterPerfilView.setTitle(tituloJanela);
 
             manterPerfilView.setSize(350, 700);
@@ -54,8 +55,6 @@ public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
             manterPerfilView.setLocation(x, y);
 
             desktop.add(manterPerfilView);
-            desktop.revalidate();
-            desktop.repaint();
             manterPerfilView.setVisible(true);
             
             try {
