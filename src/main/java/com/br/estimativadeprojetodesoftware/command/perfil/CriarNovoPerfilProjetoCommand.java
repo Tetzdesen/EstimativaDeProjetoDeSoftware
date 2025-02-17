@@ -1,6 +1,12 @@
 package com.br.estimativadeprojetodesoftware.command.perfil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
@@ -24,18 +30,50 @@ public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
 
         if (windowManager.isFrameAberto(tituloJanela)) {
             windowManager.bringToFront(tituloJanela);
+
+            try {
+                for (JInternalFrame frame : desktop.getAllFrames()) {
+                    if (frame.getTitle().equals(tituloJanela) && frame.isMaximum()) {
+
+                        frame.setMaximum(false);
+                        frame.setLocation((desktop.getWidth() - frame.getWidth()) / 2,
+                                (desktop.getHeight() - frame.getHeight()) / 2);
+                    }
+                }
+            } catch (Exception ignored) {
+            }
+
         } else {
+            //configuraCampos();
             ManterPerfilView manterPerfilView = new ManterPerfilView(desktop);
-            new ManterPerfilPresenter(manterPerfilView, repository);
             manterPerfilView.setTitle(tituloJanela);
+
+            manterPerfilView.setSize(350, 700);
+            int x = (desktop.getWidth() - manterPerfilView.getWidth()) / 2;
+            int y = (desktop.getHeight() - manterPerfilView.getHeight()) / 2;
+            manterPerfilView.setLocation(x, y);
+
             desktop.add(manterPerfilView);
             desktop.revalidate();
             desktop.repaint();
             manterPerfilView.setVisible(true);
+            
             try {
-                manterPerfilView.setMaximum(true);
+                manterPerfilView.setSelected(true); // Traz o frame para frente e o seleciona
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (manterPerfilView.isMaximum()) {
+                    manterPerfilView.setMaximum(false);
+                }
             } catch (Exception ignored) {
             }
         }
+    }
+
+    private void configuraCampos() {
+        var campos = repository.getPerfis();
     }
 }

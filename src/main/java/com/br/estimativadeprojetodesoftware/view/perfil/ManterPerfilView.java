@@ -1,42 +1,52 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
- */
 package com.br.estimativadeprojetodesoftware.view.perfil;
 
-import java.awt.BorderLayout;
-
+import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
-/**
- *
- * @author kauac
- */
 public class ManterPerfilView extends javax.swing.JInternalFrame {
-    private JLabel lblNome;
     private JDesktopPane desktop;
+    private JPanel painelPrincipal;
+    private JPanel painelCampos;
+    private JScrollPane scrollPane;
 
     public ManterPerfilView(JDesktopPane desktop) {
         setTitle("Manter Perfis");
-        setResizable(true);
-        setClosable(true);
-        setMaximizable(true);
-        setIconifiable(false);
-        setResizable(true);
-        setSize(1000, 700);
+        setSize(600, 300);
 
         this.desktop = desktop;
 
-        JPanel painelPrincipal = new JPanel(new BorderLayout());
+        painelPrincipal = new JPanel(new BorderLayout());
+        painelCampos = new JPanel();
+        painelCampos.setLayout(new BoxLayout(painelCampos, BoxLayout.Y_AXIS));
+        painelCampos.setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        scrollPane = new JScrollPane(painelCampos);
+        painelPrincipal.add(scrollPane, BorderLayout.CENTER);
+
         add(painelPrincipal);
 
-        lblNome = new JLabel("Teste");
-        painelPrincipal.add(lblNome, BorderLayout.CENTER);
+        revalidate();
+        repaint();
     }
 
     public JDesktopPane getDesktop() {
         return desktop;
     }
 
-    
+    public void adicionarCampoView(JLabel label, JSpinner spinner) {
+        JPanel linha = new JPanel();
+        linha.setLayout(new BorderLayout(5, 5));
+
+        label.setPreferredSize(new Dimension(150, 25));
+        spinner.setPreferredSize(new Dimension(80, 25));
+
+        linha.add(label, BorderLayout.WEST);
+        linha.add(spinner, BorderLayout.CENTER);
+
+        painelCampos.add(linha);
+
+        painelCampos.revalidate();
+        painelCampos.repaint();
+    }
 }
