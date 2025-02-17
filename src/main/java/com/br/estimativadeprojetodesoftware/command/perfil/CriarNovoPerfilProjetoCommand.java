@@ -16,12 +16,10 @@ import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
 public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
     private final JDesktopPane desktop;
     private final PerfilRepositoryMock repository;
-    private final Map<JLabel, JTextField> campos;
 
     public CriarNovoPerfilProjetoCommand(JDesktopPane desktop, PerfilRepositoryMock repository) {
         this.desktop = desktop;
         this.repository = repository;
-        campos = new HashMap<>();
     }
 
     @Override
@@ -32,8 +30,8 @@ public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
         if (windowManager.isFrameAberto(tituloJanela)) {
             windowManager.bringToFront(tituloJanela);
         } else {
-            configuraCampos();
-            ManterPerfilView manterPerfilView = new ManterPerfilView(desktop, campos);
+            //configuraCampos();
+            ManterPerfilView manterPerfilView = new ManterPerfilView(desktop);
             new ManterPerfilPresenter(manterPerfilView, repository);
             manterPerfilView.setTitle(tituloJanela);
             desktop.add(manterPerfilView);
@@ -48,7 +46,6 @@ public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
     }
 
     private void configuraCampos() {
-        var campos = perfilRepositoryMock.getPerfis();
-        for ()
+        var campos = repository.getPerfis();
     }
 }
