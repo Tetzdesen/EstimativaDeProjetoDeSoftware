@@ -46,12 +46,9 @@ public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
         } else {
             //configuraCampos();
             ManterPerfilView manterPerfilView = new ManterPerfilView(desktop);
-            ManterPerfilPresenter presenter = new ManterPerfilPresenter(manterPerfilView, repository);
             manterPerfilView.setTitle(tituloJanela);
 
-            int height = presenter.getFuncionalidades().size() * 45;
-
-            manterPerfilView.setSize(350, height);
+            manterPerfilView.setSize(350, 700);
             int x = (desktop.getWidth() - manterPerfilView.getWidth()) / 2;
             int y = (desktop.getHeight() - manterPerfilView.getHeight()) / 2;
             manterPerfilView.setLocation(x, y);
