@@ -11,6 +11,7 @@ import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.GlobalWindowManager;
 import com.br.estimativadeprojetodesoftware.view.PrincipalView;
 import java.awt.event.MouseListener;
@@ -61,7 +62,7 @@ public final class PrincipalPresenter implements Observer {
         comandos.put("Ver perfis de projeto", new VisualizarPerfisProjetoCommand(view.getDesktop(), perfilRepositoryMock));
         comandos.put("Elaborar estimativa", new MostrarMensagemProjetoCommand("Elaborar estimativa ainda não implementada"));
         comandos.put("Visualizar estimativa", new MostrarMensagemProjetoCommand("Visualizar estimativa ainda não implementada"));
-        comandos.put("Compartilhar projeto de estimativa", new AbrirCompartilhamentoProjetoCommand(view.getDesktop(), usuarioRepository));
+        comandos.put("Compartilhar projeto de estimativa", new AbrirCompartilhamentoProjetoCommand(view.getDesktop(), this));
         comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
         comandos.put("Novo projeto", new CriarProjetoProjetoCommand(projetoRepository, view.getDesktop()));
         comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
@@ -122,9 +123,31 @@ public final class PrincipalPresenter implements Observer {
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Exportar projeto de estimativa", "action", comandos.get("Exportar projeto de estimativa")));
             noProjetos.adicionarFilho(noProjeto);
 
-            NoArvoreComposite noProjetoCompartilhado = construtorDeArvoreNavegacaoService.criarNo(projeto.getNome(), "projeto", cmdDetalhes);
-            adicionarMenuContextual(projeto, noProjetoCompartilhado);
+        }
 
+        List<Projeto> projetosCompartilhados = UsuarioLogadoSingleton.getInstancia().getUsuario().getProjetosCompartilhados();
+
+        for (final Projeto projetoCompartilhado : listaProjetos) {
+            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()) {
+                @Override
+                public void execute() {
+                    String tituloJanela = "Detalhes do Projeto: " + projetoCompartilhado.getNome();
+                    WindowManager windowManager = WindowManager.getInstance();
+
+                    if (!windowManager.isFrameAberto(tituloJanela)) {
+                        super.execute();
+                        bloquearMinimizacao(tituloJanela);
+                    } else {
+                        windowManager.bringToFront(tituloJanela);
+                    }
+                }
+            };
+            cmdDetalhes.setProjetoNome(projetoCompartilhado.getNome());
+            NoArvoreComposite noProjetoCompartilhado = construtorDeArvoreNavegacaoService.criarNo(projetoCompartilhado.getNome(), "projeto", cmdDetalhes);
+
+            adicionarMenuContextual(projetoCompartilhado, noProjetoCompartilhado);
+
+            adicionarMenuContextual(projetoCompartilhado, noProjetoCompartilhado);
             noProjetoCompartilhado.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa", "action", comandos.get("Visualizar estimativa")));
             noProjetosCompartilhados.adicionarFilho(noProjetoCompartilhado);
         }
