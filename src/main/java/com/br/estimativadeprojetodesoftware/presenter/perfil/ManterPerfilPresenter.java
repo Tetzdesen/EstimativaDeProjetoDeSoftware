@@ -23,8 +23,16 @@ public class ManterPerfilPresenter implements Observer {
         this.funcionalidades = new ArrayList<>();
         setFuncionalidades();
         this.campos = new LinkedHashMap<>();
+        configuraView();
 
         carregarCampos();
+    }
+
+    private void configuraView() {
+        view.setClosable(true);
+        view.setIconifiable(true);
+        view.setResizable(false);
+        view.setMaximizable(false);
     }
 
     private void carregarCampos() {
@@ -45,8 +53,19 @@ public class ManterPerfilPresenter implements Observer {
             "Básico", 
             "Profissional", 
             "Cadastro por Email e Senha", 
-            "Cadastro Pelo Facebook"
+            "Cadastro Pelo Facebook",
+            "Cadastro por Email e Senha", 
+            "Cadastro por Email e Senha", 
+            "Cadastro por Email e Senha", 
+            "Cadastro por Email e Senha", 
+            "Cadastro por Email e Senha", 
+            "Cadastro por Email e Senha", 
+            "Cadastro por Email e Senha"
         );
+    }
+
+    public List<String> getFuncionalidades() {
+        return funcionalidades;
     }
 
     @Override

@@ -12,11 +12,7 @@ public class ManterPerfilView extends javax.swing.JInternalFrame {
 
     public ManterPerfilView(JDesktopPane desktop) {
         setTitle("Manter Perfis");
-        setResizable(true);
-        setClosable(true);
-        setMaximizable(true);
-        setIconifiable(false);
-        setSize(1000, 700);
+        setSize(600, 300);
 
         this.desktop = desktop;
 
@@ -50,7 +46,6 @@ public class ManterPerfilView extends javax.swing.JInternalFrame {
 
         painelCampos.add(linha);
 
-        // Atualiza a interface
         painelCampos.revalidate();
         painelCampos.repaint();
     }
