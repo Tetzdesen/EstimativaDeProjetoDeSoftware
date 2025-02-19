@@ -5,6 +5,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class ManterPerfilView extends javax.swing.JInternalFrame {
+    private JButton btnSalvar;
     private JDesktopPane desktop;
     private JPanel painelPrincipal;
     private JPanel painelCampos;
@@ -12,11 +13,15 @@ public class ManterPerfilView extends javax.swing.JInternalFrame {
 
     public ManterPerfilView(JDesktopPane desktop) {
         setTitle("Manter Perfis");
-        //setSize(600, 300);
 
         this.desktop = desktop;
 
         painelPrincipal = new JPanel(new BorderLayout());
+
+        btnSalvar = new JButton("Salvar");
+        btnSalvar.setSize(120, 20);
+        painelPrincipal.add(btnSalvar);
+
         painelCampos = new JPanel();
         painelCampos.setLayout(new BoxLayout(painelCampos, BoxLayout.Y_AXIS));
         painelCampos.setBorder(new EmptyBorder(20, 20, 20, 20));
