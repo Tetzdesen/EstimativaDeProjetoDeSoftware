@@ -44,7 +44,7 @@ public class PerfilProjetoView extends JInternalFrame {
 
         JPanel painelTabela = new JPanel(new BorderLayout());
 
-        modeloTabela = new DefaultTableModel(new Object[]{"Nome", "Dias", "Valor"}, 0) {
+        modeloTabela = new DefaultTableModel(new Object[]{"Nome"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;

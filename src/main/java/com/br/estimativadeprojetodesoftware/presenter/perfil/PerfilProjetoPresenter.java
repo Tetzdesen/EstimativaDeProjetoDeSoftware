@@ -86,8 +86,6 @@ public class PerfilProjetoPresenter implements Observer {
     private void carregarDetalhes(Perfil perfil) {
         Object[] dadosTabela = new Object[3];
         dadosTabela[0] = perfil.getNome();
-        dadosTabela[1] = 10;
-        dadosTabela[2] = 50;
 
         view.atualizarTabela(dadosTabela);
     }
