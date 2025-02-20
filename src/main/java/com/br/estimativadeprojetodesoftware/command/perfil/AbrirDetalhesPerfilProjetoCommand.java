@@ -32,7 +32,7 @@ public class AbrirDetalhesPerfilProjetoCommand implements ProjetoCommand {
             desktop.add(manterPerfilView);
             manterPerfilView.setVisible(true);
             try {
-                manterPerfilView.setMaximum(true);
+                //manterPerfilView.setMaximum(true);
             } catch (Exception ignored) {
             }
         }

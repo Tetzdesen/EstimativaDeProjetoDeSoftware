@@ -18,8 +18,6 @@ public class PerfilRepositoryMock {
         //perfil 1
         Perfil perfil1 = new Perfil("Web/Back-end");
 
-        perfil1.adicionarTamDispositivo("Médio", 30);
-        perfil1.adicionarNivelUI("Básico", 450);
         perfil1.adicionarFuncionalidade("Cadastro por E-mail e Senha", 1);
         perfil1.adicionarFuncionalidade("Painel (Dashboard)", 5);
         perfil1.adicionarFuncionalidade("Contas Multi-tenant", 3);
@@ -34,8 +32,6 @@ public class PerfilRepositoryMock {
         //perfil 2
         Perfil perfil2 = new Perfil("Android");
 
-        perfil2.adicionarTamDispositivo("Grande", 30);
-        perfil2.adicionarNivelUI("Avançado", 450);
         perfil2.adicionarFuncionalidade("Cadastro por E-mail e Senha", 1);
         perfil2.adicionarFuncionalidade("Painel (Dashboard)", 5);
         perfil2.adicionarFuncionalidade("Contas Multi-tenant", 3);

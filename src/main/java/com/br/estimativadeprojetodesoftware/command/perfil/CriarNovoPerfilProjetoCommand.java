@@ -49,24 +49,25 @@ public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
             new ManterPerfilPresenter(manterPerfilView, repository);
             manterPerfilView.setTitle(tituloJanela);
 
-            manterPerfilView.setSize(350, 700);
+            manterPerfilView.setSize(700, 700);
             int x = (desktop.getWidth() - manterPerfilView.getWidth()) / 2;
             int y = (desktop.getHeight() - manterPerfilView.getHeight()) / 2;
             manterPerfilView.setLocation(x, y);
 
-            desktop.add(manterPerfilView);
+            //desktop.add(manterPerfilView);
+            manterPerfilView.setModal(true);
             manterPerfilView.setVisible(true);
             
             try {
-                manterPerfilView.setSelected(true); // Traz o frame para frente e o seleciona
+                //manterPerfilView.setSelected(true); // Traz o frame para frente e o seleciona
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             try {
-                if (manterPerfilView.isMaximum()) {
-                    manterPerfilView.setMaximum(false);
-                }
+                //if (manterPerfilView.isMaximum()) {
+                  //  manterPerfilView.setMaximum(false);
+                //}
             } catch (Exception ignored) {
             }
         }
