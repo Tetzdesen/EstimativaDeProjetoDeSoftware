@@ -1,6 +1,7 @@
-package com.br.estimativadeprojetodesoftware.command;
+package com.br.estimativadeprojetodesoftware.command.usuario;
 
-import com.br.estimativadeprojetodesoftware.presenter.UsuarioPresenter;
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
+import com.br.estimativadeprojetodesoftware.presenter.usuario.UsuarioPresenter;
 
 /**
  *

@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.AbrirCriarProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.UsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.*;
 import com.br.estimativadeprojetodesoftware.command.perfil.VisualizarPerfisProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
@@ -15,7 +16,6 @@ import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.GlobalWindowManager;
 import com.br.estimativadeprojetodesoftware.view.PrincipalView;
-import java.awt.event.MouseListener;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -229,5 +229,4 @@ public final class PrincipalPresenter implements Observer {
     public void setCriarBarraService(BarraService criarBarraService) {
         this.criarBarraService = criarBarraService;
     }
-
 }

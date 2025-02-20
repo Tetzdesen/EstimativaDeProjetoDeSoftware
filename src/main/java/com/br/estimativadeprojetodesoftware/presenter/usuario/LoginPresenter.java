@@ -1,7 +1,9 @@
-package com.br.estimativadeprojetodesoftware.presenter;
+package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
+import com.br.estimativadeprojetodesoftware.presenter.usuario.CadastroUsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
+import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
@@ -25,7 +27,7 @@ public class LoginPresenter {
     private UsuarioLogadoSingleton usuarioLogado;
 
     public LoginPresenter(ProjetoRepositoryMock repositoryProjeto, UsuarioRepositoryMock repositoryUsuario) {
-        this.view = new LoginView();
+        this.view = new LoginView(null, true);
         this.repositoryProjeto = repositoryProjeto;
         this.repositoryUsuario = repositoryUsuario;
         usuarioLogado = UsuarioLogadoSingleton.getInstancia();
@@ -33,11 +35,10 @@ public class LoginPresenter {
     }
 
     private void configuraView() {
-        view.setSize(546, 450);
-        view.setResizable(false);
+       // view.setSize(546, 450);
+       // view.setResizable(false);
 
         view.setLocationRelativeTo(null);
-        //  view.setExtendedState(JFrame.NORMAL);
         configuraListerns();
         view.setVisible(true);
     }
@@ -67,7 +68,7 @@ public class LoginPresenter {
         
         view.getBtnCadastrar().addActionListener(e -> {
             // view.dispose();
-            new CadastroPresenter(repositoryUsuario);
+            new CadastroUsuarioPresenter(repositoryUsuario);
         });
     }
 
@@ -86,7 +87,6 @@ public class LoginPresenter {
         }
 
         if (usuario.getSenha().equals(senha)) {
-            new MostrarMensagemProjetoCommand("Login realizado com sucesso!").execute();
             usuarioLogado.setUsuario(usuario);
             view.dispose();
 

@@ -8,12 +8,13 @@ import javax.swing.JTextField;
  *
  * @author tetzner
  */
-public class LoginView extends javax.swing.JDialog{
+public class LoginView extends javax.swing.JDialog {
 
     /**
      * Creates new form Login
      */
-    public LoginView() {
+    public LoginView(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
     }
 
@@ -24,7 +25,7 @@ public class LoginView extends javax.swing.JDialog{
     public JPasswordField getTxtSenha() {
         return txtSenha;
     }
-    
+
     public JButton getBtnEntrar() {
         return btnEntrar;
     }

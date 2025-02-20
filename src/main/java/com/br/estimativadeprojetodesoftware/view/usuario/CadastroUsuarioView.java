@@ -1,4 +1,4 @@
-package com.br.estimativadeprojetodesoftware.view;
+package com.br.estimativadeprojetodesoftware.view.usuario;
 
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
@@ -8,9 +8,9 @@ import javax.swing.JTextField;
  *
  * @author tetzner
  */
-public class CadastroView extends javax.swing.JFrame {
+public class CadastroUsuarioView extends javax.swing.JFrame {
 
-    public CadastroView() {
+    public CadastroUsuarioView() {
         initComponents();
     }
     
