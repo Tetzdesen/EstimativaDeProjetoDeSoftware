@@ -1,18 +1,20 @@
-package com.br.estimativadeprojetodesoftware.presenter;
+package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
-import com.br.estimativadeprojetodesoftware.command.EditarUsuarioCommand;
-import com.br.estimativadeprojetodesoftware.command.ExcluirUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.EditarUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.ExcluirUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.SalvarUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.SalvarUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
+import com.br.estimativadeprojetodesoftware.presenter.Observer;
+import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 import com.br.estimativadeprojetodesoftware.service.IconService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.state.UsuarioPresenterState;
 import com.br.estimativadeprojetodesoftware.state.VisualizacaoState;
-import com.br.estimativadeprojetodesoftware.view.UsuarioView;
+import com.br.estimativadeprojetodesoftware.view.usuario.UsuarioView;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;

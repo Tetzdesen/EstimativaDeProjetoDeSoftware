@@ -1,11 +1,12 @@
-package com.br.estimativadeprojetodesoftware.command;
+package com.br.estimativadeprojetodesoftware.command.usuario;
 
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
-import com.br.estimativadeprojetodesoftware.presenter.UsuarioPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.usuario.UsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
-import com.br.estimativadeprojetodesoftware.view.UsuarioView;
+import com.br.estimativadeprojetodesoftware.view.usuario.UsuarioView;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 import java.awt.BorderLayout;
 import java.util.Map;

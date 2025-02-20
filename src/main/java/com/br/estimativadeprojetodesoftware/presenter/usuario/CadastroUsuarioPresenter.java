@@ -1,11 +1,11 @@
-package com.br.estimativadeprojetodesoftware.presenter;
+package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.IconService;
 import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
-import com.br.estimativadeprojetodesoftware.view.CadastroView;
+import com.br.estimativadeprojetodesoftware.view.usuario.CadastroUsuarioView;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Optional;
@@ -16,14 +16,14 @@ import javax.swing.ImageIcon;
  *
  * @author tetzner
  */
-public class CadastroPresenter {
+public class CadastroUsuarioPresenter {
 
-    private CadastroView view;
+    private CadastroUsuarioView view;
     private UsuarioRepositoryMock repositoryUsuario;
     private ValidadorSenhaService validadorDeSenha;
 
-    public CadastroPresenter(UsuarioRepositoryMock repositoryUsuario) {
-        this.view = new CadastroView();
+    public CadastroUsuarioPresenter(UsuarioRepositoryMock repositoryUsuario) {
+        this.view = new CadastroUsuarioView();
         this.repositoryUsuario = repositoryUsuario;
         this.validadorDeSenha = new ValidadorSenhaService();
         configuraView();
@@ -116,7 +116,7 @@ public class CadastroPresenter {
         }
     }
 
-    public CadastroView getView() {
+    public CadastroUsuarioView getView() {
         return view;
     }
 

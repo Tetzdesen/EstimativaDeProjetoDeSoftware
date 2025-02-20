@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.state;
 
 import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
-import com.br.estimativadeprojetodesoftware.presenter.UsuarioPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.usuario.UsuarioPresenter;
 
 /**
  *

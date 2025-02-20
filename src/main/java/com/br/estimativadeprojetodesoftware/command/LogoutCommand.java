@@ -21,6 +21,6 @@ public class LogoutCommand implements ProjetoCommand {
         // Fecha todas as janelas abertas
         principalPresenter.getView().dispose();
        // new FecharTodasJanelasCommand(principalPresenter).execute();
-        new LoginCommand().execute();
+       // new LoginCommand().execute();
     }
 }

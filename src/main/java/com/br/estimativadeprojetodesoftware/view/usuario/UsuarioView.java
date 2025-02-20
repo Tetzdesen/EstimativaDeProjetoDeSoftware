@@ -1,4 +1,4 @@
-package com.br.estimativadeprojetodesoftware.view;
+package com.br.estimativadeprojetodesoftware.view.usuario;
 
 import javax.swing.JButton;
 import javax.swing.JPasswordField;

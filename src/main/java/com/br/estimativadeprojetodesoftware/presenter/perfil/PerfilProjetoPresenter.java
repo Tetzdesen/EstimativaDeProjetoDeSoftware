@@ -6,7 +6,6 @@ import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.AbrirDetalhesPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.CriarNovoPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
-import com.br.estimativadeprojetodesoftware.presenter.CadastroPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.ConfigurarMenuJanelaCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.ConfigurarViewCommand;

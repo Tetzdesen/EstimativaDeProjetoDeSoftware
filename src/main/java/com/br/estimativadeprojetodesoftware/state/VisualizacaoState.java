@@ -3,7 +3,7 @@ package com.br.estimativadeprojetodesoftware.state;
 import com.br.estimativadeprojetodesoftware.command.LogoutCommand;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
-import com.br.estimativadeprojetodesoftware.presenter.UsuarioPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.usuario.UsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.FecharTodasJanelasCommand;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import javax.swing.JOptionPane;
