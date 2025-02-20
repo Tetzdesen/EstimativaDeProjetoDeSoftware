@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
+import com.br.estimativadeprojetodesoftware.command.projeto.AbrirCriarProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.*;
 import com.br.estimativadeprojetodesoftware.command.perfil.VisualizarPerfisProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
@@ -64,7 +65,8 @@ public final class PrincipalPresenter implements Observer {
         comandos.put("Visualizar estimativa", new MostrarMensagemProjetoCommand("Visualizar estimativa ainda não implementada"));
         comandos.put("Compartilhar projeto de estimativa", new AbrirCompartilhamentoProjetoCommand(view.getDesktop(), this));
         comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
-        comandos.put("Novo projeto", new CriarProjetoProjetoCommand(projetoRepository, view.getDesktop()));
+        //  comandos.put("Novo projeto", new CriarProjetoProjetoCommand(projetoRepository, view.getDesktop()));
+        comandos.put("Novo projeto", new AbrirCriarProjetoCommand(view.getDesktop(), projetoRepository));
         comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
         comandos.put("Abrir detalhes", new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()));
         comandos.put("Logout", new LogoutCommand(this));
