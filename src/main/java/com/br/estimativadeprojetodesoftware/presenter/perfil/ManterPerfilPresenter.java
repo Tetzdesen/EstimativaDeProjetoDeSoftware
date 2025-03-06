@@ -1,133 +1,151 @@
 package com.br.estimativadeprojetodesoftware.presenter.perfil;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import javax.swing.JLabel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import com.br.estimativadeprojetodesoftware.builder.DefaultBuilder;
+import com.br.estimativadeprojetodesoftware.builder.Diretor;
+import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
-import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
+import com.br.estimativadeprojetodesoftware.state.perfil.InclusaoPerfilState;
+import com.br.estimativadeprojetodesoftware.state.perfil.ManterPerfilPresenterState;
+import com.br.estimativadeprojetodesoftware.state.perfil.VisualizacaoPerfilState;
 import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
 
-public class ManterPerfilPresenter implements Observer {
+public class ManterPerfilPresenter {
     private ManterPerfilView view;
-    private List<String> funcionalidades;
-    private Map<JLabel, JSpinner> campos;
     private PerfilRepositoryMock repository;
+    private ManterPerfilPresenterState estado;
+    private Perfil perfil;
 
-    public ManterPerfilPresenter(ManterPerfilView view, PerfilRepositoryMock repository) {
+    public ManterPerfilPresenter(ManterPerfilView view, PerfilRepositoryMock repository, Perfil perfil) {
         this.view = view;
-        this.funcionalidades = new ArrayList<>();
         this.repository = repository;
-        setFuncionalidades();
-        this.campos = new LinkedHashMap<>();
+        this.perfil = perfil;
         configuraView();
+        configuraActionsListerns();
 
-        carregarCampos();
+        setAllBtnVisibleFalse();
+        //carregarCampos();
+
+        if (perfil == null) {
+            this.estado = new InclusaoPerfilState(this);
+        } else {
+            this.estado = new VisualizacaoPerfilState(this);
+        }
     }
 
     private void configuraView() {
-        //view.setClosable(true);
-        //view.setIconifiable(true);
-        //view.setResizable(false);
-        //view.setMaximizable(false);
+        setStatusBotaoRemover(false);
     }
 
-    private void carregarCampos() {
-        /*
-        for (String funcionalidade : funcionalidades) {
-            JSpinner spinner = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
-            JLabel label = new JLabel(funcionalidade);
-            campos.put(label, spinner);
-            view.adicionarCampoView(label, spinner);
-        }
-             */
+    private void configuraActionsListerns() {
+        view.getBtnAdicionarCampo().addActionListener(e -> {
+            try {
+                adicionarNovoCampo();
+            } catch (Exception ex) {
+                new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+            }
+        });
 
-        /*
-        for (String campo : repository.getPerfis().get(0).getFuncionalidades()) {
+        view.getBtnRemoverCampo().addActionListener(e -> {
+            try {
+                removerCampo();
+            } catch (Exception ex) {
+                new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+            }
+        });
 
+        this.view.getTabelaDetalhes().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent evt) {
+                setStatusBotaoRemover(true);
+            }
+        });
+    }
+
+    public void adicionarNovoCampo() {
+        view.getModeloTabela().addRow(new Object[]{"", "", ""});
+
+        int novaLinha = view.getModeloTabela().getRowCount() - 1;
+        
+        view.getTabelaDetalhes().setRowSelectionInterval(novaLinha, novaLinha);
+            
+        view.getTabelaDetalhes().setColumnSelectionInterval(0, 0);
+            
+        view.getTabelaDetalhes().editCellAt(novaLinha, 0);
+            
+        view.getTabelaDetalhes().requestFocusInWindow();
+
+        view.getTabelaDetalhes().getCellRect(novaLinha, 0, true);
+
+        view.getTabelaDetalhes().scrollRectToVisible(view.getTabelaDetalhes().getCellRect(novaLinha, 0, true));
+    }
+
+    public void removerCampo() {
+        int linhaSelecionada = view.getTabelaDetalhes().getSelectedRow();
+
+        if (linhaSelecionada == -1) {
+            JOptionPane.showMessageDialog(view, "Selecione uma linha para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-         */
-        Object[][] dadosTabela = repository.getPerfis().get(0).getFuncionalidades()
+
+        int resposta = JOptionPane.showConfirmDialog(
+            view, 
+            "Tem certeza que deseja remover este campo?", 
+            "Confirmação", 
+            JOptionPane.YES_NO_OPTION
+        );
+
+        if (resposta == JOptionPane.YES_OPTION) {
+            view.getModeloTabela().removeRow(linhaSelecionada);
+        }
+    }
+
+    public void carregarCampos(Perfil perfil) {
+        Object[][] dadosTabela = perfil.getFuncionalidades()
                 .entrySet()
                 .stream()
-                .map(entry -> new Object[]{ entry.getKey() })
+                .map(entry -> {
+                    String nomeFuncionalidade = entry.getKey();
+                    double valor = entry.getValue();
+                    return new Object[]{ nomeFuncionalidade, valor };
+                })
                 .toArray(Object[][]::new);
 
-
-        view.atualizarTabela(dadosTabela);
-    }
-/*
-    private void carregarDetalhesPerfil() {
-        List<Perfil> perfis = repository.getPerfis();
-        for(Perfil perfil : perfis) {
-            Object[] dadosTabela = new Object[3];
-            dadosTabela[0] = perfil.getNome();
-
-            view.atualizarTabela(dadosTabela);
-        }
-    }
-
-    private void carregarDetalhes(Perfil perfil) {
-        Object[] dadosTabela = new Object[3];
-        dadosTabela[0] = perfil.getNome();
-
         view.atualizarTabela(dadosTabela);
     }
 
- */
-    private void setFuncionalidades() {
-        funcionalidades = List.of(
-            "Pequeno", 
-            "Médio", 
-            "Grande", 
-            "MVP", 
-            "Básico", 
-            "Profissional", 
-            "Cadastro por Email e Senha", 
-            "Cadastro Pelo Facebook",
-            "Cadastro por Email e Senha", 
-            "Pequeno", 
-            "Médio", 
-            "Grande", 
-            "MVP", 
-            "Básico", 
-            "Profissional", 
-            "Cadastro por Email e Senha", 
-            "Cadastro Pelo Facebook",
-            "Cadastro por Email e Senha",
-            "Pequeno", 
-            "Médio", 
-            "Grande", 
-            "MVP", 
-            "Básico", 
-            "Profissional", 
-            "Cadastro por Email e Senha", 
-            "Cadastro Pelo Facebook",
-            "Cadastro por Email e Senha", 
-            "Pequeno", 
-            "Médio", 
-            "Grande", 
-            "MVP", 
-            "Básico", 
-            "Profissional", 
-            "Cadastro por Email e Senha", 
-            "Cadastro Pelo Facebook",
-            "Cadastro por Email e Senha"
-        );
+    private void setStatusBotaoRemover(boolean status) {
+        this.view.getBtnRemoverCampo().setEnabled(status);
     }
 
-    public List<String> getFuncionalidades() {
-        return funcionalidades;
+    public void setAllBtnVisibleFalse() {
+        this.view.getBtnAdicionarCampo().setVisible(false);
+        this.view.getBtnRemoverCampo().setVisible(false);
+        this.view.getBtnSalvar().setVisible(false);
+        this.view.getBtnEditar().setVisible(false);
+        this.view.getBtnExcluir().setVisible(false);
+        this.view.getBtnCancelar().setVisible(false);
     }
 
-    @Override
-    public void update() {
-        // Método necessário para Observer, pode ser implementado no futuro
+    public ManterPerfilView getView() {
+        return view;
     }
+
+    public PerfilRepositoryMock getRepository() {
+        return repository;
+    }
+
+    public Perfil getPerfil() {
+        return perfil;
+    }
+
+    public void setEstado(ManterPerfilPresenterState estado) {
+        this.estado = estado;
+    }
+
 }

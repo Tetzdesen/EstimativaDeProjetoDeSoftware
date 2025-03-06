@@ -12,7 +12,6 @@ import java.util.UUID;
  * @author kauac
  */
 public class PerfilProjetoView extends JInternalFrame {
-    //private JLabel lblTotalPerfis;
     private JTable tabelaDetalhes;
     private JButton btnNovoPerfil, btnVisualizar;
     private DefaultTableModel modeloTabela;
@@ -44,7 +43,7 @@ public class PerfilProjetoView extends JInternalFrame {
 
         JPanel painelTabela = new JPanel(new BorderLayout());
 
-        modeloTabela = new DefaultTableModel(new Object[]{"Nome"}, 0) {
+        modeloTabela = new DefaultTableModel(new Object[]{"id", "Nome"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -72,6 +71,10 @@ public class PerfilProjetoView extends JInternalFrame {
 
     public JTable getTablePerfis() {
         return tabelaDetalhes;
+    }
+
+    public DefaultTableModel getModeloTabela() {
+        return modeloTabela;
     }
 
     public JButton getBtnVisualizar() {

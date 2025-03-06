@@ -2,7 +2,7 @@ package com.br.estimativadeprojetodesoftware.model;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -11,7 +11,8 @@ public class Perfil {
 
     private UUID id;
     private String nome;
-    private Map<String, Integer> funcionalidades;
+    private Map<String, Double> funcionalidades;
+    private boolean isPerfilBackEnd;
     private LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
@@ -19,16 +20,17 @@ public class Perfil {
     public Perfil(String nome) {
         this.id = UUID.randomUUID();
         this.nome = nome;
-        this.funcionalidades = new HashMap<>();
+        this.funcionalidades = new LinkedHashMap<>();
         this.created_at = LocalDateTime.now();
         this.update_at = null;
         this.deleted_at = null;
     }
 
-    public Perfil(UUID id, String nome, Map<String, Integer> funcionalidades, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at) {
+    public Perfil(UUID id, String nome, Map<String, Double> funcionalidades, boolean isPerfilBackEnd, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at) {
         this.id = id;
         this.nome = nome;
         this.funcionalidades = funcionalidades;
+        this.isPerfilBackEnd = isPerfilBackEnd;
         this.created_at = created_at;
         this.update_at = update_at;
         this.deleted_at = deleted_at;
@@ -42,8 +44,12 @@ public class Perfil {
         return nome;
     }
 
-    public Map<String, Integer> getFuncionalidades() {
+    public Map<String, Double> getFuncionalidades() {
         return Collections.unmodifiableMap(funcionalidades);
+    }
+
+    public boolean isPerfilBackEnd() {
+        return isPerfilBackEnd;
     }
     
     public LocalDateTime getCreated_at() {
@@ -56,6 +62,10 @@ public class Perfil {
 
     public LocalDateTime getDeleted_at() {
         return deleted_at;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public void setUpdate_at(LocalDateTime update_at) {
@@ -72,7 +82,7 @@ public class Perfil {
         this.deleted_at = deleted_at;
     }
 
-    public void adicionarFuncionalidade(String nomeFuncionalidade, int dias) {
+    public void adicionarFuncionalidade(String nomeFuncionalidade, double dias) {
         if (nome == null || nome.isEmpty()) {
             throw new IllegalArgumentException("Erro: Nome da funcionalidade não pode ser vazio ou nula.");
         }
@@ -80,6 +90,14 @@ public class Perfil {
             throw new IllegalArgumentException("Erro: dias não pode ser negativo. Nome da funcionalidade: " + nome + " dias: " + dias);
         }
         funcionalidades.put(nomeFuncionalidade, dias);
+    }
+
+    public void removerFuncionalidades() {
+        funcionalidades = new LinkedHashMap<>();
+    }
+
+    public void setPerfilBackEnd(boolean isPerfilBackEnd) {
+        this.isPerfilBackEnd = isPerfilBackEnd;
     }
 
     @Override

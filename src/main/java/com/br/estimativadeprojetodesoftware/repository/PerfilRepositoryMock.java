@@ -3,11 +3,13 @@ package com.br.estimativadeprojetodesoftware.repository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.Subject;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 
-public class PerfilRepositoryMock {
+public class PerfilRepositoryMock implements Subject {
     private final List<Perfil> perfis;
     private final List<Observer> observers;
     
@@ -46,5 +48,35 @@ public class PerfilRepositoryMock {
 
     public List<Perfil> getPerfis() {
         return Collections.unmodifiableList(perfis);
+    }
+
+    public void setPerfil(Perfil perfil) {
+        perfis.add(perfil);
+    }
+
+    public Perfil buscarPerfilPorId(UUID id) {
+        for (Perfil perfil : perfis) {
+            if (perfil.getId().equals(id)) {
+                return perfil;
+            }
+        }
+        throw new RuntimeException("Nenhum perfil encontrado");
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update();
+        }
     }
 }
