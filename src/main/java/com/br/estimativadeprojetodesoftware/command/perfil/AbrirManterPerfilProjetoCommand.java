@@ -1,32 +1,30 @@
 package com.br.estimativadeprojetodesoftware.command.perfil;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
+import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
-import com.br.estimativadeprojetodesoftware.presenter.perfil.PerfilProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
 
-public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
+public class AbrirManterPerfilProjetoCommand implements ProjetoCommand {
     private final JDesktopPane desktop;
     private final PerfilRepositoryMock repository;
+    private final Perfil perfil;
 
-    public CriarNovoPerfilProjetoCommand(JDesktopPane desktop, PerfilRepositoryMock repository) {
+    public AbrirManterPerfilProjetoCommand(JDesktopPane desktop, PerfilRepositoryMock repository, Perfil perfil) {
         this.desktop = desktop;
         this.repository = repository;
+        this.perfil = perfil;
     }
 
     @Override
     public void execute() {
-        String tituloJanela = "Criar Novo Perfil";
+        String tituloJanela = "Manter Perfil de Projeto";
+        
         WindowManager windowManager = WindowManager.getInstance();
 
         if (windowManager.isFrameAberto(tituloJanela)) {
@@ -46,33 +44,18 @@ public class CriarNovoPerfilProjetoCommand implements ProjetoCommand {
 
         } else {
             ManterPerfilView manterPerfilView = new ManterPerfilView(desktop);
-            new ManterPerfilPresenter(manterPerfilView, repository);
+            new ManterPerfilPresenter(manterPerfilView, repository, perfil);
             manterPerfilView.setTitle(tituloJanela);
 
-            manterPerfilView.setSize(350, 700);
+            manterPerfilView.setSize(700, 700);
             int x = (desktop.getWidth() - manterPerfilView.getWidth()) / 2;
             int y = (desktop.getHeight() - manterPerfilView.getHeight()) / 2;
             manterPerfilView.setLocation(x, y);
 
-            desktop.add(manterPerfilView);
+            manterPerfilView.setModal(true);
             manterPerfilView.setVisible(true);
             
-            try {
-                manterPerfilView.setSelected(true); // Traz o frame para frente e o seleciona
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                if (manterPerfilView.isMaximum()) {
-                    manterPerfilView.setMaximum(false);
-                }
-            } catch (Exception ignored) {
-            }
         }
     }
 
-    private void configuraCampos() {
-        var campos = repository.getPerfis();
-    }
 }

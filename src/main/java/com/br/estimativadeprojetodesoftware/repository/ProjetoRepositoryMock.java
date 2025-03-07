@@ -20,8 +20,6 @@ public class ProjetoRepositoryMock implements Subject {
         //criação do perfil 1
         Perfil perfil1 = new Perfil("Web/Back-end");
 
-        perfil1.adicionarTamDispositivo("Médio", 30);
-        perfil1.adicionarNivelUI("Básico", 450);
         perfil1.adicionarFuncionalidade("Cadastro por E-mail e Senha", 1);
         perfil1.adicionarFuncionalidade("Painel (Dashboard)", 5);
         perfil1.adicionarFuncionalidade("Contas Multi-tenant", 3);
