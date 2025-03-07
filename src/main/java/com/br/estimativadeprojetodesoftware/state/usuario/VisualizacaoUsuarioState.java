@@ -3,6 +3,7 @@ package com.br.estimativadeprojetodesoftware.state.usuario;
 import com.br.estimativadeprojetodesoftware.command.usuario.ExcluirUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
 import javax.swing.JOptionPane;
+
 /**
  *
  * @author tetzner
@@ -13,6 +14,9 @@ public class VisualizacaoUsuarioState extends ManterUsuarioPresenterState {
         super(usuarioPresenter);
         usuarioPresenter.getView().getTxtNome().setEnabled(false);
         usuarioPresenter.getView().getTxtSenhaAtual().setEnabled(false);
+        usuarioPresenter.getBarraService().getBotao("Salvar usuário").setEnabled(false);
+        usuarioPresenter.getBarraService().getBotao("Excluir usuário").setEnabled(true);
+        usuarioPresenter.getBarraService().getBotao("Editar usuário").setEnabled(true);
     }
 
     @Override
