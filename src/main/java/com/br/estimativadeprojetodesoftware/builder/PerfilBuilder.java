@@ -16,4 +16,5 @@ public abstract class PerfilBuilder {
     public abstract void addTamanhoApp();
     public abstract void addNivelUI();
     public abstract void addFuncionalidades();
+    public abstract void addTaxasDiarias();
 }

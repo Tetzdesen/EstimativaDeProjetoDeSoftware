@@ -22,6 +22,20 @@ public class Perfil {
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
 
+    public Perfil(String nome) {
+        this.id = UUID.randomUUID();
+        this.nome = nome;
+        this.tamanhosApp = new LinkedHashMap<>();
+        this.niveisUI = new LinkedHashMap<>();
+        this.funcionalidades = new LinkedHashMap<>();
+        this.taxasDiarias = new LinkedHashMap<>();
+        this.created_at = LocalDateTime.now();
+        this.update_at = null;
+        this.deleted_at = null;
+
+        adicionarCamposDefault();
+    }
+
     public Perfil(String nome, Map<String, Integer> tamanhosApp, Map<String, Double> niveisUI, Map<String, Double> taxasDiarias) {
         validaTamanhosApp(tamanhosApp);
         validaNiveisUI(niveisUI);
@@ -215,6 +229,20 @@ public class Perfil {
             return false;
         }
         return Objects.equals(this.deleted_at, other.deleted_at);
+    }
+
+    private void adicionarCamposDefault() {
+        this.tamanhosApp.put("Pequeno", 0);
+        this.tamanhosApp.put("Médio", 0);
+        this.tamanhosApp.put("Grande", 0);
+
+        this.niveisUI.put("MVP", 0.0);
+        this.niveisUI.put("Básico", 0.0);
+        this.niveisUI.put("Profissional", 0.0);
+
+        this.taxasDiarias.put("Designer UI/UX", 0.0);
+        this.taxasDiarias.put("Gerência de Projeto", 0.0);
+        this.taxasDiarias.put("Desenolvimento", 0.0);
     }
 
     private void validaTamanhosApp(Map<String, Integer> tamanhosApp) {

@@ -32,7 +32,7 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
 
             for (int i=0; i<tabela.getRowCount(); i++) {
                 String funcionalidade = tabela.getValueAt(i, 0).toString();
-                double numeroDeDias = Double.parseDouble(tabela.getValueAt(i, 1).toString());
+                int numeroDeDias = Integer.parseInt(tabela.getValueAt(i, 1).toString());
                 perfil.adicionarFuncionalidade(funcionalidade, numeroDeDias);
             }
             
@@ -51,7 +51,7 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
 
             for (int i=0; i<tabela.getRowCount(); i++) {
                 String funcionalidade = tabela.getValueAt(i, 0).toString();
-                double numeroDeDias = Double.parseDouble(tabela.getValueAt(i, 1).toString());
+                int numeroDeDias = Integer.parseInt(tabela.getValueAt(i, 1).toString());
                 perfil.adicionarFuncionalidade(funcionalidade, numeroDeDias);
             }
 
