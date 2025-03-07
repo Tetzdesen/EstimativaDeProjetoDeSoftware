@@ -5,31 +5,42 @@ import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.IconService;
 import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
-import com.br.estimativadeprojetodesoftware.view.usuario.CadastroUsuarioView;
+import com.br.estimativadeprojetodesoftware.view.usuario.CadastroView;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Optional;
-import javax.swing.Icon;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author tetzner
  */
-public class CadastroUsuarioPresenter {
+public class CadastroPresenter {
 
-    private CadastroUsuarioView view;
+    private CadastroView view;
     private UsuarioRepositoryMock repositoryUsuario;
     private ValidadorSenhaService validadorDeSenha;
 
-    public CadastroUsuarioPresenter(UsuarioRepositoryMock repositoryUsuario) {
-        this.view = new CadastroUsuarioView();
+    public CadastroPresenter(UsuarioRepositoryMock repositoryUsuario) {
+        this.view = new CadastroView();
         this.repositoryUsuario = repositoryUsuario;
         this.validadorDeSenha = new ValidadorSenhaService();
         configuraView();
     }
 
     private void configuraView() {
+       // view.getLblFoto().setBounds(20, 30, 100, 100);
+      //  view.getLblFoto().setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+      //  view.getLblFoto().setHorizontalAlignment(JLabel.CENTER);
+      //  view.getLblFoto().setVerticalAlignment(JLabel.CENTER);
+      //  view.getLblFoto().setOpaque(true);
+     //   view.getLblFoto().setBackground(Color.DARK_GRAY);
+      //  view.getLblFoto().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         view.setResizable(false);
         view.setLocationRelativeTo(null);
         configuraActionsListerns();
@@ -37,6 +48,15 @@ public class CadastroUsuarioPresenter {
     }
 
     private void configuraActionsListerns() {
+
+        // Adiciona evento de clique para abrir o seletor de arquivos
+        view.getLblFoto().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                selecionarFoto();
+            }
+        });
+
         view.getBtnSalvar().addActionListener(e -> {
             try {
                 efetuarCadastro();
@@ -115,8 +135,31 @@ public class CadastroUsuarioPresenter {
             throw new IllegalArgumentException("Usuário já cadastrado no sistema, por favor cadastrar outro usuário");
         }
     }
+    
+    private void selecionarFoto() {
+        JFileChooser fileChooser = view.getJfcSelecionarFoto();
+        fileChooser.setDialogTitle("Selecionar Foto");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
-    public CadastroUsuarioView getView() {
+        int retorno = fileChooser.showOpenDialog(view);
+        if (retorno == JFileChooser.APPROVE_OPTION) {
+            File arquivoSelecionado = fileChooser.getSelectedFile();
+            exibirImagem(arquivoSelecionado);
+        }
+    }
+    
+     private void exibirImagem(File file) {
+        try {
+            BufferedImage imagem = ImageIO.read(file);
+            ImageIcon icon = new ImageIcon(imagem.getScaledInstance(view.getLblFoto().getWidth(), view.getLblFoto().getHeight(), Image.SCALE_SMOOTH));
+            view.getLblFoto().setIcon(icon);
+            view.getLblFoto().setText(""); // Remove qualquer texto
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(view, "Erro ao carregar a imagem.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public CadastroView getView() {
         return view;
     }
 

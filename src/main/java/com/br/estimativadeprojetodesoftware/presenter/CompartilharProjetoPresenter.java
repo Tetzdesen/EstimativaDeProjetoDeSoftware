@@ -7,7 +7,7 @@ import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
-import com.br.estimativadeprojetodesoftware.view.CompartilharProjetoView;
+import com.br.estimativadeprojetodesoftware.view.projeto.CompartilharProjetoView;
 import java.util.List;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;

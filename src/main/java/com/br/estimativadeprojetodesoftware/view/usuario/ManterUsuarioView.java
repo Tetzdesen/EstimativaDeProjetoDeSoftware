@@ -8,9 +8,10 @@ import javax.swing.JTextField;
  *
  * @author tetzner
  */
-public class UsuarioView extends javax.swing.JInternalFrame {
+public class ManterUsuarioView extends javax.swing.JDialog {
 
-    public UsuarioView() {
+    public ManterUsuarioView() {
+     // super(parent, modal);
         initComponents();
     }
 
@@ -46,8 +47,11 @@ public class UsuarioView extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lblTotalPerfis = new javax.swing.JLabel();
         txtNome = new javax.swing.JTextField();
+        lblSenhaAtual = new javax.swing.JLabel();
         txtDataCriacao = new javax.swing.JTextField();
+        btnExibirSenha = new javax.swing.JButton();
         txtEmail = new javax.swing.JTextField();
         txtSenhaAtual = new javax.swing.JPasswordField();
         txtTotalProjetos = new javax.swing.JTextField();
@@ -56,18 +60,24 @@ public class UsuarioView extends javax.swing.JInternalFrame {
         lblDataCriacao = new javax.swing.JLabel();
         lblEmail = new javax.swing.JLabel();
         lblTotalProjetos = new javax.swing.JLabel();
-        lblTotalPerfis = new javax.swing.JLabel();
-        lblSenhaAtual = new javax.swing.JLabel();
-        btnExibirSenha = new javax.swing.JButton();
 
-        setTitle("Usuário");
-        setToolTipText("");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        lblTotalPerfis.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblTotalPerfis.setText("Total de Perfis: ");
 
         txtNome.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtNome.setEnabled(false);
 
+        lblSenhaAtual.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblSenhaAtual.setText("Senha atual:");
+
         txtDataCriacao.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtDataCriacao.setEnabled(false);
+
+        btnExibirSenha.setBackground(new java.awt.Color(242, 242, 242));
+        btnExibirSenha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/olho-icon.png"))); // NOI18N
+        btnExibirSenha.setBorder(null);
 
         txtEmail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtEmail.setEnabled(false);
@@ -92,22 +102,12 @@ public class UsuarioView extends javax.swing.JInternalFrame {
         lblTotalProjetos.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblTotalProjetos.setText("Total de Projetos:");
 
-        lblTotalPerfis.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblTotalPerfis.setText("Total de Perfis: ");
-
-        lblSenhaAtual.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblSenhaAtual.setText("Senha atual:");
-
-        btnExibirSenha.setBackground(new java.awt.Color(242, 242, 242));
-        btnExibirSenha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/olho-icon.png"))); // NOI18N
-        btnExibirSenha.setBorder(null);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(6, 6, 6)
+                .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -119,27 +119,26 @@ public class UsuarioView extends javax.swing.JInternalFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lblTotalPerfis)
                                     .addComponent(txtTotalPerfis, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(txtSenhaAtual))
+                            .addComponent(txtSenhaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnExibirSenha))
                     .addComponent(lblSenhaAtual)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(lblNome)
-                            .addGap(320, 320, 320)
-                            .addComponent(lblDataCriacao))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(40, 40, 40)
-                            .addComponent(txtDataCriacao, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(lblEmail)
-                        .addComponent(txtEmail)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblNome)
+                        .addGap(320, 320, 320)
+                        .addComponent(lblDataCriacao))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40)
+                        .addComponent(txtDataCriacao, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblEmail)
+                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 540, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(97, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(61, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblNome)
                     .addComponent(lblDataCriacao))
@@ -165,12 +164,11 @@ public class UsuarioView extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtTotalProjetos, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtTotalPerfis, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addGap(41, 41, 41))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExibirSenha;

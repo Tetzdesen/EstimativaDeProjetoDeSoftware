@@ -1,7 +1,11 @@
 package com.br.estimativadeprojetodesoftware.command.usuario;
 
+import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.presenter.usuario.UsuarioPresenter;
+import com.br.estimativadeprojetodesoftware.model.Usuario;
+import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
+import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 /**
  *
@@ -9,15 +13,34 @@ import com.br.estimativadeprojetodesoftware.presenter.usuario.UsuarioPresenter;
  */
 public class SalvarUsuarioCommand implements ProjetoCommand {
 
-    private final UsuarioPresenter usuarioPresenter;
+    private final ManterUsuarioPresenter usuarioPresenter;
+    private final ValidadorSenhaService validadorService;
     
-    public SalvarUsuarioCommand(UsuarioPresenter usuarioPresenter) {
+    public SalvarUsuarioCommand(ManterUsuarioPresenter usuarioPresenter) {
         this.usuarioPresenter = usuarioPresenter;
+        this.validadorService = new ValidadorSenhaService();
     }
     
     @Override
     public void execute() {
-        usuarioPresenter.salvar();
+        String email = usuarioPresenter.getView().getTxtEmail().getText();
+        String nome = usuarioPresenter.getView().getTxtNome().getText();
+        String senha = usuarioPresenter.getView().getTxtSenhaAtual().getText();
+
+        try {
+            validadorService.validarSenha(senha);
+        } catch (Exception ex) {
+                 
+        }
+        
+        Usuario usuario = usuarioPresenter.getUsuario();
+
+        Usuario usuarioNovo = new Usuario(usuario.getId(), nome, email, senha, usuario.getIsAutorizado(), usuario.getCreated_at(), usuario.getUpdate_at(), usuario.getDeleted_at(), usuario.getProjetos(), usuario.getPerfis());
+        
+        UsuarioLogadoSingleton.getInstancia().setUsuario(usuarioNovo);
+        usuarioPresenter.setUsuario(usuarioNovo);
+        usuarioPresenter.getRepository().atualizarUsuario(usuario, email, nome);
+        new MostrarMensagemProjetoCommand("Usuário salvo com sucesso").execute();
     }
 
 }

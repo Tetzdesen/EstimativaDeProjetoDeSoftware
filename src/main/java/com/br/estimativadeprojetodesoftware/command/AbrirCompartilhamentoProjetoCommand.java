@@ -5,7 +5,7 @@ import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
-import com.br.estimativadeprojetodesoftware.view.CompartilharProjetoView;
+import com.br.estimativadeprojetodesoftware.view.projeto.CompartilharProjetoView;
 
 import javax.swing.*;
 

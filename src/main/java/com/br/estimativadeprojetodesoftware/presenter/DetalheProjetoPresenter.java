@@ -4,7 +4,7 @@ import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
-import com.br.estimativadeprojetodesoftware.view.DetalheProjetoView;
+import com.br.estimativadeprojetodesoftware.view.projeto.DetalheProjetoView;
 
 import java.util.List;
 import java.util.stream.Collectors;

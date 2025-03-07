@@ -1,17 +1,16 @@
-package com.br.estimativadeprojetodesoftware.state;
+package com.br.estimativadeprojetodesoftware.state.usuario;
 
-import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
-import com.br.estimativadeprojetodesoftware.presenter.usuario.UsuarioPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
 
 /**
  *
  * @author tetzner
  */
-public class UsuarioPresenterState {
+public class ManterUsuarioPresenterState {
 
-    protected UsuarioPresenter usuarioPresenter;
+    protected ManterUsuarioPresenter usuarioPresenter;
 
-    public UsuarioPresenterState(UsuarioPresenter usuarioPresenter) {
+    public ManterUsuarioPresenterState(ManterUsuarioPresenter usuarioPresenter) {
         this.usuarioPresenter = usuarioPresenter;
     }
 
