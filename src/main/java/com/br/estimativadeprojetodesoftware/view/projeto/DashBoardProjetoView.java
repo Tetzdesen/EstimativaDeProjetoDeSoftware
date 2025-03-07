@@ -1,4 +1,4 @@
-package com.br.estimativadeprojetodesoftware.view;
+package com.br.estimativadeprojetodesoftware.view.projeto;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;

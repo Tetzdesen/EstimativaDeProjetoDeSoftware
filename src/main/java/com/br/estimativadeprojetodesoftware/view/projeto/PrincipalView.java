@@ -1,4 +1,4 @@
-package com.br.estimativadeprojetodesoftware.view;
+package com.br.estimativadeprojetodesoftware.view.projeto;
 
 import javax.swing.*;
 import java.awt.*;

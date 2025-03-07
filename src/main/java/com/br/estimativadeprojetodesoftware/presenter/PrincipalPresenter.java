@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.presenter;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.AbrirCriarProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.usuario.UsuarioCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.ManterUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.*;
 import com.br.estimativadeprojetodesoftware.command.perfil.VisualizarPerfisProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
@@ -15,7 +15,7 @@ import com.br.estimativadeprojetodesoftware.service.BarraService;
 import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.GlobalWindowManager;
-import com.br.estimativadeprojetodesoftware.view.PrincipalView;
+import com.br.estimativadeprojetodesoftware.view.projeto.PrincipalView;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -59,7 +59,7 @@ public final class PrincipalPresenter implements Observer {
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), projetoRepository));
-        comandos.put("Usuário", new UsuarioCommand(this, view.getDesktop(), comandos));
+        comandos.put("Usuário", new ManterUsuarioCommand(this, view.getDesktop()));
         comandos.put("Ver perfis de projeto", new VisualizarPerfisProjetoCommand(view.getDesktop(), perfilRepositoryMock));
         comandos.put("Elaborar estimativa", new MostrarMensagemProjetoCommand("Elaborar estimativa ainda não implementada"));
         comandos.put("Visualizar estimativa", new MostrarMensagemProjetoCommand("Visualizar estimativa ainda não implementada"));
@@ -99,6 +99,7 @@ public final class PrincipalPresenter implements Observer {
         raiz.adicionarFilho(noProjetosCompartilhados);
 
         List<Projeto> listaProjetos = projetoRepository.getProjetos();
+        
         for (final Projeto projeto : listaProjetos) {
             AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()) {
                 @Override
@@ -127,31 +128,31 @@ public final class PrincipalPresenter implements Observer {
 
         }
 
-        List<Projeto> projetosCompartilhados = UsuarioLogadoSingleton.getInstancia().getUsuario().getProjetosCompartilhados();
+        for (final Projeto projeto : listaProjetos) {
+            if (projeto.getCompartilhado() == true) {
+                AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()) {
+                    @Override
+                    public void execute() {
+                        String tituloJanela = "Detalhes do Projeto: " + projeto.getNome();
+                        WindowManager windowManager = WindowManager.getInstance();
 
-        for (final Projeto projetoCompartilhado : listaProjetos) {
-            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()) {
-                @Override
-                public void execute() {
-                    String tituloJanela = "Detalhes do Projeto: " + projetoCompartilhado.getNome();
-                    WindowManager windowManager = WindowManager.getInstance();
-
-                    if (!windowManager.isFrameAberto(tituloJanela)) {
-                        super.execute();
-                        bloquearMinimizacao(tituloJanela);
-                    } else {
-                        windowManager.bringToFront(tituloJanela);
+                        if (!windowManager.isFrameAberto(tituloJanela)) {
+                            super.execute();
+                            bloquearMinimizacao(tituloJanela);
+                        } else {
+                            windowManager.bringToFront(tituloJanela);
+                        }
                     }
-                }
-            };
-            cmdDetalhes.setProjetoNome(projetoCompartilhado.getNome());
-            NoArvoreComposite noProjetoCompartilhado = construtorDeArvoreNavegacaoService.criarNo(projetoCompartilhado.getNome(), "projeto", cmdDetalhes);
+                };
+                cmdDetalhes.setProjetoNome(projeto.getNome());
+                NoArvoreComposite noProjetoCompartilhado = construtorDeArvoreNavegacaoService.criarNo(projeto.getNome(), "projeto", cmdDetalhes);
 
-            adicionarMenuContextual(projetoCompartilhado, noProjetoCompartilhado);
+                adicionarMenuContextual(projeto, noProjetoCompartilhado);
 
-            adicionarMenuContextual(projetoCompartilhado, noProjetoCompartilhado);
-            noProjetoCompartilhado.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa", "action", comandos.get("Visualizar estimativa")));
-            noProjetosCompartilhados.adicionarFilho(noProjetoCompartilhado);
+                adicionarMenuContextual(projeto, noProjetoCompartilhado);
+                noProjetoCompartilhado.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa", "action", comandos.get("Visualizar estimativa")));
+                noProjetosCompartilhados.adicionarFilho(noProjetoCompartilhado);
+            }
         }
 
         DefaultMutableTreeNode modeloArvore = construtorDeArvoreNavegacaoService.converterParaNoMutavel(raiz);

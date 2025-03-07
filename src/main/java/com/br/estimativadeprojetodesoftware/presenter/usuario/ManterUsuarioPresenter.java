@@ -1,20 +1,19 @@
 package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
-import com.br.estimativadeprojetodesoftware.command.usuario.EditarUsuarioCommand;
-import com.br.estimativadeprojetodesoftware.command.usuario.ExcluirUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.usuario.SalvarUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.BotaoEditarUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.BotaoExcluirUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.BotaoSalvarUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
-import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 import com.br.estimativadeprojetodesoftware.service.IconService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
-import com.br.estimativadeprojetodesoftware.state.UsuarioPresenterState;
-import com.br.estimativadeprojetodesoftware.state.VisualizacaoState;
-import com.br.estimativadeprojetodesoftware.view.usuario.UsuarioView;
+import com.br.estimativadeprojetodesoftware.state.usuario.ManterUsuarioPresenterState;
+import com.br.estimativadeprojetodesoftware.state.usuario.VisualizacaoUsuarioState;
+import com.br.estimativadeprojetodesoftware.view.usuario.ManterUsuarioView;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -22,37 +21,35 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
 
 /**
  *
  * @author tetzner
  */
-public class UsuarioPresenter implements Observer {
+public class ManterUsuarioPresenter implements Observer {
 
-    private UsuarioView view;
+    private ManterUsuarioView view;
     private Usuario usuario;
     private UsuarioRepositoryMock repository;
-    private UsuarioPresenterState estado;
-    private PrincipalPresenter principalPresenter;
+    private ManterUsuarioPresenterState estado;
     private final Map<String, ProjetoCommand> comandos;
-
-    public UsuarioPresenter(PrincipalPresenter principalPresenter) {
-        this.view = new UsuarioView();
+    private BarraService barraService;
+    
+    public ManterUsuarioPresenter(ManterUsuarioView view) {
+        this.view = view;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
-        this.principalPresenter = principalPresenter;
-        this.repository = principalPresenter.getUsuarioRepository();
+        this.repository = new UsuarioRepositoryMock();
         this.repository.addObserver(this);
         this.comandos = inicializarComandos();
-        this.estado = new VisualizacaoState(this);
+        this.estado = new VisualizacaoUsuarioState(this);
         configuraView();
     }
 
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
-        comandos.put("Salvar usuário", new SalvarUsuarioCommand(this));
-        comandos.put("Editar usuário", new EditarUsuarioCommand(this));
-        comandos.put("Excluir usuário", new ExcluirUsuarioCommand(this));
+        comandos.put("Salvar usuário", new BotaoSalvarUsuarioCommand(this));
+        comandos.put("Editar usuário", new BotaoEditarUsuarioCommand(this));
+        comandos.put("Excluir usuário", new BotaoExcluirUsuarioCommand(this));
         return comandos;
     }
 
@@ -82,17 +79,18 @@ public class UsuarioPresenter implements Observer {
 
     private void configuraView() {
         JPanel painelPrincipal = new JPanel(new BorderLayout());
-
-        JToolBar toolbar = new BarraService(this.getComandos()).criarBarraUsuario();
-        painelPrincipal.add(toolbar, BorderLayout.NORTH);
+        barraService = new BarraService(comandos);
+        painelPrincipal.add(barraService.criarBarraUsuario(), BorderLayout.NORTH);
         painelPrincipal.add(view.getContentPane(), BorderLayout.CENTER);
         view.setContentPane(painelPrincipal);
-
-        view.setClosable(true);
-        view.setIconifiable(true);
+        view.setModal(true);
+        
+      //  view.setClosable(true);
+    //    view.setIconifiable(true);
         view.setResizable(false);
-        view.setMaximizable(false);
-
+       // view.setMaximumSize(maximumSize);
+      //  view.setMaximizable(false);
+      
         view.getBtnExibirSenha().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -109,18 +107,18 @@ public class UsuarioPresenter implements Observer {
         atualizarCampos();
     }
 
-    public UsuarioView getView() {
+    public ManterUsuarioView getView() {
         return view;
-    }
-
-    public PrincipalPresenter getPrincipalPresenter() {
-        return principalPresenter;
     }
 
     public String formatarData(LocalDateTime dataHora) {
         return dataHora.getDayOfMonth() + "/" + String.valueOf(dataHora.getMonthValue()) + "/" + dataHora.getYear();
     }
 
+    public BarraService getBarraService() {
+        return barraService;
+    }
+    
     public int getQtdProjetos() {
         return usuario.getProjetos().size();
     }
@@ -137,7 +135,7 @@ public class UsuarioPresenter implements Observer {
         return usuario;
     }
 
-    public UsuarioPresenterState getEstado() {
+    public ManterUsuarioPresenterState getEstado() {
         return estado;
     }
 
@@ -145,7 +143,7 @@ public class UsuarioPresenter implements Observer {
         return comandos;
     }
 
-    public void setState(UsuarioPresenterState estado) {
+    public void setState(ManterUsuarioPresenterState estado) {
         this.estado = estado;
     }
 

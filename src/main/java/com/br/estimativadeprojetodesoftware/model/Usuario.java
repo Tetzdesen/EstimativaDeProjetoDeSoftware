@@ -18,7 +18,6 @@ public class Usuario {
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
     private List<Projeto> projetos;
-    private List<Projeto> projetosCompartilhados;
     private List<Perfil> perfis;
 
     public Usuario(String nome, String email, String senha) {
@@ -31,11 +30,10 @@ public class Usuario {
         this.update_at = null;
         this.deleted_at = null;
         this.projetos = new ArrayList();
-        this.projetosCompartilhados = new ArrayList<>();
         this.perfis = new ArrayList();
     }
 
-    public Usuario(UUID id, String nome, String email, String senha, boolean isAutorizado, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, List<Projeto> projetos, List<Projeto> projetosCompartilhados, List<Perfil> perfis) {
+    public Usuario(UUID id, String nome, String email, String senha, boolean isAutorizado, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, List<Projeto> projetos, List<Perfil> perfis) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -45,7 +43,6 @@ public class Usuario {
         this.update_at = update_at;
         this.deleted_at = deleted_at;
         this.projetos = projetos;
-        this.projetosCompartilhados = projetosCompartilhados;
         this.perfis = perfis;
     }
 
@@ -85,10 +82,6 @@ public class Usuario {
         return Collections.unmodifiableList(projetos);
     }
 
-    public List<Projeto> getProjetosCompartilhados() {
-        return projetosCompartilhados;
-    }
-
     public List<Perfil> getPerfis() {
         return Collections.unmodifiableList(perfis);
     }
@@ -116,13 +109,6 @@ public class Usuario {
             throw new IllegalArgumentException("Erro: Projeto não pode ser nulo.");
         }
         projetos.add(projeto);
-    }
-
-    public void adicionarProjetoCompartilhado(Projeto projetoCompartilhado) {
-        if (projetoCompartilhado == null) {
-            throw new IllegalArgumentException("Erro: Projeto compartilhado não pode ser nulo.");
-        }
-        projetosCompartilhados.add(projetoCompartilhado);
     }
 
     public void adicionarPerfil(Perfil perfil) {
@@ -182,6 +168,7 @@ public class Usuario {
 
     @Override
     public String toString() {
-        return "Usuario{" + "id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", isAutorizado=" + isAutorizado + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + ", projetos=" + projetos + ", projetosCompartilhados=" + projetosCompartilhados + ", perfis=" + perfis + '}';
+        return "Usuario{" + "id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", isAutorizado=" + isAutorizado + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + ", projetos=" + projetos + ", perfis=" + perfis + '}';
     }
+
 }
