@@ -21,7 +21,6 @@ public class DefaultBuilder extends PerfilBuilder {
 
     @Override
     public void addFuncionalidades() {
-        //terminar de implementar
         perfil.adicionarFuncionalidade("Cadastro pelo Twitter", 0);
         perfil.adicionarFuncionalidade("Cadastro pelo Google", 0);
         perfil.adicionarFuncionalidade("Cadastro pelo LinkedIn", 0);
@@ -91,5 +90,10 @@ public class DefaultBuilder extends PerfilBuilder {
         perfil.adicionarFuncionalidade("Health Data", 0);
         perfil.adicionarFuncionalidade("Apple Watch", 0);
         
-    } 
+    }
+
+    @Override
+    public void addTaxasDiarias() {
+        
+    }
 }
