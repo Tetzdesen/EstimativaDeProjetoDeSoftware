@@ -11,25 +11,28 @@ import java.util.UUID;
 
 public class Perfil {
 
-    private UUID id;
+    private final UUID id;
     private String nome;
     private Map<String, Integer> tamanhosApp;
     private Map<String, Double> niveisUI;
     private Map<String, Integer> funcionalidades;
+    private Map<String, Double> taxasDiarias;
     private boolean isPerfilBackEnd;
-    private LocalDateTime created_at;
+    private final LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
 
-    public Perfil(String nome, Map<String, Integer> tamanhosApp, Map<String, Double> niveisUI) {
+    public Perfil(String nome, Map<String, Integer> tamanhosApp, Map<String, Double> niveisUI, Map<String, Double> taxasDiarias) {
         validaTamanhosApp(tamanhosApp);
         validaNiveisUI(niveisUI);
+        validaTaxasDiarias(taxasDiarias);
 
         this.id = UUID.randomUUID();
         this.nome = nome;
         this.tamanhosApp = tamanhosApp;
         this.niveisUI = niveisUI;
         this.funcionalidades = new LinkedHashMap<>();
+        this.taxasDiarias = taxasDiarias;
         this.created_at = LocalDateTime.now();
         this.update_at = null;
         this.deleted_at = null;
@@ -39,6 +42,7 @@ public class Perfil {
                     Map<String, Integer> tamanhosApp, 
                     Map<String, Double> niveisUI, 
                     Map<String, Integer> funcionalidades, 
+                    Map<String, Double> taxasDiarias,
                     boolean isPerfilBackEnd, 
                     LocalDateTime created_at, 
                     LocalDateTime update_at, 
@@ -49,6 +53,7 @@ public class Perfil {
         this.tamanhosApp = tamanhosApp;
         this.niveisUI = niveisUI;
         this.funcionalidades = funcionalidades;
+        this.taxasDiarias = taxasDiarias;
         this.isPerfilBackEnd = isPerfilBackEnd;
         this.created_at = created_at;
         this.update_at = update_at;
@@ -73,6 +78,10 @@ public class Perfil {
 
     public Map<String, Integer> getFuncionalidades() {
         return Collections.unmodifiableMap(funcionalidades);
+    }
+
+    public Map<String, Double> getTaxasDiarias() {
+        return Collections.unmodifiableMap(taxasDiarias);
     }
 
     public boolean isPerfilBackEnd() {
@@ -111,10 +120,10 @@ public class Perfil {
 
     public void adicionarTamanhoApp(String tamanhoApp, int dias) {
         if (nome == null || nome.isEmpty()) {
-            throw new IllegalArgumentException("Erro: Nome da funcionalidade não pode ser vazio ou nula.");
+            throw new IllegalArgumentException("Erro: Tamanho do App não pode ser vazio ou nula.");
         }
         if (dias < 0) {
-            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Nome da funcionalidade: " + nome + " dias: " + dias);
+            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Tamanho do App: " + nome + " dias: " + dias);
         }
 
         if (!tamanhosApp.keySet().contains(tamanhoApp)) {
@@ -126,10 +135,10 @@ public class Perfil {
 
     public void adicionarNivelUI(String nivelUI, double dias) {
         if (nome == null || nome.isEmpty()) {
-            throw new IllegalArgumentException("Erro: Nome da funcionalidade não pode ser vazio ou nula.");
+            throw new IllegalArgumentException("Erro: Nível de UI não pode ser vazio ou nula.");
         }
         if (dias < 0) {
-            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Nome da funcionalidade: " + nome + " dias: " + dias);
+            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Nível de UI: " + nome + " dias: " + dias);
         }
 
         if (!niveisUI.keySet().contains(nivelUI)) {
@@ -147,6 +156,21 @@ public class Perfil {
             throw new IllegalArgumentException("Erro: dias não pode ser negativo. Nome da funcionalidade: " + nome + " dias: " + dias);
         }
         funcionalidades.put(nomeFuncionalidade, dias);
+    }
+
+    public void adicionarTaxaDiaria(String taxaDiaria, double dias) {
+        if (nome == null || nome.isEmpty()) {
+            throw new IllegalArgumentException("Erro: Taxa Diária não pode ser vazio ou nula.");
+        }
+        if (dias < 0) {
+            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Taxa Diária: " + nome + " dias: " + dias);
+        }
+
+        if (!taxasDiarias.keySet().contains(taxaDiaria)) {
+            throw new IllegalArgumentException("O nível de UI deve ser: MVP, Básico ou Profissional");
+        }
+
+        taxasDiarias.putIfAbsent(taxaDiaria, dias);
     }
 
     public void removerFuncionalidades() {
@@ -212,7 +236,19 @@ public class Perfil {
 
         for (Double valor : niveisUI.values()) {
             if (valor <= 0) {
-                throw new IllegalArgumentException("Os valores de tamanhos do app devem ser maiores do que zero");
+                throw new IllegalArgumentException("Os valores de níveis de UI devem ser maiores do que zero");
+            }
+        }
+    }
+
+    private void validaTaxasDiarias(Map<String, Double> taxasDiarias) {
+        if (!taxasDiarias.keySet().equals(new HashSet<>(Arrays.asList("Designer UI/UX", "Gerência de Projeto", "Desenolvimento")))) {
+            throw new IllegalArgumentException("As taxas diárias devem ser: Designer UI/UX, Gerência de Projeto e Desenolvimento");
+        }
+
+        for (Double valor : taxasDiarias.values()) {
+            if (valor <= 0) {
+                throw new IllegalArgumentException("Os valores das taxas diárias devem ser maiores do que zero");
             }
         }
     }
