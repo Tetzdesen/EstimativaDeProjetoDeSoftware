@@ -1,6 +1,8 @@
 package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
+import com.br.estimativadeprojetodesoftware.command.usuario.AbrirTelaPrincipalCommand;
 import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
+import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 
 /**
@@ -9,20 +11,19 @@ import javax.swing.JInternalFrame;
  */
 public class FecharTodasJanelasCommand implements WindowCommand {
 
-    private final PrincipalPresenter principalPresenter;
-    public FecharTodasJanelasCommand(PrincipalPresenter principalPresenter) {
-        this.principalPresenter = principalPresenter;
+    private final JDesktopPane desktop;
+    
+    public FecharTodasJanelasCommand(JDesktopPane desktop) {
+        this.desktop = desktop;
     }
      
     @Override
     public void execute() {
-        JInternalFrame[] quadrosInternos = principalPresenter.getView().getDesktop().getAllFrames();
+        JInternalFrame[] quadrosInternos = desktop.getAllFrames();
         for (JInternalFrame quadroInterno : quadrosInternos) {
             quadroInterno.dispose();
         }
-        
-        principalPresenter.getView().dispose();
-        
+        new AbrirTelaPrincipalCommand(); 
     }
     
 }

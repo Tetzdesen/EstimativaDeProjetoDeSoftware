@@ -25,10 +25,10 @@ public class ExcluirUsuarioCommand implements ProjetoCommand {
             new MostrarMensagemProjetoCommand("Usuário \"" + usuarioPresenter.getUsuario().getNome() + "\" removido com sucesso!").execute();
             usuarioPresenter.setUsuario(null);
             UsuarioLogadoSingleton.getInstancia().setUsuario(usuarioPresenter.getUsuario());
-            //new LogoutCommand(usuarioPresenter.getPrincipalPresenter()).execute();
+       //     new LogoutCommand().execute();
         } else {
             new MostrarMensagemProjetoCommand("Erro ao remover o usuário \"" + usuarioPresenter.getUsuario().getNome() + "\".").execute();
         }
-       // usuarioPresenter.excluir();
+       usuarioPresenter.excluir();
     }
 }

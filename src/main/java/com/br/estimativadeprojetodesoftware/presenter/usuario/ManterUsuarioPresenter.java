@@ -34,15 +34,16 @@ public class ManterUsuarioPresenter implements Observer {
     private ManterUsuarioPresenterState estado;
     private final Map<String, ProjetoCommand> comandos;
     private BarraService barraService;
-    
+
     public ManterUsuarioPresenter(ManterUsuarioView view) {
         this.view = view;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
         this.repository = new UsuarioRepositoryMock();
         this.repository.addObserver(this);
         this.comandos = inicializarComandos();
-        this.estado = new VisualizacaoUsuarioState(this);
+        barraService = new BarraService(comandos);
         configuraView();
+        this.estado = new VisualizacaoUsuarioState(this);
     }
 
     private Map<String, ProjetoCommand> inicializarComandos() {
@@ -79,18 +80,17 @@ public class ManterUsuarioPresenter implements Observer {
 
     private void configuraView() {
         JPanel painelPrincipal = new JPanel(new BorderLayout());
-        barraService = new BarraService(comandos);
         painelPrincipal.add(barraService.criarBarraUsuario(), BorderLayout.NORTH);
         painelPrincipal.add(view.getContentPane(), BorderLayout.CENTER);
         view.setContentPane(painelPrincipal);
         view.setModal(true);
-        
-      //  view.setClosable(true);
-    //    view.setIconifiable(true);
+
+        //  view.setClosable(true);
+        //    view.setIconifiable(true);
         view.setResizable(false);
-       // view.setMaximumSize(maximumSize);
-      //  view.setMaximizable(false);
-      
+        // view.setMaximumSize(maximumSize);
+        //  view.setMaximizable(false);
+
         view.getBtnExibirSenha().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -118,7 +118,7 @@ public class ManterUsuarioPresenter implements Observer {
     public BarraService getBarraService() {
         return barraService;
     }
-    
+
     public int getQtdProjetos() {
         return usuario.getProjetos().size();
     }
