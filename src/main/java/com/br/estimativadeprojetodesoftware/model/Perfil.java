@@ -2,7 +2,7 @@ package com.br.estimativadeprojetodesoftware.model;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -11,9 +11,8 @@ public class Perfil {
 
     private UUID id;
     private String nome;
-    private Map<String, Integer> tamDispositivos;
-    private Map<String, Double> nivelUI;
-    private Map<String, Integer> funcionalidades;
+    private Map<String, Double> funcionalidades;
+    private boolean isPerfilBackEnd;
     private LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
@@ -21,20 +20,17 @@ public class Perfil {
     public Perfil(String nome) {
         this.id = UUID.randomUUID();
         this.nome = nome;
-        this.tamDispositivos = new HashMap<>();
-        this.nivelUI = new HashMap<>();
-        this.funcionalidades = new HashMap<>();
+        this.funcionalidades = new LinkedHashMap<>();
         this.created_at = LocalDateTime.now();
         this.update_at = null;
         this.deleted_at = null;
     }
 
-    public Perfil(UUID id, String nome, Map<String, Integer> tamDispositivos, Map<String, Double> nivelUI, Map<String, Integer> funcionalidades, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at) {
+    public Perfil(UUID id, String nome, Map<String, Double> funcionalidades, boolean isPerfilBackEnd, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at) {
         this.id = id;
         this.nome = nome;
-        this.tamDispositivos = tamDispositivos;
-        this.nivelUI = nivelUI;
         this.funcionalidades = funcionalidades;
+        this.isPerfilBackEnd = isPerfilBackEnd;
         this.created_at = created_at;
         this.update_at = update_at;
         this.deleted_at = deleted_at;
@@ -48,16 +44,12 @@ public class Perfil {
         return nome;
     }
 
-    public Map<String, Integer> getTamDispositivos() {
-        return Collections.unmodifiableMap(tamDispositivos);
-    }
-
-    public Map<String, Double> getNivelUI() {
-        return Collections.unmodifiableMap(nivelUI);
-    }
-
-    public Map<String, Integer> getFuncionalidades() {
+    public Map<String, Double> getFuncionalidades() {
         return Collections.unmodifiableMap(funcionalidades);
+    }
+
+    public boolean isPerfilBackEnd() {
+        return isPerfilBackEnd;
     }
     
     public LocalDateTime getCreated_at() {
@@ -70,6 +62,10 @@ public class Perfil {
 
     public LocalDateTime getDeleted_at() {
         return deleted_at;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public void setUpdate_at(LocalDateTime update_at) {
@@ -86,27 +82,7 @@ public class Perfil {
         this.deleted_at = deleted_at;
     }
 
-    public void adicionarTamDispositivo(String nome, int dias) {
-        if (nome == null || nome.isEmpty()) {
-            throw new IllegalArgumentException("Erro: Nome do tamanho do dispositivo não pode ser vazio ou nula.");
-        }
-        if (dias < 0) {
-            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Nome do tamanho do dispositivo : " + nome + " dias: " + dias);
-        }
-        tamDispositivos.put(nome, dias);
-    }
-
-    public void adicionarNivelUI(String nome, double valor) {
-        if (nome == null || nome.isEmpty()) {
-            throw new IllegalArgumentException("Erro: Nome de nível de UI não pode ser vazio ou nula.");
-        }
-        if (valor < 0) {
-            throw new IllegalArgumentException("Erro: Valor não pode ser negativo. Nome da nível UI: " + nome + " Valor: " + valor);
-        }
-        nivelUI.put(nome, valor);
-    }
-
-    public void adicionarFuncionalidade(String nomeFuncionalidade, int dias) {
+    public void adicionarFuncionalidade(String nomeFuncionalidade, double dias) {
         if (nome == null || nome.isEmpty()) {
             throw new IllegalArgumentException("Erro: Nome da funcionalidade não pode ser vazio ou nula.");
         }
@@ -114,6 +90,14 @@ public class Perfil {
             throw new IllegalArgumentException("Erro: dias não pode ser negativo. Nome da funcionalidade: " + nome + " dias: " + dias);
         }
         funcionalidades.put(nomeFuncionalidade, dias);
+    }
+
+    public void removerFuncionalidades() {
+        funcionalidades = new LinkedHashMap<>();
+    }
+
+    public void setPerfilBackEnd(boolean isPerfilBackEnd) {
+        this.isPerfilBackEnd = isPerfilBackEnd;
     }
 
     @Override
@@ -140,12 +124,6 @@ public class Perfil {
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
-        if (!Objects.equals(this.tamDispositivos, other.tamDispositivos)) {
-            return false;
-        }
-        if (!Objects.equals(this.nivelUI, other.nivelUI)) {
-            return false;
-        }
         if (!Objects.equals(this.funcionalidades, other.funcionalidades)) {
             return false;
         }
@@ -160,6 +138,6 @@ public class Perfil {
 
     @Override
     public String toString() {
-        return "Perfil{" + "id=" + id + ", nome=" + nome + ", tamDispositivos=" + tamDispositivos + ", nivelUI=" + nivelUI + ", funcionalidades=" + funcionalidades + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + '}';
+        return "Perfil{" + "id=" + id + ", nome=" + nome + ", funcionalidades=" + funcionalidades + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + '}';
     }
 }
