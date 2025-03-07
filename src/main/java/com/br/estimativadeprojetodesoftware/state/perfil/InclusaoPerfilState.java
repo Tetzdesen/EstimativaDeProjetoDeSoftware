@@ -55,4 +55,9 @@ public class InclusaoPerfilState extends ManterPerfilPresenterState {
     public void salvar() {
         new SalvarPerfilProjetoCommand(presenter).execute();
     }
+
+    @Override
+    public String toString() {
+        return "Inclusão Perfil State";
+    }
 }

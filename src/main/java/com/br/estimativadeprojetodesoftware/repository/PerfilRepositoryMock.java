@@ -63,6 +63,16 @@ public class PerfilRepositoryMock implements Subject {
         throw new RuntimeException("Nenhum perfil encontrado");
     }
 
+    public void removerPerfil(Perfil perfil) {
+        perfis.remove(perfil);
+    }
+
+    public Perfil removerPerfil(UUID id) {
+        Perfil perfil = buscarPerfilPorId(id);
+        perfis.remove(perfil);
+        return perfil;
+    }
+
     @Override
     public void addObserver(Observer observer) {
         observers.add(observer);

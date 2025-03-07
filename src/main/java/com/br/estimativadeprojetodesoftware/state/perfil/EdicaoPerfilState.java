@@ -1,16 +1,15 @@
 package com.br.estimativadeprojetodesoftware.state.perfil;
 
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.perfil.CancelarPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.SalvarPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
 
 public class EdicaoPerfilState extends ManterPerfilPresenterState {
-    //private final Perfil perfil;
 
     public EdicaoPerfilState(ManterPerfilPresenter presenter) {
         super(presenter);
-        //this.perfil = perfil;
 
         configuraView();
         configuraActionsListerns();
@@ -41,10 +40,44 @@ public class EdicaoPerfilState extends ManterPerfilPresenterState {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
         });
+
+        presenter.getView().getBtnCancelar().addActionListener(e -> {
+            try {
+                cancelar();
+            } catch (Exception ex) {
+                new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+            }
+        });
+
+        presenter.getView().getBtnAdicionarCampo().addActionListener(e -> {
+            try {
+                presenter.adicionarNovoCampo();
+            } catch (Exception ex) {
+                new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+            }
+        });
+
+        presenter.getView().getBtnRemoverCampo().addActionListener(e -> {
+            try {
+                presenter.removerCampo();
+            } catch (Exception ex) {
+                new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+            }
+        });
     }
 
     @Override
     public void salvar() {
         new SalvarPerfilProjetoCommand(presenter).execute();
+    }
+
+    @Override
+    public void cancelar() {
+        new CancelarPerfilProjetoCommand(presenter).execute();
+    }
+
+    @Override
+    public String toString() {
+        return "Edição Perfil State";
     }
 }

@@ -4,11 +4,8 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.br.estimativadeprojetodesoftware.builder.DefaultBuilder;
-import com.br.estimativadeprojetodesoftware.builder.Diretor;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
-import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.state.perfil.InclusaoPerfilState;
 import com.br.estimativadeprojetodesoftware.state.perfil.ManterPerfilPresenterState;

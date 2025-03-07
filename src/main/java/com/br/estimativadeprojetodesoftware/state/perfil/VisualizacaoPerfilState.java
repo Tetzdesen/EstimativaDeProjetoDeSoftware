@@ -1,15 +1,14 @@
 package com.br.estimativadeprojetodesoftware.state.perfil;
 
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.perfil.ExcluirPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
 
 public class VisualizacaoPerfilState extends ManterPerfilPresenterState {
-    //private Perfil perfil;
 
     public VisualizacaoPerfilState(ManterPerfilPresenter presenter) {
         super(presenter);
-        //this.perfil = perfil;
         configuraView();
         configuraActionsListerns();
     }
@@ -55,6 +54,11 @@ public class VisualizacaoPerfilState extends ManterPerfilPresenterState {
 
     @Override
     public void excluir() {
+        new ExcluirPerfilProjetoCommand(presenter).execute();
+    }
 
+    @Override
+    public String toString() {
+        return "Visualização Perfil State";
     }
 }
