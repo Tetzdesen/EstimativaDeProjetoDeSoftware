@@ -2,7 +2,7 @@ package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalPresenter;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 
 import javax.swing.*;

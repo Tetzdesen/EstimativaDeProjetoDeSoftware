@@ -1,4 +1,4 @@
-package com.br.estimativadeprojetodesoftware.presenter;
+package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.CompartilharProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
