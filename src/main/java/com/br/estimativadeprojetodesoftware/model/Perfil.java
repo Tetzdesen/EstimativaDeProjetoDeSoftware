@@ -126,7 +126,7 @@ public class Perfil {
             throw new IllegalArgumentException("O tamanho do app deve ser: pequeno, médio ou grande");
         }
 
-        tamanhosApp.putIfAbsent(tamanhoApp.toLowerCase(), dias);
+        tamanhosApp.put(tamanhoApp.toLowerCase(), dias);
     }
 
     public void adicionarNivelUI(String nivelUI, double valor) {
@@ -141,7 +141,7 @@ public class Perfil {
             throw new IllegalArgumentException("O nível de UI deve ser: mvp, básico ou profissional");
         }
 
-        niveisUI.putIfAbsent(nivelUI.toLowerCase(), valor);
+        niveisUI.put(nivelUI.toLowerCase(), valor);
     }
 
     public void adicionarFuncionalidade(String nomeFuncionalidade, int dias) {
@@ -163,10 +163,10 @@ public class Perfil {
         }
 
         if (!taxasDiarias.keySet().contains(taxaDiaria.toLowerCase())) {
-            throw new IllegalArgumentException("A taxa diária deve ser: designer ui/ux, gerência de projeto ou desenolvimento");
+            throw new IllegalArgumentException("A taxa diária deve ser: designer ui/ux, gerência de projeto ou desenvolvimento");
         }
 
-        taxasDiarias.putIfAbsent(taxaDiaria.toLowerCase(), valor);
+        taxasDiarias.put(taxaDiaria.toLowerCase(), valor);
     }
 
     public void removerFuncionalidades() {
@@ -224,7 +224,7 @@ public class Perfil {
 
         this.taxasDiarias.put("designer ui/ux", 0.0);
         this.taxasDiarias.put("gerência de projeto", 0.0);
-        this.taxasDiarias.put("desenolvimento", 0.0);
+        this.taxasDiarias.put("desenvolvimento", 0.0);
     }
 
     @Override

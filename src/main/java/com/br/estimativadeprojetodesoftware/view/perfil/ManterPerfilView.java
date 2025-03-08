@@ -1,19 +1,22 @@
 package com.br.estimativadeprojetodesoftware.view.perfil;
 
 import java.awt.*;
+import java.text.NumberFormat;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.NumberFormatter;
 
 public class ManterPerfilView extends JDialog {
     private boolean isCellEditable;
     private JDesktopPane desktop;
     private JTable tabelaDetalhes;
     private DefaultTableModel modeloTabela;
-    private JTextField txtNome;
+    private JTextField txtNome, txtMvp, txtBasico, txtProfissional, txtDesignerUI, txtGerenciaProjeto, txtDesenvolvimento;
     private JLabel lblNome;
     private JCheckBox tglBackEnd;
     private JButton btnSalvar, btnEditar, btnExcluir, btnCancelar, btnRemoverCampo, btnAdicionarCampo;
-    private JSpinner jspPequeno, jspMedio, jspGrande, jspMvp, jspBasico, jspProfissional;
+    private JSpinner jspPequeno, jspMedio, jspGrande;
 
     public ManterPerfilView(JDesktopPane desktop) {
         setTitle("Manter Perfis");
@@ -43,6 +46,7 @@ public class ManterPerfilView extends JDialog {
         painelCamposObrigatorios.setLayout(new BoxLayout(painelCamposObrigatorios, BoxLayout.Y_AXIS));
         painelCamposObrigatorios.add(criarPainelTamanhoApp());
         painelCamposObrigatorios.add(criarPainelNivelUI());
+        painelCamposObrigatorios.add(criarPainelTaxaDiaria());
         painelCabecalho.add(painelCamposObrigatorios, BorderLayout.CENTER);
 
         painelPrincipal.add(painelCabecalho, BorderLayout.NORTH);
@@ -98,6 +102,19 @@ public class ManterPerfilView extends JDialog {
         return painel;
     }
 
+    private JPanel criarPainelComTextField(String texto, JTextField txtField, boolean addExtraLabel, boolean addPercent) {
+        JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
+        painel.add(new JLabel(texto));
+        if (addExtraLabel) {
+            painel.add(new JLabel("R$"));
+        }
+        painel.add(txtField);
+        if (addPercent) {
+            painel.add(new JLabel("%"));
+        }
+        return painel;
+    }
+
     private JPanel criarPainelTamanhoApp() {
         jspPequeno  = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
         jspMedio    = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
@@ -117,21 +134,53 @@ public class ManterPerfilView extends JDialog {
     }
 
     private JPanel criarPainelNivelUI() {
-        jspMvp          = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-        jspBasico       = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-        jspProfissional = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+        NumberFormat format = NumberFormat.getNumberInstance();
+        format.setGroupingUsed(false);
+        NumberFormatter formatter = new NumberFormatter(format);
+        formatter.setValueClass(Double.class);
+        formatter.setAllowsInvalid(false);
+        formatter.setMinimum(0.0);
 
-        JPanel painelMVP            = criarPainelComSpinner("MVP: ", jspMvp, true);
-        JPanel painelBasico         = criarPainelComSpinner("Básico: ", jspBasico, true);
-        JPanel painelProfissional   = criarPainelComSpinner("Profissional: ", jspProfissional, true);
+        txtMvp          = new JFormattedTextField(formatter);
+        txtBasico       = new JFormattedTextField(formatter);
+        txtProfissional = new JFormattedTextField(formatter);
+
+        JPanel painelMVP            = criarPainelComTextField("MVP: ", txtMvp, false, true);
+        JPanel painelBasico         = criarPainelComTextField("Básico: ", txtBasico, false, true);
+        JPanel painelProfissional   = criarPainelComTextField("Profissional: ", txtProfissional, false, true);
 
         JPanel painelNivelUI = new JPanel(new GridLayout(1, 3, 3, 15));
-        painelNivelUI.setBorder(BorderFactory.createTitledBorder("Nível de UI (Percentual):"));
+        painelNivelUI.setBorder(BorderFactory.createTitledBorder("Nível de UI (%):"));
         painelNivelUI.add(painelMVP);
         painelNivelUI.add(painelBasico);
         painelNivelUI.add(painelProfissional);
 
         return painelNivelUI;
+    }
+
+    private JPanel criarPainelTaxaDiaria() {
+        NumberFormat format = NumberFormat.getNumberInstance();
+        format.setGroupingUsed(false);
+        NumberFormatter formatter = new NumberFormatter(format);
+        formatter.setValueClass(Double.class);
+        formatter.setAllowsInvalid(false);
+        formatter.setMinimum(0.0);
+
+        txtDesignerUI = new JFormattedTextField(formatter);
+        txtGerenciaProjeto = new JFormattedTextField(formatter);
+        txtDesenvolvimento = new JFormattedTextField(formatter);
+
+        JPanel painelDesignerUI = criarPainelComTextField("Designer UI/UX: ", txtDesignerUI, true, false);
+        JPanel painelGerenciaProjeto = criarPainelComTextField("Gerência de Projeto: ", txtGerenciaProjeto, true, false);
+        JPanel painelDesenvolvimento = criarPainelComTextField("Desenvolvimento: ", txtDesenvolvimento, true, false);
+
+        JPanel painelTaxaDiaria = new JPanel(new GridLayout(1, 3, 3, 15));
+        painelTaxaDiaria.setBorder(BorderFactory.createTitledBorder("Taxa Diária (R$):"));
+        painelTaxaDiaria.add(painelDesignerUI);
+        painelTaxaDiaria.add(painelGerenciaProjeto);
+        painelTaxaDiaria.add(painelDesenvolvimento);
+
+        return painelTaxaDiaria;
     }
 
     public JDesktopPane getDesktop() {
@@ -191,5 +240,45 @@ public class ManterPerfilView extends JDialog {
 
     public JButton getBtnCancelar() {
         return btnCancelar;
+    }
+    
+    public boolean isCellEditable() {
+        return isCellEditable;
+    }
+
+    public JTextField getTxtDesignerUI() {
+        return txtDesignerUI;
+    }
+
+    public JTextField getTxtGerenciaProjeto() {
+        return txtGerenciaProjeto;
+    }
+
+    public JTextField getTxtDesenvolvimento() {
+        return txtDesenvolvimento;
+    }
+
+    public JSpinner getJspPequeno() {
+        return jspPequeno;
+    }
+
+    public JSpinner getJspMedio() {
+        return jspMedio;
+    }
+
+    public JSpinner getJspGrande() {
+        return jspGrande;
+    }
+
+    public JTextField getTxtMvp() {
+        return txtMvp;
+    }
+
+    public JTextField getTxtBasico() {
+        return txtBasico;
+    }
+
+    public JTextField getTxtProfissional() {
+        return txtProfissional;
     }
 }
