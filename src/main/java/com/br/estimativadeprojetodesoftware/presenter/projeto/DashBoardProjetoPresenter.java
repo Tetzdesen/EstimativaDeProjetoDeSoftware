@@ -1,6 +1,7 @@
-package com.br.estimativadeprojetodesoftware.presenter;
+package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
 import com.br.estimativadeprojetodesoftware.model.Projeto;
+import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
 import com.br.estimativadeprojetodesoftware.view.projeto.DashBoardProjetoView;

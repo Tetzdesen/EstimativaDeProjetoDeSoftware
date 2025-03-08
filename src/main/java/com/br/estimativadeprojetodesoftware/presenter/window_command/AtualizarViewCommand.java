@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
-import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalPresenter;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 
 /**

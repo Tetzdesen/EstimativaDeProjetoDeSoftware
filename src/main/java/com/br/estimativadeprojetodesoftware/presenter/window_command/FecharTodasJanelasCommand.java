@@ -1,7 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
 import com.br.estimativadeprojetodesoftware.command.usuario.AbrirTelaPrincipalCommand;
-import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 

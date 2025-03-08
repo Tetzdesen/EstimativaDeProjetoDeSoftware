@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.command;
 
-import com.br.estimativadeprojetodesoftware.presenter.DashBoardProjetoPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.DashBoardProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.view.projeto.DashBoardProjetoView;

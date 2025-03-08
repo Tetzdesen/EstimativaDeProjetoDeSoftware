@@ -45,11 +45,10 @@ public class CriarProjetoMock {
         perfis.add(perfil);
         Map<String, Integer> funcionalidades = combinarFuncionalidades(projetosExistentes, random);
         Estimativa estimativa = new Estimativa(UUID.randomUUID(), LocalDateTime.now(), funcionalidades);
-        Map<String, Double> taxasDiarias = new HashMap<>();
-        taxasDiarias.put("Desenvolvimento", 450.00);
+
         List<Usuario> usuarios = new ArrayList();
         usuarios.add(UsuarioLogadoSingleton.getInstancia().getUsuario());
-        return Optional.of(new Projeto(UUID.randomUUID(), nome, criador, "Android", LocalDateTime.now(), null, null, status, compartilhado, compartilhadoPor, taxasDiarias, perfis, usuarios, estimativa));
+        return Optional.of(new Projeto(UUID.randomUUID(), nome, criador, "Android", LocalDateTime.now(), null, null, status, compartilhado, compartilhadoPor, perfis, usuarios, estimativa));
     }
 
     private String gerarNomeDoProjeto(List<String> tipos) {
