@@ -10,141 +10,45 @@ public class ManterPerfilView extends JDialog {
     private JTable tabelaDetalhes;
     private DefaultTableModel modeloTabela;
     private JTextField txtNome;
-    private JLabel lblNome, lblPequeno, lblMedio, lblGrande, lblMvp, lblBasico, lblProfissional;
-    private JSpinner jspPequeno, jspMedio, jspGrande, jspMvp, jspBasico, jspProfissional;
+    private JLabel lblNome;
     private JCheckBox tglBackEnd;
     private JButton btnSalvar, btnEditar, btnExcluir, btnCancelar, btnRemoverCampo, btnAdicionarCampo;
+    private JSpinner jspPequeno, jspMedio, jspGrande, jspMvp, jspBasico, jspProfissional;
 
     public ManterPerfilView(JDesktopPane desktop) {
         setTitle("Manter Perfis");
         setResizable(true);
-
         this.desktop = desktop;
 
+        // Painel Principal
         JPanel painelPrincipal = new JPanel(new BorderLayout());
         add(painelPrincipal);
 
-        // --PAINEL CABEÇALHO--
+        // --- Painel Cabeçalho ---
         JPanel painelCabecalho = new JPanel(new BorderLayout());
 
-        //adicionar input e lable nome
+        // Painel de Informações (Nome e Checkbox)
         JPanel painelInfo = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 15));
         lblNome = new JLabel("Nome: ");
         txtNome = new JTextField();
         txtNome.setPreferredSize(new Dimension(350, 25));
         tglBackEnd = new JCheckBox("Perfil de back end");
-
         painelInfo.add(lblNome);
         painelInfo.add(txtNome);
         painelInfo.add(tglBackEnd);
-
         painelCabecalho.add(painelInfo, BorderLayout.NORTH);
 
-
+        // --- Painel de Campos Obrigatórios ---
         JPanel painelCamposObrigatorios = new JPanel();
         painelCamposObrigatorios.setLayout(new BoxLayout(painelCamposObrigatorios, BoxLayout.Y_AXIS));
-
-        /********  PAINEL DE TAMANHO DO APP */
-
-        //adicionar campos obrigatórios
-        JPanel painelTamanhoApp = new JPanel();
-        painelTamanhoApp.setLayout(new GridLayout(1, 3, 3, 15));
-        painelTamanhoApp.setBorder(BorderFactory.createTitledBorder("Tamanho do App (número de dias): "));
-
-        //label e input
-        JPanel painelPequeno = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
-        lblPequeno = new JLabel("Pequeno: ");
-        jspPequeno = new JSpinner();
-
-        painelPequeno.add(lblPequeno);
-        painelPequeno.add(jspPequeno);
-
-        painelTamanhoApp.add(painelPequeno);
-
-        //painelCabecalho.add(painelTamanhoApp, BorderLayout.CENTER);
-
-        JPanel painelMedio = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
-        lblMedio = new JLabel("Médio: ");
-        jspMedio = new JSpinner();
-
-        painelMedio.add(lblMedio);
-        painelMedio.add(jspMedio);
-
-        painelTamanhoApp.add(painelMedio);
-
-        //painelCabecalho.add(painelTamanhoApp, BorderLayout.CENTER);
-
-        JPanel painelGrande = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
-        lblGrande = new JLabel("Grande: ");
-        jspGrande = new JSpinner();
-
-        painelGrande.add(lblGrande);
-        painelGrande.add(jspGrande);
-
-        painelTamanhoApp.add(painelGrande);
-
-        painelCamposObrigatorios.add(painelTamanhoApp, BorderLayout.CENTER);
-
-
-
-
-
-        /********  PAINEL DE NIVEL DE UI */
-
-        JPanel painelNivelUI = new JPanel();
-        painelNivelUI.setLayout(new GridLayout(1, 3, 3, 15));
-        painelNivelUI.setBorder(BorderFactory.createTitledBorder("Nível de UI (Percentual): "));
-
-        //label e input
-        JPanel painelMVP = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
-        lblMvp = new JLabel("MVP: ");
-        jspMvp = new JSpinner();
-
-        painelMVP.add(lblMvp);
-        painelMVP.add(jspMvp);
-        painelMVP.add(new JLabel("%"));
-
-        painelNivelUI.add(painelMVP);
-
-        //painelCabecalho.add(painelTamanhoApp, BorderLayout.CENTER);
-
-        JPanel painelBasico = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
-        lblBasico = new JLabel("Básico: ");
-        jspBasico = new JSpinner();
-
-        painelBasico.add(lblBasico);
-        painelBasico.add(jspBasico);
-        painelBasico.add(new JLabel("%"));
-
-        painelNivelUI.add(painelBasico);
-
-        //painelCabecalho.add(painelTamanhoApp, BorderLayout.CENTER);
-
-        JPanel painelProfissional = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
-        lblProfissional = new JLabel("Profissional: ");
-        jspProfissional = new JSpinner();
-
-        painelProfissional.add(lblProfissional);
-        painelProfissional.add(jspProfissional);
-        painelProfissional.add(new JLabel("%"));
-
-        painelNivelUI.add(painelProfissional);
-
-        painelCamposObrigatorios.add(painelNivelUI, BorderLayout.CENTER);
-
-
-
-
-
+        painelCamposObrigatorios.add(criarPainelTamanhoApp());
+        painelCamposObrigatorios.add(criarPainelNivelUI());
         painelCabecalho.add(painelCamposObrigatorios, BorderLayout.CENTER);
 
-
-
         painelPrincipal.add(painelCabecalho, BorderLayout.NORTH);
-        
-        //adicionar tabela
+
+        // --- Painel Tabela ---
         JPanel painelTabela = new JPanel(new BorderLayout());
-        
         modeloTabela = new DefaultTableModel(new Object[]{"Funcionalidade", "Número de Dias"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -154,13 +58,11 @@ public class ManterPerfilView extends JDialog {
         tabelaDetalhes = new JTable(modeloTabela);
         tabelaDetalhes.setFillsViewportHeight(true);
         tabelaDetalhes.getColumnModel().getColumn(0).setPreferredWidth(400);
-        
         JScrollPane scrollTabela = new JScrollPane(tabelaDetalhes);
         painelTabela.add(scrollTabela, BorderLayout.CENTER);
-        
         painelPrincipal.add(painelTabela, BorderLayout.CENTER);
 
-        //adicionar botão salvar, remover e adicionar
+        // --- Painel de Botões ---
         btnAdicionarCampo = new JButton("Adicionar");
         btnRemoverCampo = new JButton("Remover");
         btnSalvar = new JButton("Salvar Perfil");
@@ -168,12 +70,13 @@ public class ManterPerfilView extends JDialog {
         btnExcluir = new JButton("Excluir Perfil");
         btnCancelar = new JButton("Cancelar");
 
-        btnAdicionarCampo.setPreferredSize(new Dimension(160, 25));
-        btnRemoverCampo.setPreferredSize(new Dimension(160, 25));
-        btnSalvar.setPreferredSize(new Dimension(160, 25));
-        btnEditar.setPreferredSize(new Dimension(160, 25));
-        btnExcluir.setPreferredSize(new Dimension(160, 25));
-        btnCancelar.setPreferredSize(new Dimension(160, 25));
+        Dimension btnDim = new Dimension(160, 25);
+        btnAdicionarCampo.setPreferredSize(btnDim);
+        btnRemoverCampo.setPreferredSize(btnDim);
+        btnSalvar.setPreferredSize(btnDim);
+        btnEditar.setPreferredSize(btnDim);
+        btnExcluir.setPreferredSize(btnDim);
+        btnCancelar.setPreferredSize(btnDim);
 
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER));
         painelBotoes.add(btnAdicionarCampo);
@@ -182,8 +85,53 @@ public class ManterPerfilView extends JDialog {
         painelBotoes.add(btnEditar);
         painelBotoes.add(btnExcluir);
         painelBotoes.add(btnCancelar);
-
         painelPrincipal.add(painelBotoes, BorderLayout.SOUTH);
+    }
+
+    private JPanel criarPainelComSpinner(String texto, JSpinner spinner, boolean addExtraLabel) {
+        JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
+        painel.add(new JLabel(texto));
+        painel.add(spinner);
+        if (addExtraLabel) {
+            painel.add(new JLabel("%"));
+        }
+        return painel;
+    }
+
+    private JPanel criarPainelTamanhoApp() {
+        jspPequeno  = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
+        jspMedio    = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
+        jspGrande   = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
+
+        JPanel painelPequeno    = criarPainelComSpinner("Pequeno: ", jspPequeno, false);
+        JPanel painelMedio      = criarPainelComSpinner("Médio: ", jspMedio, false);
+        JPanel painelGrande     = criarPainelComSpinner("Grande: ", jspGrande, false);
+
+        JPanel painelTamanhoApp = new JPanel(new GridLayout(1, 3, 3, 15));
+        painelTamanhoApp.setBorder(BorderFactory.createTitledBorder("Tamanho do App (número de dias):"));
+        painelTamanhoApp.add(painelPequeno);
+        painelTamanhoApp.add(painelMedio);
+        painelTamanhoApp.add(painelGrande);
+
+        return painelTamanhoApp;
+    }
+
+    private JPanel criarPainelNivelUI() {
+        jspMvp          = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+        jspBasico       = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+        jspProfissional = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+
+        JPanel painelMVP            = criarPainelComSpinner("MVP: ", jspMvp, true);
+        JPanel painelBasico         = criarPainelComSpinner("Básico: ", jspBasico, true);
+        JPanel painelProfissional   = criarPainelComSpinner("Profissional: ", jspProfissional, true);
+
+        JPanel painelNivelUI = new JPanel(new GridLayout(1, 3, 3, 15));
+        painelNivelUI.setBorder(BorderFactory.createTitledBorder("Nível de UI (Percentual):"));
+        painelNivelUI.add(painelMVP);
+        painelNivelUI.add(painelBasico);
+        painelNivelUI.add(painelProfissional);
+
+        return painelNivelUI;
     }
 
     public JDesktopPane getDesktop() {
@@ -191,9 +139,7 @@ public class ManterPerfilView extends JDialog {
     }
 
     public void atualizarTabela(Object[][] dados) {
-        DefaultTableModel modelo = (DefaultTableModel) modeloTabela;
-        modelo.setRowCount(0);
-
+        modeloTabela.setRowCount(0);
         for (Object[] linha : dados) {
             modeloTabela.addRow(linha);
         }
@@ -234,7 +180,7 @@ public class ManterPerfilView extends JDialog {
     public JCheckBox getTglBackEnd() {
         return tglBackEnd;
     }
-    
+
     public JButton getBtnEditar() {
         return btnEditar;
     }
