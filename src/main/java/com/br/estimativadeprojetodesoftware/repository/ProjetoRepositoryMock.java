@@ -153,9 +153,15 @@ public class ProjetoRepositoryMock implements Subject {
                 .findFirst()
                 .orElse(null);
     }
+    
+    public void adicionarProjeto(Projeto projeto) {
+        projetos.add(projeto);
+        notifyObservers();
+    }
+    
 
     public void adicionarProjeto(String nome, String criador, List<String> tipos, Map<String, Integer> funcionalidadesEscolhidas,
-            String status, boolean compartilhado, String compartilhadoPor) {
+        String status, boolean compartilhado, String compartilhadoPor) {
 
         Projeto novoProjeto = new Projeto(nome, criador, tipos.get(0)); 
 

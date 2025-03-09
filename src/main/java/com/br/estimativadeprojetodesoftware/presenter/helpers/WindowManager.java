@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.presenter.helpers;
 
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalPresenter;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;

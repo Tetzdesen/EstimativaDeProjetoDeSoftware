@@ -1,12 +1,18 @@
-package com.br.estimativadeprojetodesoftware.presenter;
+package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
+import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.DataHoraService;
 import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
 import com.br.estimativadeprojetodesoftware.view.projeto.DetalheProjetoView;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import java.util.stream.Collectors;
 
 public class DetalheProjetoPresenter implements Observer {
@@ -35,27 +41,24 @@ public class DetalheProjetoPresenter implements Observer {
     }
 
     private void carregarCabecalho(Projeto projeto) {
-        String tiposConcatenados = projeto.getPerfis().stream()
-                .map(Perfil::getNome)
-                .collect(Collectors.joining(", "));
-
         view.atualizarCabecalho(
                 projeto.getNome(),
                 projeto.getCriador(),
-                projeto.getCreated_at().toString(),
-                tiposConcatenados,
+                DataHoraService.formatarData(projeto.getCreated_at().toLocalDate()),
+                projeto.getTipo(),
                 projeto.getStatus()
         );
     }
 
     private void carregarDetalhes(Projeto projeto) {
+        System.out.println(projeto.getEstimativa());
         Object[][] dadosTabela = projeto.getEstimativa().getCampos()
                 .entrySet()
                 .stream()
                 .map(entry -> {
                     String nomeFuncionalidade = entry.getKey();
                     int dias = entry.getValue();
-                    
+
                     Perfil perfil = projeto.getPerfis().isEmpty() ? null : projeto.getPerfis().get(0);
 
                     double valor = (perfil != null) ? estimaService.calcularValorUnitario(perfil.getNome(), dias) : 0.0;
@@ -74,7 +77,7 @@ public class DetalheProjetoPresenter implements Observer {
                 .stream()
                 .mapToDouble(entry -> {
                     int dias = entry.getValue();
-                    
+
                     Perfil perfil = projeto.getPerfis().isEmpty() ? null : projeto.getPerfis().get(0);
 
                     return (perfil != null) ? estimaService.calcularValorUnitario(perfil.getNome(), dias) : 0.0;

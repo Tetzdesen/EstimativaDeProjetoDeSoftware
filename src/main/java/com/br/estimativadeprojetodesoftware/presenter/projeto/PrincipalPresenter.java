@@ -1,10 +1,16 @@
-package com.br.estimativadeprojetodesoftware.presenter;
+package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
+import com.br.estimativadeprojetodesoftware.command.usuario.LogoutCommand;
 import com.br.estimativadeprojetodesoftware.command.projeto.AbrirCriarProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.ManterUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.*;
 import com.br.estimativadeprojetodesoftware.command.perfil.VisualizarPerfisProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.AbrirEdicaoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.ExcluirProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
+import com.br.estimativadeprojetodesoftware.presenter.DesktopMemento;
+import com.br.estimativadeprojetodesoftware.presenter.Observer;
+import com.br.estimativadeprojetodesoftware.presenter.Zelador;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.*;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
@@ -67,9 +73,9 @@ public final class PrincipalPresenter implements Observer {
         comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
         //  comandos.put("Novo projeto", new CriarProjetoProjetoCommand(projetoRepository, view.getDesktop()));
         comandos.put("Novo projeto", new AbrirCriarProjetoCommand(view.getDesktop(), projetoRepository));
-        comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
+        comandos.put("Excluir projeto", new ExcluirProjetoCommand(projetoRepository));
         comandos.put("Abrir detalhes", new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()));
-        comandos.put("Logout", new LogoutCommand(this));
+        comandos.put("Logout", new LogoutCommand(this.getView().getDesktop()));
         return comandos;
     }
 
@@ -99,7 +105,7 @@ public final class PrincipalPresenter implements Observer {
         raiz.adicionarFilho(noProjetosCompartilhados);
 
         List<Projeto> listaProjetos = projetoRepository.getProjetos();
-        
+
         for (final Projeto projeto : listaProjetos) {
             AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()) {
                 @Override
@@ -120,10 +126,10 @@ public final class PrincipalPresenter implements Observer {
 
             adicionarMenuContextual(projeto, noProjeto);
 
-            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Elaborar estimativa", "action", comandos.get("Elaborar estimativa")));
-            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa", "action", comandos.get("Visualizar estimativa")));
-            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar projeto de estimativa", "action", comandos.get("Compartilhar projeto de estimativa")));
-            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Exportar projeto de estimativa", "action", comandos.get("Exportar projeto de estimativa")));
+       //     noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Elaborar estimativa", "action", comandos.get("Elaborar estimativa")));
+       //     noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa", "action", comandos.get("Visualizar estimativa")));
+         //   noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar projeto de estimativa", "action", comandos.get("Compartilhar projeto de estimativa")));
+         //   noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Exportar projeto de estimativa", "action", comandos.get("Exportar projeto de estimativa")));
             noProjetos.adicionarFilho(noProjeto);
 
         }
@@ -163,14 +169,21 @@ public final class PrincipalPresenter implements Observer {
     private void adicionarMenuContextual(Projeto projeto, NoArvoreComposite noProjeto) {
         noProjeto.setMenuContextual(() -> {
             JPopupMenu menu = new JPopupMenu();
+            JMenuItem editarProjetoItem = new JMenuItem("Editar Projeto");
             JMenuItem excluirProjetoItem = new JMenuItem("Excluir Projeto");
+            editarProjetoItem.addActionListener(e -> {
+                ProjetoCommand cmdEditar = new AbrirEdicaoProjetoCommand(view.getDesktop(), projetoRepository, projeto.getNome()); // trocar para editar depois
+                cmdEditar.execute();
+            });
             excluirProjetoItem.addActionListener(e -> {
-                ProjetoCommand cmdExcluir = new ExcluirProjetoProjetoCommand(projetoRepository, projeto.getNome());
+                ProjetoCommand cmdExcluir = new ExcluirProjetoCommand(projetoRepository, projeto.getNome());
                 cmdExcluir.execute();
             });
+            menu.add(editarProjetoItem);
             menu.add(excluirProjetoItem);
             return menu;
         });
+    
     }
 
     @Override

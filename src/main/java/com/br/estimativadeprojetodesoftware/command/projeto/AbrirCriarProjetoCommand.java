@@ -45,13 +45,13 @@ public class AbrirCriarProjetoCommand implements ProjetoCommand {
             CadastroProjetoView cadastroProjetoView = new CadastroProjetoView();
             new CadastroProjetoPresenter(cadastroProjetoView, repository);
             cadastroProjetoView.setTitle(tituloJanela);
-            desktop.add(cadastroProjetoView);
             int x = (desktop.getWidth() - cadastroProjetoView.getWidth()) / 2;
             int y = (desktop.getHeight() - cadastroProjetoView.getHeight()) / 2;
             cadastroProjetoView.setLocation(x, y);
             cadastroProjetoView.setVisible(true);
+
             try {
-                //  cadastroProjetoView.setMaximum(true);
+     
             } catch (Exception ignored) {
             }
         }

@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.command;
 
-import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;

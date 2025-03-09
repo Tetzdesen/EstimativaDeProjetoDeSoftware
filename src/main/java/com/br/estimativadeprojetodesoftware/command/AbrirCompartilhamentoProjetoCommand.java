@@ -1,10 +1,8 @@
 package com.br.estimativadeprojetodesoftware.command;
 
-import com.br.estimativadeprojetodesoftware.presenter.CompartilharProjetoPresenter;
-import com.br.estimativadeprojetodesoftware.presenter.PrincipalPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.CompartilharProjetoPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
-import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
-import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.view.projeto.CompartilharProjetoView;
 
 import javax.swing.*;

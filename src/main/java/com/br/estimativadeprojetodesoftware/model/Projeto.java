@@ -21,11 +21,26 @@ public class Projeto {
     private String status;
     private boolean compartilhado;
     private String compartilhadoPor;
-    private Map<String, Double> taxasDiarias;
     private List<Perfil> perfis;
     private List<Usuario> usuarios;
     private Estimativa estimativa;
 
+    public Projeto(String nome, String criador) {
+        this.id = UUID.randomUUID();
+        this.nome = nome;
+        this.criador = criador;
+        this.tipo = null;
+        this.created_at = LocalDateTime.now();
+        this.update_at = null;
+        this.deleted_at = null;
+        this.status = "Não estimado";
+        this.compartilhado = false;
+        this.compartilhadoPor = null;
+        this.perfis = new ArrayList<>();
+        this.usuarios = new ArrayList<>();
+        this.estimativa = null;
+    }
+    
     public Projeto(String nome, String criador, String tipo) {
         this.id = UUID.randomUUID();
         this.nome = nome;
@@ -39,11 +54,10 @@ public class Projeto {
         this.compartilhadoPor = null;
         this.perfis = new ArrayList<>();
         this.usuarios = new ArrayList<>();
-        this.taxasDiarias = new HashMap<>();
         this.estimativa = null;
     }
 
-    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, String status, boolean compartilhado, String compartilhadoPor, Map<String, Double> taxasDiarias, List<Perfil> perfis, List<Usuario> usuarios, Estimativa estimativa) {
+    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, String status, boolean compartilhado, String compartilhadoPor, List<Perfil> perfis, List<Usuario> usuarios, Estimativa estimativa) {
         this.id = id;
         this.nome = nome;
         this.criador = criador;
@@ -54,7 +68,6 @@ public class Projeto {
         this.status = status;
         this.compartilhado = compartilhado;
         this.compartilhadoPor = compartilhadoPor;
-        this.taxasDiarias = taxasDiarias;
         this.perfis = perfis;
         this.usuarios = usuarios;
         this.estimativa = estimativa;
@@ -100,10 +113,6 @@ public class Projeto {
         return compartilhadoPor;
     }
 
-    public Map<String, Double> getTaxasDiarias() {
-        return Collections.unmodifiableMap(taxasDiarias);
-    }
-
     public List<Perfil> getPerfis() {
         return Collections.unmodifiableList(perfis);
     }
@@ -116,6 +125,10 @@ public class Projeto {
         return estimativa;
     }
 
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+    
     public void setUpdate_at(LocalDateTime update_at) {
         if (update_at == null) {
             throw new IllegalArgumentException("Erro: Data de atualização não pode ser nula.");
@@ -148,16 +161,6 @@ public class Projeto {
         this.compartilhadoPor = compartilhadoPor;
     }
 
-    public void adicionarTaxaDiaria(String nomeTaxa, double valor) {
-        if (nome == null || nome.isEmpty()) {
-            throw new IllegalArgumentException("Erro: Nome da taxa não pode ser vazia ou nula.");
-        }
-        if (valor < 0) {
-            throw new IllegalArgumentException("Erro: Valor não pode ser negativo. Nome da taxa: " + nome + " Valor: " + valor);
-        }
-        taxasDiarias.put(nomeTaxa, valor);
-    }
-
     public void adicionarPerfil(Perfil perfil) {
         if (perfil == null) {
             throw new IllegalArgumentException("Erro: Perfil de projeto não pode ser nulo.");
@@ -170,6 +173,20 @@ public class Projeto {
             throw new IllegalArgumentException("Erro: Perfil de projeto não pode ser nulo.");
         }
         usuarios.add(usuario);
+    }
+    
+    public void removerPerfil(Perfil perfil) {
+        if (perfil == null) {
+            throw new IllegalArgumentException("Erro: Perfil de projeto não pode ser nulo.");
+        }
+        perfis.remove(perfil);
+    }
+    
+    public void removerUsuario(Usuario usuario) {
+        if (usuario == null) {
+            throw new IllegalArgumentException("Erro: Perfil de projeto não pode ser nulo.");
+        }
+        usuarios.remove(usuario);
     }
 
     @Override
@@ -220,9 +237,6 @@ public class Projeto {
         if (!Objects.equals(this.deleted_at, other.deleted_at)) {
             return false;
         }
-        if (!Objects.equals(this.taxasDiarias, other.taxasDiarias)) {
-            return false;
-        }
         if (!Objects.equals(this.perfis, other.perfis)) {
             return false;
         }
@@ -234,7 +248,7 @@ public class Projeto {
 
     @Override
     public String toString() {
-        return "Projeto{" + "id=" + id + ", nome=" + nome + ", criador=" + criador + ", tipo=" + tipo + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + ", status=" + status + ", compartilhado=" + compartilhado + ", compartilhadoPor=" + compartilhadoPor + ", taxasDiarias=" + taxasDiarias + ", perfis=" + perfis + ", usuarios=" + usuarios + ", estimativa=" + estimativa + '}';
+        return "Projeto{" + "id=" + id + ", nome=" + nome + ", criador=" + criador + ", tipo=" + tipo + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + ", status=" + status + ", compartilhado=" + compartilhado + ", compartilhadoPor=" + compartilhadoPor + ", perfis=" + perfis + ", usuarios=" + usuarios + ", estimativa=" + estimativa + '}';
     }
 
 }

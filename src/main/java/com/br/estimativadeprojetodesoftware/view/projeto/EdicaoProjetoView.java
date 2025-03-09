@@ -10,12 +10,12 @@ import javax.swing.JTextField;
  *
  * @author tetzner
  */
-public class CadastroProjetoView extends javax.swing.JDialog {
+public class EdicaoProjetoView extends javax.swing.JDialog {
 
     /**
      * Creates new form CadastroProjView
      */
-    public CadastroProjetoView() {
+    public EdicaoProjetoView() {
         initComponents();
     }
 
@@ -90,7 +90,7 @@ public class CadastroProjetoView extends javax.swing.JDialog {
         btnCancelar.setText("Cancelar");
 
         lblCadastroProjeto.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        lblCadastroProjeto.setText("Cadastro de Projeto");
+        lblCadastroProjeto.setText("Edição de Projeto");
 
         lblNomeProjeto.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblNomeProjeto.setText("Nome:");
