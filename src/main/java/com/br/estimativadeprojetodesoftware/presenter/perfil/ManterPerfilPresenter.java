@@ -1,10 +1,10 @@
 package com.br.estimativadeprojetodesoftware.presenter.perfil;
 
-import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.perfil.AdicionarNovaFuncionalidadePerfilCommand;
+import com.br.estimativadeprojetodesoftware.command.perfil.RemoverFuncionalidadePerfilCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.state.perfil.InclusaoPerfilState;
@@ -22,7 +22,7 @@ public class ManterPerfilPresenter {
         this.view = view;
         this.repository = repository;
         this.perfil = perfil;
-        configuraView();
+        setStatusBotaoRemover(false);
         configuraActionsListerns();
 
         setAllBtnVisibleFalse();
@@ -34,27 +34,7 @@ public class ManterPerfilPresenter {
         }
     }
 
-    private void configuraView() {
-        setStatusBotaoRemover(false);
-    }
-
     private void configuraActionsListerns() {
-        view.getBtnAdicionarCampo().addActionListener(e -> {
-            try {
-                adicionarNovoCampo();
-            } catch (Exception ex) {
-                new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
-            }
-        });
-
-        view.getBtnRemoverCampo().addActionListener(e -> {
-            try {
-                removerCampo();
-            } catch (Exception ex) {
-                new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
-            }
-        });
-
         view.getTabelaDetalhes().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent evt) {
@@ -76,42 +56,12 @@ public class ManterPerfilPresenter {
         }
     }
 
-    public void adicionarNovoCampo() {
-        view.getModeloTabela().addRow(new Object[]{"", "", ""});
-
-        int novaLinha = view.getModeloTabela().getRowCount() - 1;
-        
-        view.getTabelaDetalhes().setRowSelectionInterval(novaLinha, novaLinha);
-            
-        view.getTabelaDetalhes().setColumnSelectionInterval(0, 0);
-            
-        view.getTabelaDetalhes().editCellAt(novaLinha, 0);
-            
-        view.getTabelaDetalhes().requestFocusInWindow();
-
-        view.getTabelaDetalhes().getCellRect(novaLinha, 0, true);
-
-        view.getTabelaDetalhes().scrollRectToVisible(view.getTabelaDetalhes().getCellRect(novaLinha, 0, true));
+    public void AdicionarNovaFuncionalidade() {
+        new AdicionarNovaFuncionalidadePerfilCommand(this).execute();
     }
 
     public void removerCampo() {
-        int linhaSelecionada = view.getTabelaDetalhes().getSelectedRow();
-
-        if (linhaSelecionada == -1) {
-            JOptionPane.showMessageDialog(view, "Selecione uma linha para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        int resposta = JOptionPane.showConfirmDialog(
-            view, 
-            "Tem certeza que deseja remover este campo?", 
-            "Confirmação", 
-            JOptionPane.YES_NO_OPTION
-        );
-
-        if (resposta == JOptionPane.YES_OPTION) {
-            view.getModeloTabela().removeRow(linhaSelecionada);
-        }
+        new RemoverFuncionalidadePerfilCommand(this).execute();
     }
 
     public void carregarCampos(Perfil perfil) {
