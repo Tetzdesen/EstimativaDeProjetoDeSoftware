@@ -48,7 +48,7 @@ public class CriarProjetoMock {
 
         List<Usuario> usuarios = new ArrayList();
         usuarios.add(UsuarioLogadoSingleton.getInstancia().getUsuario());
-        return Optional.of(new Projeto(UUID.randomUUID(), nome, criador, "Android", LocalDateTime.now(), null, null, status, compartilhado, compartilhadoPor, perfis, usuarios, estimativa));
+        return Optional.of(new Projeto(UUID.randomUUID(), nome, criador, "Android", LocalDateTime.now(), status, compartilhado, compartilhadoPor, perfis, usuarios, estimativa));
     }
 
     private String gerarNomeDoProjeto(List<String> tipos) {

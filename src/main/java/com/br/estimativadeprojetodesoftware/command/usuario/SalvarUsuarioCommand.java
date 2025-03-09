@@ -35,7 +35,7 @@ public class SalvarUsuarioCommand implements ProjetoCommand {
         
         Usuario usuario = usuarioPresenter.getUsuario();
 
-        Usuario usuarioNovo = new Usuario(usuario.getId(), nome, email, senha, usuario.getIsAutorizado(), usuario.getCreated_at(), usuario.getUpdate_at(), usuario.getDeleted_at(), usuario.getProjetos(), usuario.getPerfis());
+        Usuario usuarioNovo = new Usuario(usuario.getId(), nome, email, senha, usuario.getCreated_at(), usuario.getLog(), usuario.getProjetos(), usuario.getPerfis());
         
         UsuarioLogadoSingleton.getInstancia().setUsuario(usuarioNovo);
         usuarioPresenter.setUsuario(usuarioNovo);

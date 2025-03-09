@@ -40,7 +40,7 @@ public class CriarProjetoProjetoCommand implements ProjetoCommand {
                             nomesPerfis, 
                             projeto.getEstimativa() != null ? projeto.getEstimativa().getCampos() : new HashMap<>(),
                             projeto.getStatus(),
-                            projeto.getCompartilhado(),
+                            projeto.isCompartilhado(),
                             projeto.getCompartilhadoPor()
                     );
 
