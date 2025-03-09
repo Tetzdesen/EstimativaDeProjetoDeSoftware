@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.model;
 
+import java.awt.Image;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,13 +11,14 @@ import java.util.UUID;
 public class Usuario {
 
     private UUID id;
+    private Image rosto;
     private String nome;
     private String email;
     private String senha;
-    private boolean isAutorizado;
     private LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
+    private int log;
     private List<Projeto> projetos;
     private List<Perfil> perfis;
 
@@ -25,29 +27,33 @@ public class Usuario {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
-        this.isAutorizado = false;
         this.created_at = LocalDateTime.now();
         this.update_at = null;
         this.deleted_at = null;
+        this.log = -1;
         this.projetos = new ArrayList();
         this.perfis = new ArrayList();
     }
 
-    public Usuario(UUID id, String nome, String email, String senha, boolean isAutorizado, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, List<Projeto> projetos, List<Perfil> perfis) {
+    public Usuario(UUID id, String nome, String email, String senha, LocalDateTime created_at, LocalDateTime update_at, LocalDateTime deleted_at, int log, List<Projeto> projetos, List<Perfil> perfis) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
-        this.isAutorizado = isAutorizado;
         this.created_at = created_at;
         this.update_at = update_at;
         this.deleted_at = deleted_at;
+        this.log = log;
         this.projetos = projetos;
         this.perfis = perfis;
     }
 
     public UUID getId() {
         return id;
+    }
+
+    public Image getRosto() {
+        return rosto;
     }
 
     public String getNome() {
@@ -62,10 +68,6 @@ public class Usuario {
         return senha;
     }
 
-    public boolean getIsAutorizado() {
-        return isAutorizado;
-    }
-
     public LocalDateTime getCreated_at() {
         return created_at;
     }
@@ -78,16 +80,16 @@ public class Usuario {
         return deleted_at;
     }
 
+    public int getLog() {
+        return log;
+    }
+    
     public List<Projeto> getProjetos() {
         return Collections.unmodifiableList(projetos);
     }
 
     public List<Perfil> getPerfis() {
         return Collections.unmodifiableList(perfis);
-    }
-
-    public void setIsAutorizado(Boolean isAutorizado) {
-        this.isAutorizado = isAutorizado;
     }
 
     public void setUpdate_at(LocalDateTime update_at) {
@@ -136,7 +138,7 @@ public class Usuario {
             return false;
         }
         final Usuario other = (Usuario) obj;
-        if (this.isAutorizado != other.isAutorizado) {
+        if (this.log != other.log) {
             return false;
         }
         if (!Objects.equals(this.nome, other.nome)) {
@@ -149,6 +151,9 @@ public class Usuario {
             return false;
         }
         if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.rosto, other.rosto)) {
             return false;
         }
         if (!Objects.equals(this.created_at, other.created_at)) {
@@ -168,7 +173,7 @@ public class Usuario {
 
     @Override
     public String toString() {
-        return "Usuario{" + "id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", isAutorizado=" + isAutorizado + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + ", projetos=" + projetos + ", perfis=" + perfis + '}';
+        return "Usuario{" + "id=" + id + ", rosto=" + rosto + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + ", log=" + log + ", projetos=" + projetos + ", perfis=" + perfis + '}';
     }
-
+    
 }
