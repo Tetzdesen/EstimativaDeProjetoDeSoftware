@@ -36,7 +36,7 @@ public class InclusaoPerfilState extends ManterPerfilPresenterState {
 
         presenter.getView().getBtnAdicionarCampo().addActionListener(e -> {
             try {
-                presenter.adicionarNovoCampo();
+                presenter.AdicionarNovaFuncionalidade();
             } catch (Exception ex) {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }

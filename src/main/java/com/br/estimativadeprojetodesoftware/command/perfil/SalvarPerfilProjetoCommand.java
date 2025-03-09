@@ -25,9 +25,9 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
         int medio = (int) presenter.getView().getJspMedio().getValue();
         int grande = (int) presenter.getView().getJspGrande().getValue();
 
-        int mvp = Integer.parseInt(presenter.getView().getTxtMvp().getText());
-        int basico = Integer.parseInt(presenter.getView().getTxtBasico().getText());
-        int profissional = Integer.parseInt(presenter.getView().getTxtProfissional().getText());
+        double mvp = Double.parseDouble(presenter.getView().getTxtMvp().getText());
+        double basico = Double.parseDouble(presenter.getView().getTxtBasico().getText());
+        double profissional = Double.parseDouble(presenter.getView().getTxtProfissional().getText());
 
         double designer = Double.parseDouble(presenter.getView().getTxtDesignerUI().getText());
         double gerencia = Double.parseDouble(presenter.getView().getTxtGerenciaProjeto().getText());
@@ -46,9 +46,9 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
             perfil.adicionarTamanhoApp("médio", medio);
             perfil.adicionarTamanhoApp("grande", grande);
 
-            perfil.adicionarNivelUI("mvp", (mvp/100));
-            perfil.adicionarNivelUI("básico", (basico/100));
-            perfil.adicionarNivelUI("profissional", (profissional/100));
+            perfil.adicionarNivelUI("mvp", (mvp));
+            perfil.adicionarNivelUI("básico", (basico));
+            perfil.adicionarNivelUI("profissional", (profissional));
 
             perfil.adicionarTaxaDiaria("designer ui/ux", designer);
             perfil.adicionarTaxaDiaria("gerência de projeto", gerencia);
@@ -74,11 +74,11 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
             perfil.setNome(nome);
 
             perfil.adicionarTamanhoApp("pequeno", pequeno);
-            perfil.adicionarTamanhoApp("medio", medio);
+            perfil.adicionarTamanhoApp("médio", medio);
             perfil.adicionarTamanhoApp("grande", grande);
 
             perfil.adicionarNivelUI("mvp", mvp);
-            perfil.adicionarNivelUI("basico", basico);
+            perfil.adicionarNivelUI("básico", basico);
             perfil.adicionarNivelUI("profissional", profissional);
 
             perfil.adicionarTaxaDiaria("designer ui/ux", designer);
