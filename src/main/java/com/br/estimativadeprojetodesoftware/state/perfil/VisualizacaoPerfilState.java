@@ -33,6 +33,18 @@ public class VisualizacaoPerfilState extends ManterPerfilPresenterState {
 
         presenter.getView().getTxtNome().setEnabled(false);
         presenter.getView().getTglBackEnd().setEnabled(false);
+
+        presenter.getView().getJspPequeno().setEnabled(false);
+        presenter.getView().getJspMedio().setEnabled(false);
+        presenter.getView().getJspGrande().setEnabled(false);
+        
+        presenter.getView().getTxtMvp().setEnabled(false);
+        presenter.getView().getTxtBasico().setEnabled(false);
+        presenter.getView().getTxtProfissional().setEnabled(false);
+
+        presenter.getView().getTxtDesignerUI().setEnabled(false);
+        presenter.getView().getTxtGerenciaProjeto().setEnabled(false);
+        presenter.getView().getTxtDesenvolvimento().setEnabled(false);
         
         presenter.carregarCampos(perfil);
 

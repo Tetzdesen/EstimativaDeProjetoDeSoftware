@@ -1,11 +1,9 @@
 package com.br.estimativadeprojetodesoftware.view.perfil;
 
 import java.awt.*;
-import java.text.NumberFormat;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.NumberFormatter;
 
 public class ManterPerfilView extends JDialog {
     private boolean isCellEditable;
@@ -22,6 +20,7 @@ public class ManterPerfilView extends JDialog {
         setTitle("Manter Perfis");
         setResizable(true);
         this.desktop = desktop;
+        isCellEditable = false;
 
         // Painel Principal
         JPanel painelPrincipal = new JPanel(new BorderLayout());
@@ -134,16 +133,9 @@ public class ManterPerfilView extends JDialog {
     }
 
     private JPanel criarPainelNivelUI() {
-        NumberFormat format = NumberFormat.getNumberInstance();
-        format.setGroupingUsed(false);
-        NumberFormatter formatter = new NumberFormatter(format);
-        formatter.setValueClass(Double.class);
-        formatter.setAllowsInvalid(false);
-        formatter.setMinimum(0.0);
-
-        txtMvp          = new JFormattedTextField(formatter);
-        txtBasico       = new JFormattedTextField(formatter);
-        txtProfissional = new JFormattedTextField(formatter);
+        txtMvp          = new JFormattedTextField();
+        txtBasico       = new JFormattedTextField();
+        txtProfissional = new JFormattedTextField();
 
         JPanel painelMVP            = criarPainelComTextField("MVP: ", txtMvp, false, true);
         JPanel painelBasico         = criarPainelComTextField("Básico: ", txtBasico, false, true);
@@ -159,16 +151,9 @@ public class ManterPerfilView extends JDialog {
     }
 
     private JPanel criarPainelTaxaDiaria() {
-        NumberFormat format = NumberFormat.getNumberInstance();
-        format.setGroupingUsed(false);
-        NumberFormatter formatter = new NumberFormatter(format);
-        formatter.setValueClass(Double.class);
-        formatter.setAllowsInvalid(false);
-        formatter.setMinimum(0.0);
-
-        txtDesignerUI = new JFormattedTextField(formatter);
-        txtGerenciaProjeto = new JFormattedTextField(formatter);
-        txtDesenvolvimento = new JFormattedTextField(formatter);
+        txtDesignerUI = new JFormattedTextField();
+        txtGerenciaProjeto = new JFormattedTextField();
+        txtDesenvolvimento = new JFormattedTextField();
 
         JPanel painelDesignerUI = criarPainelComTextField("Designer UI/UX: ", txtDesignerUI, true, false);
         JPanel painelGerenciaProjeto = criarPainelComTextField("Gerência de Projeto: ", txtGerenciaProjeto, true, false);

@@ -115,14 +115,14 @@ public class Perfil {
     }
 
     public void adicionarTamanhoApp(String tamanhoApp, int dias) {
-        if (nome == null || nome.isEmpty()) {
+        if (tamanhoApp == null || tamanhoApp.isEmpty()) {
             throw new IllegalArgumentException("Erro: Tamanho do App não pode ser vazio ou nula.");
         }
         if (dias < 0) {
-            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Tamanho do App: " + nome + " dias: " + dias);
+            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Tamanho do App: " + tamanhoApp + " dias: " + dias);
         }
 
-        if (!tamanhosApp.keySet().contains(tamanhoApp.toLowerCase())) {
+        if (!tamanhosApp.containsKey(tamanhoApp.toLowerCase())) {
             throw new IllegalArgumentException("O tamanho do app deve ser: pequeno, médio ou grande");
         }
 
@@ -130,14 +130,14 @@ public class Perfil {
     }
 
     public void adicionarNivelUI(String nivelUI, double valor) {
-        if (nome == null || nome.isEmpty()) {
+        if (nivelUI == null || nivelUI.isEmpty()) {
             throw new IllegalArgumentException("Erro: Nível de UI não pode ser vazio ou nula.");
         }
         if (valor < 0) {
-            throw new IllegalArgumentException("Erro: valor não pode ser negativo. Nível de UI: " + nome + " valor: " + valor);
+            throw new IllegalArgumentException("Erro: valor não pode ser negativo. Nível de UI: " + nivelUI + " valor: " + valor);
         }
 
-        if (!niveisUI.keySet().contains(nivelUI.toLowerCase())) {
+        if (!niveisUI.containsKey(nivelUI.toLowerCase())) {
             throw new IllegalArgumentException("O nível de UI deve ser: mvp, básico ou profissional");
         }
 
@@ -145,24 +145,24 @@ public class Perfil {
     }
 
     public void adicionarFuncionalidade(String nomeFuncionalidade, int dias) {
-        if (nome == null || nome.isEmpty()) {
+        if (nomeFuncionalidade == null || nomeFuncionalidade.isEmpty()) {
             throw new IllegalArgumentException("Erro: Nome da funcionalidade não pode ser vazio ou nula.");
         }
         if (dias < 0) {
-            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Nome da funcionalidade: " + nome + " dias: " + dias);
+            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Nome da funcionalidade: " + nomeFuncionalidade + " dias: " + dias);
         }
         funcionalidades.put(nomeFuncionalidade, dias);
     }
 
     public void adicionarTaxaDiaria(String taxaDiaria, double valor) {
-        if (nome == null || nome.isEmpty()) {
+        if (taxaDiaria == null || taxaDiaria.isEmpty()) {
             throw new IllegalArgumentException("Erro: Taxa Diária não pode ser vazio ou nula.");
         }
         if (valor < 0) {
-            throw new IllegalArgumentException("Erro: valor não pode ser negativo. Taxa Diária: " + nome + " valor: " + valor);
+            throw new IllegalArgumentException("Erro: valor não pode ser negativo. Taxa Diária: " + taxaDiaria + " valor: " + valor);
         }
 
-        if (!taxasDiarias.keySet().contains(taxaDiaria.toLowerCase())) {
+        if (!taxasDiarias.containsKey(taxaDiaria.toLowerCase())) {
             throw new IllegalArgumentException("A taxa diária deve ser: designer ui/ux, gerência de projeto ou desenvolvimento");
         }
 
@@ -170,7 +170,7 @@ public class Perfil {
     }
 
     public void removerFuncionalidades() {
-        funcionalidades = new LinkedHashMap<>();
+        funcionalidades.clear();
     }
 
     public void setPerfilBackEnd(boolean isPerfilBackEnd) {
