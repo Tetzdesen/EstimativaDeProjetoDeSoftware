@@ -1,9 +1,7 @@
 package com.br.estimativadeprojetodesoftware.model;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -34,22 +32,6 @@ public class Perfil {
         this.deleted_at = null;
 
         adicionarCamposDefault();
-    }
-
-    public Perfil(String nome, Map<String, Integer> tamanhosApp, Map<String, Double> niveisUI, Map<String, Double> taxasDiarias) {
-        validaTamanhosApp(tamanhosApp);
-        validaNiveisUI(niveisUI);
-        validaTaxasDiarias(taxasDiarias);
-
-        this.id = UUID.randomUUID();
-        this.nome = nome;
-        this.tamanhosApp = tamanhosApp;
-        this.niveisUI = niveisUI;
-        this.funcionalidades = new LinkedHashMap<>();
-        this.taxasDiarias = taxasDiarias;
-        this.created_at = LocalDateTime.now();
-        this.update_at = null;
-        this.deleted_at = null;
     }
 
     public Perfil(  UUID id, String nome, 
@@ -140,26 +122,26 @@ public class Perfil {
             throw new IllegalArgumentException("Erro: dias não pode ser negativo. Tamanho do App: " + nome + " dias: " + dias);
         }
 
-        if (!tamanhosApp.keySet().contains(tamanhoApp)) {
+        if (!tamanhosApp.keySet().contains(tamanhoApp.toLowerCase())) {
             throw new IllegalArgumentException("O tamanho do app deve ser: pequeno, médio ou grande");
         }
 
-        funcionalidades.putIfAbsent(tamanhoApp, dias);
+        tamanhosApp.put(tamanhoApp.toLowerCase(), dias);
     }
 
-    public void adicionarNivelUI(String nivelUI, double dias) {
+    public void adicionarNivelUI(String nivelUI, double valor) {
         if (nome == null || nome.isEmpty()) {
             throw new IllegalArgumentException("Erro: Nível de UI não pode ser vazio ou nula.");
         }
-        if (dias < 0) {
-            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Nível de UI: " + nome + " dias: " + dias);
+        if (valor < 0) {
+            throw new IllegalArgumentException("Erro: valor não pode ser negativo. Nível de UI: " + nome + " valor: " + valor);
         }
 
-        if (!niveisUI.keySet().contains(nivelUI)) {
-            throw new IllegalArgumentException("O nível de UI deve ser: MVP, Básico ou Profissional");
+        if (!niveisUI.keySet().contains(nivelUI.toLowerCase())) {
+            throw new IllegalArgumentException("O nível de UI deve ser: mvp, básico ou profissional");
         }
 
-        niveisUI.putIfAbsent(nivelUI, dias);
+        niveisUI.put(nivelUI.toLowerCase(), valor);
     }
 
     public void adicionarFuncionalidade(String nomeFuncionalidade, int dias) {
@@ -172,19 +154,19 @@ public class Perfil {
         funcionalidades.put(nomeFuncionalidade, dias);
     }
 
-    public void adicionarTaxaDiaria(String taxaDiaria, double dias) {
+    public void adicionarTaxaDiaria(String taxaDiaria, double valor) {
         if (nome == null || nome.isEmpty()) {
             throw new IllegalArgumentException("Erro: Taxa Diária não pode ser vazio ou nula.");
         }
-        if (dias < 0) {
-            throw new IllegalArgumentException("Erro: dias não pode ser negativo. Taxa Diária: " + nome + " dias: " + dias);
+        if (valor < 0) {
+            throw new IllegalArgumentException("Erro: valor não pode ser negativo. Taxa Diária: " + nome + " valor: " + valor);
         }
 
-        if (!taxasDiarias.keySet().contains(taxaDiaria)) {
-            throw new IllegalArgumentException("O nível de UI deve ser: MVP, Básico ou Profissional");
+        if (!taxasDiarias.keySet().contains(taxaDiaria.toLowerCase())) {
+            throw new IllegalArgumentException("A taxa diária deve ser: designer ui/ux, gerência de projeto ou desenvolvimento");
         }
 
-        taxasDiarias.putIfAbsent(taxaDiaria, dias);
+        taxasDiarias.put(taxaDiaria.toLowerCase(), valor);
     }
 
     public void removerFuncionalidades() {
@@ -232,53 +214,17 @@ public class Perfil {
     }
 
     private void adicionarCamposDefault() {
-        this.tamanhosApp.put("Pequeno", 0);
-        this.tamanhosApp.put("Médio", 0);
-        this.tamanhosApp.put("Grande", 0);
+        this.tamanhosApp.put("pequeno", 0);
+        this.tamanhosApp.put("médio", 0);
+        this.tamanhosApp.put("grande", 0);
 
-        this.niveisUI.put("MVP", 0.0);
-        this.niveisUI.put("Básico", 0.0);
-        this.niveisUI.put("Profissional", 0.0);
+        this.niveisUI.put("mvp", 0.0);
+        this.niveisUI.put("básico", 0.0);
+        this.niveisUI.put("profissional", 0.0);
 
-        this.taxasDiarias.put("Designer UI/UX", 0.0);
-        this.taxasDiarias.put("Gerência de Projeto", 0.0);
-        this.taxasDiarias.put("Desenolvimento", 0.0);
-    }
-
-    private void validaTamanhosApp(Map<String, Integer> tamanhosApp) {
-        if (!tamanhosApp.keySet().equals(new HashSet<>(Arrays.asList("Pequeno", "Médio", "Grande")))) {
-            throw new IllegalArgumentException("Os tamanhos do app devem ser: pequeno, médio e grande");
-        }
-
-        for (Integer valor : tamanhosApp.values()) {
-            if (valor <= 0) {
-                throw new IllegalArgumentException("Os valores de tamanhos do app devem ser maiores do que zero");
-            }
-        }
-    }
-
-    private void validaNiveisUI(Map<String, Double> niveisUI) {
-        if (!niveisUI.keySet().equals(new HashSet<>(Arrays.asList("MVP", "Básico", "Profissional")))) {
-            throw new IllegalArgumentException("Os níveis de UI devem ser: MVP, Básico e Profissional");
-        }
-
-        for (Double valor : niveisUI.values()) {
-            if (valor <= 0) {
-                throw new IllegalArgumentException("Os valores de níveis de UI devem ser maiores do que zero");
-            }
-        }
-    }
-
-    private void validaTaxasDiarias(Map<String, Double> taxasDiarias) {
-        if (!taxasDiarias.keySet().equals(new HashSet<>(Arrays.asList("Designer UI/UX", "Gerência de Projeto", "Desenolvimento")))) {
-            throw new IllegalArgumentException("As taxas diárias devem ser: Designer UI/UX, Gerência de Projeto e Desenolvimento");
-        }
-
-        for (Double valor : taxasDiarias.values()) {
-            if (valor <= 0) {
-                throw new IllegalArgumentException("Os valores das taxas diárias devem ser maiores do que zero");
-            }
-        }
+        this.taxasDiarias.put("designer ui/ux", 0.0);
+        this.taxasDiarias.put("gerência de projeto", 0.0);
+        this.taxasDiarias.put("desenvolvimento", 0.0);
     }
 
     @Override

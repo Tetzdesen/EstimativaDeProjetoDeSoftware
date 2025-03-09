@@ -7,16 +7,16 @@ public class DefaultBuilder extends PerfilBuilder {
 
     @Override
     public void addTamanhoApp() {
-        perfil.adicionarFuncionalidade("Tamanho do App: pequeno", 0);
-        perfil.adicionarFuncionalidade("Tamanho do App: médio", 0);
-        perfil.adicionarFuncionalidade("Tamanho do App: Grande", 0);
+        perfil.adicionarTamanhoApp("pequeno", 0);
+        perfil.adicionarTamanhoApp("médio", 0);
+        perfil.adicionarTamanhoApp("grande", 0);
     }
 
     @Override
     public void addNivelUI() {
-        perfil.adicionarFuncionalidade("Nível de UI (Percentual) MVP", 0);
-        perfil.adicionarFuncionalidade("Nível de UI (Percentual) Básico", 0);
-        perfil.adicionarFuncionalidade("Nível de UI (Percentual) Profissional", 0);
+        perfil.adicionarNivelUI("mvp", 0);
+        perfil.adicionarNivelUI("básico", 0);
+        perfil.adicionarNivelUI("profissional", 0);
     }
 
     @Override
@@ -83,17 +83,14 @@ public class DefaultBuilder extends PerfilBuilder {
         perfil.adicionarFuncionalidade("Dados de Sensores do Dispositivo (Device Sensor Data)", 0);
         perfil.adicionarFuncionalidade("Códigos de Barras ou QR Codes", 0);
         perfil.adicionarFuncionalidade("Dados de Saúde (Health Data)", 0);
-        perfil.adicionarFuncionalidade("Gerente de Projeto (Project Manager)", 0);
-        perfil.adicionarFuncionalidade("Taxa Diária de Design (Design Day Rate)", 0);
-        perfil.adicionarFuncionalidade("Taxa Diária de Gerência de Projeto (Developer Day Rate)", 0);
-        perfil.adicionarFuncionalidade("Taxa Diária de Desenvolvimento (Developer Day Rate)", 0);
-        perfil.adicionarFuncionalidade("Health Data", 0);
         perfil.adicionarFuncionalidade("Apple Watch", 0);
         
     }
 
     @Override
     public void addTaxasDiarias() {
-        
+        perfil.adicionarTaxaDiaria("designer ui/ux", 0);
+        perfil.adicionarTaxaDiaria("gerência de projeto", 0);
+        perfil.adicionarTaxaDiaria("desenvolvimento", 0);
     }
 }
