@@ -21,6 +21,18 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
         boolean isBackEnd = presenter.getView().getTglBackEnd().isSelected();
         DefaultTableModel tabela = presenter.getView().getModeloTabela();
 
+        int pequeno = (int) presenter.getView().getJspPequeno().getValue();
+        int medio = (int) presenter.getView().getJspMedio().getValue();
+        int grande = (int) presenter.getView().getJspGrande().getValue();
+
+        int mvp = Integer.parseInt(presenter.getView().getTxtMvp().getText());
+        int basico = Integer.parseInt(presenter.getView().getTxtBasico().getText());
+        int profissional = Integer.parseInt(presenter.getView().getTxtProfissional().getText());
+
+        double designer = Double.parseDouble(presenter.getView().getTxtDesignerUI().getText());
+        double gerencia = Double.parseDouble(presenter.getView().getTxtGerenciaProjeto().getText());
+        double desenvolvimento = Double.parseDouble(presenter.getView().getTxtDesenvolvimento().getText());
+
         if (presenter.getView().getTabelaDetalhes().isEditing()) {
             presenter.getView().getTabelaDetalhes().getCellEditor().stopCellEditing();
         }
@@ -29,6 +41,18 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
             Perfil perfil = new Perfil(nome);
         
             perfil.setPerfilBackEnd(isBackEnd);
+
+            perfil.adicionarTamanhoApp("pequeno", pequeno);
+            perfil.adicionarTamanhoApp("médio", medio);
+            perfil.adicionarTamanhoApp("grande", grande);
+
+            perfil.adicionarNivelUI("mvp", (mvp/100));
+            perfil.adicionarNivelUI("básico", (basico/100));
+            perfil.adicionarNivelUI("profissional", (profissional/100));
+
+            perfil.adicionarTaxaDiaria("designer ui/ux", designer);
+            perfil.adicionarTaxaDiaria("gerência de projeto", gerencia);
+            perfil.adicionarTaxaDiaria("desenvolvimento", desenvolvimento);
 
             for (int i=0; i<tabela.getRowCount(); i++) {
                 String funcionalidade = tabela.getValueAt(i, 0).toString();
@@ -48,6 +72,18 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
 
             perfil.setPerfilBackEnd(isBackEnd);
             perfil.setNome(nome);
+
+            perfil.adicionarTamanhoApp("pequeno", pequeno);
+            perfil.adicionarTamanhoApp("medio", medio);
+            perfil.adicionarTamanhoApp("grande", grande);
+
+            perfil.adicionarNivelUI("mvp", mvp);
+            perfil.adicionarNivelUI("basico", basico);
+            perfil.adicionarNivelUI("profissional", profissional);
+
+            perfil.adicionarTaxaDiaria("designer ui/ux", designer);
+            perfil.adicionarTaxaDiaria("gerência de projeto", gerencia);
+            perfil.adicionarTaxaDiaria("desenvolvimento", desenvolvimento);
 
             for (int i=0; i<tabela.getRowCount(); i++) {
                 String funcionalidade = tabela.getValueAt(i, 0).toString();

@@ -26,7 +26,6 @@ public class ManterPerfilPresenter {
         configuraActionsListerns();
 
         setAllBtnVisibleFalse();
-        //carregarCampos();
 
         if (perfil == null) {
             this.estado = new InclusaoPerfilState(this);
@@ -56,12 +55,25 @@ public class ManterPerfilPresenter {
             }
         });
 
-        this.view.getTabelaDetalhes().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        view.getTabelaDetalhes().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent evt) {
                 setStatusBotaoRemover(true);
             }
         });
+
+        view.getTglBackEnd().addItemListener(e -> {
+            controlaTglBackEnd();
+        });
+    }
+
+    private void controlaTglBackEnd() {
+        if (view.getTglBackEnd().isSelected()) {
+            view.getTxtDesignerUI().setEditable(false);
+            view.getTxtDesignerUI().setText("0");
+        } else {
+            view.getTxtDesignerUI().setEditable(true);
+        }
     }
 
     public void adicionarNovoCampo() {
@@ -108,7 +120,7 @@ public class ManterPerfilPresenter {
                 .stream()
                 .map(entry -> {
                     String nomeFuncionalidade = entry.getKey();
-                    double valor = entry.getValue();
+                    int valor = entry.getValue();
                     return new Object[]{ nomeFuncionalidade, valor };
                 })
                 .toArray(Object[][]::new);
@@ -143,6 +155,10 @@ public class ManterPerfilPresenter {
 
     public void setEstado(ManterPerfilPresenterState estado) {
         this.estado = estado;
+    }
+
+    public ManterPerfilPresenterState getEstado() {
+        return estado;
     }
 
 }
