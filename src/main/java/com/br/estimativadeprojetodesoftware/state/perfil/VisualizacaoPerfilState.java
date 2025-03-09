@@ -16,35 +16,8 @@ public class VisualizacaoPerfilState extends ManterPerfilPresenterState {
     private void configuraView() {
         Perfil perfil = presenter.getPerfil();
 
-        presenter.getView().getTxtNome().setText(perfil.getNome());
-        presenter.getView().getTglBackEnd().setSelected(perfil.isPerfilBackEnd());
-
-        presenter.getView().getJspPequeno().setValue(perfil.getTamanhosApp().get("pequeno"));
-        presenter.getView().getJspMedio().setValue(perfil.getTamanhosApp().get("médio"));
-        presenter.getView().getJspGrande().setValue(perfil.getTamanhosApp().get("grande"));
-
-        presenter.getView().getTxtMvp().setText(perfil.getNiveisUI().get("mvp").toString());
-        presenter.getView().getTxtBasico().setText(perfil.getNiveisUI().get("básico").toString());
-        presenter.getView().getTxtProfissional().setText(perfil.getNiveisUI().get("profissional").toString());
-
-        presenter.getView().getTxtDesignerUI().setText((perfil.getTaxasDiarias().get("designer ui/ux")).toString());
-        presenter.getView().getTxtGerenciaProjeto().setText((perfil.getTaxasDiarias().get("gerência de projeto")).toString());
-        presenter.getView().getTxtDesenvolvimento().setText((perfil.getTaxasDiarias().get("desenvolvimento")).toString());
-
-        presenter.getView().getTxtNome().setEnabled(false);
-        presenter.getView().getTglBackEnd().setEnabled(false);
-
-        presenter.getView().getJspPequeno().setEnabled(false);
-        presenter.getView().getJspMedio().setEnabled(false);
-        presenter.getView().getJspGrande().setEnabled(false);
-        
-        presenter.getView().getTxtMvp().setEnabled(false);
-        presenter.getView().getTxtBasico().setEnabled(false);
-        presenter.getView().getTxtProfissional().setEnabled(false);
-
-        presenter.getView().getTxtDesignerUI().setEnabled(false);
-        presenter.getView().getTxtGerenciaProjeto().setEnabled(false);
-        presenter.getView().getTxtDesenvolvimento().setEnabled(false);
+        setCamposPreenchidos(perfil);
+        desabilitarCampos();
         
         presenter.carregarCampos(perfil);
 
@@ -68,6 +41,40 @@ public class VisualizacaoPerfilState extends ManterPerfilPresenterState {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
         });
+    }
+
+    private void setCamposPreenchidos(Perfil perfil) {
+        presenter.getView().getTxtNome().setText(perfil.getNome());
+        presenter.getView().getTglBackEnd().setSelected(perfil.isPerfilBackEnd());
+
+        presenter.getView().getJspPequeno().setValue(perfil.getTamanhosApp().get("pequeno"));
+        presenter.getView().getJspMedio().setValue(perfil.getTamanhosApp().get("médio"));
+        presenter.getView().getJspGrande().setValue(perfil.getTamanhosApp().get("grande"));
+
+        presenter.getView().getTxtMvp().setText(perfil.getNiveisUI().get("mvp").toString());
+        presenter.getView().getTxtBasico().setText(perfil.getNiveisUI().get("básico").toString());
+        presenter.getView().getTxtProfissional().setText(perfil.getNiveisUI().get("profissional").toString());
+
+        presenter.getView().getTxtDesignerUI().setText((perfil.getTaxasDiarias().get("designer ui/ux")).toString());
+        presenter.getView().getTxtGerenciaProjeto().setText((perfil.getTaxasDiarias().get("gerência de projeto")).toString());
+        presenter.getView().getTxtDesenvolvimento().setText((perfil.getTaxasDiarias().get("desenvolvimento")).toString());
+    }
+
+    private void desabilitarCampos() {
+        presenter.getView().getTxtNome().setEnabled(false);
+        presenter.getView().getTglBackEnd().setEnabled(false);
+
+        presenter.getView().getJspPequeno().setEnabled(false);
+        presenter.getView().getJspMedio().setEnabled(false);
+        presenter.getView().getJspGrande().setEnabled(false);
+        
+        presenter.getView().getTxtMvp().setEnabled(false);
+        presenter.getView().getTxtBasico().setEnabled(false);
+        presenter.getView().getTxtProfissional().setEnabled(false);
+
+        presenter.getView().getTxtDesignerUI().setEnabled(false);
+        presenter.getView().getTxtGerenciaProjeto().setEnabled(false);
+        presenter.getView().getTxtDesenvolvimento().setEnabled(false);
     }
 
     @Override
