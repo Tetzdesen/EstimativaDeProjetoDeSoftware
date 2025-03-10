@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository;
 
-import com.br.estimativadeprojetodesoftware.model.Estimativa;
+import com.br.estimativadeprojetodesoftware.model.Perfil;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -10,13 +11,13 @@ import java.util.UUID;
  */
 public interface IPerfilRepository {
 
-    void salvar(Estimativa estimativa);
+    void salvar(Perfil Perfil);
 
-    void atualizar(Estimativa estimativa);
+    void atualizar(Perfil Perfil);
 
     void removerPorId(UUID id);
 
-    Optional<Estimativa> buscarPorId(UUID id);
+    Optional<Perfil> buscarPorId(UUID id);
 
-    Optional<Estimativa> buscarTodos();
+    List<Perfil> buscarTodos();
 }

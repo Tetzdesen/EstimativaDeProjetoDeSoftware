@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.model;
 
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -16,6 +17,9 @@ public class Projeto {
     private final List<Perfil> perfis;
     private final List<Usuario> usuarios;
     private Estimativa estimativa;
+    
+    
+    // lembrar set para compartilhado, compartilhadoPor e estimativa
 
     public Projeto(String nome, String criador) {
         this(nome, criador, null);
@@ -31,23 +35,35 @@ public class Projeto {
         this.perfis = new ArrayList<>();
         this.usuarios = new ArrayList<>();
     }
-
-    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, String status,
-            boolean compartilhado, String compartilhadoPor,
-            List<Perfil> perfis, List<Usuario> usuarios, Estimativa estimativa) {
+     
+    public Projeto(UUID id, String nome, String tipo, LocalDateTime created_at, String status) {
         this.id = Objects.requireNonNull(id, "ID não pode ser nulo");
         this.nome = Objects.requireNonNull(nome, "Nome não pode ser nulo");
-        this.criador = Objects.requireNonNull(criador, "Criador não pode ser nulo");
+        this.criador = UsuarioLogadoSingleton.getInstancia().getUsuario().getNome();
         this.tipo = tipo;
         this.created_at = Objects.requireNonNull(created_at, "Data de criação não pode ser nula");
+        this.compartilhado = false;
+        this.compartilhadoPor = "";
         this.status = Objects.requireNonNullElse(status, "Não estimado");
-        this.compartilhado = compartilhado;
-        this.compartilhadoPor = compartilhadoPor;
-        this.perfis = perfis != null ? new ArrayList<>(perfis) : new ArrayList<>();
-        this.usuarios = usuarios != null ? new ArrayList<>(usuarios) : new ArrayList<>();
-        this.estimativa = estimativa;
+        this.perfis = new ArrayList<>();
+        this.usuarios = new ArrayList<>();
+        this.estimativa = null;
     }
 
+    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, String status, boolean compartilhado, String compartilhadoPor, List<Perfil> perfis, List<Usuario> usuarios, Estimativa estimativa) {
+        this.id = id;
+        this.nome = nome;
+        this.criador = criador;
+        this.tipo = tipo;
+        this.created_at = created_at;
+        this.status = status;
+        this.compartilhado = compartilhado;
+        this.compartilhadoPor = compartilhadoPor;
+        this.perfis = perfis;
+        this.usuarios = usuarios;
+        this.estimativa = estimativa;
+    }
+    
     public UUID getId() {
         return id;
     }
@@ -125,23 +141,6 @@ public class Projeto {
 
     public void removerUsuario(Usuario usuario) {
         usuarios.remove(Objects.requireNonNull(usuario, "Usuário não pode ser nulo."));
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        Projeto other = (Projeto) obj;
-        return Objects.equals(this.id, other.id);
     }
 
     @Override

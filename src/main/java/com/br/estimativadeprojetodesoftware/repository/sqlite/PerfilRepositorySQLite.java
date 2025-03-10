@@ -1,4 +1,4 @@
-package com.br.estimativadeprojetodesoftware.repository;
+package com.br.estimativadeprojetodesoftware.repository.sqlite;
 
 /**
  *
