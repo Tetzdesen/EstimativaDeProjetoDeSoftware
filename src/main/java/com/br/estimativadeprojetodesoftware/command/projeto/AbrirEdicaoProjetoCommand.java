@@ -37,11 +37,7 @@ public class AbrirEdicaoProjetoCommand implements ProjetoCommand {
 
     @Override
     public void execute() {
-
-        Projeto projeto = repository.getProjetoPorNome(projetoNome);
-
-        // criar view
-        // da ni
+        
         String tituloJanela = "Edição de Projeto";
         WindowManager windowManager = WindowManager.getInstance();
 
@@ -49,17 +45,15 @@ public class AbrirEdicaoProjetoCommand implements ProjetoCommand {
             windowManager.bringToFront(tituloJanela);
         } else {
 
-            EdicaoProjetoView view = new EdicaoProjetoView();
+            EdicaoProjetoView edicaoProjetoview = new EdicaoProjetoView();
 
-            new EdicaoProjetoPresenter(view, repository, projetoNome);
+            new EdicaoProjetoPresenter(edicaoProjetoview, repository, projetoNome);
 
-            view.setTitle(tituloJanela);
-            int x = (desktop.getWidth() - view.getWidth()) / 2;
-            int y = (desktop.getHeight() - view.getHeight()) / 2;
-            view.setLocation(x, y);
-            view.setVisible(true);
+            edicaoProjetoview.setTitle(tituloJanela);
+            edicaoProjetoview.setSize(800, 400);
+            edicaoProjetoview.setVisible(true);
 
-            view.addWindowListener(new java.awt.event.WindowAdapter() {
+            edicaoProjetoview.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosed(java.awt.event.WindowEvent e) {
                     windowManager.fechar(tituloJanela);

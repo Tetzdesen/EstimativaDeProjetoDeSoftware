@@ -7,24 +7,15 @@ import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
-import com.br.estimativadeprojetodesoftware.view.projeto.CadastroProjetoView;
 import com.br.estimativadeprojetodesoftware.view.projeto.EdicaoProjetoView;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 
 /**
@@ -50,13 +41,13 @@ public class EdicaoProjetoPresenter {
     }
 
     private void configuraView() {
-            view.setResizable(false);
+        view.setModal(true);
         view.setResizable(false);
         view.setLocationRelativeTo(null);
-  
+
         configuraActionsListerns();
         carregarListaPerfis();
-        carregarDadosProjeto(); 
+        carregarDadosProjeto();
     }
 
     private void carregarDadosProjeto() {
@@ -72,7 +63,7 @@ public class EdicaoProjetoPresenter {
             perfisSelecionados.put(perfil.getNome(), perfil);
         }
 
-        view.getjListPerfis().setModel(listModel);
+        view.getJListPerfis().setModel(listModel);
     }
 
     private void configuraActionsListerns() {
@@ -120,7 +111,7 @@ public class EdicaoProjetoPresenter {
 
         Projeto projetoAtualizado = new Projeto(nomeProjeto, UsuarioLogadoSingleton.getInstancia().getUsuario().getNome());
 
-        ListModel<String> listModel = view.getjListPerfis().getModel();
+        ListModel<String> listModel = view.getJListPerfis().getModel();
         for (int i = 0; i < listModel.getSize(); i++) {
             String nomePerfil = listModel.getElementAt(i);
             projetoAtualizado.adicionarPerfil(perfisSelecionados.get(nomePerfil));
@@ -171,7 +162,7 @@ public class EdicaoProjetoPresenter {
             return;
         }
 
-        DefaultListModel<String> model = (DefaultListModel<String>) view.getjListPerfis().getModel();
+        DefaultListModel<String> model = (DefaultListModel<String>) view.getJListPerfis().getModel();
         if (!model.contains(perfil)) {
             model.addElement(perfil);
             projetoAtual.adicionarPerfil(perfisSelecionados.get(perfil));
@@ -181,13 +172,13 @@ public class EdicaoProjetoPresenter {
     }
 
     private void removerPerfil() {
-        int selectedIndex = view.getjListPerfis().getSelectedIndex();
+        int selectedIndex = view.getJListPerfis().getSelectedIndex();
         if (selectedIndex == -1) {
             exibirMensagem("Selecione um perfil para remover!");
             return;
         }
 
-        DefaultListModel<String> model = (DefaultListModel<String>) view.getjListPerfis().getModel();
+        DefaultListModel<String> model = (DefaultListModel<String>) view.getJListPerfis().getModel();
         String perfilRemovido = model.getElementAt(selectedIndex);
         model.remove(selectedIndex);
 

@@ -5,7 +5,9 @@ import com.br.estimativadeprojetodesoftware.presenter.projeto.CadastroProjetoPre
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.view.projeto.CadastroProjetoView;
+import java.awt.Toolkit;
 import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 
 /**
@@ -45,13 +47,11 @@ public class AbrirCriarProjetoCommand implements ProjetoCommand {
             CadastroProjetoView cadastroProjetoView = new CadastroProjetoView();
             new CadastroProjetoPresenter(cadastroProjetoView, repository);
             cadastroProjetoView.setTitle(tituloJanela);
-            int x = (desktop.getWidth() - cadastroProjetoView.getWidth()) / 2;
-            int y = (desktop.getHeight() - cadastroProjetoView.getHeight()) / 2;
-            cadastroProjetoView.setLocation(x, y);
+            cadastroProjetoView.setSize(800,400);
             cadastroProjetoView.setVisible(true);
 
             try {
-     
+
             } catch (Exception ignored) {
             }
         }

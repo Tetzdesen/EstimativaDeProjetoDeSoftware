@@ -84,13 +84,7 @@ public class ManterUsuarioPresenter implements Observer {
         painelPrincipal.add(view.getContentPane(), BorderLayout.CENTER);
         view.setContentPane(painelPrincipal);
         view.setModal(true);
-
-        //  view.setClosable(true);
-        //    view.setIconifiable(true);
         view.setResizable(false);
-        // view.setMaximumSize(maximumSize);
-        //  view.setMaximizable(false);
-
         view.getBtnExibirSenha().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
