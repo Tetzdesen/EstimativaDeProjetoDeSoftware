@@ -135,7 +135,7 @@ public final class PrincipalPresenter implements Observer {
         }
 
         for (final Projeto projeto : listaProjetos) {
-            if (projeto.getCompartilhado() == true) {
+            if (projeto.isCompartilhado() == true) {
                 AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()) {
                     @Override
                     public void execute() {

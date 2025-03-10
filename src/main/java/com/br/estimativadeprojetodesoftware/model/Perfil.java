@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.model;
 
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -19,6 +20,7 @@ public class Perfil {
     private final LocalDateTime created_at;
     private LocalDateTime update_at;
     private LocalDateTime deleted_at;
+    private Usuario usuario;
 
     public Perfil(String nome) {
         this.id = UUID.randomUUID();
@@ -30,20 +32,31 @@ public class Perfil {
         this.created_at = LocalDateTime.now();
         this.update_at = null;
         this.deleted_at = null;
-
+        this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
         adicionarCamposDefault();
     }
 
-    public Perfil(  UUID id, String nome, 
-                    Map<String, Integer> tamanhosApp, 
-                    Map<String, Double> niveisUI, 
-                    Map<String, Integer> funcionalidades, 
-                    Map<String, Double> taxasDiarias,
-                    boolean isPerfilBackEnd, 
-                    LocalDateTime created_at, 
-                    LocalDateTime update_at, 
-                    LocalDateTime deleted_at
-        ) {
+    public Perfil(UUID id, String nome,
+            boolean isPerfilBackEnd,
+            LocalDateTime created_at, Usuario usuario
+    ) {
+        this.id = id;
+        this.nome = nome;
+        this.isPerfilBackEnd = isPerfilBackEnd;
+        this.created_at = created_at;
+        this.usuario = usuario;
+    }
+
+    public Perfil(UUID id, String nome,
+            Map<String, Integer> tamanhosApp,
+            Map<String, Double> niveisUI,
+            Map<String, Integer> funcionalidades,
+            Map<String, Double> taxasDiarias,
+            boolean isPerfilBackEnd,
+            LocalDateTime created_at,
+            LocalDateTime update_at,
+            LocalDateTime deleted_at
+    ) {
         this.id = id;
         this.nome = nome;
         this.tamanhosApp = tamanhosApp;
@@ -54,6 +67,7 @@ public class Perfil {
         this.created_at = created_at;
         this.update_at = update_at;
         this.deleted_at = deleted_at;
+        this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
     }
 
     public UUID getId() {
@@ -83,7 +97,7 @@ public class Perfil {
     public boolean isPerfilBackEnd() {
         return isPerfilBackEnd;
     }
-    
+
     public LocalDateTime getCreated_at() {
         return created_at;
     }
@@ -94,6 +108,10 @@ public class Perfil {
 
     public LocalDateTime getDeleted_at() {
         return deleted_at;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
     }
 
     public void setNome(String nome) {

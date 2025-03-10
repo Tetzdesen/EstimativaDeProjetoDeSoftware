@@ -23,7 +23,6 @@ public class UsuarioRepositoryMock implements Subject {
 
         // Usuário 1
         Usuario usuario1 = new Usuario("Alice Silva", "alice@email.com", "senha123");
-        usuario1.setIsAutorizado(true);
         usuario1.adicionarPerfil(new Perfil("Desenvolvedor Back-End"));
         usuario1.adicionarProjeto(new Projeto("Sistema ERP", "Alice Silva", "Web/Back-End"));
         usuarios.add(usuario1);
