@@ -9,20 +9,26 @@ import java.util.UUID;
 
 public class Estimativa {
 
-    private UUID id;
-    private LocalDateTime created_at;
-    private Map<String, Integer> campos;
-    
+    private final UUID id;
+    private final LocalDateTime created_at;
+    private final Map<String, Integer> campos;
+
     public Estimativa() {
         this.id = UUID.randomUUID();
         this.created_at = LocalDateTime.now();
         this.campos = new HashMap<>();
     }
 
+    public Estimativa(UUID id, LocalDateTime created_at) {
+        this.id = Objects.requireNonNull(id, "ID não pode ser nulo");
+        this.created_at = Objects.requireNonNull(created_at, "Data de criação não pode ser nula");
+        this.campos = new HashMap<>();
+    }
+
     public Estimativa(UUID id, LocalDateTime created_at, Map<String, Integer> campos) {
-        this.id = id;
-        this.created_at = created_at;
-        this.campos = campos;
+        this.id = Objects.requireNonNull(id, "ID não pode ser nulo");
+        this.created_at = Objects.requireNonNull(created_at, "Data de criação não pode ser nula");
+        this.campos = campos != null ? new HashMap<>(campos) : new HashMap<>();
     }
 
     public UUID getId() {
@@ -39,43 +45,20 @@ public class Estimativa {
 
     public void adicionarCampo(String nomeFuncionalidade, int dias) {
         if (nomeFuncionalidade == null || nomeFuncionalidade.isEmpty()) {
-            throw new IllegalArgumentException("Erro: Nome da funcionalidade não pode ser vazia ou nula.");
+            throw new IllegalArgumentException("Erro: Nome da funcionalidade não pode ser vazio ou nulo.");
         }
         if (dias < 0) {
-            throw new IllegalArgumentException("Erro: Quantidade de dias não pode ser negativo. Chave: " + nomeFuncionalidade + " Valor: " + dias);
+            throw new IllegalArgumentException("Erro: Quantidade de dias não pode ser negativa. Chave: " + nomeFuncionalidade + " Valor: " + dias);
         }
         campos.put(nomeFuncionalidade, dias);
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Estimativa other = (Estimativa) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        if (!Objects.equals(this.created_at, other.created_at)) {
-            return false;
-        }
-        return Objects.equals(this.campos, other.campos);
-    }
-    
-    @Override
     public String toString() {
-        return "Estimativa{" + "id=" + id + ", created_at=" + created_at + ", campos=" + campos + '}';
+        return "Estimativa{"
+                + "id=" + id
+                + ", created_at=" + created_at
+                + ", campos=" + campos
+                + '}';
     }
 }
