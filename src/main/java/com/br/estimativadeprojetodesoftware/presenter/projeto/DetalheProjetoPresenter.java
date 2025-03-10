@@ -7,13 +7,6 @@ import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.DataHoraService;
 import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
 import com.br.estimativadeprojetodesoftware.view.projeto.DetalheProjetoView;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import java.util.stream.Collectors;
 
 public class DetalheProjetoPresenter implements Observer {
 
