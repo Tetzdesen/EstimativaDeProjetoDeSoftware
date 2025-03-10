@@ -30,7 +30,6 @@ public class ConexaoSingleton {
 
         try {
             this.conexao = DriverManager.getConnection(url, user, senha);
-            System.out.println("Conexão ok");
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao conectar com o banco de dados: " + e.getMessage());
         }

@@ -54,7 +54,6 @@ public class CompartilharProjetoPresenter /*implements Observer*/ {
                     return;
                 }
                 Projeto projeto = projetoRepository.getProjetoPorNome(nomeProjeto);
-                System.out.println(projeto.getNome());
                 int linhaSelecionada = this.view.getTabelaUsuarios().getSelectedRow();
 
                 if (linhaSelecionada != -1) {
