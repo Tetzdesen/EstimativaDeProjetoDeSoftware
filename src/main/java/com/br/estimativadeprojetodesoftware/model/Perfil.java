@@ -195,42 +195,6 @@ public class Perfil {
         this.isPerfilBackEnd = isPerfilBackEnd;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Perfil other = (Perfil) obj;
-        if (!Objects.equals(this.nome, other.nome)) {
-            return false;
-        }
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        if (!Objects.equals(this.funcionalidades, other.funcionalidades)) {
-            return false;
-        }
-        if (!Objects.equals(this.created_at, other.created_at)) {
-            return false;
-        }
-        if (!Objects.equals(this.update_at, other.update_at)) {
-            return false;
-        }
-        return Objects.equals(this.deleted_at, other.deleted_at);
-    }
-
     private void adicionarCamposDefault() {
         this.tamanhosApp.put("pequeno", 0);
         this.tamanhosApp.put("médio", 0);
