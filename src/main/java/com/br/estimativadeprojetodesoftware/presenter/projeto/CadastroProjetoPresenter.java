@@ -30,7 +30,7 @@ public class CadastroProjetoPresenter {
     private ProjetoRepositoryMock repositoryProjeto;
     private Usuario usuario;
     private Map<String, Perfil> perfisSelecionados;
-    
+
     public CadastroProjetoPresenter(CadastroProjetoView view, ProjetoRepositoryMock repositoryProjeto) {
         this.view = view;
         this.repositoryProjeto = repositoryProjeto;
@@ -40,9 +40,8 @@ public class CadastroProjetoPresenter {
     }
 
     private void configuraView() {
+        view.setModal(true);
         view.setResizable(false);
-        view.setResizable(false);
-        view.setLocationRelativeTo(null);
         configuraActionsListerns();
         carregarListaPerfis();
     }
@@ -122,7 +121,7 @@ public class CadastroProjetoPresenter {
         Projeto projeto = new Projeto(nome, criador);
         projeto.adicionarUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario());
 
-        ListModel<String> listModel = view.getjListPerfis().getModel();
+        ListModel<String> listModel = view.getJListPerfis().getModel();
         for (int i = 0; i < listModel.getSize(); i++) {
             String item = listModel.getElementAt(i);
             projeto.adicionarPerfil(perfisSelecionados.get(item));
@@ -133,7 +132,7 @@ public class CadastroProjetoPresenter {
                 .collect(Collectors.joining(", "));
 
         projeto.setTipo(tiposConcatenados);
-        
+
         Map<String, Integer> funcionalidades = combinarFuncionalidades(projeto.getPerfis());
         Estimativa estimativa = new Estimativa(UUID.randomUUID(), LocalDateTime.now(), funcionalidades);
 
@@ -158,32 +157,32 @@ public class CadastroProjetoPresenter {
             return;
         }
 
-        if (!(view.getjListPerfis().getModel() instanceof DefaultListModel)) {
-            view.getjListPerfis().setModel(new DefaultListModel<>());
+        if (!(view.getJListPerfis().getModel() instanceof DefaultListModel)) {
+            view.getJListPerfis().setModel(new DefaultListModel<>());
         }
 
-        DefaultListModel<String> model = (DefaultListModel<String>) view.getjListPerfis().getModel();
+        DefaultListModel<String> model = (DefaultListModel<String>) view.getJListPerfis().getModel();
 
         if (!model.contains(perfil)) {
             model.addElement(perfil);
         } else {
             exibirMensagem("Este perfil já foi adicionado!");
         }
-        
+
         exibirMensagem("Perfil adicionado com sucesso!");
 
     }
 
     private void removerPerfil() {
 
-        String perfil = (String) view.getjListPerfis().getSelectedValue();
+        String perfil = (String) view.getJListPerfis().getSelectedValue();
 
         if (perfil == null || perfil.isEmpty()) {
             JOptionPane.showMessageDialog(view, "Selecione um perfil válido!", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        DefaultListModel<String> model = (DefaultListModel<String>) view.getjListPerfis().getModel();
+        DefaultListModel<String> model = (DefaultListModel<String>) view.getJListPerfis().getModel();
 
         if (model.contains(perfil)) {
             model.removeElement(perfil);
@@ -192,14 +191,14 @@ public class CadastroProjetoPresenter {
             exibirMensagem("Erro: Perfil não removido!");
         }
 
-        view.getjListPerfis().setModel(model);
+        view.getJListPerfis().setModel(model);
 
     }
 
     public CadastroProjetoView getView() {
         return view;
     }
-    
+
     public void exibirMensagem(String mensagem) {
         new MostrarMensagemProjetoCommand(mensagem).execute();
     }

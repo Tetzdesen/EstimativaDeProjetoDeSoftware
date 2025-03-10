@@ -39,12 +39,7 @@ public class PrincipalUsuarioPresenter {
                 new LoginPresenter(new ProjetoRepositoryMock(), new UsuarioRepositoryMock());
             });
         });
-
-        // Adicionar ação para a autenticação facial
-        view.getBtnAutenticarViaBiometriaFacial().addActionListener(e -> {
-            // Incluir a lógica de autenticação via biometria facial
-        });
-
+        
         view.getBtnCadastrar().addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {
                 new SetLookAndFeelCommand().execute();

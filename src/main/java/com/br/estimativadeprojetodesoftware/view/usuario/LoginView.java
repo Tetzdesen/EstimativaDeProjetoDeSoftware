@@ -51,15 +51,15 @@ public class LoginView extends javax.swing.JFrame {
 
         lblLogin.setFont(new java.awt.Font("Segoe UI", 1, 24)); 
         lblLogin.setText("Login");
-        lblLogin.setForeground(Color.WHITE); 
+        lblLogin.setForeground(Color.BLACK); 
 
         lblSenha.setFont(new java.awt.Font("Segoe UI", 0, 14)); 
         lblSenha.setText("Senha:");
-        lblSenha.setForeground(Color.WHITE); 
+        lblSenha.setForeground(Color.BLACK); 
 
         lblEmail.setFont(new java.awt.Font("Segoe UI", 0, 14)); 
         lblEmail.setText("E-mail:");
-        lblEmail.setForeground(Color.WHITE); 
+        lblEmail.setForeground(Color.BLACK); 
 
         txtEmail.setFont(new java.awt.Font("Segoe UI", 0, 14));
         txtEmail.setPreferredSize(new java.awt.Dimension(300, 30)); 
@@ -67,19 +67,19 @@ public class LoginView extends javax.swing.JFrame {
         txtSenha.setFont(new java.awt.Font("Segoe UI", 0, 14)); 
         txtSenha.setPreferredSize(new java.awt.Dimension(300, 30)); 
 
-        btnExibirSenha.setBackground(new java.awt.Color(34, 45, 68));
+        btnExibirSenha.setBackground(new java.awt.Color(255, 255, 255));
         btnExibirSenha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/olho-icon.png"))); 
         btnExibirSenha.setBorder(null);
         btnExibirSenha.setPreferredSize(new Dimension(30, 30));
 
         btnEntrar.setFont(new java.awt.Font("Segoe UI", 0, 18)); 
         btnEntrar.setText("Entrar");
-        btnEntrar.setBackground(new Color(34, 45, 68));
-        btnEntrar.setForeground(Color.WHITE);
+        btnEntrar.setBackground(new Color(255, 255, 255));
+        btnEntrar.setForeground(Color.BLACK);
         btnEntrar.setFocusPainted(false);
         btnEntrar.setPreferredSize(new Dimension(85, 45)); 
         btnEntrar.setBorder(new CompoundBorder(
-            new LineBorder(Color.WHITE, 3, true),
+            new LineBorder(Color.BLACK, 3, true),
             new EmptyBorder(8, 8, 8, 8)
         ));
 
@@ -88,8 +88,8 @@ public class LoginView extends javax.swing.JFrame {
         setLayout(new BorderLayout());
 
         JPanel painelFundo = new JPanel(new GridBagLayout());
-        painelFundo.setBackground(new Color(34, 45, 68)); 
-        painelFundo.setBorder(new LineBorder(Color.WHITE, 2, true));
+        painelFundo.setBackground(new Color(255, 255, 255)); 
+        painelFundo.setBorder(new LineBorder(Color.BLACK, 2, true));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -131,11 +131,11 @@ public class LoginView extends javax.swing.JFrame {
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(57, 68, 99));
+                button.setBackground(new Color(255, 255, 255));
             }
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(34, 45, 68));
+                button.setBackground(new Color(255, 255, 255));
             }
         });
     }
