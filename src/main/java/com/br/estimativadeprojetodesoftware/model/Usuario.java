@@ -24,8 +24,8 @@ public class Usuario {
         this.senha = senha;
         this.created_at = LocalDateTime.now();
         this.log = "";
-        this.projetos = new ArrayList();
-        this.perfis = new ArrayList();
+        this.projetos = new ArrayList<>();
+        this.perfis = new ArrayList<>();
     }
 
     public Usuario(UUID id, String nome, String email, String senha, LocalDateTime created_at, String log) {
@@ -35,8 +35,8 @@ public class Usuario {
         this.senha = senha;
         this.created_at = created_at;
         this.log = log;
-        this.projetos = new ArrayList();
-        this.perfis = new ArrayList();
+        this.projetos = new ArrayList<>();
+        this.perfis = new ArrayList<>();
     }
 
     public Usuario(UUID id, String nome, String email, String senha, LocalDateTime created_at, String log, List<Projeto> projetos, List<Perfil> perfis) {

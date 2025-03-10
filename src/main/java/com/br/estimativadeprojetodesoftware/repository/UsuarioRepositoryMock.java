@@ -29,9 +29,12 @@ public class UsuarioRepositoryMock implements Subject {
 
         // Usuário 2
         Usuario usuario2 = new Usuario("Carlos Souza", "carlos@email.com", "senha456");
-        usuario2.adicionarPerfil(new Perfil("Desenvolvedor Mobile"));
-        usuario2.adicionarPerfil(new PerfilRepositoryMock().getPerfis().get(0));
-        usuario2.adicionarPerfil(new PerfilRepositoryMock().getPerfis().get(1));
+        for (Perfil perfil : new PerfilRepositoryMock().getPerfis()) {
+            usuario2.adicionarPerfil(perfil);
+        }
+        // usuario2.adicionarPerfil(new Perfil("Desenvolvedor Mobile"));
+        // usuario2.adicionarPerfil(new PerfilRepositoryMock().getPerfis().get(0));
+        // usuario2.adicionarPerfil(new PerfilRepositoryMock().getPerfis().get(1));
         usuario2.adicionarProjeto(new Projeto("App Delivery", "Carlos Souza", "Android"));
         usuarios.add(usuario2);
        

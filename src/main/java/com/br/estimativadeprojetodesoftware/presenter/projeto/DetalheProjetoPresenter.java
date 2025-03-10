@@ -44,7 +44,6 @@ public class DetalheProjetoPresenter implements Observer {
     }
 
     private void carregarDetalhes(Projeto projeto) {
-        System.out.println(projeto.getEstimativa());
         Object[][] dadosTabela = projeto.getEstimativa().getCampos()
                 .entrySet()
                 .stream()

@@ -138,7 +138,6 @@ public class CadastroProjetoPresenter {
         Estimativa estimativa = new Estimativa(UUID.randomUUID(), LocalDateTime.now(), funcionalidades);
 
         projeto.setEstimativa(estimativa);
-        System.out.println(projeto);
         return Optional.of(projeto);
     }
 
