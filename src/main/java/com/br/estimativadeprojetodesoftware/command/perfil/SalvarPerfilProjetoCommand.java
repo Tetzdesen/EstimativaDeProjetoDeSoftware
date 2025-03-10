@@ -46,9 +46,9 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
             perfil.adicionarTamanhoApp("médio", medio);
             perfil.adicionarTamanhoApp("grande", grande);
 
-            perfil.adicionarNivelUI("mvp", (mvp));
-            perfil.adicionarNivelUI("básico", (basico));
-            perfil.adicionarNivelUI("profissional", (profissional));
+            perfil.adicionarNivelUI("mvp", mvp);
+            perfil.adicionarNivelUI("básico", basico);
+            perfil.adicionarNivelUI("profissional", profissional);
 
             perfil.adicionarTaxaDiaria("designer ui/ux", designer);
             perfil.adicionarTaxaDiaria("gerência de projeto", gerencia);

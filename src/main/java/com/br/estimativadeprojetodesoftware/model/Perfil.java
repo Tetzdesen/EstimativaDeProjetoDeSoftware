@@ -1,6 +1,5 @@
 package com.br.estimativadeprojetodesoftware.model;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,9 +15,6 @@ public class Perfil {
     private Map<String, Integer> funcionalidades;
     private Map<String, Double> taxasDiarias;
     private boolean isPerfilBackEnd;
-    private final LocalDateTime created_at;
-    private LocalDateTime update_at;
-    private LocalDateTime deleted_at;
 
     public Perfil(String nome) {
         this.id = UUID.randomUUID();
@@ -27,9 +23,6 @@ public class Perfil {
         this.niveisUI = new LinkedHashMap<>();
         this.funcionalidades = new LinkedHashMap<>();
         this.taxasDiarias = new LinkedHashMap<>();
-        this.created_at = LocalDateTime.now();
-        this.update_at = null;
-        this.deleted_at = null;
 
         adicionarCamposDefault();
     }
@@ -39,10 +32,7 @@ public class Perfil {
                     Map<String, Double> niveisUI, 
                     Map<String, Integer> funcionalidades, 
                     Map<String, Double> taxasDiarias,
-                    boolean isPerfilBackEnd, 
-                    LocalDateTime created_at, 
-                    LocalDateTime update_at, 
-                    LocalDateTime deleted_at
+                    boolean isPerfilBackEnd
         ) {
         this.id = id;
         this.nome = nome;
@@ -51,9 +41,6 @@ public class Perfil {
         this.funcionalidades = funcionalidades;
         this.taxasDiarias = taxasDiarias;
         this.isPerfilBackEnd = isPerfilBackEnd;
-        this.created_at = created_at;
-        this.update_at = update_at;
-        this.deleted_at = deleted_at;
     }
 
     public UUID getId() {
@@ -83,35 +70,9 @@ public class Perfil {
     public boolean isPerfilBackEnd() {
         return isPerfilBackEnd;
     }
-    
-    public LocalDateTime getCreated_at() {
-        return created_at;
-    }
-
-    public LocalDateTime getUpdate_at() {
-        return update_at;
-    }
-
-    public LocalDateTime getDeleted_at() {
-        return deleted_at;
-    }
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public void setUpdate_at(LocalDateTime update_at) {
-        if (update_at == null) {
-            throw new IllegalArgumentException("Erro: Data de atualização não pode ser nula.");
-        }
-        this.update_at = update_at;
-    }
-
-    public void setDeleted_at(LocalDateTime deleted_at) {
-        if (deleted_at == null) {
-            throw new IllegalArgumentException("Erro: Data de exclusão não pode ser nula.");
-        }
-        this.deleted_at = deleted_at;
     }
 
     public void adicionarTamanhoApp(String tamanhoApp, int dias) {
@@ -204,13 +165,7 @@ public class Perfil {
         if (!Objects.equals(this.funcionalidades, other.funcionalidades)) {
             return false;
         }
-        if (!Objects.equals(this.created_at, other.created_at)) {
-            return false;
-        }
-        if (!Objects.equals(this.update_at, other.update_at)) {
-            return false;
-        }
-        return Objects.equals(this.deleted_at, other.deleted_at);
+        return true;
     }
 
     private void adicionarCamposDefault() {
@@ -229,6 +184,8 @@ public class Perfil {
 
     @Override
     public String toString() {
-        return "Perfil{" + "id=" + id + ", nome=" + nome + ", funcionalidades=" + funcionalidades + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + '}';
+        return "Perfil [id=" + id + ", nome=" + nome + ", tamanhosApp=" + tamanhosApp + ", niveisUI=" + niveisUI
+                + ", funcionalidades=" + funcionalidades + ", taxasDiarias=" + taxasDiarias + ", isPerfilBackEnd="
+                + isPerfilBackEnd + "]";
     }
 }
