@@ -50,4 +50,8 @@ public class UsuarioRepositoryService {
     public List<Usuario> buscarTodos() {
         return usuarioRepository.buscarTodos();
     }
+    
+    public List<Usuario> buscarUsuariosPorProjeto(UUID idProjeto) {
+        return usuarioRepository.buscarUsuariosPorProjeto(idProjeto);
+    }
 }

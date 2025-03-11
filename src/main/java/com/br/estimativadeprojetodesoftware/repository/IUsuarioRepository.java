@@ -20,4 +20,6 @@ public interface IUsuarioRepository {
     Optional<Usuario> buscarPorId(UUID id);
 
     List<Usuario> buscarTodos();
+    
+    List<Usuario> buscarUsuariosPorProjeto(UUID idProjeto);
 }

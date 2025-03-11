@@ -10,7 +10,7 @@ public class Campo {
     private final UUID id;
     private final String tipo;
     private final String nome;
-    private final double dias;
+    private double dias;
 
     public Campo(UUID id, String tipo, String nome, double dias) {
         this.id = id;
@@ -33,6 +33,10 @@ public class Campo {
 
     public double getDias() {
         return dias;
+    }
+
+    public void setDias(double dias) {
+        this.dias = dias;
     }
 
     @Override

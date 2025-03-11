@@ -19,4 +19,8 @@ public interface IProjetoRepository {
     Optional<Projeto> buscarPorId(UUID id);
 
     List<Projeto> buscarTodos();
+    
+    boolean buscarIsCompartilhadoPorId(UUID idUsuario, UUID idProjeto);
+    
+    List<String> buscarProjetosPorUsuario(UUID idUsuario);
 }
