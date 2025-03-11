@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -8,9 +9,11 @@ import java.util.List;
  */
 public interface IUsuarioHasProjetoRepository {
 
-    void salvar(String usuarioId, String projetoId, boolean isCompartilhado);
+    void salvar(UUID idUsuario, UUID idProjeto, boolean isCompartilhado);
 
-    void removerPorIds(String usuarioId, String projetoId);
+    void removerPorIds(UUID idUsuario, UUID idProjeto);
 
-    List<String> buscarProjetosPorUsuario(String usuarioId);
+    boolean buscarIsCompartilhadoPorId(UUID idUsuario, UUID idProjeto);
+    
+    List<String> buscarProjetosPorUsuario(UUID idUsuario);
 }

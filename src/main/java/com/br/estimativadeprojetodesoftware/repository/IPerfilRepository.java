@@ -19,5 +19,7 @@ public interface IPerfilRepository {
 
     Optional<Perfil> buscarPorId(UUID id);
 
+    List<Perfil> buscarTodosPerfisPorIdUsuario(UUID id);
+    
     List<Perfil> buscarTodos();
 }

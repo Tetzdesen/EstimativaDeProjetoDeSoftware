@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Estimativa;
+import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
@@ -9,6 +9,7 @@ import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.EdicaoProjetoView;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,12 +123,39 @@ public class EdicaoProjetoPresenter {
                 .collect(Collectors.joining(", "));
 
         projetoAtualizado.setTipo(nomeProjeto);
+        
+        List<Campo> campos = new ArrayList<>();
+        
+        for (Perfil perfil : projetoAtualizado.getPerfis()) {
+            // Criando campos para estimativa
+            Map<String, Integer> tamanhosApp = perfil.getTamanhosApp();
 
-        Map<String, Integer> funcionalidades = combinarFuncionalidades(projetoAtualizado.getPerfis());
-        Estimativa estimativa = new Estimativa(UUID.randomUUID(), LocalDateTime.now(), funcionalidades);
+            for (Map.Entry<String, Integer> entry : tamanhosApp.entrySet()) {
+                campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue()));
+            }
 
-        projetoAtualizado.setEstimativa(estimativa);
+            // Criando campos para niveisUD
+            Map<String, Double> niveisUI = perfil.getNiveisUI();
+            for (Map.Entry<String, Double> entry : niveisUI.entrySet()) {
+                campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue()));
+            }
 
+            // Criando campos para funcionalidades
+            Map<String, Integer> funcionalidades = perfil.getFuncionalidades();
+            for (Map.Entry<String, Integer> entry : funcionalidades.entrySet()) {
+                campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue()));
+            }
+
+            // Criando campos para taxas diarias
+            Map<String, Double> taxasDiarias = perfil.getTaxasDiarias();
+
+            for (Map.Entry<String, Double> entry : taxasDiarias.entrySet()) {
+                campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue()));
+            }
+
+            //  Map<String, Integer> funcionalidades = combinarFuncionalidades(projeto.getPerfis());
+        }
+        
         // repositoryProjeto.atualizarProjeto(projetoAtualizado);
         exibirMensagem("Projeto atualizado com sucesso!");
     }
