@@ -33,8 +33,14 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             stmt.setString(3, projeto.getTipo());
             stmt.setTimestamp(4, Timestamp.valueOf(projeto.getCreated_at()));
             stmt.setString(5, projeto.getStatus());
-            //   stmt.setString(6, projeto.getEstimativa().getId().toString());
+
+            for (Campo campo : projeto.getCampos()) {
+                CampoRepositoryService.getInstancia().salvar(campo);
+                CampoRepositoryService.getInstancia().atualizarDiasProjetoCampo(projeto, campo);
+            }
+
             stmt.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao salvar projeto", e);
         }
@@ -47,9 +53,15 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             stmt.setString(1, projeto.getNome());
             stmt.setString(2, projeto.getTipo());
             stmt.setString(3, projeto.getStatus());
-            //    stmt.setString(4, projeto.getEstimativa().getId().toString());
             stmt.setString(4, projeto.getId().toString());
+
+            for (Campo campo : projeto.getCampos()) {
+                CampoRepositoryService.getInstancia().atualizar(campo);
+                CampoRepositoryService.getInstancia().atualizarDiasProjetoCampo(projeto, campo);
+            }
+
             stmt.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao atualizar projeto", e);
         }
@@ -102,7 +114,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
         List<Usuario> usuarios = UsuarioRepositoryService.getInstancia().buscarUsuariosPorProjeto(idProjeto);
         List<Campo> campos = CampoRepositoryService.getInstancia().listarTodosPorIdProjeto(idProjeto);
         List<Campo> camposNovos = new ArrayList<>();
-        
+
         for (Campo campo : campos) {
             Integer dias = CampoRepositoryService.getInstancia().buscarDiasPorProjetoCampo(idProjeto, campo.getId());
             campo.setDias(dias.doubleValue());;
@@ -124,6 +136,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
         );
     }
 
+    @Override
     public boolean buscarIsCompartilhadoPorId(UUID idUsuario, UUID idProjeto) {
         boolean isCompartilhado = false;
         String query = "SELECT isCompartilhado FROM usuario_has_projeto WHERE usuario_idUsuario = ? AND projeto_idProjeto = ?";
@@ -138,6 +151,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
         return isCompartilhado;
     }
 
+    @Override
     public List<String> buscarProjetosPorUsuario(UUID idUsuario) {
         List<String> projetos = new ArrayList<>();
         String query = "SELECT projeto_idProjeto FROM usuario_has_projeto WHERE usuario_idUsuario = ?";

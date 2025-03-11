@@ -10,9 +10,15 @@ public class Campo {
     private final UUID id;
     private final String tipo;
     private final String nome;
-    private double dias;
+    private Double dias;
+    
+    public Campo(UUID id, String tipo, String nome) {
+        this.id = id;
+        this.tipo = tipo;
+        this.nome = nome;
+    }
 
-    public Campo(UUID id, String tipo, String nome, double dias) {
+    public Campo(UUID id, String tipo, String nome, Double dias) {
         this.id = id;
         this.tipo = tipo;
         this.nome = nome;
@@ -31,11 +37,11 @@ public class Campo {
         return nome;
     }
 
-    public double getDias() {
+    public Double getDias() {
         return dias;
     }
 
-    public void setDias(double dias) {
+    public void setDias(Double dias) {
         this.dias = dias;
     }
 

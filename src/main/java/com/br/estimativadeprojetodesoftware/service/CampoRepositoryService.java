@@ -3,6 +3,8 @@ package com.br.estimativadeprojetodesoftware.service;
 import com.br.estimativadeprojetodesoftware.abstractfactory.FabricaRepository;
 import com.br.estimativadeprojetodesoftware.abstractfactory.SeletorFabricaRepository;
 import com.br.estimativadeprojetodesoftware.model.Campo;
+import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ICampoRepository;
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +39,15 @@ public class CampoRepositoryService {
     public void atualizar(Campo campo) {
         campoRepository.atualizar(campo);
     }
+    
+    public void atualizarDiasProjetoCampo(Projeto projeto, Campo campo){
+        campoRepository.atualizarDiasProjetoCampo(projeto, campo);
+    }
 
+    public void atualizarDiasPerfilCampo(Perfil perfil, Campo campo){
+        campoRepository.atualizarDiasPerfilCampo(perfil, campo);
+    }
+    
     public void removerPorID(UUID id) {
         campoRepository.removerPorID(id);
     }
@@ -89,7 +99,7 @@ public class CampoRepositoryService {
         return campoRepository.buscarPorIdProjetoTipo(idProjeto, tipo);
     }
 
-    public Campo buscarPorIdPerfilTipo(UUID idPerfil, String tipo) {
+    public List<Campo> buscarPorIdPerfilTipo(UUID idPerfil, String tipo) {
         return campoRepository.buscarPorIdPerfilTipo(idPerfil, tipo);
     }
 

@@ -49,7 +49,7 @@ public class CriarProjetoMock {
         List<Campo> campos = new ArrayList<>();
 
         for (Map.Entry<String, Integer> entry : tamanhosApp.entrySet()) {
-            campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue()));
+            campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue().doubleValue()));
         }
 
         // Criando campos para niveisUD
@@ -61,7 +61,7 @@ public class CriarProjetoMock {
         // Criando campos para funcionalidades
         Map<String, Integer> funcionalidades = perfil.getFuncionalidades();
         for (Map.Entry<String, Integer> entry : funcionalidades.entrySet()) {
-            campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue()));
+            campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue().doubleValue()));
         }
 
         // Criando campos para taxas diarias

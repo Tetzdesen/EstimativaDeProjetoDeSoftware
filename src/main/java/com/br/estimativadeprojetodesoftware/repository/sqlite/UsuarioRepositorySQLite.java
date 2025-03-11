@@ -12,9 +12,7 @@ import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -102,39 +100,41 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
         UUID idUsuario = UUID.fromString(resultSet.getString("idUsuario"));
         List<Perfil> perfis = PerfilRepositoryService.getInstancia().buscarTodosPerfisPorIdUsuario(idUsuario);
 
-        // buscar campos dos perfis
-        Map<String, Integer> tamanhosApp = new HashMap<>();
-        Map<String, Double> niveisUI = new HashMap<>();
-        Map<String, Integer> funcionalidades = new HashMap<>();
-        Map<String, Double> taxasDiarias = new HashMap<>();
+        List<Perfil> perfisNovos = new ArrayList<>();
 
         for (Perfil perfil : perfis) {
 
             // buscar nome do campo pelo id do Perfil
-            Campo campo = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "tamanho do app");
+            List<Campo> camposTamanhoApp = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "tamanho app");
 
-            Double dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+            for (Campo campo : camposTamanhoApp) {
+                Double dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+                perfil.adicionarTamanhoApp(campo.getNome(), dias.intValue());
 
-            tamanhosApp.put(campo.getNome(), dias.intValue());
+            }
 
-            campo = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "nivel de ui");
-
-            dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-
-            niveisUI.put(campo.getNome(), dias);
-
-            campo = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "funcionalidade");
-
-            dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-
-            funcionalidades.put(campo.getNome(), dias.intValue());
-
-            campo = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "taxas diarias");
-
-            dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-
-            taxasDiarias.put(campo.getNome(), dias);
-
+            List<Campo> camposNivelUI = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "nivel ui");
+            
+            for (Campo campo : camposNivelUI) {
+                Double dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+                perfil.adicionarNivelUI(campo.getNome(), dias.intValue());
+            }
+            
+            List<Campo> camposFuncionalidades = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "funcionalidades");
+            
+            for (Campo campo : camposFuncionalidades) {
+                Double dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+                perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
+            }
+            
+            List<Campo> taxasDiarias = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "taxa diaria");
+            
+            for (Campo campo : taxasDiarias) {
+                Double dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+                perfil.adicionarTaxaDiaria(campo.getNome(), dias.intValue());
+            }
+            
+            perfisNovos.add(perfil);
         }
 
         List<Projeto> projetos = new ArrayList<>();
@@ -163,7 +163,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
                 resultSet.getTimestamp("created_atUsuario").toLocalDateTime(),
                 resultSet.getString("log"),
                 projetos,
-                perfis
+                perfisNovos
         );
     }
 
