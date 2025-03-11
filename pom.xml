@@ -33,11 +33,11 @@
             <version>3.48.0.0</version>
         </dependency>
         
-        <!-- Dependência do H2 -->
+        <!-- Dependência do H2 Database -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.2.224</version> <!-- Verifique a última versão disponível -->
+            <version>2.2.224</version> <!-- Verifique a versão mais recente -->
             <scope>runtime</scope>
         </dependency>
 

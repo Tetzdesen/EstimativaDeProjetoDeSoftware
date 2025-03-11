@@ -2,6 +2,7 @@ package com.br.estimativadeprojetodesoftware.repository.sqlite;
 
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.repository.IPerfilRepository;
+import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 
@@ -85,6 +86,22 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return perfis;
+    }
+    
+    @Override
+    public List<Perfil> buscarPerfisPorProjeto(UUID projetoId) {
+        List<Perfil> perfis = new ArrayList<>();
+        String sql = "SELECT perfil_idPerfil FROM projeto_has_perfil WHERE projeto_idProjeto = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, projetoId.toString());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                perfis.add(PerfilRepositoryService.getInstancia().buscarPorId(UUID.fromString(rs.getString("perfil_idPerfil"))).get());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar perfis do projeto", e);
         }
         return perfis;
     }

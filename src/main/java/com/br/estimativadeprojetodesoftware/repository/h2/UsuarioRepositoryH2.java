@@ -1,16 +1,20 @@
-
 package com.br.estimativadeprojetodesoftware.repository.h2;
+
+import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.IUsuarioRepository;
+import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.UsuarioHasProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -94,27 +98,84 @@ public class UsuarioRepositoryH2 implements IUsuarioRepository {
         return usuarios;
     }
 
-  private Usuario mapToUsuario(ResultSet resultSet) throws SQLException {
+    private Usuario mapToUsuario(ResultSet resultSet) throws SQLException {
         UUID idUsuario = UUID.fromString(resultSet.getString("idUsuario"));
         List<Perfil> perfis = PerfilRepositoryService.getInstancia().buscarTodosPerfisPorIdUsuario(idUsuario);
-        List<Projeto> projetos = new ArrayList<>();
-        
-        List<String> idProjetos = UsuarioHasProjetoRepositoryService.getInstancia().buscarProjetosPorUsuario(idUsuario);
-        
-        for(String id : idProjetos){
-            projetos.add(ProjetoRepositoryService.getInstancia().buscarPorId(UUID.fromString(id)).get());
+
+        // buscar campos dos perfis
+        Map<String, Integer> tamanhosApp = new HashMap<>();
+        Map<String, Double> niveisUI = new HashMap<>();
+        Map<String, Integer> funcionalidades = new HashMap<>();
+        Map<String, Double> taxasDiarias = new HashMap<>();
+
+        for (Perfil perfil : perfis) {
+
+            // buscar nome do campo pelo id do Perfil
+            Campo campo = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "tamanho do app");
+
+            Double dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+
+            tamanhosApp.put(campo.getNome(), dias.intValue());
+
+            campo = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "nivel de ui");
+
+            dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+
+            niveisUI.put(campo.getNome(), dias);
+
+            campo = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "funcionalidade");
+
+            dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+
+            funcionalidades.put(campo.getNome(), dias.intValue());
+
+            campo = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "taxas diarias");
+
+            dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+
+            taxasDiarias.put(campo.getNome(), dias);
+
         }
-        
+
+        List<Projeto> projetos = new ArrayList<>();
+        List<String> idProjetos = ProjetoRepositoryService.getInstancia().buscarProjetosPorUsuario(idUsuario);
+
+        for (String id : idProjetos) {
+
+            Projeto projeto = ProjetoRepositoryService.getInstancia().buscarPorId(UUID.fromString(id)).get();
+
+            Campo campo = CampoRepositoryService.getInstancia().buscarPorIdProjeto(projeto.getId());
+
+            Integer dias = CampoRepositoryService.getInstancia().buscarDiasPorProjeto(projeto.getId());
+
+            campo.setDias(dias.doubleValue());;
+
+            projeto.adicionarCampo(campo);
+
+            projetos.add(projeto);
+        }
+
         return new Usuario(
-            idUsuario,
-            resultSet.getString("nomeUsuario"),
-            resultSet.getString("email"),
-            resultSet.getString("senha"),
-            resultSet.getTimestamp("created_atUsuario").toLocalDateTime(),
-            resultSet.getString("log"),
+                idUsuario,
+                resultSet.getString("nomeUsuario"),
+                resultSet.getString("email"),
+                resultSet.getString("senha"),
+                resultSet.getTimestamp("created_atUsuario").toLocalDateTime(),
+                resultSet.getString("log"),
                 projetos,
                 perfis
         );
     }
-  
+
+    @Override
+    public List<Usuario> buscarUsuariosPorProjeto(UUID idProjeto) {
+        List<Usuario> usuarios = new ArrayList<>();
+        List<String> usuarioIds = ProjetoRepositoryService.getInstancia().buscarProjetosPorUsuario(idProjeto);
+
+        for (String userId : usuarioIds) {
+            UsuarioRepositoryService.getInstancia().buscarPorId(UUID.fromString(userId)).ifPresent(usuarios::add);
+        }
+        return usuarios;
+    }
+
 }

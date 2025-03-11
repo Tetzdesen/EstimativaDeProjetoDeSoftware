@@ -1,0 +1,96 @@
+package com.br.estimativadeprojetodesoftware.service;
+
+import com.br.estimativadeprojetodesoftware.abstractfactory.FabricaRepository;
+import com.br.estimativadeprojetodesoftware.abstractfactory.SeletorFabricaRepository;
+import com.br.estimativadeprojetodesoftware.model.Campo;
+import com.br.estimativadeprojetodesoftware.repository.ICampoRepository;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ *
+ * @author tetzner
+ */
+public class CampoRepositoryService {
+
+    private static CampoRepositoryService INSTANCIA = null;
+    private final FabricaRepository fabricaDAO;
+    private final ICampoRepository campoRepository;
+
+    private CampoRepositoryService() {
+        fabricaDAO = SeletorFabricaRepository.obterInstancia();
+        campoRepository = fabricaDAO.criarCampoRepository();
+    }
+
+    public static CampoRepositoryService getInstancia() {
+        if (INSTANCIA == null) {
+            INSTANCIA = new CampoRepositoryService();
+        }
+
+        return INSTANCIA;
+    }
+
+    public void salvar(Campo campo) {
+        campoRepository.salvar(campo);
+    }
+
+    public void atualizar(Campo campo) {
+        campoRepository.atualizar(campo);
+    }
+
+    public void removerPorID(UUID id) {
+        campoRepository.removerPorID(id);
+    }
+
+    public Campo buscarPorId(UUID id) {
+        return campoRepository.buscarPorId(id);
+    }
+
+    public List<Campo> listarTodos() {
+        return campoRepository.listarTodos();
+    }
+
+    public Integer buscarDiasPorProjetoCampo(UUID idProjeto, UUID idCampo) {
+        return campoRepository.buscarDiasPorProjetoCampo(idProjeto, idCampo);
+    }
+
+    public Double buscarDiasPorPerfilCampo(UUID idPerfil, UUID idCampo) {
+        return campoRepository.buscarDiasPorPerfilCampo(idPerfil, idCampo);
+    }
+
+    public Integer buscarDiasPorProjeto(UUID idProjeto) {
+        return campoRepository.buscarDiasPorProjeto(idProjeto);
+    }
+
+    public Double buscarDiasPorPerfil(UUID idPerfil) {
+        return campoRepository.buscarDiasPorPerfil(idPerfil);
+    }
+
+    public List<Campo> listarTodosPorIdProjeto(UUID idProjeto) {
+        return campoRepository.listarTodosPorIdProjeto(idProjeto);
+    }
+
+    public List<Campo> listarTodosPorIdPerfil(UUID idPerfil){
+        return campoRepository.listarTodosPorIdPerfil(idPerfil);
+    }
+
+    //public List<Campo> listarTodosPorIdProjetoCampo(UUID idProjeto, UUID idCampo) {
+    // return campoRepository.listarTodosPorIdProjetoCampo(idProjeto, idCampo);
+    //}
+    public Campo buscarPorIdProjeto(UUID idProjeto) {
+        return campoRepository.buscarPorIdProjeto(idProjeto);
+    }
+
+    public Campo buscarPorIdPerfil(UUID idPerfil) {
+        return campoRepository.buscarPorIdPerfil(idPerfil);
+    }
+
+    public Campo buscarPorIdProjetoTipo(UUID idProjeto, String tipo) {
+        return campoRepository.buscarPorIdProjetoTipo(idProjeto, tipo);
+    }
+
+    public Campo buscarPorIdPerfilTipo(UUID idPerfil, String tipo) {
+        return campoRepository.buscarPorIdPerfilTipo(idPerfil, tipo);
+    }
+
+}
