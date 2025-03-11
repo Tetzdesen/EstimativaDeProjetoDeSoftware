@@ -54,6 +54,10 @@ public class UsuarioRepositoryService implements Subject {
     public Optional<Usuario> buscarPorId(UUID id) {
         return usuarioRepository.buscarPorId(id);
     }
+    
+    public Optional<Usuario> buscarPorEmail(String email){
+        return usuarioRepository.buscarPorEmail(email);
+    }
 
     public List<Usuario> buscarTodos() {
         return usuarioRepository.buscarTodos();

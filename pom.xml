@@ -62,7 +62,7 @@
         <dependency>
             <groupId>com.github.claytonfraga</groupId>
             <artifactId>validadorsenha</artifactId>
-            <version>master</version>
+            <version>c949bd44ba</version>
         </dependency>
         
     </dependencies>

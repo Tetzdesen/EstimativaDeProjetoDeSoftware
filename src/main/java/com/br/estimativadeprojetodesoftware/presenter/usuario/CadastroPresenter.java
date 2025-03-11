@@ -84,7 +84,7 @@ public class CadastroPresenter {
 
         String email = view.getTxtEmail().getText();
 
-        Usuario usuario = repositoryUsuario.buscarPorEmail(email);
+        Usuario usuario = repositoryUsuario.buscarPorEmail(email).orElse(null);
 
         if (usuario == null) {
             String nome = view.getTxtNomeUsuario().getText();

@@ -16,12 +16,15 @@ public class ValidadorSenhaAdapter {
     }
 
     public boolean validarSenha(String senha) throws Exception {
-        List<String> validacoesOcorridas = validador.validar(senha);
+        var validacoes = validador.validar(senha);
 
-        if (validacoesOcorridas.isEmpty()) {
-            return true;
+        if (!validacoes.isEmpty()) {
+            // Concatena as mensagens de validação, cada uma em uma nova linha
+            String mensagemErro = String.join("\n", validacoes);
+            throw new Exception(mensagemErro);
         }
-        throw new Exception(String.join("\n", validacoesOcorridas));
+
+        return true;
     }
 
 }
