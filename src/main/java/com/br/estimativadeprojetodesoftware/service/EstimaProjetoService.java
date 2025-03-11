@@ -21,6 +21,7 @@ public class EstimaProjetoService {
     }
 
     public double calcularValorUnitario(String tipoProjeto, int dias) {
+        /* 
         switch (tipoProjeto) {
             case "Web/Back-end":
             case "Android":
@@ -30,6 +31,8 @@ public class EstimaProjetoService {
             default:
                 throw new IllegalArgumentException("Tipo de projeto desconhecido: " + tipoProjeto);
         }
+                */
+        return 2;
     }
 
     public int calcularDiasFuncionalidades(List<Campo> funcionalidadesEscolhidas) {

@@ -76,7 +76,7 @@ public class ConexaoSingleton {
 
         -- Tabela campo
         CREATE TABLE IF NOT EXISTS campo (
-          idCampo INTEGER PRIMARY KEY AUTOINCREMENT,
+          idCampo TEXT PRIMARY KEY,
           tipoCampo VARCHAR(45) NOT NULL,
           nomeCampo VARCHAR(75) NOT NULL UNIQUE
         );
@@ -94,7 +94,7 @@ public class ConexaoSingleton {
         -- Tabela perfil_has_campo
         CREATE TABLE IF NOT EXISTS perfil_has_campo (
           perfil_idPerfil TEXT NOT NULL,
-          campo_idCampo INTEGER NOT NULL,
+          campo_idCampo TEXT NOT NULL,
           diasPerfil DOUBLE NOT NULL,
           PRIMARY KEY (perfil_idPerfil, campo_idCampo),
           FOREIGN KEY (perfil_idPerfil) REFERENCES perfil(idPerfil) ON DELETE CASCADE,
@@ -113,7 +113,7 @@ public class ConexaoSingleton {
         -- Tabela projeto_has_campo
         CREATE TABLE IF NOT EXISTS projeto_has_campo (
           projeto_idProjeto TEXT NOT NULL,
-          campo_idCampo INTEGER NOT NULL,
+          campo_idCampo TEXT NOT NULL,
           diasProjeto INTEGER NOT NULL,
           PRIMARY KEY (projeto_idProjeto, campo_idCampo),
           FOREIGN KEY (projeto_idProjeto) REFERENCES projeto(idProjeto) ON DELETE CASCADE,

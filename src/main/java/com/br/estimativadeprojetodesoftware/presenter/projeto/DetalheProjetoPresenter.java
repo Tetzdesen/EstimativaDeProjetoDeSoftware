@@ -1,5 +1,9 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
@@ -44,23 +48,32 @@ public class DetalheProjetoPresenter implements Observer {
     }
 
     private void carregarDetalhes(Projeto projeto) {
-        Object[][] dadosTabela = projeto.getCampos()
-                .stream()
-                .map(campo -> {
-                    String nomeFuncionalidade = campo.getNome();
-                    Integer dias = campo.getDias().intValue();
-
-                    Perfil perfil = projeto.getPerfis().isEmpty() ? null : projeto.getPerfis().get(0);
-
-                    double valor = (perfil != null) ? estimaService.calcularValorUnitario(perfil.getNome(), dias) : 0.0;
-
-                    return new Object[]{nomeFuncionalidade, dias, String.format("R$ %.2f", valor)};
-                })
-                .toArray(Object[][]::new);
-
+    // Cria uma lista para acumular as linhas da tabela
+        List<Object[]> linhas = new ArrayList<>();
+        
+        for (Perfil perfil : projeto.getPerfis()) {
+            // Para cada perfil, cria as linhas a partir das funcionalidades
+            Object[][] dadosPerfil = perfil.getFuncionalidades()
+                    .entrySet()
+                    .stream()
+                    .map(entry -> new Object[]{ perfil.getNome(), entry.getKey(), entry.getValue() })
+                    .toArray(Object[][]::new);
+            
+            // Adiciona cada linha do perfil à lista geral
+            for (Object[] linha : dadosPerfil) {
+                linhas.add(linha);
+            }
+        }
+        
+        // Converte a lista em um array bidimensional
+        Object[][] dadosTabela = linhas.toArray(new Object[0][]);
         double valorTotal = calcularValorTotal(projeto);
+        
+        // Atualiza a tabela com todas as linhas acumuladas
         view.atualizarTabela(dadosTabela, valorTotal);
     }
+
+    
 
     private double calcularValorTotal(Projeto projeto) {
         return projeto.getCampos()

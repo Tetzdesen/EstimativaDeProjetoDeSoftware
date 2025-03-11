@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
+import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.state.perfil.VisualizacaoPerfilState;
 
 public class SalvarPerfilProjetoCommand implements ProjetoCommand {
@@ -60,7 +61,8 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
                 perfil.adicionarFuncionalidade(funcionalidade, numeroDeDias);
             }
             
-            presenter.getRepository().setPerfil(perfil);
+            //presenter.getRepository().setPerfil(perfil);
+            PerfilRepositoryService.getInstancia().salvar(perfil);
 
             JOptionPane.showMessageDialog(presenter.getView(), "Perfil incluído com sucesso!");
 

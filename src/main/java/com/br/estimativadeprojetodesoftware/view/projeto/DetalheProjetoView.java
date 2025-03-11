@@ -42,7 +42,7 @@ public class DetalheProjetoView extends JInternalFrame {
         JPanel painelTabela = new JPanel(new BorderLayout());
         painelTabela.setBorder(BorderFactory.createTitledBorder("Funcionalidades do Projeto"));
 
-        modeloTabela = new DefaultTableModel(new Object[]{"Nome", "Dias", "Valor"}, 0) {
+        modeloTabela = new DefaultTableModel(new Object[]{"Perfil", "Nome", "Dias", "Valor"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;

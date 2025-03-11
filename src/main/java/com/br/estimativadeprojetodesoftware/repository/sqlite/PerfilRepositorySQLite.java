@@ -31,7 +31,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             statement.setString(2, perfil.getNome());
             statement.setBoolean(3, perfil.isPerfilBackEnd());
             statement.setTimestamp(4, Timestamp.valueOf(perfil.getCreated_at()));
-            statement.setString(6, perfil.getUsuario().getId().toString());
+            statement.setString(5, perfil.getUsuario().getId().toString());
 
             for (Map.Entry<String, Integer> entry : perfil.getTamanhosApp().entrySet()) {
                 CampoRepositoryService.getInstancia().salvar(new Campo(UUID.randomUUID(), "tamanho app", entry.getKey(), entry.getValue().doubleValue()));

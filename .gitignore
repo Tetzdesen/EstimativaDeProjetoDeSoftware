@@ -34,3 +34,6 @@ target/
 
 # vs code package
 .vscode
+
+# Folder db
+db
