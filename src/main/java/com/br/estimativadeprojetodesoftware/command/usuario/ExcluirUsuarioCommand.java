@@ -19,7 +19,7 @@ public class ExcluirUsuarioCommand implements ProjetoCommand {
 
     @Override
     public void execute() {
-        boolean removido = usuarioPresenter.getRepository().removerUsuarioPorEmail(usuarioPresenter.getUsuario().getEmail());
+        boolean removido = usuarioPresenter.getRepository().removerPorId(usuarioPresenter.getUsuario().getId());
 
         if (removido) {
             new MostrarMensagemProjetoCommand("Usuário \"" + usuarioPresenter.getUsuario().getNome() + "\" removido com sucesso!").execute();
