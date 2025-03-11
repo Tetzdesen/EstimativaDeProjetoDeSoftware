@@ -44,24 +44,35 @@ public class DetalheProjetoPresenter implements Observer {
     }
 
     private void carregarDetalhes(Projeto projeto) {
+        int numPerfis = projeto.getPerfis().size();
+        
+        // Mapeia os dados: cada linha terá 2 colunas fixas + uma coluna para cada perfil
         Object[][] dadosTabela = projeto.getEstimativa().getCampos()
                 .entrySet()
                 .stream()
                 .map(entry -> {
                     String nomeFuncionalidade = entry.getKey();
                     int dias = entry.getValue();
-
-                    Perfil perfil = projeto.getPerfis().isEmpty() ? null : projeto.getPerfis().get(0);
-
-                    double valor = (perfil != null) ? estimaService.calcularValorUnitario(perfil.getNome(), dias) : 0.0;
-
-                    return new Object[]{nomeFuncionalidade, dias, String.format("R$ %.2f", valor)};
+                    
+                    // Cria uma linha com tamanho dinâmico: nome, dias e um valor para cada perfil
+                    Object[] row = new Object[2 + numPerfis];
+                    row[1] = nomeFuncionalidade;
+                    row[2] = dias;
+                    
+                    // Para cada perfil, calcula o valor e o formata
+                    for (int i = 0; i < numPerfis; i++) {
+                        Perfil perfil = projeto.getPerfis().get(i);
+                        double valor = estimaService.calcularValorUnitario(perfil.getNome(), dias);
+                        row[i + 3] = String.format("R$ %.2f", valor);
+                    }
+                    return row;
                 })
                 .toArray(Object[][]::new);
-
+        
         double valorTotal = calcularValorTotal(projeto);
         view.atualizarTabela(dadosTabela, valorTotal);
     }
+    
 
     private double calcularValorTotal(Projeto projeto) {
         return projeto.getEstimativa().getCampos()
