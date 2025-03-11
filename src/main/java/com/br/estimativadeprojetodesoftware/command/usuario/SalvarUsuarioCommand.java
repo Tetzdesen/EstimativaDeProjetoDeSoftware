@@ -39,7 +39,7 @@ public class SalvarUsuarioCommand implements ProjetoCommand {
         
         UsuarioLogadoSingleton.getInstancia().setUsuario(usuarioNovo);
         usuarioPresenter.setUsuario(usuarioNovo);
-        usuarioPresenter.getRepository().atualizarUsuario(usuario, email, nome);
+        usuarioPresenter.getRepository().atualizar(usuarioNovo);
         new MostrarMensagemProjetoCommand("Usuário salvo com sucesso").execute();
     }
 

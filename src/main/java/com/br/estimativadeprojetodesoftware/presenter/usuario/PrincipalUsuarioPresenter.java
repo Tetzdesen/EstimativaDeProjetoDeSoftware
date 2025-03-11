@@ -36,14 +36,14 @@ public class PrincipalUsuarioPresenter {
         view.getBtnAutenticarPorSenha().addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {
                 new SetLookAndFeelCommand().execute();
-                new LoginPresenter(new ProjetoRepositoryMock(), new UsuarioRepositoryMock());
+                new LoginPresenter();
             });
         });
         
         view.getBtnCadastrar().addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {
                 new SetLookAndFeelCommand().execute();
-                new CadastroPresenter(new UsuarioRepositoryMock());
+                new CadastroPresenter();
             });
         });
     }
