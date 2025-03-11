@@ -12,5 +12,7 @@ public interface IEstimativaHasCampoRepository {
 
     void removerPorIds(String estimativaId, int campoId);
 
+    List<String> buscarNomesPorEstimativa(String estimativaId);
+
     List<Double> buscarValoresPorEstimativa(String estimativaId);
 }

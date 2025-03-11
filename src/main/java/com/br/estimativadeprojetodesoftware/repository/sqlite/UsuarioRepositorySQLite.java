@@ -1,7 +1,13 @@
 package com.br.estimativadeprojetodesoftware.repository.sqlite;
 
+import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.IUsuarioRepository;
+import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioHasProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +16,10 @@ import java.util.UUID;
 
 public class UsuarioRepositorySQLite implements IUsuarioRepository {
 
-    private Connection connection;
+    private final Connection connection;
 
-    public UsuarioRepositorySQLite(Connection connection) {
-        this.connection = connection;
+    public UsuarioRepositorySQLite() {
+        this.connection = ConexaoSingleton.getInstancia().getConexao();
     }
 
     @Override
@@ -89,13 +95,25 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
     }
 
     private Usuario mapToUsuario(ResultSet resultSet) throws SQLException {
+        UUID idUsuario = UUID.fromString(resultSet.getString("idUsuario"));
+        List<Perfil> perfis = PerfilRepositoryService.getInstancia().buscarTodosPerfisPorIdUsuario(idUsuario);
+        List<Projeto> projetos = new ArrayList<>();
+        
+        List<String> idProjetos = UsuarioHasProjetoRepositoryService.getInstancia().buscarProjetosPorUsuario(idUsuario);
+        
+        for(String id : idProjetos){
+            projetos.add(ProjetoRepositoryService.getInstancia().buscarPorId(UUID.fromString(id)).get());
+        }
+        
         return new Usuario(
-            UUID.fromString(resultSet.getString("idUsuario")),
+            idUsuario,
             resultSet.getString("nomeUsuario"),
             resultSet.getString("email"),
             resultSet.getString("senha"),
             resultSet.getTimestamp("created_atUsuario").toLocalDateTime(),
-            resultSet.getString("log")
+            resultSet.getString("log"),
+                projetos,
+                perfis
         );
     }
 }

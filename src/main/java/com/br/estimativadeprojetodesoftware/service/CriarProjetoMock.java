@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.service;
 
-import com.br.estimativadeprojetodesoftware.model.Estimativa;
+import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
@@ -22,7 +22,7 @@ public class CriarProjetoMock {
     public Optional<Projeto> criarProjetoAleatorio() {
         List<Projeto> projetosExistentes = repository.getProjetos();
         List<Perfil> perfis = new ArrayList<>();
-        
+
         if (projetosExistentes.isEmpty()) {
             return Optional.empty();
         }
@@ -43,12 +43,37 @@ public class CriarProjetoMock {
         String compartilhadoPor = compartilhado ? projetoBase.getCriador() : null;
         Perfil perfil = new Perfil("Android");
         perfis.add(perfil);
-        Map<String, Integer> funcionalidades = combinarFuncionalidades(projetosExistentes, random);
-        Estimativa estimativa = new Estimativa(UUID.randomUUID(), LocalDateTime.now(), funcionalidades);
+
+        // Criando campos para estimativa
+        Map<String, Integer> tamanhosApp = perfil.getTamanhosApp();
+        List<Campo> campos = new ArrayList<>();
+
+        for (Map.Entry<String, Integer> entry : tamanhosApp.entrySet()) {
+            campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue()));
+        }
+
+        // Criando campos para niveisUD
+        Map<String, Double> niveisUI = perfil.getNiveisUI();
+        for (Map.Entry<String, Double> entry : niveisUI.entrySet()) {
+            campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue()));
+        }
+
+        // Criando campos para funcionalidades
+        Map<String, Integer> funcionalidades = perfil.getFuncionalidades();
+        for (Map.Entry<String, Integer> entry : funcionalidades.entrySet()) {
+            campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue()));
+        }
+
+        // Criando campos para taxas diarias
+        Map<String, Double> taxasDiarias = perfil.getTaxasDiarias();
+
+        for (Map.Entry<String, Double> entry : taxasDiarias.entrySet()) {
+            campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue()));
+        }
 
         List<Usuario> usuarios = new ArrayList();
         usuarios.add(UsuarioLogadoSingleton.getInstancia().getUsuario());
-        return Optional.of(new Projeto(UUID.randomUUID(), nome, criador, "Android", LocalDateTime.now(), status, compartilhado, compartilhadoPor, perfis, usuarios, estimativa));
+        return Optional.of(new Projeto(UUID.randomUUID(), nome, criador, "Android", LocalDateTime.now(), status, compartilhado, compartilhadoPor, perfis, usuarios, campos));
     }
 
     private String gerarNomeDoProjeto(List<String> tipos) {
@@ -81,7 +106,7 @@ public class CriarProjetoMock {
 
         for (Projeto projeto : projetos) {
             todosOsTipos.addAll(projeto.getPerfis().stream()
-                    .map(Perfil::getNome) 
+                    .map(Perfil::getNome)
                     .collect(Collectors.toList()));
         }
 
@@ -95,16 +120,18 @@ public class CriarProjetoMock {
         return new ArrayList<>(tiposCombinados);
     }
 
+    /*
+
     private Map<String, Integer> combinarFuncionalidades(List<Projeto> projetos, Random random) {
         Map<String, Integer> funcionalidadesCombinadas = new HashMap<>();
         int numProjetosParaCombinar = 1 + random.nextInt(projetos.size());
 
         for (int i = 0; i < numProjetosParaCombinar; i++) {
             Projeto projeto = projetos.get(random.nextInt(projetos.size()));
-            Map<String, Integer> funcionalidades = projeto.getEstimativa().getCampos();
+            List<Campo> funcionalidades = projeto.getCampos();
 
             int numFuncionalidades = 1 + random.nextInt(funcionalidades.size());
-            List<String> chaves = new ArrayList<>(funcionalidades.keySet());
+            List<String> chaves = new ArrayList<>(funcionalidades.);
             Collections.shuffle(chaves, random);
 
             for (int j = 0; j < numFuncionalidades; j++) {
@@ -114,5 +141,5 @@ public class CriarProjetoMock {
         }
 
         return funcionalidadesCombinadas;
-    }
+    }*/
 }

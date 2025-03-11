@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.repository;
 
-import com.br.estimativadeprojetodesoftware.model.Estimativa;
+import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Subject;
@@ -17,7 +17,7 @@ public class ProjetoRepositoryMock implements Subject {
         projetos = new ArrayList<>();
         observers = new ArrayList<>();
 
-        //criação do perfil 1
+        // Criação do perfil 1
         Perfil perfil1 = new Perfil("Web/Back-end");
 
         perfil1.adicionarFuncionalidade("Cadastro por E-mail e Senha", 1);
@@ -31,114 +31,102 @@ public class ProjetoRepositoryMock implements Subject {
         perfil1.adicionarFuncionalidade("Relatórios de Erros", 1);
 
         // Projeto 1: Web/Back-end
-        Estimativa estimativa1 = new Estimativa();
+        List<Campo> camposProjeto1 = new ArrayList<>();
+        camposProjeto1.add(new Campo(UUID.randomUUID(), "Tamanho do App: Médio", "", 30));
+        camposProjeto1.add(new Campo(UUID.randomUUID(), "Cadastro por E-mail e Senha", "", 1));
+        camposProjeto1.add(new Campo(UUID.randomUUID(), "Painel (Dashboard)", "", 5));
+        camposProjeto1.add(new Campo(UUID.randomUUID(), "Contas Multi-tenant", "", 3));
+        camposProjeto1.add(new Campo(UUID.randomUUID(), "Subdomínios", "", 4));
+        camposProjeto1.add(new Campo(UUID.randomUUID(), "E-mails Transacionais", "", 2));
+        camposProjeto1.add(new Campo(UUID.randomUUID(), "Gerente de Projeto", "", 10));
+        camposProjeto1.add(new Campo(UUID.randomUUID(), "Nível de UI: Básico", "", 50));
+        camposProjeto1.add(new Campo(UUID.randomUUID(), "Integração com CMS", "", 7));
+        camposProjeto1.add(new Campo(UUID.randomUUID(), "Monitoramento de Performance", "", 1));
+        camposProjeto1.add(new Campo(UUID.randomUUID(), "Relatórios de Erros", "", 1));
 
-        estimativa1.adicionarCampo("Tamanho do App: Médio", 30);
-        estimativa1.adicionarCampo("Cadastro por E-mail e Senha", 1);
-        estimativa1.adicionarCampo("Painel (Dashboard)", 5);
-        estimativa1.adicionarCampo("Contas Multi-tenant", 3);
-        estimativa1.adicionarCampo("Subdomínios", 4);
-        estimativa1.adicionarCampo("E-mails Transacionais", 2);
-        estimativa1.adicionarCampo("Gerente de Projeto", 10);
-        estimativa1.adicionarCampo("Nível de UI: Básico", 50);
-        estimativa1.adicionarCampo("Integração com CMS", 7);
-        estimativa1.adicionarCampo("Monitoramento de Performance", 1);
-        estimativa1.adicionarCampo("Relatórios de Erros", 1);
-
-        Projeto projeto1 = new Projeto("Gerenciamento Corporativo", "Usuario 1", "Web/Back-End");
-        projeto1.setEstimativa(estimativa1);
+        Projeto projeto1 = new Projeto("Gerenciamento Corporativo", "Usuario 1", "Web/Back-End", camposProjeto1);
         projeto1.adicionarPerfil(perfil1);
         projetos.add(projeto1);
 
         // Projeto 2: iOS
-        Estimativa estimativa2 = new Estimativa();
+        List<Campo> camposProjeto2 = new ArrayList<>();
+        camposProjeto2.add(new Campo(UUID.randomUUID(), "Tamanho do App: Pequeno", "", 10));
+        camposProjeto2.add(new Campo(UUID.randomUUID(), "Cadastro pelo Facebook", "", 2));
+        camposProjeto2.add(new Campo(UUID.randomUUID(), "Feed de Atividades", "", 4));
+        camposProjeto2.add(new Campo(UUID.randomUUID(), "Upload de Mídia", "", 4));
+        camposProjeto2.add(new Campo(UUID.randomUUID(), "Perfis de Usuário", "", 2));
+        camposProjeto2.add(new Campo(UUID.randomUUID(), "Notificações Push", "", 3));
+        camposProjeto2.add(new Campo(UUID.randomUUID(), "Design de Ícone do App", "", 7));
+        camposProjeto2.add(new Campo(UUID.randomUUID(), "Nível de UI: Profissional", "", 70));
+        camposProjeto2.add(new Campo(UUID.randomUUID(), "Apple Watch", "", 7));
+        camposProjeto2.add(new Campo(UUID.randomUUID(), "Sincronização em Nuvem", "", 5));
 
-        estimativa2.adicionarCampo("Tamanho do App: Pequeno", 10);
-        estimativa2.adicionarCampo("Cadastro pelo Facebook", 2);
-        estimativa2.adicionarCampo("Feed de Atividades", 4);
-        estimativa2.adicionarCampo("Upload de Mídia", 4);
-        estimativa2.adicionarCampo("Perfis de Usuário", 2);
-        estimativa2.adicionarCampo("Notificações Push", 3);
-        estimativa2.adicionarCampo("Design de Ícone do App", 7);
-        estimativa2.adicionarCampo("Nível de UI: Profissional", 70);
-        estimativa2.adicionarCampo("Apple Watch", 7);
-        estimativa2.adicionarCampo("Sincronização em Nuvem", 5);
-
-        Projeto projeto2 = new Projeto("Aplicativo Social iOS", "Usuario 2", "iOS");
-        projeto2.setEstimativa(estimativa2);
+        Projeto projeto2 = new Projeto("Aplicativo Social iOS", "Usuario 2", "iOS", camposProjeto2);
         projeto2.adicionarPerfil(perfil1);
         projetos.add(projeto2);
 
         // Projeto 3: Android
-        Estimativa estimativa3 = new Estimativa();
+        List<Campo> camposProjeto3 = new ArrayList<>();
+        camposProjeto3.add(new Campo(UUID.randomUUID(), "Tamanho do App: Médio", "", 30));
+        camposProjeto3.add(new Campo(UUID.randomUUID(), "Cadastro pelo Google", "", 2));
+        camposProjeto3.add(new Campo(UUID.randomUUID(), "Feed de Atividades", "", 4));
+        camposProjeto3.add(new Campo(UUID.randomUUID(), "Compartilhamento Social", "", 1));
+        camposProjeto3.add(new Campo(UUID.randomUUID(), "Pesquisa", "", 3));
+        camposProjeto3.add(new Campo(UUID.randomUUID(), "Mensagens", "", 5));
+        camposProjeto3.add(new Campo(UUID.randomUUID(), "Nível de UI: Básico", "", 50));
+        camposProjeto3.add(new Campo(UUID.randomUUID(), "Dados de Sensores do Dispositivo", "", 5));
+        camposProjeto3.add(new Campo(UUID.randomUUID(), "Códigos de Barras ou QR Codes", "", 2));
 
-        estimativa3.adicionarCampo("Tamanho do App: Médio", 30);
-        estimativa3.adicionarCampo("Cadastro pelo Google", 2);
-        estimativa3.adicionarCampo("Feed de Atividades", 4);
-        estimativa3.adicionarCampo("Compartilhamento Social", 1);
-        estimativa3.adicionarCampo("Pesquisa", 3);
-        estimativa3.adicionarCampo("Mensagens", 5);
-        estimativa3.adicionarCampo("Nível de UI: Básico", 50);
-        estimativa3.adicionarCampo("Dados de Sensores do Dispositivo", 5);
-        estimativa3.adicionarCampo("Códigos de Barras ou QR Codes", 2);
-
-        Projeto projeto3 = new Projeto("Aplicativo de Marketplace Android", "Usuario 3", "Android");
-        projeto3.setEstimativa(estimativa3);
+        Projeto projeto3 = new Projeto("Aplicativo de Marketplace Android", "Usuario 3", "Android", camposProjeto3);
         projeto3.adicionarPerfil(perfil1);
         projetos.add(projeto3);
 
         // Projeto 4: Web/Back-end e iOS
-        Estimativa estimativa4 = new Estimativa();
+        List<Campo> camposProjeto4 = new ArrayList<>();
+        camposProjeto4.add(new Campo(UUID.randomUUID(), "Tamanho do App: Grande", "", 50));
+        camposProjeto4.add(new Campo(UUID.randomUUID(), "Cadastro por E-mail e Senha", "", 1));
+        camposProjeto4.add(new Campo(UUID.randomUUID(), "Feed de Atividades", "", 4));
+        camposProjeto4.add(new Campo(UUID.randomUUID(), "Painel (Dashboard)", "", 5));
+        camposProjeto4.add(new Campo(UUID.randomUUID(), "Notificações Push", "", 3));
+        camposProjeto4.add(new Campo(UUID.randomUUID(), "Upload de Mídia", "", 4));
+        camposProjeto4.add(new Campo(UUID.randomUUID(), "Gerente de Projeto", "", 10));
+        camposProjeto4.add(new Campo(UUID.randomUUID(), "Nível de UI: Profissional", "", 70));
+        camposProjeto4.add(new Campo(UUID.randomUUID(), "Planos de Assinatura", "", 8));
+        camposProjeto4.add(new Campo(UUID.randomUUID(), "Envio de SMS", "", 4));
 
-        estimativa4.adicionarCampo("Tamanho do App: Grande", 50);
-        estimativa4.adicionarCampo("Cadastro por E-mail e Senha", 1);
-        estimativa4.adicionarCampo("Feed de Atividades", 4);
-        estimativa4.adicionarCampo("Painel (Dashboard)", 5);
-        estimativa4.adicionarCampo("Notificações Push", 3);
-        estimativa4.adicionarCampo("Upload de Mídia", 4);
-        estimativa4.adicionarCampo("Gerente de Projeto", 10);
-        estimativa4.adicionarCampo("Nível de UI: Profissional", 70);
-        estimativa4.adicionarCampo("Planos de Assinatura", 8);
-        estimativa4.adicionarCampo("Envio de SMS", 4);
-
-        Projeto projeto4 = new Projeto("Aplicativo Financeiro Completo", "Usuario 4", "Web/Back-end e iOS");
-        projeto4.setEstimativa(estimativa4);
+        Projeto projeto4 = new Projeto("Aplicativo Financeiro Completo", "Usuario 4", "Web/Back-end e iOS", camposProjeto4);
         projeto4.adicionarPerfil(perfil1);
         projetos.add(projeto4);
 
         // Projeto 5: Android com Web/Back-end
-        Estimativa estimativa5 = new Estimativa();
+        List<Campo> camposProjeto5 = new ArrayList<>();
+        camposProjeto5.add(new Campo(UUID.randomUUID(), "Tamanho do App: Médio", "", 30));
+        camposProjeto5.add(new Campo(UUID.randomUUID(), "Cadastro pelo Facebook", "", 2));
+        camposProjeto5.add(new Campo(UUID.randomUUID(), "Feed de Atividades", "", 4));
+        camposProjeto5.add(new Campo(UUID.randomUUID(), "Mensagens", "", 5));
+        camposProjeto5.add(new Campo(UUID.randomUUID(), "Compartilhamento Social", "", 1));
+        camposProjeto5.add(new Campo(UUID.randomUUID(), "Pesquisa", "", 3));
+        camposProjeto5.add(new Campo(UUID.randomUUID(), "Painel (Dashboard)", "", 5));
+        camposProjeto5.add(new Campo(UUID.randomUUID(), "Nível de UI: Básico", "", 50));
+        camposProjeto5.add(new Campo(UUID.randomUUID(), "Processamento de Pagamentos", "", 5));
+        camposProjeto5.add(new Campo(UUID.randomUUID(), "Suporte Multilíngue", "", 4));
 
-        estimativa5.adicionarCampo("Tamanho do App: Médio", 30);
-        estimativa5.adicionarCampo("Cadastro pelo Facebook", 2);
-        estimativa5.adicionarCampo("Feed de Atividades", 4);
-        estimativa5.adicionarCampo("Mensagens", 5);
-        estimativa5.adicionarCampo("Compartilhamento Social", 1);
-        estimativa5.adicionarCampo("Pesquisa", 3);
-        estimativa5.adicionarCampo("Painel (Dashboard)", 5);
-        estimativa5.adicionarCampo("Nível de UI: Básico", 50);
-        estimativa5.adicionarCampo("Processamento de Pagamentos", 5);
-        estimativa5.adicionarCampo("Suporte Multilíngue", 4);
-
-        Projeto projeto5 = new Projeto("Plataforma de Compras Android", "Usuario 5", "Android e Web/Back-end");
-        projeto5.setEstimativa(estimativa5);
+        Projeto projeto5 = new Projeto("Plataforma de Compras Android", "Usuario 5", "Android e Web/Back-end", camposProjeto5);
         projeto5.adicionarPerfil(perfil1);
         projetos.add(projeto5);
 
         // Projeto 6: Web/Back-end com funcionalidades extras
-        Estimativa estimativa6 = new Estimativa();
+        List<Campo> camposProjeto6 = new ArrayList<>();
+        camposProjeto6.add(new Campo(UUID.randomUUID(), "Tamanho do App: Pequeno", "", 10));
+        camposProjeto6.add(new Campo(UUID.randomUUID(), "Painel (Dashboard)", "", 5));
+        camposProjeto6.add(new Campo(UUID.randomUUID(), "E-mails Transacionais", "", 2));
+        camposProjeto6.add(new Campo(UUID.randomUUID(), "Subdomínios", "", 4));
+        camposProjeto6.add(new Campo(UUID.randomUUID(), "Contas Multi-tenant", "", 3));
+        camposProjeto6.add(new Campo(UUID.randomUUID(), "Nível de UI: MVP", "", 30));
+        camposProjeto6.add(new Campo(UUID.randomUUID(), "Conectar a um ou mais serviços de terceiros", "", 6));
+        camposProjeto6.add(new Campo(UUID.randomUUID(), "Moderação / Aprovação de Conteúdo", "", 4));
 
-        estimativa6.adicionarCampo("Tamanho do App: Pequeno", 10);
-        estimativa6.adicionarCampo("Painel (Dashboard)", 5);
-        estimativa6.adicionarCampo("E-mails Transacionais", 2);
-        estimativa6.adicionarCampo("Subdomínios", 4);
-        estimativa6.adicionarCampo("Contas Multi-tenant", 3);
-        estimativa6.adicionarCampo("Nível de UI: MVP", 30);
-        estimativa6.adicionarCampo("Conectar a um ou mais serviços de terceiros", 6);
-        estimativa6.adicionarCampo("Moderação / Aprovação de Conteúdo", 4);
-
-        Projeto projeto6 = new Projeto("Sistema de Suporte Web", "Usuario 6", "Web/Back-end");
-        projeto6.setEstimativa(estimativa6);
+        Projeto projeto6 = new Projeto("Sistema de Suporte Web", "Usuario 6", "Web/Back-end", camposProjeto6);
         projeto6.adicionarPerfil(perfil1);
         projetos.add(projeto6);
     }
@@ -153,17 +141,16 @@ public class ProjetoRepositoryMock implements Subject {
                 .findFirst()
                 .orElse(null);
     }
-    
+
     public void adicionarProjeto(Projeto projeto) {
         projetos.add(projeto);
         notifyObservers();
     }
-    
 
-    public void adicionarProjeto(String nome, String criador, List<String> tipos, Map<String, Integer> funcionalidadesEscolhidas,
-        String status, boolean compartilhado, String compartilhadoPor) {
+    public void adicionarProjeto(String nome, String criador, List<String> tipos, List<Campo> campos,
+                                 String status, boolean compartilhado, String compartilhadoPor) {
 
-        Projeto novoProjeto = new Projeto(nome, criador, tipos.get(0)); 
+        Projeto novoProjeto = new Projeto(nome, criador, tipos.get(0));
 
         for (String tipo : tipos) {
             novoProjeto.adicionarPerfil(new Perfil(tipo));
@@ -174,13 +161,9 @@ public class ProjetoRepositoryMock implements Subject {
         if (compartilhado && compartilhadoPor != null && !compartilhadoPor.isEmpty()) {
             novoProjeto.setCompartilhadoPor(compartilhadoPor);
         }
- 
-        if (funcionalidadesEscolhidas != null && !funcionalidadesEscolhidas.isEmpty()) {
-            Estimativa estimativa = new Estimativa();
-            for (Map.Entry<String, Integer> entry : funcionalidadesEscolhidas.entrySet()) {
-                estimativa.adicionarCampo(entry.getKey(), entry.getValue());
-            }
-            novoProjeto.setEstimativa(estimativa);
+
+        for (Campo campo : campos) {
+            novoProjeto.adicionarCampo(campo);
         }
 
         projetos.add(novoProjeto);

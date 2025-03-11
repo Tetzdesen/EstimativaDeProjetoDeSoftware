@@ -32,6 +32,14 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.48.0.0</version>
         </dependency>
+        
+        <!-- Dependência do H2 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version> <!-- Verifique a última versão disponível -->
+            <scope>runtime</scope>
+        </dependency>
 
         <dependency>
             <groupId>io.github.cdimascio</groupId>

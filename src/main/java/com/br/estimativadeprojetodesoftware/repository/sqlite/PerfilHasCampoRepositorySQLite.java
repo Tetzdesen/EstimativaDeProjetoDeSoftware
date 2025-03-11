@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository.sqlite;
 
 import com.br.estimativadeprojetodesoftware.repository.IPerfilHasCampoRepository;
+import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,10 +15,10 @@ import java.util.List;
  */
 public class PerfilHasCampoRepositorySQLite implements IPerfilHasCampoRepository {
 
-    private Connection connection;
+    private final Connection connection;
 
-    public PerfilHasCampoRepositorySQLite(Connection connection) {
-        this.connection = connection;
+    public PerfilHasCampoRepositorySQLite() {
+        this.connection = ConexaoSingleton.getInstancia().getConexao();
     }
 
     @Override

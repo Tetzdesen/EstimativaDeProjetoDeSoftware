@@ -4,7 +4,7 @@ import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.CriarProjetoMock;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
@@ -38,7 +38,7 @@ public class CriarProjetoProjetoCommand implements ProjetoCommand {
                             projeto.getNome(),
                             projeto.getCriador(),
                             nomesPerfis, 
-                            projeto.getEstimativa() != null ? projeto.getEstimativa().getCampos() : new HashMap<>(),
+                            projeto.getCampos() != null ? projeto.getCampos() : new ArrayList<>(),
                             projeto.getStatus(),
                             projeto.isCompartilhado(),
                             projeto.getCompartilhadoPor()

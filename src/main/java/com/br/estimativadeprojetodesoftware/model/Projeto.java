@@ -1,6 +1,5 @@
 package com.br.estimativadeprojetodesoftware.model;
 
-import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -16,11 +15,9 @@ public class Projeto {
     private String compartilhadoPor;
     private final List<Perfil> perfis;
     private final List<Usuario> usuarios;
-    private Estimativa estimativa;
-    
-    
-    // lembrar set para compartilhado, compartilhadoPor e estimativa
+    private List<Campo> campos;
 
+    // lembrar set para compartilhado, compartilhadoPor e estimativa
     public Projeto(String nome, String criador) {
         this(nome, criador, null);
     }
@@ -34,23 +31,22 @@ public class Projeto {
         this.status = "Não estimado";
         this.perfis = new ArrayList<>();
         this.usuarios = new ArrayList<>();
-    }
-     
-    public Projeto(UUID id, String nome, String tipo, LocalDateTime created_at, String status) {
-        this.id = Objects.requireNonNull(id, "ID não pode ser nulo");
-        this.nome = Objects.requireNonNull(nome, "Nome não pode ser nulo");
-        this.criador = UsuarioLogadoSingleton.getInstancia().getUsuario().getNome();
-        this.tipo = tipo;
-        this.created_at = Objects.requireNonNull(created_at, "Data de criação não pode ser nula");
-        this.compartilhado = false;
-        this.compartilhadoPor = "";
-        this.status = Objects.requireNonNullElse(status, "Não estimado");
-        this.perfis = new ArrayList<>();
-        this.usuarios = new ArrayList<>();
-        this.estimativa = null;
+        this.campos = new ArrayList<>();
     }
 
-    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, String status, boolean compartilhado, String compartilhadoPor, List<Perfil> perfis, List<Usuario> usuarios, Estimativa estimativa) {
+    public Projeto(String nome, String criador, String tipo, List<Campo> campos) {
+        this.id = UUID.randomUUID();
+        this.nome = Objects.requireNonNull(nome, "Nome não pode ser nulo");
+        this.criador = Objects.requireNonNull(criador, "Criador não pode ser nulo");
+        this.tipo = tipo;
+        this.created_at = LocalDateTime.now();
+        this.status = "Não estimado";
+        this.perfis = new ArrayList<>();
+        this.usuarios = new ArrayList<>();
+        this.campos = new ArrayList<>();
+    }
+
+    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, String status, boolean compartilhado, String compartilhadoPor, List<Perfil> perfis, List<Usuario> usuarios, List<Campo> campos) {
         this.id = id;
         this.nome = nome;
         this.criador = criador;
@@ -61,9 +57,9 @@ public class Projeto {
         this.compartilhadoPor = compartilhadoPor;
         this.perfis = perfis;
         this.usuarios = usuarios;
-        this.estimativa = estimativa;
+        this.campos = campos;
     }
-    
+
     public UUID getId() {
         return id;
     }
@@ -83,7 +79,7 @@ public class Projeto {
     public LocalDateTime getCreated_at() {
         return created_at;
     }
-    
+
     public String getStatus() {
         return status;
     }
@@ -104,16 +100,20 @@ public class Projeto {
         return Collections.unmodifiableList(usuarios);
     }
 
-    public Estimativa getEstimativa() {
-        return estimativa;
+    public List<Campo> getCampos() {
+        return campos;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 
-    public void setEstimativa(Estimativa estimativa) {
-        this.estimativa = Objects.requireNonNull(estimativa, "Estimativa não pode ser nula.");
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setCompartilhado(boolean compartilhado) {
@@ -135,6 +135,10 @@ public class Projeto {
         usuarios.add(Objects.requireNonNull(usuario, "Usuário não pode ser nulo."));
     }
 
+    public void adicionarCampo(Campo campo) {
+        campos.add(Objects.requireNonNull(campo, "Campo não pode ser nulo."));
+    }
+
     public void removerPerfil(Perfil perfil) {
         perfis.remove(Objects.requireNonNull(perfil, "Perfil não pode ser nulo."));
     }
@@ -143,8 +147,12 @@ public class Projeto {
         usuarios.remove(Objects.requireNonNull(usuario, "Usuário não pode ser nulo."));
     }
 
+    public void removerCampo(Campo campo) {
+        campos.remove(Objects.requireNonNull(campo, "Campo não pode ser nulo."));
+    }
+
     @Override
     public String toString() {
-        return "Projeto{" + "id=" + id + ", nome=" + nome + ", criador=" + criador + ", tipo=" + tipo + ", created_at=" + created_at + ", status=" + status + ", compartilhado=" + compartilhado + ", compartilhadoPor=" + compartilhadoPor + ", perfis=" + perfis + ", usuarios=" + usuarios + ", estimativa=" + estimativa + '}';
+        return "Projeto{" + "id=" + id + ", nome=" + nome + ", criador=" + criador + ", tipo=" + tipo + ", created_at=" + created_at + ", status=" + status + ", compartilhado=" + compartilhado + ", compartilhadoPor=" + compartilhadoPor + ", perfis=" + perfis + ", usuarios=" + usuarios + ", campos=" + campos + '}';
     }
 }

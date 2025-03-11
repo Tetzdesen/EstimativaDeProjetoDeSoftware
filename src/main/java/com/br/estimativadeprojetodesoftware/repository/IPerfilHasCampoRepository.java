@@ -13,4 +13,5 @@ public interface IPerfilHasCampoRepository {
     void removerPorIds(String perfilId, int campoId);
 
     List<Double> buscarValoresPorPerfil(String perfilId);
+    
 }
