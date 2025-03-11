@@ -1,6 +1,8 @@
 package com.br.estimativadeprojetodesoftware.repository.sqlite;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
+import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ICampoRepository;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.Connection;
@@ -47,6 +49,32 @@ public class CampoRepositorySQLite implements ICampoRepository {
     }
 
     @Override
+    public void atualizarDiasProjetoCampo(Projeto projeto, Campo campo) {
+        String sql = "UPDATE projeto_has_campo SET diasProjeto = ? WHERE projeto_idProjeto = ? AND campo_idCampo = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, campo.getDias().intValue());
+            stmt.setString(2, projeto.getId().toString());
+            stmt.setString(3, campo.getId().toString());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar campo: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void atualizarDiasPerfilCampo(Perfil perfil, Campo campo) {
+        String sql = "UPDATE perfil_has_campo SET diasPerfil = ? WHERE perfil_idPerfil = ? AND campo_idCampo = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, campo.getDias().intValue());
+            stmt.setString(2, perfil.getId().toString());
+            stmt.setString(3, campo.getId().toString());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar campo: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
     public void removerPorID(UUID id) {
         String sql = "DELETE FROM campo WHERE idCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -64,7 +92,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
             stmt.setString(1, id.toString());
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new Campo(UUID.fromString(rs.getString("idCampo")), rs.getString("tipoCampo"), rs.getString("nomeCampo"), 0);
+                return new Campo(UUID.fromString(rs.getString("idCampo")), rs.getString("tipoCampo"), rs.getString("nomeCampo"));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao buscar campo por ID: " + e.getMessage(), e);
@@ -78,7 +106,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
         String sql = "SELECT * FROM campo";
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                campos.add(new Campo(UUID.fromString(rs.getString("idCampo")), rs.getString("tipoCampo"), rs.getString("nomeCampo"), 0));
+                campos.add(new Campo(UUID.fromString(rs.getString("idCampo")), rs.getString("tipoCampo"), rs.getString("nomeCampo")));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao listar campos: " + e.getMessage(), e);
@@ -170,7 +198,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
         }
         return campos;
     }
-    
+
     @Override
     public List<Campo> listarTodosPorIdPerfil(UUID idPerfil) {
         List<Campo> campos = new ArrayList<>();
@@ -189,7 +217,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
         }
         return campos;
     }
-    
+
     /*
     @Override
     public List<Campo> listarTodosPorIdProjetoCampo(UUID idProjeto, UUID idCampo) {
@@ -211,8 +239,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
         return campos;
     }
 
-*/
-
+     */
     @Override
     public Campo buscarPorIdProjeto(UUID idProjeto) {
         String sql = "SELECT * FROM campo WHERE idCampo IN (SELECT campo_idCampo FROM projeto_has_campo WHERE projeto_idProjeto = ?)";
@@ -220,8 +247,8 @@ public class CampoRepositorySQLite implements ICampoRepository {
             stmt.setString(1, idProjeto.toString());
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                int dias = buscarDiasPorProjeto(idProjeto);
-                return new Campo(UUID.fromString(rs.getString("idCampo")), rs.getString("tipoCampo"), rs.getString("nomeCampo"), dias);
+                Integer dias = buscarDiasPorProjeto(idProjeto);
+                return new Campo(UUID.fromString(rs.getString("idCampo")), rs.getString("tipoCampo"), rs.getString("nomeCampo"), dias.doubleValue());
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao buscar campo por ID de projeto: " + e.getMessage(), e);
@@ -253,8 +280,8 @@ public class CampoRepositorySQLite implements ICampoRepository {
             stmt.setString(2, tipo);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                int dias = buscarDiasPorProjeto(idProjeto);
-                return new Campo(UUID.fromString(rs.getString("idCampo")), rs.getString("tipoCampo"), rs.getString("nomeCampo"), dias);
+                Integer dias = buscarDiasPorProjeto(idProjeto);
+                return new Campo(UUID.fromString(rs.getString("idCampo")), rs.getString("tipoCampo"), rs.getString("nomeCampo"), dias.doubleValue());
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao buscar campo por ID de projeto e tipo: " + e.getMessage(), e);
@@ -263,19 +290,23 @@ public class CampoRepositorySQLite implements ICampoRepository {
     }
 
     @Override
-    public Campo buscarPorIdPerfilTipo(UUID idPerfil, String tipo) {
+    public List<Campo> buscarPorIdPerfilTipo(UUID idPerfil, String tipo) {
+        List<Campo> campos = new ArrayList<>();
         String sql = "SELECT * FROM campo WHERE idCampo IN (SELECT campo_idCampo FROM perfil_has_campo WHERE perfil_idPerfil = ?) AND tipoCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, idPerfil.toString());
             stmt.setString(2, tipo);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                double dias = buscarDiasPorPerfil(idPerfil);
-                return new Campo(UUID.fromString(rs.getString("idCampo")), rs.getString("tipoCampo"), rs.getString("nomeCampo"), dias);
+            while (rs.next()) {
+                Campo campo = buscarPorId(UUID.fromString(rs.getString("campo_idCampo")));
+                if (campo != null) {
+                    campos.add(campo);
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao buscar campo por ID de perfil e tipo: " + e.getMessage(), e);
         }
-        return null;
+        return campos;
     }
+
 }

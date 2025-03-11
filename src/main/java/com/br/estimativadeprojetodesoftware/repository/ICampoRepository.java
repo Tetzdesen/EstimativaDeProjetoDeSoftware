@@ -1,10 +1,8 @@
 package com.br.estimativadeprojetodesoftware.repository;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.Projeto;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,9 +13,13 @@ import java.util.UUID;
 public interface ICampoRepository {
 
     void salvar(Campo campo);
-
+    
     void atualizar(Campo campo);
+    
+    void atualizarDiasProjetoCampo(Projeto projeto, Campo campo);
 
+    void atualizarDiasPerfilCampo(Perfil perfil, Campo campo);
+    
     void removerPorID(UUID id);
 
     Campo buscarPorId(UUID id);
@@ -36,5 +38,5 @@ public interface ICampoRepository {
     Campo buscarPorIdProjeto(UUID idProjeto);
     Campo buscarPorIdPerfil(UUID idPerfil);
     Campo buscarPorIdProjetoTipo(UUID idProjeto, String tipo);
-    Campo buscarPorIdPerfilTipo(UUID idPerfil, String tipo);
+    List<Campo> buscarPorIdPerfilTipo(UUID idPerfil, String tipo);
 }
