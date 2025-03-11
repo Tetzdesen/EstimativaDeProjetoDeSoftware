@@ -6,6 +6,7 @@ import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.IconService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.usuario.LoginView;
 import java.awt.event.MouseAdapter;
@@ -19,14 +20,12 @@ import javax.swing.SwingUtilities;
 public class LoginPresenter {
 
     private LoginView view;
-    private ProjetoRepositoryMock repositoryProjeto;
-    private UsuarioRepositoryMock repositoryUsuario;
+    private UsuarioRepositoryService repositoryUsuario;
     private UsuarioLogadoSingleton usuarioLogado;
 
-    public LoginPresenter(ProjetoRepositoryMock repositoryProjeto, UsuarioRepositoryMock repositoryUsuario) {
+    public LoginPresenter() {
         this.view = new LoginView();
-        this.repositoryProjeto = repositoryProjeto;
-        this.repositoryUsuario = repositoryUsuario;
+        this.repositoryUsuario = UsuarioRepositoryService.getInstancia();
         usuarioLogado = UsuarioLogadoSingleton.getInstancia();
         configuraView();
     }
@@ -72,8 +71,8 @@ public class LoginPresenter {
             throw new IllegalArgumentException("Os campos de nome e senha não podem estar vazios");
         }
 
-        Usuario usuario = repositoryUsuario.getUsuarioPorEmail(email);
-
+        Usuario usuario = repositoryUsuario.buscarPorEmail(email).orElse(null);
+        
         if (usuario == null) {
             throw new IllegalArgumentException("Usuário não encontrado!");
         }

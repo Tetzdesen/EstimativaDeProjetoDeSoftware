@@ -15,12 +15,12 @@ public class SalvarUsuarioCommand implements ProjetoCommand {
 
     private final ManterUsuarioPresenter usuarioPresenter;
     private final ValidadorSenhaService validadorService;
-    
+
     public SalvarUsuarioCommand(ManterUsuarioPresenter usuarioPresenter) {
         this.usuarioPresenter = usuarioPresenter;
         this.validadorService = new ValidadorSenhaService();
     }
-    
+
     @Override
     public void execute() {
         String email = usuarioPresenter.getView().getTxtEmail().getText();
@@ -30,16 +30,16 @@ public class SalvarUsuarioCommand implements ProjetoCommand {
         try {
             validadorService.validarSenha(senha);
         } catch (Exception ex) {
-                 
+
         }
-        
+
         Usuario usuario = usuarioPresenter.getUsuario();
 
         Usuario usuarioNovo = new Usuario(usuario.getId(), nome, email, senha, usuario.getCreated_at(), usuario.getLog(), usuario.getProjetos(), usuario.getPerfis());
-        
+
         UsuarioLogadoSingleton.getInstancia().setUsuario(usuarioNovo);
         usuarioPresenter.setUsuario(usuarioNovo);
-        usuarioPresenter.getRepository().atualizarUsuario(usuario, email, nome);
+        usuarioPresenter.getRepository().atualizar(usuarioNovo);
         new MostrarMensagemProjetoCommand("Usuário salvo com sucesso").execute();
     }
 

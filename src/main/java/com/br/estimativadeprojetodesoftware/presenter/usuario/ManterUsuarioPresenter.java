@@ -10,6 +10,7 @@ import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 import com.br.estimativadeprojetodesoftware.service.IconService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.state.usuario.ManterUsuarioPresenterState;
 import com.br.estimativadeprojetodesoftware.state.usuario.VisualizacaoUsuarioState;
@@ -30,7 +31,7 @@ public class ManterUsuarioPresenter implements Observer {
 
     private ManterUsuarioView view;
     private Usuario usuario;
-    private UsuarioRepositoryMock repository;
+    private UsuarioRepositoryService usuarioRepository;
     private ManterUsuarioPresenterState estado;
     private final Map<String, ProjetoCommand> comandos;
     private BarraService barraService;
@@ -38,8 +39,8 @@ public class ManterUsuarioPresenter implements Observer {
     public ManterUsuarioPresenter(ManterUsuarioView view) {
         this.view = view;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
-        this.repository = new UsuarioRepositoryMock();
-        this.repository.addObserver(this);
+        this.usuarioRepository = UsuarioRepositoryService.getInstancia();
+        this.usuarioRepository.addObserver(this);
         this.comandos = inicializarComandos();
         barraService = new BarraService(comandos);
         configuraView();
@@ -121,8 +122,8 @@ public class ManterUsuarioPresenter implements Observer {
         return usuario.getPerfis().size();
     }
 
-    public UsuarioRepositoryMock getRepository() {
-        return repository;
+    public UsuarioRepositoryService getRepository() {
+        return usuarioRepository;
     }
 
     public Usuario getUsuario() {

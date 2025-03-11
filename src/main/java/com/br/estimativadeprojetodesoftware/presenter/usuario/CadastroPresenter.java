@@ -2,19 +2,12 @@ package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.IconService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
 import com.br.estimativadeprojetodesoftware.view.usuario.CadastroView;
-import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -23,12 +16,12 @@ import javax.swing.JOptionPane;
 public class CadastroPresenter {
 
     private CadastroView view;
-    private UsuarioRepositoryMock repositoryUsuario;
+    private UsuarioRepositoryService repositoryUsuario;
     private ValidadorSenhaService validadorDeSenha;
 
-    public CadastroPresenter(UsuarioRepositoryMock repositoryUsuario) {
+    public CadastroPresenter() {
         this.view = new CadastroView();
-        this.repositoryUsuario = repositoryUsuario;
+        this.repositoryUsuario = UsuarioRepositoryService.getInstancia();
         this.validadorDeSenha = new ValidadorSenhaService();
         configuraView();
     }
@@ -91,7 +84,7 @@ public class CadastroPresenter {
 
         String email = view.getTxtEmail().getText();
 
-        Usuario usuario = repositoryUsuario.getUsuarioPorEmail(email);
+        Usuario usuario = repositoryUsuario.buscarPorEmail(email).orElse(null);
 
         if (usuario == null) {
             String nome = view.getTxtNomeUsuario().getText();
@@ -105,7 +98,8 @@ public class CadastroPresenter {
             if (senha.equals(senhaConfirmada)) {
                 try {
                     if (validadorDeSenha.validarSenha(senha)) {
-                        repositoryUsuario.adicionarUsuario(nome, email, senha);
+                        usuario = new Usuario(nome, email, senha);
+                        repositoryUsuario.salvar(usuario);
                         exibirMensagem("Cadastro realizado com sucesso!");
                         view.dispose();
                     }

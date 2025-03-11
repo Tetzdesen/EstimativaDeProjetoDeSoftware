@@ -79,7 +79,7 @@ public class DetalheProjetoPresenter implements Observer {
         return projeto.getCampos()
                 .stream()
                 .mapToDouble(campo -> {
-                    int dias = (int) campo.getDias();
+                    Integer dias = campo.getDias().intValue();
                     Perfil perfil = projeto.getPerfis().isEmpty() ? null : projeto.getPerfis().get(0);
                     return (perfil != null) ? estimaService.calcularValorUnitario(perfil.getNome(), dias) : 0.0;
                 })
