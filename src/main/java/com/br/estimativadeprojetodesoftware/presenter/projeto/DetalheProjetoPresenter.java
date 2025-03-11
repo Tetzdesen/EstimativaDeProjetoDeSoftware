@@ -1,5 +1,9 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
@@ -44,34 +48,31 @@ public class DetalheProjetoPresenter implements Observer {
     }
 
     private void carregarDetalhes(Projeto projeto) {
-        int numPerfis = projeto.getPerfis().size();
+    // Cria uma lista para acumular as linhas da tabela
+        List<Object[]> linhas = new ArrayList<>();
         
-        // Mapeia os dados: cada linha terá 2 colunas fixas + uma coluna para cada perfil
-        Object[][] dadosTabela = projeto.getEstimativa().getCampos()
-                .entrySet()
-                .stream()
-                .map(entry -> {
-                    String nomeFuncionalidade = entry.getKey();
-                    int dias = entry.getValue();
-                    
-                    // Cria uma linha com tamanho dinâmico: nome, dias e um valor para cada perfil
-                    Object[] row = new Object[2 + numPerfis];
-                    row[1] = nomeFuncionalidade;
-                    row[2] = dias;
-                    
-                    // Para cada perfil, calcula o valor e o formata
-                    for (int i = 0; i < numPerfis; i++) {
-                        Perfil perfil = projeto.getPerfis().get(i);
-                        double valor = estimaService.calcularValorUnitario(perfil.getNome(), dias);
-                        row[i + 3] = String.format("R$ %.2f", valor);
-                    }
-                    return row;
-                })
-                .toArray(Object[][]::new);
+        for (Perfil perfil : projeto.getPerfis()) {
+            // Para cada perfil, cria as linhas a partir das funcionalidades
+            Object[][] dadosPerfil = perfil.getFuncionalidades()
+                    .entrySet()
+                    .stream()
+                    .map(entry -> new Object[]{ perfil.getNome(), entry.getKey(), entry.getValue() })
+                    .toArray(Object[][]::new);
+            
+            // Adiciona cada linha do perfil à lista geral
+            for (Object[] linha : dadosPerfil) {
+                linhas.add(linha);
+            }
+        }
         
+        // Converte a lista em um array bidimensional
+        Object[][] dadosTabela = linhas.toArray(new Object[0][]);
         double valorTotal = calcularValorTotal(projeto);
+        
+        // Atualiza a tabela com todas as linhas acumuladas
         view.atualizarTabela(dadosTabela, valorTotal);
     }
+
     
 
     private double calcularValorTotal(Projeto projeto) {

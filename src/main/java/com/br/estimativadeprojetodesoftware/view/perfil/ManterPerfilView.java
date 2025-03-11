@@ -1,7 +1,8 @@
 package com.br.estimativadeprojetodesoftware.view.perfil;
 
 import java.awt.*;
-
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -10,7 +11,10 @@ public class ManterPerfilView extends JDialog {
     private JDesktopPane desktop;
     private JTable tabelaDetalhes;
     private DefaultTableModel modeloTabela;
-    private JTextField txtNome, txtMvp, txtBasico, txtProfissional, txtDesignerUI, txtGerenciaProjeto, txtDesenvolvimento;
+    private JTextField txtNome;
+    private JTextField txtMvp, txtBasico, txtProfissional;
+    private JTextField txtDesignerUI, txtGerenciaProjeto, txtDesenvolvimento;
+    private Map<JLabel, JComponent> camposObrigatorios;
     private JLabel lblNome;
     private JCheckBox tglBackEnd;
     private JButton btnSalvar, btnEditar, btnExcluir, btnCancelar, btnRemoverCampo, btnAdicionarCampo;
@@ -19,6 +23,8 @@ public class ManterPerfilView extends JDialog {
     public ManterPerfilView(JDesktopPane desktop) {
         setTitle("Manter Perfis");
         setResizable(true);
+        // Inicializa o map de campos obrigatórios
+        setCamposObrigatorios();
         this.desktop = desktop;
         isCellEditable = false;
 
@@ -91,82 +97,93 @@ public class ManterPerfilView extends JDialog {
         painelPrincipal.add(painelBotoes, BorderLayout.SOUTH);
     }
 
-    private JPanel criarPainelComSpinner(String texto, JSpinner spinner, boolean addExtraLabel) {
-        JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
-        painel.add(new JLabel(texto));
-        painel.add(spinner);
-        if (addExtraLabel) {
-            painel.add(new JLabel("%"));
-        }
-        return painel;
-    }
+    /**
+     * Inicializa o map de campos obrigatórios, onde cada entrada associa um JLabel a um componente de entrada.
+     */
+    private void setCamposObrigatorios() {
+        camposObrigatorios = new LinkedHashMap<>();
+        // Campos para "Tamanho do App"
+        jspPequeno = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
+        jspMedio   = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
+        jspGrande  = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
+        camposObrigatorios.put(new JLabel("Pequeno: "), jspPequeno);
+        camposObrigatorios.put(new JLabel("Médio: "), jspMedio);
+        camposObrigatorios.put(new JLabel("Grande: "), jspGrande);
 
-    private JPanel criarPainelComTextField(String texto, JTextField txtField, boolean addExtraLabel, boolean addPercent) {
-        JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
-        painel.add(new JLabel(texto));
-        if (addExtraLabel) {
-            painel.add(new JLabel("R$"));
-        }
-        painel.add(txtField);
-        if (addPercent) {
-            painel.add(new JLabel("%"));
-        }
-        return painel;
-    }
-
-    private JPanel criarPainelTamanhoApp() {
-        jspPequeno  = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
-        jspMedio    = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
-        jspGrande   = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
-
-        JPanel painelPequeno    = criarPainelComSpinner("Pequeno: ", jspPequeno, false);
-        JPanel painelMedio      = criarPainelComSpinner("Médio: ", jspMedio, false);
-        JPanel painelGrande     = criarPainelComSpinner("Grande: ", jspGrande, false);
-
-        JPanel painelTamanhoApp = new JPanel(new GridLayout(1, 3, 3, 15));
-        painelTamanhoApp.setBorder(BorderFactory.createTitledBorder("Tamanho do App (número de dias):"));
-        painelTamanhoApp.add(painelPequeno);
-        painelTamanhoApp.add(painelMedio);
-        painelTamanhoApp.add(painelGrande);
-
-        return painelTamanhoApp;
-    }
-
-    private JPanel criarPainelNivelUI() {
+        // Campos para "Nível de UI"
         txtMvp          = new JFormattedTextField();
         txtBasico       = new JFormattedTextField();
         txtProfissional = new JFormattedTextField();
+        camposObrigatorios.put(new JLabel("MVP: "), txtMvp);
+        camposObrigatorios.put(new JLabel("Básico: "), txtBasico);
+        camposObrigatorios.put(new JLabel("Profissional: "), txtProfissional);
 
-        JPanel painelMVP            = criarPainelComTextField("MVP: ", txtMvp, false, true);
-        JPanel painelBasico         = criarPainelComTextField("Básico: ", txtBasico, false, true);
-        JPanel painelProfissional   = criarPainelComTextField("Profissional: ", txtProfissional, false, true);
+        // Campos para "Taxa Diária"
+        txtDesignerUI      = new JFormattedTextField();
+        txtGerenciaProjeto = new JFormattedTextField();
+        txtDesenvolvimento = new JFormattedTextField();
+        camposObrigatorios.put(new JLabel("Designer UI/UX: "), txtDesignerUI);
+        camposObrigatorios.put(new JLabel("Gerência de Projeto: "), txtGerenciaProjeto);
+        camposObrigatorios.put(new JLabel("Desenvolvimento: "), txtDesenvolvimento);
+    }
 
+    /**
+     * Cria o painel para o "Tamanho do App" utilizando os componentes do map.
+     */
+    private JPanel criarPainelTamanhoApp() {
+        JPanel painelTamanhoApp = new JPanel(new GridLayout(1, 3, 3, 15));
+        painelTamanhoApp.setBorder(BorderFactory.createTitledBorder("Tamanho do App (número de dias):"));
+        for (Map.Entry<JLabel, JComponent> entry : camposObrigatorios.entrySet()) {
+            String labelText = entry.getKey().getText();
+            if (labelText.contains("Pequeno") || labelText.contains("Médio") || labelText.contains("Grande")) {
+                JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
+                painel.add(entry.getKey());
+                painel.add(entry.getValue());
+                painelTamanhoApp.add(painel);
+            }
+        }
+        return painelTamanhoApp;
+    }
+
+    /**
+     * Cria o painel para o "Nível de UI" utilizando os componentes do map.
+     */
+    private JPanel criarPainelNivelUI() {
         JPanel painelNivelUI = new JPanel(new GridLayout(1, 3, 3, 15));
         painelNivelUI.setBorder(BorderFactory.createTitledBorder("Nível de UI (%):"));
-        painelNivelUI.add(painelMVP);
-        painelNivelUI.add(painelBasico);
-        painelNivelUI.add(painelProfissional);
-
+        for (Map.Entry<JLabel, JComponent> entry : camposObrigatorios.entrySet()) {
+            String labelText = entry.getKey().getText();
+            if (labelText.contains("MVP") || labelText.contains("Básico") || labelText.contains("Profissional")) {
+                JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
+                painel.add(entry.getKey());
+                painel.add(entry.getValue());
+                painel.add(new JLabel("%"));
+                painelNivelUI.add(painel);
+            }
+        }
         return painelNivelUI;
     }
 
+    /**
+     * Cria o painel para a "Taxa Diária" utilizando os componentes do map.
+     */
     private JPanel criarPainelTaxaDiaria() {
-        txtDesignerUI = new JFormattedTextField();
-        txtGerenciaProjeto = new JFormattedTextField();
-        txtDesenvolvimento = new JFormattedTextField();
-
-        JPanel painelDesignerUI = criarPainelComTextField("Designer UI/UX: ", txtDesignerUI, true, false);
-        JPanel painelGerenciaProjeto = criarPainelComTextField("Gerência de Projeto: ", txtGerenciaProjeto, true, false);
-        JPanel painelDesenvolvimento = criarPainelComTextField("Desenvolvimento: ", txtDesenvolvimento, true, false);
-
         JPanel painelTaxaDiaria = new JPanel(new GridLayout(1, 3, 3, 15));
         painelTaxaDiaria.setBorder(BorderFactory.createTitledBorder("Taxa Diária (R$):"));
-        painelTaxaDiaria.add(painelDesignerUI);
-        painelTaxaDiaria.add(painelGerenciaProjeto);
-        painelTaxaDiaria.add(painelDesenvolvimento);
-
+        for (Map.Entry<JLabel, JComponent> entry : camposObrigatorios.entrySet()) {
+            String labelText = entry.getKey().getText();
+            if (labelText.contains("Designer UI/UX") || labelText.contains("Gerência de Projeto") || labelText.contains("Desenvolvimento")) {
+                JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
+                painel.add(entry.getKey());
+                painel.add(new JLabel("R$"));
+                painel.add(entry.getValue());
+                painelTaxaDiaria.add(painel);
+            }
+        }
         return painelTaxaDiaria;
     }
+
+    // Métodos getters e atualizadores
 
     public JDesktopPane getDesktop() {
         return desktop;
@@ -226,7 +243,7 @@ public class ManterPerfilView extends JDialog {
     public JButton getBtnCancelar() {
         return btnCancelar;
     }
-    
+
     public boolean isCellEditable() {
         return isCellEditable;
     }

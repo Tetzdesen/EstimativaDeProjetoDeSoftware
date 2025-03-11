@@ -63,7 +63,15 @@ public class Perfil {
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
     }
 
-    public Perfil(UUID id, String nome, Map<String, Integer> tamanhosApp, Map<String, Double> niveisUI, Map<String, Integer> funcionalidades, Map<String, Double> taxasDiarias, boolean isPerfilBackEnd, LocalDateTime created_at, Usuario usuario) {
+    public Perfil(  UUID id, String nome, 
+                    Map<String, Integer> tamanhosApp, 
+                    Map<String, Double> niveisUI, 
+                    Map<String, Integer> funcionalidades, 
+                    Map<String, Double> taxasDiarias, 
+                    boolean isPerfilBackEnd, 
+                    LocalDateTime created_at, 
+                    Usuario usuario
+    ) {
         this.id = id;
         this.nome = nome;
         this.tamanhosApp = tamanhosApp;
@@ -169,6 +177,24 @@ public class Perfil {
 
         taxasDiarias.put(taxaDiaria.toLowerCase(), valor);
     }
+
+    public Map<String, Double> getCampos() {
+        Map<String, Double> campos = new LinkedHashMap<>();
+    
+        for (Map.Entry<String, Integer> entry : tamanhosApp.entrySet()) {
+            campos.put(entry.getKey(), entry.getValue().doubleValue());
+        }
+    
+        for (Map.Entry<String, Integer> entry : funcionalidades.entrySet()) {
+            campos.put(entry.getKey(), entry.getValue().doubleValue());
+        }
+        
+        campos.putAll(niveisUI);
+        campos.putAll(taxasDiarias);
+        
+        return campos;
+    }
+    
 
     public void removerFuncionalidades() {
         funcionalidades.clear();
