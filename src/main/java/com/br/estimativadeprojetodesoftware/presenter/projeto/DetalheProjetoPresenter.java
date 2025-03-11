@@ -75,14 +75,11 @@ public class DetalheProjetoPresenter implements Observer {
     
 
     private double calcularValorTotal(Projeto projeto) {
-        return projeto.getEstimativa().getCampos()
-                .entrySet()
+        return projeto.getCampos()
                 .stream()
-                .mapToDouble(entry -> {
-                    int dias = entry.getValue();
-
+                .mapToDouble(campo -> {
+                    int dias = (int) campo.getDias();
                     Perfil perfil = projeto.getPerfis().isEmpty() ? null : projeto.getPerfis().get(0);
-
                     return (perfil != null) ? estimaService.calcularValorUnitario(perfil.getNome(), dias) : 0.0;
                 })
                 .sum();

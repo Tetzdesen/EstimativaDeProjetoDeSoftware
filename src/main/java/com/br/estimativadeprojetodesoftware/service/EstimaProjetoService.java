@@ -1,6 +1,8 @@
 package com.br.estimativadeprojetodesoftware.service;
 
+import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
+import java.util.List;
 
 import java.util.Map;
 
@@ -10,7 +12,7 @@ public class EstimaProjetoService {
     private static final double VALOR_DIARIA_UI_UX = 550.0;
 
     public int calcularDiasTotais(Projeto projeto) {
-        return calcularDiasFuncionalidades(projeto.getEstimativa().getCampos());
+        return calcularDiasFuncionalidades(projeto.getCampos());
     }
 
     public double calcularCusto(Projeto projeto) {
@@ -33,10 +35,10 @@ public class EstimaProjetoService {
         return 2;
     }
 
-    public int calcularDiasFuncionalidades(Map<String, Integer> funcionalidadesEscolhidas) {
+    public int calcularDiasFuncionalidades(List<Campo> funcionalidadesEscolhidas) {
         int totalDias = 0;
-        for (Integer dias : funcionalidadesEscolhidas.values()) {
-            totalDias += dias;
+        for(int i = 0; i < funcionalidadesEscolhidas.size(); i++){
+            totalDias += funcionalidadesEscolhidas.get(i).getDias();
         }
         return totalDias;
     }

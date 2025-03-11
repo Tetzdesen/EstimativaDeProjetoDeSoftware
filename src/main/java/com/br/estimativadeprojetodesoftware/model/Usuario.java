@@ -28,17 +28,6 @@ public class Usuario {
         this.perfis = new ArrayList<>();
     }
 
-    public Usuario(UUID id, String nome, String email, String senha, LocalDateTime created_at, String log) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.created_at = created_at;
-        this.log = log;
-        this.projetos = new ArrayList<>();
-        this.perfis = new ArrayList<>();
-    }
-
     public Usuario(UUID id, String nome, String email, String senha, LocalDateTime created_at, String log, List<Projeto> projetos, List<Perfil> perfis) {
         this.id = id;
         this.nome = nome;

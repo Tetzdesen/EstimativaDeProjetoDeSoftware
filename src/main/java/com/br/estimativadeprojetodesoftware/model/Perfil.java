@@ -17,8 +17,6 @@ public class Perfil {
     private Map<String, Double> taxasDiarias;
     private boolean isPerfilBackEnd;
     private final LocalDateTime created_at;
-    private LocalDateTime update_at;
-    private LocalDateTime deleted_at;
     private Usuario usuario;
 
     public Perfil(String nome) {
@@ -29,8 +27,6 @@ public class Perfil {
         this.funcionalidades = new LinkedHashMap<>();
         this.taxasDiarias = new LinkedHashMap<>();
         this.created_at = LocalDateTime.now();
-        this.update_at = null;
-        this.deleted_at = null;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
         adicionarCamposDefault();
     }
@@ -64,11 +60,21 @@ public class Perfil {
         this.taxasDiarias = taxasDiarias;
         this.isPerfilBackEnd = isPerfilBackEnd;
         this.created_at = created_at;
-        this.update_at = update_at;
-        this.deleted_at = deleted_at;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
     }
 
+    public Perfil(UUID id, String nome, Map<String, Integer> tamanhosApp, Map<String, Double> niveisUI, Map<String, Integer> funcionalidades, Map<String, Double> taxasDiarias, boolean isPerfilBackEnd, LocalDateTime created_at, Usuario usuario) {
+        this.id = id;
+        this.nome = nome;
+        this.tamanhosApp = tamanhosApp;
+        this.niveisUI = niveisUI;
+        this.funcionalidades = funcionalidades;
+        this.taxasDiarias = taxasDiarias;
+        this.isPerfilBackEnd = isPerfilBackEnd;
+        this.created_at = created_at;
+        this.usuario = usuario;
+    }
+    
     public UUID getId() {
         return id;
     }
@@ -101,34 +107,12 @@ public class Perfil {
         return created_at;
     }
 
-    public LocalDateTime getUpdate_at() {
-        return update_at;
-    }
-
-    public LocalDateTime getDeleted_at() {
-        return deleted_at;
-    }
-
     public Usuario getUsuario() {
         return usuario;
     }
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public void setUpdate_at(LocalDateTime update_at) {
-        if (update_at == null) {
-            throw new IllegalArgumentException("Erro: Data de atualização não pode ser nula.");
-        }
-        this.update_at = update_at;
-    }
-
-    public void setDeleted_at(LocalDateTime deleted_at) {
-        if (deleted_at == null) {
-            throw new IllegalArgumentException("Erro: Data de exclusão não pode ser nula.");
-        }
-        this.deleted_at = deleted_at;
     }
 
     public void adicionarTamanhoApp(String tamanhoApp, int dias) {
@@ -210,6 +194,6 @@ public class Perfil {
 
     @Override
     public String toString() {
-        return "Perfil{" + "id=" + id + ", nome=" + nome + ", funcionalidades=" + funcionalidades + ", created_at=" + created_at + ", update_at=" + update_at + ", deleted_at=" + deleted_at + '}';
+        return "Perfil{" + "id=" + id + ", nome=" + nome + ", tamanhosApp=" + tamanhosApp + ", niveisUI=" + niveisUI + ", funcionalidades=" + funcionalidades + ", taxasDiarias=" + taxasDiarias + ", isPerfilBackEnd=" + isPerfilBackEnd + ", created_at=" + created_at + ", usuario=" + usuario + '}';
     }
 }

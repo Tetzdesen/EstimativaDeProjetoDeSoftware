@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.repository.h2;
 
+import com.br.estimativadeprojetodesoftware.repository.IEstimativaHasCampoRepository;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,14 +13,15 @@ import java.util.List;
  *
  * @author tetzner
  */
-public class EstimativaHasCampoRepositoryH2 {
+public class EstimativaHasCampoRepositoryH2 implements IEstimativaHasCampoRepository {
 
-    private Connection connection;
+    private final Connection connection;
 
     public EstimativaHasCampoRepositoryH2() {
         this.connection = ConexaoSingleton.getInstancia().getConexao();
     }
 
+    @Override
     public void salvar(String estimativaId, int campoId, double valorEstimativaCampo) {
         String sql = "INSERT INTO estimativa_has_campo (estimativa_idEstimativa, campo_idCampo, valorEstimativaCampo) VALUES (?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -28,10 +30,11 @@ public class EstimativaHasCampoRepositoryH2 {
             statement.setDouble(3, valorEstimativaCampo);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            handleSQLException(e);
         }
     }
 
+    @Override
     public void removerPorIds(String estimativaId, int campoId) {
         String sql = "DELETE FROM estimativa_has_campo WHERE estimativa_idEstimativa = ? AND campo_idCampo = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -39,22 +42,47 @@ public class EstimativaHasCampoRepositoryH2 {
             statement.setInt(2, campoId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            handleSQLException(e);
         }
     }
 
+    @Override
+    public List<String> buscarNomesPorEstimativa(String estimativaId) {
+        List<String> nomesCampos = new ArrayList<>();
+        String sql = "SELECT c.nomeCampo FROM estimativa_has_campo e " +
+                     "JOIN campo c ON e.campo_idCampo = c.idCampo " +
+                     "WHERE e.estimativa_idEstimativa = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, estimativaId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    nomesCampos.add(resultSet.getString("nomeCampo"));
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+        return nomesCampos;
+    }
+
+    @Override
     public List<Double> buscarValoresPorEstimativa(String estimativaId) {
         List<Double> valores = new ArrayList<>();
         String sql = "SELECT valorEstimativaCampo FROM estimativa_has_campo WHERE estimativa_idEstimativa = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, estimativaId);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                valores.add(resultSet.getDouble("valorEstimativaCampo"));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    valores.add(resultSet.getDouble("valorEstimativaCampo"));
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            handleSQLException(e);
         }
         return valores;
+    }
+
+    private void handleSQLException(SQLException e) {
+        e.printStackTrace();
     }
 }

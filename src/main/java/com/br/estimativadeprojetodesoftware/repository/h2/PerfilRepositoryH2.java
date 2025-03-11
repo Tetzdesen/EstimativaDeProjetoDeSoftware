@@ -2,6 +2,8 @@ package com.br.estimativadeprojetodesoftware.repository.h2;
 
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.repository.IPerfilRepository;
+import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
+import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +12,10 @@ import java.util.UUID;
 
 public class PerfilRepositoryH2 implements IPerfilRepository {
 
-    private Connection connection;
+    private final Connection connection;
 
-    public PerfilRepositoryH2(Connection connection) {
-        this.connection = connection;
+    public PerfilRepositoryH2() {
+        this.connection = ConexaoSingleton.getInstancia().getConexao();
     }
 
     @Override
@@ -72,6 +74,21 @@ public class PerfilRepositoryH2 implements IPerfilRepository {
     }
 
     @Override
+    public List<Perfil> buscarTodosPerfisPorIdUsuario(UUID id) {
+        List<Perfil> perfis = new ArrayList<>();
+        String sql = "SELECT * FROM perfil WHERE usuario_idUsuario = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                perfis.add(mapToPerfil(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return perfis;
+    }
+
+    @Override
     public List<Perfil> buscarTodos() {
         List<Perfil> perfis = new ArrayList<>();
         String sql = "SELECT * FROM perfil";
@@ -88,14 +105,12 @@ public class PerfilRepositoryH2 implements IPerfilRepository {
 
     private Perfil mapToPerfil(ResultSet resultSet) throws SQLException {
         return new Perfil(
-            UUID.fromString(resultSet.getString("idPerfil")),
-            resultSet.getString("nomePerfil"),
-            resultSet.getBoolean("perfilBackend"),
-            resultSet.getTimestamp("created_atPerfil").toLocalDateTime(),
-            null
-            //UUID.fromString(resultSet.getString("usuario_idUsuario"))
+                UUID.fromString(resultSet.getString("idPerfil")),
+                resultSet.getString("nomePerfil"),
+                resultSet.getBoolean("perfilBackend"),
+                resultSet.getTimestamp("created_atPerfil").toLocalDateTime(),
+                UsuarioRepositoryService.getInstancia().buscarPorId(UUID.fromString(resultSet.getString("usuario_idUsuario"))).get()
         );
     }
 
- 
 }
