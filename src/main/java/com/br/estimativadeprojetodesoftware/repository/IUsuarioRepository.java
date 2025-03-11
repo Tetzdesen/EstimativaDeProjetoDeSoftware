@@ -18,7 +18,9 @@ public interface IUsuarioRepository {
     void removerPorId(UUID id);
 
     Optional<Usuario> buscarPorId(UUID id);
-
+    
+    Optional<Usuario> buscarPorEmail(String email);
+    
     List<Usuario> buscarTodos();
     
     List<Usuario> buscarUsuariosPorProjeto(UUID idProjeto);

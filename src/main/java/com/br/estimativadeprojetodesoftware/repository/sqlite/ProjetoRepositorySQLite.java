@@ -48,7 +48,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
 
     @Override
     public void atualizar(Projeto projeto) {
-        String sql = "UPDATE projeto SET nomeProjeto = ?, tipoProjeto = ?, updated_atProjeto = NOW(), status = ? WHERE idProjeto = ?";
+        String sql = "UPDATE projeto SET nomeProjeto = ?, tipoProjeto = ?, updated_atProjeto = CURRENT_TIMESTAMP, status = ? WHERE idProjeto = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, projeto.getNome());
             stmt.setString(2, projeto.getTipo());

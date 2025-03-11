@@ -58,7 +58,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
     @Override
     public void atualizar(Perfil perfil
     ) {
-        String sql = "UPDATE perfil SET nomePerfil = ?, perfilBackend = ?, updated_atPerfil = NOW(), usuario_idUsuario = ? WHERE idPerfil = ?";
+        String sql = "UPDATE perfil SET nomePerfil = ?, perfilBackend = ?, updated_atPerfil = CURRENT_TIMESTAMP, usuario_idUsuario = ? WHERE idPerfil = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, perfil.getNome());
             statement.setBoolean(2, perfil.isPerfilBackEnd());

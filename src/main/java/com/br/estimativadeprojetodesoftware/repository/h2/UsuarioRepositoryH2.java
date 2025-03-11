@@ -31,11 +31,11 @@ public class UsuarioRepositoryH2 implements IUsuarioRepository {
         String sql = "INSERT INTO usuario (idUsuario, nomeUsuario, email, senha, created_atUsuario, log) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, usuario.getId().toString());
-            statement.setString(3, usuario.getNome());
-            statement.setString(4, usuario.getEmail());
-            statement.setString(5, usuario.getSenha());
-            statement.setTimestamp(6, Timestamp.valueOf(usuario.getCreated_at()));
-            statement.setString(8, usuario.getLog());
+            statement.setString(2, usuario.getNome());
+            statement.setString(3, usuario.getEmail());
+            statement.setString(4, usuario.getSenha());
+            statement.setTimestamp(5, Timestamp.valueOf(usuario.getCreated_at()));
+            statement.setString(6, usuario.getLog());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -49,8 +49,8 @@ public class UsuarioRepositoryH2 implements IUsuarioRepository {
             statement.setString(1, usuario.getNome());
             statement.setString(2, usuario.getEmail());
             statement.setString(3, usuario.getSenha());
-            statement.setString(5, usuario.getLog());
-            statement.setString(6, usuario.getId().toString());
+            statement.setString(4, usuario.getLog());
+            statement.setString(5, usuario.getId().toString());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -82,6 +82,22 @@ public class UsuarioRepositoryH2 implements IUsuarioRepository {
         }
         return Optional.empty();
     }
+    
+    @Override
+    public Optional<Usuario> buscarPorEmail(String email) {
+        String sql = "SELECT * FROM usuario WHERE email = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, email);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(mapToUsuario(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
 
     @Override
     public List<Usuario> buscarTodos() {

@@ -71,8 +71,8 @@ public class LoginPresenter {
             throw new IllegalArgumentException("Os campos de nome e senha não podem estar vazios");
         }
 
-        Usuario usuario = repositoryUsuario.buscarPorEmail(email);
-
+        Usuario usuario = repositoryUsuario.buscarPorEmail(email).orElse(null);
+        
         if (usuario == null) {
             throw new IllegalArgumentException("Usuário não encontrado!");
         }
