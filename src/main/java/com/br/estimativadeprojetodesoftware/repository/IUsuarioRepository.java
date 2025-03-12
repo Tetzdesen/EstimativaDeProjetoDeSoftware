@@ -15,7 +15,7 @@ public interface IUsuarioRepository {
 
     void atualizar(Usuario usuario);
     
-    void removerPorId(UUID id);
+    boolean removerPorId(UUID id);
 
     Optional<Usuario> buscarPorId(UUID id);
     

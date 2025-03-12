@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.singleton;
 
 import com.br.estimativadeprojetodesoftware.service.DotenvService;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,42 +10,60 @@ import java.util.UUID;
 
 public class ConexaoSingleton {
 
-  private Connection conexao;
-  private String url;
-  private String user;
-  private String senha;
-  private String driver;
-  private static ConexaoSingleton instancia = null;
+    private Connection conexao;
+    private String url;
+    private String user;
+    private String senha;
+    private String driver;
+    private static ConexaoSingleton instancia = null;
 
-  private ConexaoSingleton() {
-    this.url = DotenvService.getEnv("DB_URL");
-    this.user = DotenvService.getEnv("DB_USER");
-    this.senha = DotenvService.getEnv("DB_PASSWORD");
-    this.driver = DotenvService.getEnv("DB_DRIVER");
+    private ConexaoSingleton() {
+        this.url = DotenvService.getEnv("DB_URL");
+        this.user = DotenvService.getEnv("DB_USER");
+        this.senha = DotenvService.getEnv("DB_PASSWORD");
+        this.driver = DotenvService.getEnv("DB_DRIVER");
 
-    try {
-      this.conexao = DriverManager.getConnection(url, user, senha);
-      criarTabelasSQLite();
-      inserirDadosIniciais();
-      // criarTabelasH2();
-    } catch (SQLException e) {
-      throw new RuntimeException("Erro ao conectar com o banco de dados: " + e.getMessage());
+        try {
+            this.conexao = DriverManager.getConnection(url, user, senha);
+
+            // Criar banco de dados caso não exista (SQLite)
+            if (url.startsWith("jdbc:sqlite:")) {
+                criarArquivoDB(url.replace("jdbc:sqlite:", ""));
+                criarTabelasSQLite();
+                inserirDadosIniciais();
+            } else {
+                //criarTabelasH2();
+            }
+            //  criarTabelasSQLite();
+            //criarTabelasH2();
+
+            try {
+                this.conexao = DriverManager.getConnection(url, user, senha);
+
+                // criarTabelasH2();
+            } catch (SQLException e) {
+                throw new RuntimeException("Erro ao conectar com o banco de dados: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao conectar com o banco de dados: " + e.getMessage());
+
+        }
+
     }
-  }
 
-  public static synchronized ConexaoSingleton getInstancia() {
-    if (instancia == null) {
-      instancia = new ConexaoSingleton();
+    public static synchronized ConexaoSingleton getInstancia() {
+        if (instancia == null) {
+            instancia = new ConexaoSingleton();
+        }
+        return instancia;
     }
-    return instancia;
-  }
 
-  public Connection getConexao() {
-    return this.conexao;
-  }
+    public Connection getConexao() {
+        return this.conexao;
+    }
 
-  private void criarTabelasSQLite() {
-    String sql = """
+    private void criarTabelasSQLite() {
+        String sql = """
             -- Tabela usuario
             CREATE TABLE IF NOT EXISTS usuario (
               idUsuario TEXT PRIMARY KEY,
@@ -124,19 +143,19 @@ public class ConexaoSingleton {
             );
         """;
 
-    try (var stmt = conexao.createStatement()) {
-      for (String query : sql.split(";")) {
-        if (!query.trim().isEmpty()) {
-          stmt.execute(query);
+        try (var stmt = conexao.createStatement()) {
+            for (String query : sql.split(";")) {
+                if (!query.trim().isEmpty()) {
+                    stmt.execute(query);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro na criação de tabelas no banco de dados: " + e.getMessage(), e);
         }
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException("Erro na criação de tabelas no banco de dados: " + e.getMessage(), e);
     }
-  }
 
-  private void criarTabelasH2() {
-    String sql = """
+    private void criarTabelasH2() {
+        String sql = """
            -- H2 Script
 
            CREATE DATABASE IF NOT EXISTS sistemaProjetoEstimativa;
@@ -221,72 +240,84 @@ public class ConexaoSingleton {
            );
         """;
 
-    try (var stmt = conexao.createStatement()) {
-      for (String query : sql.split(";")) {
-        if (!query.trim().isEmpty()) {
-          stmt.execute(query);
+        try (var stmt = conexao.createStatement()) {
+            for (String query : sql.split(";")) {
+                if (!query.trim().isEmpty()) {
+                    stmt.execute(query);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro na criação de tabelas no banco de dados: " + e.getMessage(), e);
         }
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException("Erro na criação de tabelas no banco de dados: " + e.getMessage(), e);
     }
-  }
 
-  private void inserirDadosIniciais() {
-      try {
-          // Inserção do usuário
-          String sqlUsuario = """
+    private void criarArquivoDB(String caminho) {
+        File arquivo = new File(caminho);
+        if (!arquivo.exists()) {
+            try {
+                if (arquivo.createNewFile()) {
+                    System.out.println("Banco de dados criado: " + caminho);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Erro ao criar arquivo do banco SQLite: " + e.getMessage());
+            }
+        }
+    }
+
+    private void inserirDadosIniciais() {
+        try {
+            // Inserção do usuário
+            String sqlUsuario = """
               INSERT INTO usuario (idUsuario, nomeUsuario, email, senha, log) VALUES (?, ?, ?, ?, ?);
           """;
-          
-          try (PreparedStatement stmt = conexao.prepareStatement(sqlUsuario)) {
-              stmt.setString(1, UUID.randomUUID().toString());
-              stmt.setString(2, "admin");
-              stmt.setString(3, "admin@email.com");
-              stmt.setString(4, "admin"); // Em produção, usar hash da senha
-              stmt.setString(5, "Usuário inicial criado");
-              stmt.executeUpdate();
-          }
 
-          // Inserção dos campos
-          String sqlCampo = """
+            try (PreparedStatement stmt = conexao.prepareStatement(sqlUsuario)) {
+                stmt.setString(1, UUID.randomUUID().toString());
+                stmt.setString(2, "admin");
+                stmt.setString(3, "admin@email.com");
+                stmt.setString(4, "admin"); // Em produção, usar hash da senha
+                stmt.setString(5, "Usuário inicial criado");
+                stmt.executeUpdate();
+            }
+
+            // Inserção dos campos
+            String sqlCampo = """
               INSERT INTO campo(idCampo, tipoCampo, nomeCampo) VALUES (?, ?, ?);
           """;
 
-          try (PreparedStatement stmt = conexao.prepareStatement(sqlCampo)) {
-              String[][] campos = {
-                  {"tamanho", "pequeno"},
-                  {"tamanho", "médio"},
-                  {"tamanho", "grande"},
-                  {"nivel", "mvp"},
-                  {"nivel", "básico"},
-                  {"nivel", "profissional"},
-                  {"taxa diária", "designer ui/ux"},
-                  {"taxa diária", "gerência de projeto"},
-                  {"taxa diária", "desenvolvimento"}
-              };
+            try (PreparedStatement stmt = conexao.prepareStatement(sqlCampo)) {
+                String[][] campos = {
+                    {"tamanho", "pequeno"},
+                    {"tamanho", "médio"},
+                    {"tamanho", "grande"},
+                    {"nivel", "mvp"},
+                    {"nivel", "básico"},
+                    {"nivel", "profissional"},
+                    {"taxa diária", "designer ui/ux"},
+                    {"taxa diária", "gerência de projeto"},
+                    {"taxa diária", "desenvolvimento"}
+                };
 
-              for (String[] campo : campos) {
-                  stmt.setString(1, UUID.randomUUID().toString());
-                  stmt.setString(2, campo[0]);
-                  stmt.setString(3, campo[1]);
-                  stmt.executeUpdate();
-              }
-          }
-      } catch (SQLException e) {
-          e.printStackTrace();
-      }
-  }
-
-
-  public void closeConnection() {
-    try {
-      if (conexao != null && !conexao.isClosed()) {
-        conexao.close();
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException("Error ao fechar conexão com o banco de dados: " + e.getMessage());
+                for (String[] campo : campos) {
+                    stmt.setString(1, UUID.randomUUID().toString());
+                    stmt.setString(2, campo[0]);
+                    stmt.setString(3, campo[1]);
+                    stmt.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-  }
+
+    public void closeConnection() {
+        try {
+            if (conexao != null && !conexao.isClosed()) {
+                conexao.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error ao fechar conexão com o banco de dados: " + e.getMessage());
+        }
+    }
 
 }

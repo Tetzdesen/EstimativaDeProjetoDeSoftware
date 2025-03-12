@@ -14,6 +14,10 @@ public interface ICampoRepository {
 
     void salvar(Campo campo);
     
+    void salvarProjetoCampo(Projeto projeto, Campo campo);
+    
+    void salvarPerfilCampo(Perfil perfil, Campo campo);
+    
     void atualizar(Campo campo);
     
     void atualizarDiasProjetoCampo(Projeto projeto, Campo campo);

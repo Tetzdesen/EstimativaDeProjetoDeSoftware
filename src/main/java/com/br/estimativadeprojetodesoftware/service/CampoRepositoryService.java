@@ -35,6 +35,14 @@ public class CampoRepositoryService {
     public void salvar(Campo campo) {
         campoRepository.salvar(campo);
     }
+    
+    public void salvarProjetoCampo(Projeto projeto, Campo campo){
+        campoRepository.salvarProjetoCampo(projeto, campo);
+    }
+    
+    public void salvarPerfilCampo(Perfil perfil, Campo campo){
+        campoRepository.salvarPerfilCampo(perfil, campo);
+    }
 
     public void atualizar(Campo campo) {
         campoRepository.atualizar(campo);

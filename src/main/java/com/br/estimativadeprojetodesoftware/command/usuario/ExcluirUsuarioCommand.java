@@ -19,16 +19,15 @@ public class ExcluirUsuarioCommand implements ProjetoCommand {
 
     @Override
     public void execute() {
-        //  boolean removido = usuarioPresenter.getRepository().removerPorId(usuarioPresenter.getUsuario().getId());
-        usuarioPresenter.getRepository().removerPorId(usuarioPresenter.getUsuario().getId());
-      //  if (removido) {
+        boolean removido = usuarioPresenter.getRepository().removerPorId(usuarioPresenter.getUsuario().getId());
+        if (removido) {
             new MostrarMensagemProjetoCommand("Usuário \"" + usuarioPresenter.getUsuario().getNome() + "\" removido com sucesso!").execute();
             usuarioPresenter.setUsuario(null);
             UsuarioLogadoSingleton.getInstancia().setUsuario(usuarioPresenter.getUsuario());
-            //     new LogoutCommand().execute();
-      //  } else {
-           // new MostrarMensagemProjetoCommand("Erro ao remover o usuário \"" + usuarioPresenter.getUsuario().getNome() + "\".").execute();
-        //}
+       //     new LogoutCommand().execute();
+        } else {
+            new MostrarMensagemProjetoCommand("Erro ao remover o usuário \"" + usuarioPresenter.getUsuario().getNome() + "\".").execute();
+        }
         usuarioPresenter.excluir();
     }
 }
