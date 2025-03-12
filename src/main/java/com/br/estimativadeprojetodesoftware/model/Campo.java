@@ -8,7 +8,7 @@ import java.util.UUID;
  * @author tetzner
  */
 public class Campo {
-    private final UUID id;
+    private UUID id;
     private final String tipo;
     private final String nome;
     private Double dias;
@@ -27,7 +27,6 @@ public class Campo {
     }
 
     public Campo(String tipo, String nome, double dias) {
-        this.id = UUID.randomUUID();
         this.tipo = tipo;
         this.nome = nome;
         this.dias = dias;

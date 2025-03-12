@@ -322,4 +322,9 @@ public class CampoRepositoryH2 implements ICampoRepository {
     public void salvarPerfilCampo(Perfil perfil, Campo campo) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+
+    @Override
+    public List<Campo> listarTodosPorTipo(String tipo) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

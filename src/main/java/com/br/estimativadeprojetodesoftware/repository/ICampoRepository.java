@@ -30,6 +30,8 @@ public interface ICampoRepository {
 
     List<Campo> listarTodos();
     
+    List<Campo> listarTodosPorTipo(String tipo);
+    
     Integer buscarDiasPorProjetoCampo(UUID idProjeto, UUID idCampo);
     
     Double buscarDiasPorPerfilCampo(UUID idPerfil, UUID idCampo);

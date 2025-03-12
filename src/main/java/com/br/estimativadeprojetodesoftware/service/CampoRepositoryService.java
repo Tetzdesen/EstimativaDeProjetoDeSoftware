@@ -67,6 +67,10 @@ public class CampoRepositoryService {
     public List<Campo> listarTodos() {
         return campoRepository.listarTodos();
     }
+    
+    public List<Campo> listarTodosPorTipo(String tipo) {
+        return campoRepository.listarTodosPorTipo(tipo);
+    }
 
     public Integer buscarDiasPorProjetoCampo(UUID idProjeto, UUID idCampo) {
         return campoRepository.buscarDiasPorProjetoCampo(idProjeto, idCampo);

@@ -10,9 +10,7 @@ import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,16 +32,39 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             statement.setTimestamp(4, Timestamp.valueOf(perfil.getCreated_at()));
             statement.setString(5, perfil.getUsuario().getId().toString());
 
-            List<Campo> campos = CampoRepositoryService.getInstancia().listarTodosPorIdPerfil(perfil.getId());
+            List<Campo> campos;
+
+            campos = CampoRepositoryService.getInstancia().listarTodosPorTipo("tamanho");
 
             for (Campo campo : campos) {
-                // verificar por funcionalide
-                if (!perfil.getFuncionalidades().containsKey(campo.getNome()) && campo.getTipo().equalsIgnoreCase("funcionalidades")) {
+                campo.setDias(perfil.getTamanhosApp().get(campo.getNome()).doubleValue());
+                CampoRepositoryService.getInstancia().salvarPerfilCampo(perfil, campo);
+            }
+
+            campos = CampoRepositoryService.getInstancia().listarTodosPorTipo("nivel");
+
+            for (Campo campo : campos) {
+                campo.setDias(perfil.getNiveisUI().get(campo.getNome()));
+                CampoRepositoryService.getInstancia().salvarPerfilCampo(perfil, campo);
+            }
+
+            campos = CampoRepositoryService.getInstancia().listarTodosPorTipo("funcionalidade");
+
+            for (Campo campo : campos) {
+                campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
+                if (!perfil.getFuncionalidades().containsKey(campo.getNome()) && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
                     CampoRepositoryService.getInstancia().salvar(campo);
                     CampoRepositoryService.getInstancia().salvarPerfilCampo(perfil, campo);
                 }
                 CampoRepositoryService.getInstancia().salvarPerfilCampo(perfil, campo);
             }
+
+            campos = CampoRepositoryService.getInstancia().listarTodosPorTipo("taxa diária");
+            for (Campo campo : campos) {
+                campo.setDias(perfil.getTaxasDiarias().get(campo.getNome()));
+                CampoRepositoryService.getInstancia().salvarPerfilCampo(perfil, campo);
+            }
+
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,20 +80,38 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             statement.setString(4, perfil.getUsuario().getId().toString());
             statement.setString(5, perfil.getId().toString());
 
-            for (Map.Entry<String, Integer> entry : perfil.getTamanhosApp().entrySet()) {
-                CampoRepositoryService.getInstancia().atualizar(new Campo(UUID.randomUUID(), "tamanho app", entry.getKey(), entry.getValue().doubleValue()));
+          List<Campo> campos;
+
+            campos = CampoRepositoryService.getInstancia().listarTodosPorTipo("tamanho");
+
+            for (Campo campo : campos) {
+                campo.setDias(perfil.getTamanhosApp().get(campo.getNome()).doubleValue());
+                CampoRepositoryService.getInstancia().atualizarDiasPerfilCampo(perfil, campo);
             }
 
-            for (Map.Entry<String, Double> entry : perfil.getNiveisUI().entrySet()) {
-                CampoRepositoryService.getInstancia().atualizar(new Campo(UUID.randomUUID(), "nivel ui", entry.getKey(), entry.getValue()));
+            campos = CampoRepositoryService.getInstancia().listarTodosPorTipo("nivel");
+
+            for (Campo campo : campos) {
+                campo.setDias(perfil.getNiveisUI().get(campo.getNome()));
+                CampoRepositoryService.getInstancia().atualizarDiasPerfilCampo(perfil, campo);
             }
 
-            for (Map.Entry<String, Integer> entry : perfil.getFuncionalidades().entrySet()) {
-                CampoRepositoryService.getInstancia().atualizar(new Campo(UUID.randomUUID(), "funcionalidades", entry.getKey(), entry.getValue().doubleValue()));
+            campos = CampoRepositoryService.getInstancia().listarTodosPorTipo("funcionalidade");
+
+            for (Campo campo : campos) {
+                campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
+                if (!perfil.getFuncionalidades().containsKey(campo.getNome()) && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
+                    CampoRepositoryService.getInstancia().atualizar(campo);
+                    CampoRepositoryService.getInstancia().atualizarDiasPerfilCampo(perfil, campo);
+                }
+                CampoRepositoryService.getInstancia().atualizarDiasPerfilCampo(perfil, campo);
             }
 
-            for (Map.Entry<String, Double> entry : perfil.getTaxasDiarias().entrySet()) {
-                CampoRepositoryService.getInstancia().atualizar(new Campo(UUID.randomUUID(), "taxa diaria", entry.getKey(), entry.getValue()));
+            campos = CampoRepositoryService.getInstancia().listarTodosPorTipo("taxa diária");
+            
+            for (Campo campo : campos) {
+                campo.setDias(perfil.getTaxasDiarias().get(campo.getNome()));
+                CampoRepositoryService.getInstancia().atualizarDiasPerfilCampo(perfil, campo);
             }
 
             statement.executeUpdate();
