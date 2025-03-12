@@ -1,9 +1,14 @@
 package com.br.estimativadeprojetodesoftware.command.usuario;
 
+import com.br.estimativadeprojetodesoftware.builder.AndroidBuilder;
+import com.br.estimativadeprojetodesoftware.builder.Diretor;
+import com.br.estimativadeprojetodesoftware.builder.IosBuilder;
+import com.br.estimativadeprojetodesoftware.builder.WebBackEndBuilder;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
+import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
