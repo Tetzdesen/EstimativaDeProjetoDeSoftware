@@ -6,7 +6,6 @@ import javax.swing.event.ListSelectionListener;
 import com.br.estimativadeprojetodesoftware.command.perfil.AdicionarNovaFuncionalidadePerfilCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.RemoverFuncionalidadePerfilCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
-import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.state.perfil.InclusaoPerfilState;
 import com.br.estimativadeprojetodesoftware.state.perfil.ManterPerfilPresenterState;

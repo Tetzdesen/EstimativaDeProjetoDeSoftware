@@ -6,12 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import com.br.estimativadeprojetodesoftware.builder.AndroidBuilder;
-import com.br.estimativadeprojetodesoftware.builder.Diretor;
-import com.br.estimativadeprojetodesoftware.builder.IosBuilder;
-import com.br.estimativadeprojetodesoftware.builder.WebBackEndBuilder;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-
 public class Usuario {
 
     private UUID id;
@@ -32,9 +26,6 @@ public class Usuario {
         this.log = "";
         this.projetos = new ArrayList<>();
         this.perfis = new ArrayList<>();
-        PerfilRepositoryService.getInstancia().salvar(Diretor.build(new WebBackEndBuilder("Web/Back end")));
-        PerfilRepositoryService.getInstancia().salvar(Diretor.build(new IosBuilder("iOS")));
-        PerfilRepositoryService.getInstancia().salvar(Diretor.build(new AndroidBuilder("Android")));
     }
 
     public Usuario(UUID id, String nome, String email, String senha, LocalDateTime created_at, String log, List<Projeto> projetos, List<Perfil> perfis) {
@@ -46,9 +37,6 @@ public class Usuario {
         this.log = log;
         this.projetos = projetos;
         this.perfis = perfis;
-        PerfilRepositoryService.getInstancia().salvar(Diretor.build(new WebBackEndBuilder("Web/Back end")));
-        PerfilRepositoryService.getInstancia().salvar(Diretor.build(new IosBuilder("iOS")));
-        PerfilRepositoryService.getInstancia().salvar(Diretor.build(new AndroidBuilder("Android")));
     }
 
     public UUID getId() {

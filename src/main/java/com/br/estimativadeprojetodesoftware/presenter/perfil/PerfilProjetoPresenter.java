@@ -6,7 +6,6 @@ import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.WindowCommand;
-import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.perfil.PerfilProjetoView;
@@ -76,7 +75,7 @@ public class PerfilProjetoPresenter implements Observer {
         DefaultTableModel modelo = (DefaultTableModel) view.getModeloTabela();
         modelo.setRowCount(0);
 
-        List<Perfil> perfis = repository.buscarTodosPerfisPorIdUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
+        List<Perfil> perfis = UsuarioLogadoSingleton.getInstancia().getUsuario().getPerfis();
         for(Perfil perfil : perfis) {
             carregarDetalhes(perfil);
         }

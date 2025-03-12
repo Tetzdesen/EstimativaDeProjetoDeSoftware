@@ -7,7 +7,6 @@ import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
-import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
 
 public class AbrirManterPerfilProjetoCommand implements ProjetoCommand {

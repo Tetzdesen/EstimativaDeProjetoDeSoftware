@@ -3,7 +3,6 @@ package com.br.estimativadeprojetodesoftware.command.perfil;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.PerfilProjetoPresenter;
-import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.view.perfil.PerfilProjetoView;
 
 import javax.swing.*;

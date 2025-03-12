@@ -60,10 +60,6 @@ public class PerfilRepositoryService implements Subject {
         return perfilRepository.buscarPorId(id);
     }
     
-    public List<Perfil> buscarTodosPerfisPorIdUsuario(UUID id){
-        return perfilRepository.buscarTodosPerfisPorIdUsuario(id);
-    }
-    
     public List<Perfil> buscarPerfisPorProjeto(UUID idProjeto){
         return perfilRepository.buscarPerfisPorProjeto(idProjeto);
     }
