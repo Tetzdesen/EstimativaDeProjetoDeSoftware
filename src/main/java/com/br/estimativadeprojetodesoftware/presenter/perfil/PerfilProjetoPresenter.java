@@ -7,6 +7,8 @@ import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.WindowCommand;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.perfil.PerfilProjetoView;
 
 import java.util.Arrays;
@@ -22,11 +24,11 @@ import javax.swing.table.TableColumnModel;
 public class PerfilProjetoPresenter implements Observer {
 
     private final PerfilProjetoView view;
-    private final PerfilRepositoryMock repository;
+    private final PerfilRepositoryService repository;
 
-    public PerfilProjetoPresenter(PerfilProjetoView view, PerfilRepositoryMock repository) {
+    public PerfilProjetoPresenter(PerfilProjetoView view) {
         this.view = view;
-        this.repository = repository;
+        this.repository = PerfilRepositoryService.getInstancia();
 
         this.repository.addObserver(this);
         update();
@@ -49,7 +51,7 @@ public class PerfilProjetoPresenter implements Observer {
     private void configuraActionsListerns() {
         view.getBtnNovoPerfil().addActionListener(e -> {
             try {
-                new AbrirManterPerfilProjetoCommand(view.getDesktop(), repository, null).execute();
+                new AbrirManterPerfilProjetoCommand(view.getDesktop(), null).execute();
             } catch (Exception ex) {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
@@ -61,8 +63,8 @@ public class PerfilProjetoPresenter implements Observer {
                 DefaultTableModel model = (DefaultTableModel) view.getModeloTabela();
                 UUID id = (UUID) model.getValueAt(linha, 0);
 
-                Perfil perfil = repository.buscarPerfilPorId(id);
-                new AbrirManterPerfilProjetoCommand(view.getDesktop(), repository, perfil).execute();
+                Perfil perfil = repository.buscarPorId(id).get();
+                new AbrirManterPerfilProjetoCommand(view.getDesktop(), perfil).execute();
                 //new ManterPerfilPresenter(new ManterPerfilView(view.getDesktop()), repository, perfil);
             } catch (Exception ex) {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
@@ -74,7 +76,7 @@ public class PerfilProjetoPresenter implements Observer {
         DefaultTableModel modelo = (DefaultTableModel) view.getModeloTabela();
         modelo.setRowCount(0);
 
-        List<Perfil> perfis = repository.getPerfis();
+        List<Perfil> perfis = repository.buscarTodosPerfisPorIdUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
         for(Perfil perfil : perfis) {
             carregarDetalhes(perfil);
         }

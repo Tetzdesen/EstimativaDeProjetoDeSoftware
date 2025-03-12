@@ -7,6 +7,7 @@ import com.br.estimativadeprojetodesoftware.command.perfil.AdicionarNovaFunciona
 import com.br.estimativadeprojetodesoftware.command.perfil.RemoverFuncionalidadePerfilCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.state.perfil.InclusaoPerfilState;
 import com.br.estimativadeprojetodesoftware.state.perfil.ManterPerfilPresenterState;
 import com.br.estimativadeprojetodesoftware.state.perfil.VisualizacaoPerfilState;
@@ -14,13 +15,13 @@ import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
 
 public class ManterPerfilPresenter {
     private ManterPerfilView view;
-    private PerfilRepositoryMock repository;
+    private PerfilRepositoryService repository;
     private ManterPerfilPresenterState estado;
     private Perfil perfil;
 
-    public ManterPerfilPresenter(ManterPerfilView view, PerfilRepositoryMock repository, Perfil perfil) {
+    public ManterPerfilPresenter(ManterPerfilView view, Perfil perfil) {
         this.view = view;
-        this.repository = repository;
+        this.repository = PerfilRepositoryService.getInstancia();
         this.perfil = perfil;
         setStatusBotaoRemover(false);
         configuraActionsListerns();
@@ -95,7 +96,7 @@ public class ManterPerfilPresenter {
         return view;
     }
 
-    public PerfilRepositoryMock getRepository() {
+    public PerfilRepositoryService getRepository() {
         return repository;
     }
 
