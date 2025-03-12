@@ -34,6 +34,32 @@ public class CampoRepositorySQLite implements ICampoRepository {
             throw new RuntimeException("Erro ao salvar campo: " + e.getMessage(), e);
         }
     }
+    
+    @Override
+    public void salvarProjetoCampo(Projeto projeto, Campo campo) {
+        String sql = "INSERT INTO projeto_has_campo (projeto_idProjeto, campo_idCampo, diasProjeto) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1,projeto.getId().toString());
+            stmt.setString(2, campo.getId().toString());
+            stmt.setInt(3, campo.getDias().intValue());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar campo de projeto: " + e.getMessage(), e);
+        }
+    }
+    
+    @Override
+    public void salvarPerfilCampo(Perfil perfil, Campo campo) {
+        String sql = "INSERT INTO perfil_has_campo (perfil_idPerfil, campo_idCampo, diasPerfil) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1,perfil.getId().toString());
+            stmt.setString(2, campo.getId().toString());
+            stmt.setDouble(3, campo.getDias());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar campo de perfil: " + e.getMessage(), e);
+        }
+    }
 
     @Override
     public void atualizar(Campo campo) {

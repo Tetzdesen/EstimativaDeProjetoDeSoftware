@@ -35,8 +35,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             stmt.setString(5, projeto.getStatus());
 
             for (Campo campo : projeto.getCampos()) {
-                CampoRepositoryService.getInstancia().salvar(campo);
-                CampoRepositoryService.getInstancia().atualizarDiasProjetoCampo(projeto, campo);
+                CampoRepositoryService.getInstancia().salvarProjetoCampo(projeto, campo);
             }
 
             stmt.executeUpdate();

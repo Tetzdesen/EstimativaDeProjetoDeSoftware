@@ -46,9 +46,10 @@ public class UsuarioRepositoryService implements Subject {
         notifyObservers();
     }
 
-    public void removerPorId(UUID id) {
-        usuarioRepository.removerPorId(id);
+    public boolean removerPorId(UUID id) {
+        boolean removido = usuarioRepository.removerPorId(id);
         notifyObservers();
+        return removido;
     }
 
     public Optional<Usuario> buscarPorId(UUID id) {

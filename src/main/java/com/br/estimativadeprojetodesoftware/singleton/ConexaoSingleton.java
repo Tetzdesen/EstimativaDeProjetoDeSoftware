@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.singleton;
 
 import com.br.estimativadeprojetodesoftware.service.DotenvService;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -22,7 +23,15 @@ public class ConexaoSingleton {
 
         try {
             this.conexao = DriverManager.getConnection(url, user, senha);
-            criarTabelasSQLite();
+
+            // Criar banco de dados caso não exista (SQLite)
+            if (url.startsWith("jdbc:sqlite:")) {
+                criarArquivoDB(url.replace("jdbc:sqlite:", ""));
+                criarTabelasSQLite();
+            } else{
+                //criarTabelasH2();
+            }
+          //  criarTabelasSQLite();
             //criarTabelasH2();
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao conectar com o banco de dados: " + e.getMessage());
@@ -38,6 +47,19 @@ public class ConexaoSingleton {
 
     public Connection getConexao() {
         return this.conexao;
+    }
+
+    private void criarArquivoDB(String caminho) {
+        File arquivo = new File(caminho);
+        if (!arquivo.exists()) {
+            try {
+                if (arquivo.createNewFile()) {
+                    System.out.println("Banco de dados criado: " + caminho);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Erro ao criar arquivo do banco SQLite: " + e.getMessage());
+            }
+        }
     }
 
     private void criarTabelasSQLite() {

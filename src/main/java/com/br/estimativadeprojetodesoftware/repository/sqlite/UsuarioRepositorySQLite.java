@@ -56,7 +56,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
     }
 
     @Override
-    public void removerPorId(UUID id) {
+    public boolean removerPorId(UUID id) {
         String sql = "DELETE FROM usuario WHERE idUsuario = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, id.toString());
@@ -64,6 +64,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return true;
     }
 
     @Override
