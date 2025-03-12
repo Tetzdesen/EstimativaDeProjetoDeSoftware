@@ -10,11 +10,9 @@ import javax.swing.*;
 
 public class VisualizarPerfisProjetoCommand implements ProjetoCommand {
     private final JDesktopPane desktop;
-    private final PerfilRepositoryMock repository;
 
-    public VisualizarPerfisProjetoCommand(JDesktopPane desktop, PerfilRepositoryMock repository) {
+    public VisualizarPerfisProjetoCommand(JDesktopPane desktop) {
         this.desktop = desktop;
-        this.repository = repository;
     }
 
     @Override
@@ -26,7 +24,7 @@ public class VisualizarPerfisProjetoCommand implements ProjetoCommand {
             windowManager.bringToFront(tituloJanela);
         } else {
             PerfilProjetoView perfilProjetoView = new PerfilProjetoView(desktop);
-            new PerfilProjetoPresenter(perfilProjetoView, repository);
+            new PerfilProjetoPresenter(perfilProjetoView);
             perfilProjetoView.setTitle(tituloJanela);
             desktop.add(perfilProjetoView);
             perfilProjetoView.setVisible(true);

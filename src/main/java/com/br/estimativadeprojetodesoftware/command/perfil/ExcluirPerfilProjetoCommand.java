@@ -22,7 +22,7 @@ public class ExcluirPerfilProjetoCommand implements ProjetoCommand {
         );
 
         if (confirmacao == JOptionPane.YES_OPTION) {
-            presenter.getRepository().removerPerfil(presenter.getPerfil());
+            presenter.getRepository().removerPorId(presenter.getPerfil().getId());
             presenter.getRepository().notifyObservers();
             JOptionPane.showMessageDialog(presenter.getView(), "Perfil removido com sucesso!", "Remoção", JOptionPane.INFORMATION_MESSAGE);
             presenter.setAllBtnVisibleFalse();

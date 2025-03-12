@@ -69,7 +69,7 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
             presenter.getView().dispose();
 
         } else {
-            Perfil perfil = presenter.getRepository().buscarPerfilPorId(presenter.getPerfil().getId());
+            Perfil perfil = presenter.getRepository().buscarPorId(presenter.getPerfil().getId()).get();
             perfil.removerFuncionalidades();
 
             perfil.setPerfilBackEnd(isBackEnd);
