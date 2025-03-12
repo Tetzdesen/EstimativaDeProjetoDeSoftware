@@ -23,32 +23,19 @@ public class ConexaoSingleton {
         this.senha = DotenvService.getEnv("DB_PASSWORD");
         this.driver = DotenvService.getEnv("DB_DRIVER");
 
-        try {
-            this.conexao = DriverManager.getConnection(url, user, senha);
-
-            // Criar banco de dados caso não exista (SQLite)
-            if (url.startsWith("jdbc:sqlite:")) {
-                criarArquivoDB(url.replace("jdbc:sqlite:", ""));
-                criarTabelasSQLite();
-                inserirDadosIniciais();
-            } else {
-                //criarTabelasH2();
-            }
-            //  criarTabelasSQLite();
-            //criarTabelasH2();
-
+        // Criar banco de dados caso não exista (SQLite)
+        if (url.startsWith("jdbc:sqlite:")) {
+         //   criarArquivoBDSQLite(url.replace("jdbc:sqlite:", ""));
             try {
                 this.conexao = DriverManager.getConnection(url, user, senha);
-
-                // criarTabelasH2();
             } catch (SQLException e) {
                 throw new RuntimeException("Erro ao conectar com o banco de dados: " + e.getMessage());
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao conectar com o banco de dados: " + e.getMessage());
+            configurarBancoSQLite();
 
+        } else {
+            //criarTabelasH2();
         }
-
     }
 
     public static synchronized ConexaoSingleton getInstancia() {
@@ -251,17 +238,23 @@ public class ConexaoSingleton {
         }
     }
 
-    private void criarArquivoDB(String caminho) {
+    private void criarArquivoBDSQLite(String caminho) {
         File arquivo = new File(caminho);
         if (!arquivo.exists()) {
             try {
+                arquivo.mkdir();
                 if (arquivo.createNewFile()) {
                     System.out.println("Banco de dados criado: " + caminho);
-                }
+                };
             } catch (Exception e) {
                 throw new RuntimeException("Erro ao criar arquivo do banco SQLite: " + e.getMessage());
             }
         }
+    }
+
+    private void configurarBancoSQLite() {
+        criarTabelasSQLite();
+        inserirDadosIniciais();
     }
 
     private void inserirDadosIniciais() {
