@@ -115,22 +115,6 @@ public class PerfilRepositoryH2 implements IPerfilRepository {
     }
 
     @Override
-    public List<Perfil> buscarTodosPerfisPorIdUsuario(UUID id
-    ) {
-        List<Perfil> perfis = new ArrayList<>();
-        String sql = "SELECT * FROM perfil WHERE usuario_idUsuario = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                perfis.add(mapToPerfil(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return perfis;
-    }
-
-    @Override
     public List<Perfil> buscarPerfisPorProjeto(UUID projetoId
     ) {
         List<Perfil> perfis = new ArrayList<>();

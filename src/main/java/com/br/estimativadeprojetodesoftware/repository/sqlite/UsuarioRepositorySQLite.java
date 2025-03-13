@@ -10,6 +10,8 @@ import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +116,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
 
     private Usuario mapToUsuario(ResultSet resultSet) throws SQLException {
         UUID idUsuario = UUID.fromString(resultSet.getString("idUsuario"));
-        List<Perfil> perfis = PerfilRepositoryService.getInstancia().buscarTodosPerfisPorIdUsuario(idUsuario);
+        List<Perfil> perfis = UsuarioLogadoSingleton.getInstancia().getUsuario().getPerfis();
 
         List<Perfil> perfisNovos = new ArrayList<>();
 

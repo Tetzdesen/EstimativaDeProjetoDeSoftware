@@ -2,6 +2,10 @@ package com.br.estimativadeprojetodesoftware.service;
 
 import com.br.estimativadeprojetodesoftware.abstractfactory.FabricaRepository;
 import com.br.estimativadeprojetodesoftware.abstractfactory.SeletorFabricaRepository;
+import com.br.estimativadeprojetodesoftware.builder.AndroidBuilder;
+import com.br.estimativadeprojetodesoftware.builder.Diretor;
+import com.br.estimativadeprojetodesoftware.builder.IosBuilder;
+import com.br.estimativadeprojetodesoftware.builder.WebBackEndBuilder;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Subject;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
@@ -54,10 +58,6 @@ public class PerfilRepositoryService implements Subject {
 
     public Optional<Perfil> buscarPorId(UUID id){
         return perfilRepository.buscarPorId(id);
-    }
-    
-    public List<Perfil> buscarTodosPerfisPorIdUsuario(UUID id){
-        return perfilRepository.buscarTodosPerfisPorIdUsuario(id);
     }
     
     public List<Perfil> buscarPerfisPorProjeto(UUID idProjeto){
