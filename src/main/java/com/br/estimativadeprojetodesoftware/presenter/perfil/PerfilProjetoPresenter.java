@@ -76,9 +76,10 @@ public class PerfilProjetoPresenter implements Observer {
         modelo.setRowCount(0);
 
         //a construção do perfil está errada. está faltando passar o usuário
-        //List<Perfil> perfis = PerfilRepositoryService.getInstancia()
-        List<Perfil> perfis = UsuarioLogadoSingleton.getInstancia().getUsuario().getPerfis();
-        for(Perfil perfil : perfis) {
+        List<Perfil> perfis = new PerfilRepositoryService().buscarTodosPerfisPorIdUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
+
+        // List<Perfil> perfis = UsuarioLogadoSingleton.getInstancia().getUsuario().getPerfis();
+        for (Perfil perfil : perfis) {
             carregarDetalhes(perfil);
         }
 
@@ -90,8 +91,8 @@ public class PerfilProjetoPresenter implements Observer {
         dadosTabela[0] = perfil.getId();
         dadosTabela[1] = perfil.getNome();
 
-        //view.atualizarTabela(dadosTabela); 
         view.getModeloTabela().addRow(dadosTabela);
+        view.atualizarTabela(dadosTabela);
     }
 
     private void removeColunaId() {
@@ -102,7 +103,7 @@ public class PerfilProjetoPresenter implements Observer {
 
     private void configuraView() {
         setStatusBotaoVisualizar(false);
-        
+
         removeColunaId();
         this.view.getTablePerfis().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override

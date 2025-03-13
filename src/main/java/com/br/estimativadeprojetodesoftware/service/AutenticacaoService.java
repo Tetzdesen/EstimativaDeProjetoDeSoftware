@@ -17,7 +17,7 @@ public class AutenticacaoService {
     private UsuarioRepositoryService usuarioRepository;
 
     public AutenticacaoService() {
-        this.usuarioRepository = UsuarioRepositoryService.getInstancia();
+        this.usuarioRepository = new UsuarioRepositoryService();
         this.metodoAutenticacao = new AutenticadorSenha();
         carregarUsuariosNoAutenticador();
     }

@@ -26,7 +26,7 @@ public class ProjetoRepositoryH2 implements IProjetoRepository {
         this.connection = ConexaoSingleton.getInstancia().getConexao();
     }
 
-   @Override
+@Override
     public void salvar(Projeto projeto) {
         String sql = "INSERT INTO projeto (idProjeto, nomeProjeto, tipoProjeto, created_atProjeto, status) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -37,8 +37,7 @@ public class ProjetoRepositoryH2 implements IProjetoRepository {
             stmt.setString(5, projeto.getStatus());
 
             for (Campo campo : projeto.getCampos()) {
-                CampoRepositoryService.getInstancia().salvar(campo);
-                CampoRepositoryService.getInstancia().atualizarDiasProjetoCampo(projeto, campo);
+                new CampoRepositoryService().salvarProjetoCampo(projeto, campo);
             }
 
             stmt.executeUpdate();
@@ -50,7 +49,7 @@ public class ProjetoRepositoryH2 implements IProjetoRepository {
 
     @Override
     public void atualizar(Projeto projeto) {
-        String sql = "UPDATE projeto SET nomeProjeto = ?, tipoProjeto = ?, updated_atProjeto = NOW(), status = ? WHERE idProjeto = ?";
+        String sql = "UPDATE projeto SET nomeProjeto = ?, tipoProjeto = ?, updated_atProjeto = CURRENT_TIMESTAMP, status = ? WHERE idProjeto = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, projeto.getNome());
             stmt.setString(2, projeto.getTipo());
@@ -58,8 +57,8 @@ public class ProjetoRepositoryH2 implements IProjetoRepository {
             stmt.setString(4, projeto.getId().toString());
 
             for (Campo campo : projeto.getCampos()) {
-                CampoRepositoryService.getInstancia().atualizar(campo);
-                CampoRepositoryService.getInstancia().atualizarDiasProjetoCampo(projeto, campo);
+                new CampoRepositoryService().atualizar(campo);
+                new CampoRepositoryService().atualizarDiasProjetoCampo(projeto, campo);
             }
 
             stmt.executeUpdate();
@@ -112,13 +111,13 @@ public class ProjetoRepositoryH2 implements IProjetoRepository {
 
     private Projeto mapProjetoFromResultSet(ResultSet rs) throws SQLException {
         UUID idProjeto = UUID.fromString(rs.getString("idProjeto"));
-        List<Perfil> perfis = PerfilRepositoryService.getInstancia().buscarPerfisPorProjeto(idProjeto);
-        List<Usuario> usuarios = UsuarioRepositoryService.getInstancia().buscarUsuariosPorProjeto(idProjeto);
-        List<Campo> campos = CampoRepositoryService.getInstancia().listarTodosPorIdProjeto(idProjeto);
+        List<Perfil> perfis = new PerfilRepositoryService().buscarPerfisPorProjeto(idProjeto);
+        List<Usuario> usuarios = new UsuarioRepositoryService().buscarUsuariosPorProjeto(idProjeto);
+        List<Campo> campos = new CampoRepositoryService().listarTodosPorIdProjeto(idProjeto);
         List<Campo> camposNovos = new ArrayList<>();
 
         for (Campo campo : campos) {
-            Integer dias = CampoRepositoryService.getInstancia().buscarDiasPorProjetoCampo(idProjeto, campo.getId());
+            Integer dias = new CampoRepositoryService().buscarDiasPorProjetoCampo(idProjeto, campo.getId());
             campo.setDias(dias.doubleValue());;
             camposNovos.add(campo);
         }
@@ -168,4 +167,5 @@ public class ProjetoRepositoryH2 implements IProjetoRepository {
         }
         return projetos;
     }
+
 }

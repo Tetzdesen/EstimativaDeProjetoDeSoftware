@@ -15,21 +15,12 @@ import java.util.UUID;
  */
 public class CampoRepositoryService {
 
-    private static CampoRepositoryService INSTANCIA = null;
     private final FabricaRepository fabricaDAO;
     private final ICampoRepository campoRepository;
 
-    private CampoRepositoryService() {
+    public CampoRepositoryService() {
         fabricaDAO = SeletorFabricaRepository.obterInstancia();
         campoRepository = fabricaDAO.criarCampoRepository();
-    }
-
-    public static CampoRepositoryService getInstancia() {
-        if (INSTANCIA == null) {
-            INSTANCIA = new CampoRepositoryService();
-        }
-
-        return INSTANCIA;
     }
 
     public void salvar(Campo campo) {

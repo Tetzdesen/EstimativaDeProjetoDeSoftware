@@ -19,21 +19,12 @@ import java.util.UUID;
  */
 public class ProjetoRepositoryService {
 
-    private static ProjetoRepositoryService INSTANCIA = null;
     private final FabricaRepository fabricaDAO;
     private final IProjetoRepository projetoRepository;
 
-    private ProjetoRepositoryService() {
+    public ProjetoRepositoryService() {
         fabricaDAO = SeletorFabricaRepository.obterInstancia();
         projetoRepository = fabricaDAO.criarProjetoRepository();
-    }
-
-    public static ProjetoRepositoryService getInstancia() {
-        if (INSTANCIA == null) {
-            INSTANCIA = new ProjetoRepositoryService();
-        }
-
-        return INSTANCIA;
     }
 
     public void salvar(Projeto projeto) {
