@@ -13,7 +13,6 @@ import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.Zelador;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.*;
-import com.br.estimativadeprojetodesoftware.repository.PerfilRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
@@ -32,17 +31,15 @@ public final class PrincipalPresenter implements Observer {
     private final PrincipalView view;
     private final ProjetoRepositoryMock projetoRepository;
     private final UsuarioRepositoryMock usuarioRepository;
-    private final PerfilRepositoryMock perfilRepositoryMock;
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
     private final Map<String, ProjetoCommand> comandos;
     private BarraService criarBarraService;
     private final List<WindowCommand> windowCommands = new ArrayList<>();
 
-    public PrincipalPresenter(ProjetoRepositoryMock projetoRepository, UsuarioRepositoryMock usuarioRepository, PerfilRepositoryMock perfilRepositoryMock) {
+    public PrincipalPresenter(ProjetoRepositoryMock projetoRepository, UsuarioRepositoryMock usuarioRepository) {
         this.view = new PrincipalView();
         this.projetoRepository = projetoRepository;
         this.usuarioRepository = usuarioRepository;
-        this.perfilRepositoryMock = perfilRepositoryMock;
         this.projetoRepository.addObserver(this);
         this.usuarioRepository.addObserver(this);
 
@@ -226,10 +223,6 @@ public final class PrincipalPresenter implements Observer {
 
     public UsuarioRepositoryMock getUsuarioRepository() {
         return usuarioRepository;
-    }
-
-    public PerfilRepositoryMock getPerfilRepositoryMock() {
-        return perfilRepositoryMock;
     }
 
     public PrincipalView getView() {
