@@ -76,7 +76,7 @@ public class LoginPresenter {
         ResultadoAutenticacao resultadoAutenticacao = autenticacaoService.autenticar(email, senha);
 
         if (resultadoAutenticacao.isAutenticado()) {
-            Usuario usuario = UsuarioRepositoryService.getInstancia().buscarPorEmail(email).get();
+            Usuario usuario = repositoryUsuario.buscarPorEmail(email).get();
             usuarioLogado.setUsuario(usuario);
             view.dispose();
             new AbrirPrincipalPresenterCommand().execute();

@@ -35,7 +35,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             stmt.setString(5, projeto.getStatus());
 
             for (Campo campo : projeto.getCampos()) {
-                CampoRepositoryService.getInstancia().salvarProjetoCampo(projeto, campo);
+                new CampoRepositoryService().salvarProjetoCampo(projeto, campo);
             }
 
             stmt.executeUpdate();
@@ -55,8 +55,8 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             stmt.setString(4, projeto.getId().toString());
 
             for (Campo campo : projeto.getCampos()) {
-                CampoRepositoryService.getInstancia().atualizar(campo);
-                CampoRepositoryService.getInstancia().atualizarDiasProjetoCampo(projeto, campo);
+                new CampoRepositoryService().atualizar(campo);
+                new CampoRepositoryService().atualizarDiasProjetoCampo(projeto, campo);
             }
 
             stmt.executeUpdate();
@@ -111,11 +111,11 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
         UUID idProjeto = UUID.fromString(rs.getString("idProjeto"));
         List<Perfil> perfis = new PerfilRepositoryService().buscarPerfisPorProjeto(idProjeto);
         List<Usuario> usuarios = new UsuarioRepositoryService().buscarUsuariosPorProjeto(idProjeto);
-        List<Campo> campos = CampoRepositoryService.getInstancia().listarTodosPorIdProjeto(idProjeto);
+        List<Campo> campos = new CampoRepositoryService().listarTodosPorIdProjeto(idProjeto);
         List<Campo> camposNovos = new ArrayList<>();
 
         for (Campo campo : campos) {
-            Integer dias = CampoRepositoryService.getInstancia().buscarDiasPorProjetoCampo(idProjeto, campo.getId());
+            Integer dias = new CampoRepositoryService().buscarDiasPorProjetoCampo(idProjeto, campo.getId());
             campo.setDias(dias.doubleValue());;
             camposNovos.add(campo);
         }

@@ -46,7 +46,7 @@ public class UsuarioRepositoryH2 implements IUsuarioRepository {
 
     @Override
     public void atualizar(Usuario usuario) {
-        String sql = "UPDATE usuario SET nomeUsuario = ?, email = ?, senha = ?, updated_atUsuario = NOW(), log = ? WHERE idUsuario = ?";
+        String sql = "UPDATE usuario SET nomeUsuario = ?, email = ?, senha = ?, updated_atUsuario = CURRENT_TIMESTAMP, log = ? WHERE idUsuario = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, usuario.getNome());
             statement.setString(2, usuario.getEmail());
@@ -85,7 +85,7 @@ public class UsuarioRepositoryH2 implements IUsuarioRepository {
         }
         return Optional.empty();
     }
-    
+
     @Override
     public Optional<Usuario> buscarPorEmail(String email) {
         String sql = "SELECT * FROM usuario WHERE email = ?";
@@ -100,7 +100,6 @@ public class UsuarioRepositoryH2 implements IUsuarioRepository {
         }
         return Optional.empty();
     }
-
 
     @Override
     public List<Usuario> buscarTodos() {
@@ -119,55 +118,57 @@ public class UsuarioRepositoryH2 implements IUsuarioRepository {
 
     private Usuario mapToUsuario(ResultSet resultSet) throws SQLException {
         UUID idUsuario = UUID.fromString(resultSet.getString("idUsuario"));
-        List<Perfil> perfis = UsuarioLogadoSingleton.getInstancia().getUsuario().getPerfis();
+
+        List<Perfil> perfis = new ArrayList<>();
+        perfis.addAll(new PerfilRepositoryService().buscarTodosPerfisPorIdUsuario(idUsuario));
 
         List<Perfil> perfisNovos = new ArrayList<>();
 
         for (Perfil perfil : perfis) {
 
             // buscar nome do campo pelo id do Perfil
-            List<Campo> camposTamanhoApp = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "tamanho app");
+            List<Campo> camposTamanhoApp = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "tamanho app");
 
             for (Campo campo : camposTamanhoApp) {
-                Double dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+                Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
                 perfil.adicionarTamanhoApp(campo.getNome(), dias.intValue());
 
             }
 
-            List<Campo> camposNivelUI = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "nivel ui");
-            
+            List<Campo> camposNivelUI = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "nivel ui");
+
             for (Campo campo : camposNivelUI) {
-                Double dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+                Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
                 perfil.adicionarNivelUI(campo.getNome(), dias.intValue());
             }
-            
-            List<Campo> camposFuncionalidades = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "funcionalidades");
-            
+
+            List<Campo> camposFuncionalidades = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "funcionalidades");
+
             for (Campo campo : camposFuncionalidades) {
-                Double dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+                Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
                 perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
             }
-            
-            List<Campo> taxasDiarias = CampoRepositoryService.getInstancia().buscarPorIdPerfilTipo(perfil.getId(), "taxa diaria");
-            
+
+            List<Campo> taxasDiarias = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "taxa diaria");
+
             for (Campo campo : taxasDiarias) {
-                Double dias = CampoRepositoryService.getInstancia().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+                Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
                 perfil.adicionarTaxaDiaria(campo.getNome(), dias.intValue());
             }
-            
+
             perfisNovos.add(perfil);
         }
 
         List<Projeto> projetos = new ArrayList<>();
-        List<String> idProjetos = ProjetoRepositoryService.getInstancia().buscarProjetosPorUsuario(idUsuario);
+        List<String> idProjetos = new ProjetoRepositoryService().buscarProjetosPorUsuario(idUsuario);
 
         for (String id : idProjetos) {
 
-            Projeto projeto = ProjetoRepositoryService.getInstancia().buscarPorId(UUID.fromString(id)).get();
+            Projeto projeto = new ProjetoRepositoryService().buscarPorId(UUID.fromString(id)).get();
 
-            Campo campo = CampoRepositoryService.getInstancia().buscarPorIdProjeto(projeto.getId());
+            Campo campo = new CampoRepositoryService().buscarPorIdProjeto(projeto.getId());
 
-            Integer dias = CampoRepositoryService.getInstancia().buscarDiasPorProjeto(projeto.getId());
+            Integer dias = new CampoRepositoryService().buscarDiasPorProjeto(projeto.getId());
 
             campo.setDias(dias.doubleValue());;
 
@@ -184,19 +185,18 @@ public class UsuarioRepositoryH2 implements IUsuarioRepository {
                 resultSet.getTimestamp("created_atUsuario").toLocalDateTime(),
                 resultSet.getString("log"),
                 projetos,
-                perfisNovos
+                perfis
         );
     }
 
     @Override
     public List<Usuario> buscarUsuariosPorProjeto(UUID idProjeto) {
         List<Usuario> usuarios = new ArrayList<>();
-        List<String> usuarioIds = ProjetoRepositoryService.getInstancia().buscarProjetosPorUsuario(idProjeto);
+        List<String> usuarioIds = new ProjetoRepositoryService().buscarProjetosPorUsuario(idProjeto);
 
         for (String userId : usuarioIds) {
-            UsuarioRepositoryService.getInstancia().buscarPorId(UUID.fromString(userId)).ifPresent(usuarios::add);
+            new UsuarioRepositoryService().buscarPorId(UUID.fromString(userId)).ifPresent(usuarios::add);
         }
         return usuarios;
     }
-
 }

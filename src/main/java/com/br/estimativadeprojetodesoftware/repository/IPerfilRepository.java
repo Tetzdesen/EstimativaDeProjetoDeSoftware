@@ -18,8 +18,10 @@ public interface IPerfilRepository {
     void removerPorId(UUID id);
 
     Optional<Perfil> buscarPorId(UUID id);
-    
+
     List<Perfil> buscarPerfisPorProjeto(UUID idProjeto);
-    
+
     List<Perfil> buscarTodos();
+
+    public List<Perfil> buscarTodosPerfisPorIdUsuario(UUID id);
 }

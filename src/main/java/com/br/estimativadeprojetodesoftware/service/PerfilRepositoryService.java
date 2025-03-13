@@ -58,6 +58,11 @@ public class PerfilRepositoryService implements Subject {
     public List<Perfil> buscarTodos(){
       return perfilRepository.buscarTodos();
     }
+    
+    public List<Perfil> buscarTodosPerfisPorIdUsuario(UUID id
+    ) {
+        return perfilRepository.buscarTodosPerfisPorIdUsuario(id);
+    }
 
     @Override
     public void addObserver(Observer observer) {
