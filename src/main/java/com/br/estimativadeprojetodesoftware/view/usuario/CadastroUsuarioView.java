@@ -6,7 +6,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-public class CadastroView extends javax.swing.JFrame {
+public class CadastroUsuarioView extends javax.swing.JFrame {
 
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnCancelar;
@@ -22,7 +22,7 @@ public class CadastroView extends javax.swing.JFrame {
     private javax.swing.JPasswordField txtSenha;
     private javax.swing.JPasswordField txtConfirmarSenha;
 
-    public CadastroView() {
+    public CadastroUsuarioView() {
         initComponents();
     }
 

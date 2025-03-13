@@ -110,5 +110,4 @@ public class ManterPerfilPresenter {
     public ManterPerfilPresenterState getEstado() {
         return estado;
     }
-
 }

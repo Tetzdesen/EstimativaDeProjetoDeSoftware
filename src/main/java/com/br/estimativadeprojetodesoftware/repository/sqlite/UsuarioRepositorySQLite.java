@@ -35,7 +35,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
             statement.setString(3, usuario.getEmail());
             statement.setString(4, usuario.getSenha());
             statement.setTimestamp(5, Timestamp.valueOf(usuario.getCreated_at()));
-            statement.setString(6, usuario.getLog());
+            statement.setString(6, "JSON");
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

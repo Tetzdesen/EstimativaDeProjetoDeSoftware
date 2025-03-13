@@ -43,7 +43,7 @@ public class PrincipalUsuarioPresenter {
         view.getBtnCadastrar().addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {
                 new SetLookAndFeelCommand().execute();
-                new CadastroPresenter();
+                new CadastroUsuarioPresenter();
             });
         });
     }
