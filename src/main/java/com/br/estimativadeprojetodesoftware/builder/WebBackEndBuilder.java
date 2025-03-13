@@ -1,8 +1,10 @@
 package com.br.estimativadeprojetodesoftware.builder;
 
+import com.br.estimativadeprojetodesoftware.model.Usuario;
+
 public class WebBackEndBuilder extends PerfilBuilder {
-    public WebBackEndBuilder(String nomePerfil) {
-        super(nomePerfil);
+    public WebBackEndBuilder(String nomePerfil, Usuario usuario) {
+        super(nomePerfil, usuario);
     }
 
     @Override

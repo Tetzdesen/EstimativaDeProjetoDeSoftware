@@ -27,7 +27,7 @@ public class PerfilProjetoPresenter implements Observer {
 
     public PerfilProjetoPresenter(PerfilProjetoView view) {
         this.view = view;
-        this.repository = PerfilRepositoryService.getInstancia();
+        this.repository = new PerfilRepositoryService();
 
         this.repository.addObserver(this);
         update();
@@ -75,6 +75,8 @@ public class PerfilProjetoPresenter implements Observer {
         DefaultTableModel modelo = (DefaultTableModel) view.getModeloTabela();
         modelo.setRowCount(0);
 
+        //a construção do perfil está errada. está faltando passar o usuário
+        //List<Perfil> perfis = PerfilRepositoryService.getInstancia()
         List<Perfil> perfis = UsuarioLogadoSingleton.getInstancia().getUsuario().getPerfis();
         for(Perfil perfil : perfis) {
             carregarDetalhes(perfil);

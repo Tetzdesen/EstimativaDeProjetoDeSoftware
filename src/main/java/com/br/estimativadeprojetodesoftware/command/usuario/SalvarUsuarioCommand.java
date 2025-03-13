@@ -44,10 +44,6 @@ public class SalvarUsuarioCommand implements ProjetoCommand {
 
         UsuarioLogadoSingleton.getInstancia().setUsuario(usuarioNovo);
         usuarioPresenter.setUsuario(usuarioNovo);
-
-        PerfilRepositoryService.getInstancia().salvar(Diretor.build(new WebBackEndBuilder("Web/Back end")));
-        PerfilRepositoryService.getInstancia().salvar(Diretor.build(new IosBuilder("iOS")));
-        PerfilRepositoryService.getInstancia().salvar(Diretor.build(new AndroidBuilder("Android")));
         
         usuarioPresenter.getRepository().atualizar(usuarioNovo);
         new MostrarMensagemProjetoCommand("Usuário salvo com sucesso").execute();

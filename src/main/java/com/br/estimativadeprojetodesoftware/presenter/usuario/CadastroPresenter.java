@@ -1,8 +1,13 @@
 package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
+import com.br.estimativadeprojetodesoftware.builder.AndroidBuilder;
+import com.br.estimativadeprojetodesoftware.builder.Diretor;
+import com.br.estimativadeprojetodesoftware.builder.IosBuilder;
+import com.br.estimativadeprojetodesoftware.builder.WebBackEndBuilder;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.service.IconService;
+import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
 import com.br.estimativadeprojetodesoftware.view.usuario.CadastroView;
@@ -21,7 +26,7 @@ public class CadastroPresenter {
 
     public CadastroPresenter() {
         this.view = new CadastroView();
-        this.repositoryUsuario = UsuarioRepositoryService.getInstancia();
+        this.repositoryUsuario = new UsuarioRepositoryService();
         this.validadorDeSenha = new ValidadorSenhaService();
         configuraView();
     }
@@ -100,6 +105,9 @@ public class CadastroPresenter {
                     if (validadorDeSenha.validarSenha(senha)) {
                         usuario = new Usuario(nome, email, senha);
                         repositoryUsuario.salvar(usuario);
+                        new PerfilRepositoryService().salvar(Diretor.build(new WebBackEndBuilder("Web/Back end", usuario)));
+                        new PerfilRepositoryService().salvar(Diretor.build(new IosBuilder("iOS", usuario)));
+                        new PerfilRepositoryService().salvar(Diretor.build(new AndroidBuilder("Android", usuario)));
                         exibirMensagem("Cadastro realizado com sucesso!");
                         view.dispose();
                     }

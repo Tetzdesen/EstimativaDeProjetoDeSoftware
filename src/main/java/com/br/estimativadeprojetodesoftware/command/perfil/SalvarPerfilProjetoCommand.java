@@ -62,9 +62,7 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
             }
             
             //presenter.getRepository().setPerfil(perfil);
-            PerfilRepositoryService.getInstancia().salvar(perfil);
-
-            JOptionPane.showMessageDialog(presenter.getView(), "Perfil incluído com sucesso!");
+            new PerfilRepositoryService().salvar(perfil);
 
             presenter.getView().dispose();
 

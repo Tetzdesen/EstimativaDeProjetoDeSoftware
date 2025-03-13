@@ -7,6 +7,7 @@ import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -157,7 +158,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             stmt.setString(1, projetoId.toString());
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                perfis.add(PerfilRepositoryService.getInstancia().buscarPorId(UUID.fromString(rs.getString("perfil_idPerfil"))).get());
+                perfis.add(new PerfilRepositoryService().buscarPorId(UUID.fromString(rs.getString("perfil_idPerfil"))).get());
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao buscar perfis do projeto", e);
@@ -189,7 +190,8 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                 resultSet.getString("nomePerfil"),
                 resultSet.getBoolean("perfilBackend"),
                 resultSet.getTimestamp("created_atPerfil").toLocalDateTime(),
-                UsuarioRepositoryService.getInstancia().buscarPorId(UUID.fromString(resultSet.getString("usuario_idUsuario"))).get()
+                //UsuarioLogadoSingleton.getInstancia().getUsuario()
+                new UsuarioRepositoryService().buscarPorId(UUID.fromString(resultSet.getString("usuario_idUsuario"))).get() 
         );
 
         // buscar nome do campo pelo id do Perfil

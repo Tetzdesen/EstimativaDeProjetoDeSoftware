@@ -20,7 +20,7 @@ public class ManterPerfilPresenter {
 
     public ManterPerfilPresenter(ManterPerfilView view, Perfil perfil) {
         this.view = view;
-        this.repository = PerfilRepositoryService.getInstancia();
+        this.repository = new PerfilRepositoryService();
         this.perfil = perfil;
         setStatusBotaoRemover(false);
         configuraActionsListerns();

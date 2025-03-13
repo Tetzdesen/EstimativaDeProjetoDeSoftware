@@ -1,11 +1,14 @@
 package com.br.estimativadeprojetodesoftware.state.perfil;
 
+import javax.swing.JOptionPane;
+
 import com.br.estimativadeprojetodesoftware.builder.DefaultBuilder;
 import com.br.estimativadeprojetodesoftware.builder.Diretor;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.SalvarPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 public class InclusaoPerfilState extends ManterPerfilPresenterState {
 
@@ -17,7 +20,7 @@ public class InclusaoPerfilState extends ManterPerfilPresenterState {
 
     private void configuraView() {
         presenter.getView().setCellEditable(true);
-        Perfil perfil = Diretor.build(new DefaultBuilder("Default"));
+        Perfil perfil = Diretor.build(new DefaultBuilder("Default", UsuarioLogadoSingleton.getInstancia().getUsuario()));
         presenter.carregarCampos(perfil);
 
         presenter.getView().getBtnAdicionarCampo().setVisible(true);
@@ -29,6 +32,7 @@ public class InclusaoPerfilState extends ManterPerfilPresenterState {
         presenter.getView().getBtnSalvar().addActionListener(e -> {
             try {
                 salvar();
+                JOptionPane.showMessageDialog(presenter.getView(), "Perfil incluído com sucesso!");
             } catch (Exception ex) {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }

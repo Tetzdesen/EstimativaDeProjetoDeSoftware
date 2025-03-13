@@ -1,8 +1,10 @@
 package com.br.estimativadeprojetodesoftware.builder;
 
+import com.br.estimativadeprojetodesoftware.model.Usuario;
+
 public class IosBuilder extends PerfilBuilder {
-    public IosBuilder(String nomePerfil) {
-        super(nomePerfil);
+    public IosBuilder(String nomePerfil, Usuario usuario) {
+        super(nomePerfil, usuario);
     }
 
     @Override

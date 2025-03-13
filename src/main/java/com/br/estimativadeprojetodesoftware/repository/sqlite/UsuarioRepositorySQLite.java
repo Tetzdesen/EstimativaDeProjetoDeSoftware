@@ -116,7 +116,9 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
 
     private Usuario mapToUsuario(ResultSet resultSet) throws SQLException {
         UUID idUsuario = UUID.fromString(resultSet.getString("idUsuario"));
-        List<Perfil> perfis = UsuarioLogadoSingleton.getInstancia().getUsuario().getPerfis();
+        
+        List<Perfil> perfis = new ArrayList<>();
+        perfis.addAll(new PerfilRepositoryService().buscarTodos());
 
         List<Perfil> perfisNovos = new ArrayList<>();
 
@@ -154,6 +156,8 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
             
             perfisNovos.add(perfil);
         }
+             
+        /*
 
         List<Projeto> projetos = new ArrayList<>();
         List<String> idProjetos = ProjetoRepositoryService.getInstancia().buscarProjetosPorUsuario(idUsuario);
@@ -172,6 +176,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
 
             projetos.add(projeto);
         }
+             */
 
         return new Usuario(
                 idUsuario,
@@ -179,9 +184,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
                 resultSet.getString("email"),
                 resultSet.getString("senha"),
                 resultSet.getTimestamp("created_atUsuario").toLocalDateTime(),
-                resultSet.getString("log"),
-                projetos,
-                perfisNovos
+                resultSet.getString("log")
         );
     }
 
@@ -191,7 +194,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
         List<String> usuarioIds = ProjetoRepositoryService.getInstancia().buscarProjetosPorUsuario(idProjeto);
 
         for (String userId : usuarioIds) {
-            UsuarioRepositoryService.getInstancia().buscarPorId(UUID.fromString(userId)).ifPresent(usuarios::add);
+            new UsuarioRepositoryService().buscarPorId(UUID.fromString(userId)).ifPresent(usuarios::add);
         }
         return usuarios;
     }
