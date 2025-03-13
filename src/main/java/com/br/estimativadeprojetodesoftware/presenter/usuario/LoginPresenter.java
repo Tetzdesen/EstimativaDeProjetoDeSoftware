@@ -1,10 +1,10 @@
 package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
+import com.br.authifyjava.ResultadoAutenticacao;
 import com.br.estimativadeprojetodesoftware.command.AbrirPrincipalPresenterCommand;
 import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
-import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.AutenticacaoService;
 import com.br.estimativadeprojetodesoftware.service.IconService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
@@ -22,11 +22,13 @@ public class LoginPresenter {
     private LoginView view;
     private UsuarioRepositoryService repositoryUsuario;
     private UsuarioLogadoSingleton usuarioLogado;
+    private AutenticacaoService autenticacaoService;
 
     public LoginPresenter() {
         this.view = new LoginView();
         this.repositoryUsuario = new UsuarioRepositoryService();
-        usuarioLogado = UsuarioLogadoSingleton.getInstancia();
+        this.usuarioLogado = UsuarioLogadoSingleton.getInstancia();
+        this.autenticacaoService = new AutenticacaoService();
         configuraView();
     }
 
@@ -71,20 +73,15 @@ public class LoginPresenter {
             throw new IllegalArgumentException("Os campos de nome e senha não podem estar vazios");
         }
 
-        Usuario usuario = repositoryUsuario.buscarPorEmail(email).orElse(null);
-        
-        if (usuario == null) {
-            throw new IllegalArgumentException("Usuário não encontrado!");
-        }
+        ResultadoAutenticacao resultadoAutenticacao = autenticacaoService.autenticar(email, senha);
 
-        if (usuario.getSenha().equals(senha)) {
+        if (resultadoAutenticacao.isAutenticado()) {
+            Usuario usuario = UsuarioRepositoryService.getInstancia().buscarPorEmail(email).get();
             usuarioLogado.setUsuario(usuario);
-            if (UsuarioLogadoSingleton.getInstancia().getUsuario() != null) {
-                view.dispose();
-                new AbrirPrincipalPresenterCommand().execute();
-            }
+            view.dispose();
+            new AbrirPrincipalPresenterCommand().execute();
         } else {
-            throw new IllegalArgumentException("Senha incorreta");
+            throw new IllegalArgumentException(resultadoAutenticacao.getMensagem());
         }
     }
 
