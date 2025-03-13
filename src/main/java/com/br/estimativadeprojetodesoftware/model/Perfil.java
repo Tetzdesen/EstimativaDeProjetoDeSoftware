@@ -31,6 +31,18 @@ public class Perfil {
         adicionarCamposDefault();
     }
 
+    public Perfil(String nome, Usuario usuario) {
+        this.id = UUID.randomUUID();
+        this.nome = nome;
+        this.tamanhosApp = new LinkedHashMap<>();
+        this.niveisUI = new LinkedHashMap<>();
+        this.funcionalidades = new LinkedHashMap<>();
+        this.taxasDiarias = new LinkedHashMap<>();
+        this.created_at = LocalDateTime.now();
+        this.usuario = usuario;
+        adicionarCamposDefault();
+    }
+
     public Perfil(UUID id, String nome,
             boolean isPerfilBackEnd,
             LocalDateTime created_at, Usuario usuario

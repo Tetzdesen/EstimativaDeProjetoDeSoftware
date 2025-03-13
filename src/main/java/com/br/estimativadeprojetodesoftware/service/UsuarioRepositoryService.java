@@ -17,23 +17,14 @@ import java.util.UUID;
  */
 public class UsuarioRepositoryService implements Subject {
 
-    private static UsuarioRepositoryService INSTANCIA = null;
     private final FabricaRepository fabricaDAO;
     private final IUsuarioRepository usuarioRepository;
     private final List<Observer> observers;
 
-    private UsuarioRepositoryService() {
+    public UsuarioRepositoryService() {
         this.fabricaDAO = SeletorFabricaRepository.obterInstancia();
         this.usuarioRepository = fabricaDAO.criarUsuarioRepository();
         this.observers = new ArrayList<>();
-    }
-
-    public static UsuarioRepositoryService getInstancia() {
-        if (INSTANCIA == null) {
-            INSTANCIA = new UsuarioRepositoryService();
-        }
-
-        return INSTANCIA;
     }
 
     public void salvar(Usuario usuario) {

@@ -22,23 +22,14 @@ import java.util.UUID;
  */
 public class PerfilRepositoryService implements Subject {
 
-    private static PerfilRepositoryService INSTANCIA = null;
     private final FabricaRepository fabricaDAO;
     private final IPerfilRepository perfilRepository;
     private final List<Observer> observers;
 
-    private PerfilRepositoryService() {
+    public PerfilRepositoryService() {
         fabricaDAO = SeletorFabricaRepository.obterInstancia();
         perfilRepository = fabricaDAO.criarPerfilRepository();
         this.observers = new ArrayList<>();
-    }
-
-    public static PerfilRepositoryService getInstancia() {
-        if (INSTANCIA == null) {
-            INSTANCIA = new PerfilRepositoryService();
-        }
-
-        return INSTANCIA;
     }
 
     public void salvar(Perfil perfil){

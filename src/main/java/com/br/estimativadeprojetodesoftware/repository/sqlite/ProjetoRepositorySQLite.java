@@ -109,8 +109,8 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
 
     private Projeto mapProjetoFromResultSet(ResultSet rs) throws SQLException {
         UUID idProjeto = UUID.fromString(rs.getString("idProjeto"));
-        List<Perfil> perfis = PerfilRepositoryService.getInstancia().buscarPerfisPorProjeto(idProjeto);
-        List<Usuario> usuarios = UsuarioRepositoryService.getInstancia().buscarUsuariosPorProjeto(idProjeto);
+        List<Perfil> perfis = new PerfilRepositoryService().buscarPerfisPorProjeto(idProjeto);
+        List<Usuario> usuarios = new UsuarioRepositoryService().buscarUsuariosPorProjeto(idProjeto);
         List<Campo> campos = CampoRepositoryService.getInstancia().listarTodosPorIdProjeto(idProjeto);
         List<Campo> camposNovos = new ArrayList<>();
 

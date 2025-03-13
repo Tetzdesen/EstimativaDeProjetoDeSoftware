@@ -39,7 +39,7 @@ public class ManterUsuarioPresenter implements Observer {
     public ManterUsuarioPresenter(ManterUsuarioView view) {
         this.view = view;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
-        this.usuarioRepository = UsuarioRepositoryService.getInstancia();
+        this.usuarioRepository = new UsuarioRepositoryService();
         this.usuarioRepository.addObserver(this);
         this.comandos = inicializarComandos();
         barraService = new BarraService(comandos);

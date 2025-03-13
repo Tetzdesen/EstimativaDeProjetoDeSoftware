@@ -26,7 +26,7 @@ public class LoginPresenter {
 
     public LoginPresenter() {
         this.view = new LoginView();
-        this.repositoryUsuario = UsuarioRepositoryService.getInstancia();
+        this.repositoryUsuario = new UsuarioRepositoryService();
         this.usuarioLogado = UsuarioLogadoSingleton.getInstancia();
         this.autenticacaoService = new AutenticacaoService();
         configuraView();
