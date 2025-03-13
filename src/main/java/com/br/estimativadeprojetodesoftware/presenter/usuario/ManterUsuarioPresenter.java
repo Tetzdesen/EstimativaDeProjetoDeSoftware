@@ -9,6 +9,7 @@ import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
+import com.br.estimativadeprojetodesoftware.service.DataHoraService;
 import com.br.estimativadeprojetodesoftware.service.IconService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
@@ -148,7 +149,7 @@ public class ManterUsuarioPresenter implements Observer {
 
     public void atualizarCampos() {
         view.getTxtNome().setText(usuario.getNome());
-        view.getTxtDataCriacao().setText(formatarData(usuario.getCreated_at()));
+        view.getTxtDataCriacao().setText(DataHoraService.formatarData(usuario.getCreated_at().toLocalDate()));
         view.getTxtEmail().setText(usuario.getEmail());
         view.getTxtSenhaAtual().setText(usuario.getSenha());
         view.getTxtTotalProjetos().setText(String.valueOf(getQtdProjetos()));

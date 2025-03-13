@@ -97,8 +97,6 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
             presenter.setEstado(new VisualizacaoPerfilState(presenter));
         }
 
-        presenter.getRepository().notifyObservers();
-        
     }
 }
 

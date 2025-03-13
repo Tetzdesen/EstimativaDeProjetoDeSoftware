@@ -10,7 +10,7 @@ import com.br.estimativadeprojetodesoftware.service.IconService;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
-import com.br.estimativadeprojetodesoftware.view.usuario.CadastroView;
+import com.br.estimativadeprojetodesoftware.view.usuario.CadastroUsuarioView;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -18,14 +18,14 @@ import java.awt.event.MouseEvent;
  *
  * @author tetzner
  */
-public class CadastroPresenter {
+public class CadastroUsuarioPresenter {
 
-    private CadastroView view;
+    private CadastroUsuarioView view;
     private UsuarioRepositoryService repositoryUsuario;
     private ValidadorSenhaService validadorDeSenha;
 
-    public CadastroPresenter() {
-        this.view = new CadastroView();
+    public CadastroUsuarioPresenter() {
+        this.view = new CadastroUsuarioView();
         this.repositoryUsuario = new UsuarioRepositoryService();
         this.validadorDeSenha = new ValidadorSenhaService();
         configuraView();
@@ -105,9 +105,7 @@ public class CadastroPresenter {
                     if (validadorDeSenha.validarSenha(senha)) {
                         usuario = new Usuario(nome, email, senha);
                         repositoryUsuario.salvar(usuario);
-                        new PerfilRepositoryService().salvar(Diretor.build(new WebBackEndBuilder("Web/Back end", usuario)));
-                        new PerfilRepositoryService().salvar(Diretor.build(new IosBuilder("iOS", usuario)));
-                        new PerfilRepositoryService().salvar(Diretor.build(new AndroidBuilder("Android", usuario)));
+                   
                         exibirMensagem("Cadastro realizado com sucesso!");
                         view.dispose();
                     }
@@ -123,7 +121,7 @@ public class CadastroPresenter {
         }
     }
 
-    public CadastroView getView() {
+    public CadastroUsuarioView getView() {
         return view;
     }
 

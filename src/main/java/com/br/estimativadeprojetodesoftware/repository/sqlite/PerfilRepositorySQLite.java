@@ -11,8 +11,10 @@ import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public class PerfilRepositorySQLite implements IPerfilRepository {
@@ -33,6 +35,8 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             statement.setTimestamp(4, Timestamp.valueOf(perfil.getCreated_at()));
             statement.setString(5, perfil.getUsuario().getId().toString());
 
+            statement.executeUpdate();
+
             List<Campo> campos;
 
             campos = new CampoRepositoryService().listarTodosPorTipo("tamanho");
@@ -50,14 +54,14 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             }
 
             campos = new CampoRepositoryService().listarTodosPorTipo("funcionalidade");
-
+  
+            // lembrar de colocar quando é uma funcionalidade nova
+            
             for (Campo campo : campos) {
-                campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
-                if (!perfil.getFuncionalidades().containsKey(campo.getNome()) && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
-                    new CampoRepositoryService().salvar(campo);
+                if (perfil.getFuncionalidades().containsKey(campo.getNome()) && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
+                    campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
                     new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
                 }
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
             }
 
             campos = new CampoRepositoryService().listarTodosPorTipo("taxa diária");
@@ -66,7 +70,6 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                 new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
             }
 
-            statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -182,23 +185,34 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
     }
 
     @Override
-    public List<Perfil> buscarTodosPerfisPorIdUsuario(UUID id
-    ) {
+    public List<Perfil> buscarTodosPerfisPorIdUsuario(UUID id) {
+        Set<UUID> perfisIds = new HashSet<>();
         List<Perfil> perfis = new ArrayList<>();
+
         String sql = "SELECT * FROM perfil WHERE usuario_idUsuario = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, id.toString());
             ResultSet resultSet = statement.executeQuery();
+
             while (resultSet.next()) {
-                perfis.add(mapToPerfil(resultSet));
+                UUID idPerfil = UUID.fromString(resultSet.getString("idPerfil"));
+
+                // Evita perfis duplicados
+                if (!perfisIds.contains(idPerfil)) {
+                    Perfil perfil = mapToPerfil(resultSet);
+                    perfis.add(perfil);
+                    perfisIds.add(idPerfil);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return perfis;
     }
 
     private Perfil mapToPerfil(ResultSet resultSet) throws SQLException {
-
         UUID idPerfil = UUID.fromString(resultSet.getString("idPerfil"));
 
         Perfil perfil = new Perfil(
@@ -206,41 +220,35 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                 resultSet.getString("nomePerfil"),
                 resultSet.getBoolean("perfilBackend"),
                 resultSet.getTimestamp("created_atPerfil").toLocalDateTime(),
-                //UsuarioLogadoSingleton.getInstancia().getUsuario()
-                new UsuarioRepositoryService().buscarPorId(UUID.fromString(resultSet.getString("usuario_idUsuario"))).get()
+                UsuarioLogadoSingleton.getInstancia().getUsuario()
         );
 
-        // buscar nome do campo pelo id do Perfil
-        List<Campo> camposTamanhoApp = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "tamanho app");
+        CampoRepositoryService campoService = new CampoRepositoryService();
 
-        for (Campo campo : camposTamanhoApp) {
-            Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-            perfil.adicionarTamanhoApp(campo.getNome(), dias.intValue());
-
-        }
-
-        List<Campo> camposNivelUI = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "nivel ui");
-
-        for (Campo campo : camposNivelUI) {
-            Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-            perfil.adicionarNivelUI(campo.getNome(), dias.intValue());
-        }
-
-        List<Campo> camposFuncionalidades = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "funcionalidades");
-
-        for (Campo campo : camposFuncionalidades) {
-            Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-            perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
-        }
-
-        List<Campo> taxasDiarias = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "taxa diaria");
-
-        for (Campo campo : taxasDiarias) {
-            Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-            perfil.adicionarTaxaDiaria(campo.getNome(), dias.intValue());
-        }
+        carregarCampos(perfil, "tamanho", campoService);
+        carregarCampos(perfil, "nivel", campoService);
+        carregarCampos(perfil, "funcionalidade", campoService);
+        carregarCampos(perfil, "taxa diária", campoService);
 
         return perfil;
     }
 
+    private void carregarCampos(Perfil perfil, String tipoCampo, CampoRepositoryService campoService) throws SQLException {
+        List<Campo> campos = campoService.buscarPorIdPerfilTipo(perfil.getId(), tipoCampo);
+
+        for (Campo campo : campos) {
+            Double dias = campoService.buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
+
+            switch (tipoCampo) {
+                case "tamanho app" ->
+                    perfil.adicionarTamanhoApp(campo.getNome(), dias.intValue());
+                case "nivel ui" ->
+                    perfil.adicionarNivelUI(campo.getNome(), dias.intValue());
+                case "funcionalidades" ->
+                    perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
+                case "taxa diaria" ->
+                    perfil.adicionarTaxaDiaria(campo.getNome(), dias.intValue());
+            }
+        }
+    }
 }

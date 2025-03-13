@@ -344,7 +344,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
             stmt.setString(2, tipo);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Campo campo = buscarPorId(UUID.fromString(rs.getString("campo_idCampo")));
+                Campo campo = buscarPorId(UUID.fromString(rs.getString("idCampo")));
                 if (campo != null) {
                     campos.add(campo);
                 }
