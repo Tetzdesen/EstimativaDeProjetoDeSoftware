@@ -65,5 +65,11 @@
             <version>c949bd44ba</version>
         </dependency>
         
+        <dependency>
+            <groupId>com.github.Tetzdesen</groupId>
+            <artifactId>AuthifyJava</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        
     </dependencies>
 </project>
