@@ -19,12 +19,20 @@ public class AutenticacaoService {
     public AutenticacaoService() {
         this.usuarioRepository = new UsuarioRepositoryService();
         this.metodoAutenticacao = new AutenticadorSenha();
-        carregarUsuariosNoAutenticador();
+        //carregarUsuariosNoAutenticador();
     }
     
-    public ResultadoAutenticacao autenticar(String email, String senha){
-        Credenciais credenciais = new Credenciais(email, senha);
-        return metodoAutenticacao.autenticar(credenciais);
+    public boolean autenticar(String email, String senha){
+        Usuario usuario = usuarioRepository.buscarPorEmail(email).get();
+        if (usuario == null) {
+            return false;
+        }
+        if (usuario.getSenha().equals(senha)) {
+            return true;
+        }
+        return false;
+        //Credenciais credenciais = new Credenciais(email, senha);
+        //return metodoAutenticacao.autenticar(credenciais);
     }
     
     private void carregarUsuariosNoAutenticador(){

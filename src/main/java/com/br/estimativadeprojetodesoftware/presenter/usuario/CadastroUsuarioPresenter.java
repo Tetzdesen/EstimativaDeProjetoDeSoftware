@@ -105,7 +105,12 @@ public class CadastroUsuarioPresenter {
                     if (validadorDeSenha.validarSenha(senha)) {
                         usuario = new Usuario(nome, email, senha);
                         repositoryUsuario.salvar(usuario);
-                   
+
+                        PerfilRepositoryService repositoryPerfil = new PerfilRepositoryService();
+                        repositoryPerfil.salvar(Diretor.build(new AndroidBuilder("Android", usuario)));
+                        repositoryPerfil.salvar(Diretor.build(new IosBuilder("iOS", usuario)));
+                        repositoryPerfil.salvar(Diretor.build(new WebBackEndBuilder("Web Back-End", usuario)));
+
                         exibirMensagem("Cadastro realizado com sucesso!");
                         view.dispose();
                     }
@@ -126,7 +131,8 @@ public class CadastroUsuarioPresenter {
     }
 
     private boolean camposInvalidos(String email, String nome, String senha, String senhaConfirmada) {
-        return email == null || email.trim().isEmpty() || senha == null || senha.trim().isEmpty() || nome == null || nome.trim().isEmpty() || senhaConfirmada == null || senhaConfirmada.isEmpty();
+        return email == null || email.trim().isEmpty() || senha == null || senha.trim().isEmpty() || nome == null
+                || nome.trim().isEmpty() || senhaConfirmada == null || senhaConfirmada.isEmpty();
     }
 
     public void exibirMensagem(String mensagem) {

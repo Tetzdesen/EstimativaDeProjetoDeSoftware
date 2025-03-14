@@ -73,15 +73,15 @@ public class LoginPresenter {
             throw new IllegalArgumentException("Os campos de nome e senha não podem estar vazios");
         }
 
-        ResultadoAutenticacao resultadoAutenticacao = autenticacaoService.autenticar(email, senha);
+        //ResultadoAutenticacao resultadoAutenticacao = autenticacaoService.autenticar(email, senha);
 
-        if (resultadoAutenticacao.isAutenticado()) {
+        if (autenticacaoService.autenticar(email, senha)) {
             Usuario usuario = repositoryUsuario.buscarPorEmail(email).get();
             usuarioLogado.setUsuario(usuario);
             view.dispose();
             new AbrirPrincipalPresenterCommand().execute();
         } else {
-            throw new IllegalArgumentException(resultadoAutenticacao.getMensagem());
+            throw new IllegalArgumentException("não foi logado");
         }
     }
 

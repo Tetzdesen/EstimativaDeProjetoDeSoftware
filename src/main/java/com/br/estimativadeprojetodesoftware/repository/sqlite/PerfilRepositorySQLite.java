@@ -225,17 +225,17 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
 
         CampoRepositoryService campoService = new CampoRepositoryService();
 
-        carregarCampos(perfil, "tamanho", campoService);
-        carregarCampos(perfil, "nivel", campoService);
-        carregarCampos(perfil, "funcionalidade", campoService);
-        carregarCampos(perfil, "taxa diária", campoService);
+        carregarCampos(perfil, "tamanho app", campoService);
+        carregarCampos(perfil, "nivel ui", campoService);
+        carregarCampos(perfil, "funcionalidades", campoService);
+        carregarCampos(perfil, "taxas diária", campoService);
 
         return perfil;
     }
 
     private void carregarCampos(Perfil perfil, String tipoCampo, CampoRepositoryService campoService) throws SQLException {
         List<Campo> campos = campoService.buscarPorIdPerfilTipo(perfil.getId(), tipoCampo);
-
+        System.out.println(campos);
         for (Campo campo : campos) {
             Double dias = campoService.buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
 
@@ -246,7 +246,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                     perfil.adicionarNivelUI(campo.getNome(), dias.intValue());
                 case "funcionalidades" ->
                     perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
-                case "taxa diaria" ->
+                case "taxas diária" ->
                     perfil.adicionarTaxaDiaria(campo.getNome(), dias.intValue());
             }
         }
