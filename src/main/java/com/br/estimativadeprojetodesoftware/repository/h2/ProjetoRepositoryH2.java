@@ -168,4 +168,14 @@ public class ProjetoRepositoryH2 implements IProjetoRepository {
         return projetos;
     }
 
+    @Override
+    public List<String> buscarNomesDeProjetosPorUsuario(UUID idUsuario) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Optional<Projeto> buscarProjetoPorNome(String nomeProjeto) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }

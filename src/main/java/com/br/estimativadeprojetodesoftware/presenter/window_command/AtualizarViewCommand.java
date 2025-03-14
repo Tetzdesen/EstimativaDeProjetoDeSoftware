@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
-import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 
 /**
@@ -9,9 +9,9 @@ import com.br.estimativadeprojetodesoftware.service.BarraService;
  */
 public class AtualizarViewCommand implements WindowCommand {
 
-    private final PrincipalPresenter presenter;
+    private final PrincipalProjetoPresenter presenter;
 
-    public AtualizarViewCommand(PrincipalPresenter presenter) {
+    public AtualizarViewCommand(PrincipalProjetoPresenter presenter) {
         this.presenter = presenter;
     }
 

@@ -1,5 +1,6 @@
-package com.br.estimativadeprojetodesoftware.command;
+package com.br.estimativadeprojetodesoftware.command.projeto;
 
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;

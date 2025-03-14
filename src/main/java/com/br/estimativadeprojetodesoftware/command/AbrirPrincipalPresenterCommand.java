@@ -1,9 +1,10 @@
 package com.br.estimativadeprojetodesoftware.command;
 
-import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 
 /**
  *
@@ -11,17 +12,17 @@ import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
  */
 public class AbrirPrincipalPresenterCommand implements ProjetoCommand {
 
-    private final ProjetoRepositoryMock projetoRepository;
+    private final ProjetoRepositoryService projetoService;
     private final UsuarioRepositoryMock usuarioRepository;
 
     public AbrirPrincipalPresenterCommand() {
-        this.projetoRepository = new ProjetoRepositoryMock();
+        this.projetoService = new ProjetoRepositoryService();
         this.usuarioRepository = new UsuarioRepositoryMock();
     }
         
     @Override
     public void execute() {
-        PrincipalPresenter presenter = new PrincipalPresenter(projetoRepository, usuarioRepository);
+        PrincipalProjetoPresenter presenter = new PrincipalProjetoPresenter(projetoService, usuarioRepository);
         WindowManager.getInstance().initialize(presenter);
     }
 

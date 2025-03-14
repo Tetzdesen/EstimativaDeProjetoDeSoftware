@@ -1,19 +1,21 @@
-package com.br.estimativadeprojetodesoftware.command;
+package com.br.estimativadeprojetodesoftware.command.projeto;
 
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.DashBoardProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.view.projeto.DashBoardProjetoView;
 
 import javax.swing.*;
 
 public class AbrirDashboardProjetoCommand implements ProjetoCommand {
     private final JDesktopPane desktop;
-    private final ProjetoRepositoryMock repository;
+    private final ProjetoRepositoryService projetoService;
 
-    public AbrirDashboardProjetoCommand(JDesktopPane desktop, ProjetoRepositoryMock repository) {
+    public AbrirDashboardProjetoCommand(JDesktopPane desktop, ProjetoRepositoryService projetoService) {
         this.desktop = desktop;
-        this.repository = repository;
+        this.projetoService = projetoService;
     }
 
     @Override
@@ -25,7 +27,7 @@ public class AbrirDashboardProjetoCommand implements ProjetoCommand {
             windowManager.bringToFront(tituloJanela);
         } else {
             DashBoardProjetoView dashboardView = new DashBoardProjetoView();
-            new DashBoardProjetoPresenter(dashboardView, repository);
+            new DashBoardProjetoPresenter(dashboardView, projetoService);
             dashboardView.setTitle(tituloJanela);
             desktop.add(dashboardView);
             dashboardView.setVisible(true);

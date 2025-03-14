@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.command.usuario;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.CadastroProjetoPresenter;
@@ -16,10 +16,10 @@ import javax.swing.JDesktopPane;
  */
 public class ManterUsuarioCommand implements ProjetoCommand {
 
-    private final PrincipalPresenter principalPresenter;
+    private final PrincipalProjetoPresenter principalPresenter;
     private final JDesktopPane desktop;
 
-    public ManterUsuarioCommand(PrincipalPresenter principalPresenter, JDesktopPane desktop) {
+    public ManterUsuarioCommand(PrincipalProjetoPresenter principalPresenter, JDesktopPane desktop) {
         this.principalPresenter = principalPresenter;
         this.desktop = desktop;
     }

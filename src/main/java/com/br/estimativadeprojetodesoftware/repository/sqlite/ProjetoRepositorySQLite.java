@@ -9,6 +9,7 @@ import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
     @Override
     public void salvar(Projeto projeto) {
         String sql = "INSERT INTO projeto (idProjeto, nomeProjeto, tipoProjeto, created_atProjeto, status) VALUES (?, ?, ?, ?, ?)";
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, projeto.getId().toString());
             stmt.setString(2, projeto.getNome());
@@ -40,8 +42,33 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
 
             stmt.executeUpdate();
 
+            salvarCampos(projeto);
+            salvarUsuarioProjeto(projeto);
+
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao salvar projeto", e);
+        }
+    }
+
+    private void salvarCampos(Projeto projeto) {
+        CampoRepositoryService campoService = new CampoRepositoryService();
+
+        for (Campo campo : projeto.getCampos()) {
+            campoService.salvarProjetoCampo(projeto, campo);
+        }
+    }
+
+    private void salvarUsuarioProjeto(Projeto projeto) {
+        String sql = "INSERT INTO usuario_has_projeto (usuario_idUsuario, projeto_idProjeto, isCompartilhado) VALUES (?, ?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, projeto.getUsuarios().get(0).getId().toString());
+            stmt.setString(2, projeto.getId().toString());
+            stmt.setBoolean(3, projeto.isCompartilhado());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao salvar usuário-projeto", e);
         }
     }
 
@@ -94,6 +121,38 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
     }
 
     @Override
+    public Optional<Projeto> buscarProjetoPorNome(String nomeProjeto) {
+        String sql = "SELECT * FROM projeto WHERE nomeProjeto = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, nomeProjeto);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return Optional.of(mapProjetoFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar projeto", e);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public List<String> buscarNomesDeProjetosPorUsuario(UUID idUsuario) {
+        List<String> projetos = new ArrayList<>();
+        String query = "SELECT projeto_idProjeto FROM usuario_has_projeto WHERE usuario_idUsuario = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, idUsuario.toString());
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Projeto projeto = buscarPorId(UUID.fromString(resultSet.getString("projeto_idProjeto"))).get();
+                projetos.add(projeto.getNome());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return projetos;
+    }
+
+    @Override
     public List<Projeto> buscarTodos() {
         List<Projeto> projetos = new ArrayList<>();
         String sql = "SELECT * FROM projeto";
@@ -109,29 +168,25 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
 
     private Projeto mapProjetoFromResultSet(ResultSet rs) throws SQLException {
         UUID idProjeto = UUID.fromString(rs.getString("idProjeto"));
+
         List<Perfil> perfis = new PerfilRepositoryService().buscarPerfisPorProjeto(idProjeto);
         List<Usuario> usuarios = new UsuarioRepositoryService().buscarUsuariosPorProjeto(idProjeto);
         List<Campo> campos = new CampoRepositoryService().listarTodosPorIdProjeto(idProjeto);
-        List<Campo> camposNovos = new ArrayList<>();
 
-        for (Campo campo : campos) {
-            Integer dias = new CampoRepositoryService().buscarDiasPorProjetoCampo(idProjeto, campo.getId());
-            campo.setDias(dias.doubleValue());;
-            camposNovos.add(campo);
-        }
-
+        // Tratamento para evitar o erro:
+        UUID idUsuario = usuarios.isEmpty() ? null : usuarios.get(0).getId();
         return new Projeto(
                 idProjeto,
                 rs.getString("nomeProjeto"),
+                UsuarioLogadoSingleton.getInstancia().getUsuario().getNome(),
                 rs.getString("tipoProjeto"),
-                usuarios.get(0).getNome(),
                 rs.getTimestamp("created_atProjeto").toLocalDateTime(),
                 rs.getString("status"),
-                buscarIsCompartilhadoPorId(usuarios.get(0).getId(), idProjeto),
-                usuarios.get(0).getNome(),
+                buscarIsCompartilhadoPorId(idUsuario, idProjeto),
+                null,
                 perfis,
                 usuarios,
-                camposNovos
+                campos
         );
     }
 

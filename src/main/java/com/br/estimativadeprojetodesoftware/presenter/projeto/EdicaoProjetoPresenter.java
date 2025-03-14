@@ -1,11 +1,13 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.EdicaoProjetoView;
 import java.time.LocalDateTime;
@@ -25,18 +27,19 @@ import javax.swing.ListModel;
  */
 public class EdicaoProjetoPresenter {
 
+    private final ProjetoRepositoryService projetoService;
     private EdicaoProjetoView view;
-    private ProjetoRepositoryMock repositoryProjeto;
+    private String nomeProjeto;
     private Usuario usuario;
     private Map<String, Perfil> perfisSelecionados;
     private Projeto projetoAtual;
 
-    public EdicaoProjetoPresenter(EdicaoProjetoView view, ProjetoRepositoryMock repositoryProjeto, String nomeProjeto) {
+    public EdicaoProjetoPresenter(ProjetoRepositoryService projetoService, EdicaoProjetoView view, String nomeProjeto) {
+        this.projetoService = projetoService;
         this.view = view;
-        this.repositoryProjeto = repositoryProjeto;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
         this.perfisSelecionados = new HashMap<>();
-        this.projetoAtual = repositoryProjeto.getProjetoPorNome(nomeProjeto);
+        this.projetoAtual = new ProjetoRepositoryMock().getProjetoPorNome(nomeProjeto);
 
         configuraView();
     }
@@ -123,9 +126,9 @@ public class EdicaoProjetoPresenter {
                 .collect(Collectors.joining(", "));
 
         projetoAtualizado.setTipo(nomeProjeto);
-        
+
         List<Campo> campos = new ArrayList<>();
-        
+
         for (Perfil perfil : projetoAtualizado.getPerfis()) {
             // Criando campos para estimativa
             Map<String, Integer> tamanhosApp = perfil.getTamanhosApp();
@@ -155,14 +158,14 @@ public class EdicaoProjetoPresenter {
 
             //  Map<String, Integer> funcionalidades = combinarFuncionalidades(projeto.getPerfis());
         }
-        
-        // repositoryProjeto.atualizarProjeto(projetoAtualizado);
+
+     //   projetoRepository.atualizarProjeto(projetoAtualizado);
         exibirMensagem("Projeto atualizado com sucesso!");
     }
 
     private void carregarListaPerfis() {
 
-        List<Perfil> perfis = usuario.getPerfis();
+        List<Perfil> perfis = new PerfilRepositoryService().buscarTodosPerfisPorIdUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
 
         DefaultComboBoxModel<String> cmbPerfis = new DefaultComboBoxModel<>();
 

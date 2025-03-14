@@ -8,6 +8,7 @@ import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.repository.IUsuarioRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -53,6 +54,10 @@ public class UsuarioRepositoryService implements Subject {
 
     public List<Usuario> buscarTodos() {
         return usuarioRepository.buscarTodos();
+    }
+    
+    public Map<String, String> buscarEmailESenhaDeUsuarios() {
+        return usuarioRepository.buscarEmailESenhaDeUsuarios();
     }
 
     public List<Usuario> buscarUsuariosPorProjeto(UUID idProjeto) {

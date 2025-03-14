@@ -3,34 +3,33 @@ package com.br.estimativadeprojetodesoftware.presenter.projeto;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
-import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.DataHoraService;
 import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.view.projeto.DetalheProjetoView;
 
 public class DetalheProjetoPresenter implements Observer {
 
     private final DetalheProjetoView view;
     private final EstimaProjetoService estimaService;
-    private final ProjetoRepositoryMock repository;
+    private final ProjetoRepositoryService projetoService;
     private final String projetoNome;
 
-    public DetalheProjetoPresenter(DetalheProjetoView view, ProjetoRepositoryMock repository, String projetoNome) {
+    public DetalheProjetoPresenter(DetalheProjetoView view, String projetoNome) {
         this.view = view;
-        this.repository = repository;
+        this.projetoService = new ProjetoRepositoryService();
         this.projetoNome = projetoNome;
         this.estimaService = new EstimaProjetoService();
 
-        this.repository.addObserver(this);
+        this.projetoService.addObserver(this);
         carregarDetalhesProjeto();
     }
 
     private void carregarDetalhesProjeto() {
-        Projeto projeto = repository.getProjetoPorNome(projetoNome);
+        Projeto projeto = projetoService.buscarProjetoPorNome(projetoNome).get();
         if (projeto != null) {
             carregarCabecalho(projeto);
             carregarDetalhes(projeto);
@@ -72,8 +71,6 @@ public class DetalheProjetoPresenter implements Observer {
         // Atualiza a tabela com todas as linhas acumuladas
         view.atualizarTabela(dadosTabela, valorTotal);
     }
-
-    
 
     private double calcularValorTotal(Projeto projeto) {
         return projeto.getCampos()

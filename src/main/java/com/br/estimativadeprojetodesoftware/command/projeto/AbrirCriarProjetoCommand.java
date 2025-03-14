@@ -4,10 +4,9 @@ import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.CadastroProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.view.projeto.CadastroProjetoView;
-import java.awt.Toolkit;
 import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 
 /**
@@ -17,11 +16,11 @@ import javax.swing.JInternalFrame;
 public class AbrirCriarProjetoCommand implements ProjetoCommand {
 
     private final JDesktopPane desktop;
-    private final ProjetoRepositoryMock repository;
+    private final ProjetoRepositoryService projetoService;
 
-    public AbrirCriarProjetoCommand(JDesktopPane desktop, ProjetoRepositoryMock repository) {
+    public AbrirCriarProjetoCommand(JDesktopPane desktop, ProjetoRepositoryService projetoService) {
         this.desktop = desktop;
-        this.repository = repository;
+        this.projetoService = projetoService;
     }
 
     @Override
@@ -45,15 +44,10 @@ public class AbrirCriarProjetoCommand implements ProjetoCommand {
             }
         } else {
             CadastroProjetoView cadastroProjetoView = new CadastroProjetoView();
-            new CadastroProjetoPresenter(cadastroProjetoView, repository);
+            new CadastroProjetoPresenter(cadastroProjetoView, projetoService);
             cadastroProjetoView.setTitle(tituloJanela);
             cadastroProjetoView.setSize(800,400);
             cadastroProjetoView.setVisible(true);
-
-            try {
-
-            } catch (Exception ignored) {
-            }
         }
     }
 

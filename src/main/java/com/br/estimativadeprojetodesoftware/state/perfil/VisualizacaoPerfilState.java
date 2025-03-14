@@ -3,7 +3,7 @@ package com.br.estimativadeprojetodesoftware.state.perfil;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.ExcluirPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;

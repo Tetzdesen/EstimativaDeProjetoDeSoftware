@@ -1,18 +1,11 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
-import com.br.estimativadeprojetodesoftware.presenter.projeto.CadastroProjetoPresenter;
-import com.br.estimativadeprojetodesoftware.presenter.projeto.DashBoardProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.EdicaoProjetoPresenter;
-import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
-import com.br.estimativadeprojetodesoftware.view.projeto.CadastroProjetoView;
-import com.br.estimativadeprojetodesoftware.view.projeto.DashBoardProjetoView;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.view.projeto.EdicaoProjetoView;
-import com.br.estimativadeprojetodesoftware.view.usuario.ManterUsuarioView;
-import static java.awt.SystemColor.desktop;
 import javax.swing.JDesktopPane;
 
 /**
@@ -20,19 +13,16 @@ import javax.swing.JDesktopPane;
  * @author tetzner
  */
 public class AbrirEdicaoProjetoCommand implements ProjetoCommand {
+    private final ProjetoRepositoryService projetoService;
+    private String nomeProjeto;
 
-    private final JDesktopPane desktop;
-    private final ProjetoRepositoryMock repository;
-    private String projetoNome;
-
-    public AbrirEdicaoProjetoCommand(JDesktopPane desktop, ProjetoRepositoryMock repository, String projetoNome) {
-        this.desktop = desktop;
-        this.repository = repository;
-        this.projetoNome = projetoNome;
+    public AbrirEdicaoProjetoCommand(ProjetoRepositoryService projetoService, String nomeProjeto) {
+        this.projetoService = projetoService;
+        this.nomeProjeto = nomeProjeto;
     }
 
-    public void setProjetoNome(String projetoNome) {
-        this.projetoNome = projetoNome;
+    public void setProjetoNome(String nomeProjeto) {
+        this.nomeProjeto = nomeProjeto;
     }
 
     @Override
@@ -47,7 +37,7 @@ public class AbrirEdicaoProjetoCommand implements ProjetoCommand {
 
             EdicaoProjetoView edicaoProjetoview = new EdicaoProjetoView();
 
-            new EdicaoProjetoPresenter(edicaoProjetoview, repository, projetoNome);
+            new EdicaoProjetoPresenter(projetoService, edicaoProjetoview, nomeProjeto);
 
             edicaoProjetoview.setTitle(tituloJanela);
             edicaoProjetoview.setSize(800, 400);

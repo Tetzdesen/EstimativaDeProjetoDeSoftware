@@ -14,7 +14,9 @@ import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -83,7 +85,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
         }
         return Optional.empty();
     }
-    
+
     @Override
     public Optional<Usuario> buscarPorEmail(String email) {
         String sql = "SELECT * FROM usuario WHERE email = ?";
@@ -95,6 +97,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("AAAAAAAAAAA");
         }
         return Optional.empty();
     }
@@ -107,6 +110,23 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 usuarios.add(mapToUsuario(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usuarios;
+    }
+
+    @Override
+    public Map<String, String> buscarEmailESenhaDeUsuarios() {
+        Map<String, String> usuarios = new HashMap<>();
+        String sql = "SELECT email, senha FROM usuario";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String email = resultSet.getString("email");
+                String senha = resultSet.getString("senha");
+                usuarios.put(email, senha);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -175,7 +195,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
             projetos.add(projeto);
         }
             
-*/
+         */
         return new Usuario(
                 idUsuario,
                 resultSet.getString("nomeUsuario"),
@@ -188,12 +208,24 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
 
     @Override
     public List<Usuario> buscarUsuariosPorProjeto(UUID idProjeto) {
-        List<Usuario> usuarios = new ArrayList<>();
-        List<String> usuarioIds = new ProjetoRepositoryService().buscarProjetosPorUsuario(idProjeto);
-
-        for (String userId : usuarioIds) {
-            new UsuarioRepositoryService().buscarPorId(UUID.fromString(userId)).ifPresent(usuarios::add);
+        List<String> usuarioIds = new ArrayList<>();
+        String query = "SELECT usuario_idUsuario FROM usuario_has_projeto WHERE projeto_idProjeto = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, idProjeto.toString());
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                usuarioIds.add(resultSet.getString("usuario_idUsuario"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        
+        List<Usuario> usuarios = new ArrayList<>();
+  
+        for (String userId : usuarioIds) {
+           usuarios.add(new UsuarioRepositoryService().buscarPorId(UUID.fromString(userId)).get());
+        }
+        
         return usuarios;
     }
 }

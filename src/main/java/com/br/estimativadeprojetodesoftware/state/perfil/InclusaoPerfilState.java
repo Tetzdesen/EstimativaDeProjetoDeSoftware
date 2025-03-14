@@ -4,7 +4,7 @@ import javax.swing.JOptionPane;
 
 import com.br.estimativadeprojetodesoftware.builder.DefaultBuilder;
 import com.br.estimativadeprojetodesoftware.builder.Diretor;
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.SalvarPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;

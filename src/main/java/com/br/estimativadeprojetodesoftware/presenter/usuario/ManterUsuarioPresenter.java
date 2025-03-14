@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.BotaoEditarUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.BotaoExcluirUsuarioCommand;
