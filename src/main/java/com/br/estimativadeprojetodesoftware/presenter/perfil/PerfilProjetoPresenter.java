@@ -59,6 +59,7 @@ public class PerfilProjetoPresenter implements Observer {
 
         view.getBtnVisualizar().addActionListener(e -> {
             try {
+                
                 int linha = view.getTablePerfis().getSelectedRow();
                 DefaultTableModel model = (DefaultTableModel) view.getModeloTabela();
                 UUID id = (UUID) model.getValueAt(linha, 0);

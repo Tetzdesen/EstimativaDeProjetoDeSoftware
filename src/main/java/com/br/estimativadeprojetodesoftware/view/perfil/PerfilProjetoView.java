@@ -59,12 +59,6 @@ public class PerfilProjetoView extends JInternalFrame {
 
     }
 
-    public void adicionarPerfis(String nome, UUID id, LocalDateTime created_at, boolean status) {
-        //PerfilPanel painelPerfil = new PerfilPanel(nome, id, created_at, status);
-        //painelPerfis.add(painelPerfil);
-        //painelPerfis.revalidate();
-    }
-
     public void atualizarTabela(Object[] dados) {
         modeloTabela.addRow(dados);
     }
