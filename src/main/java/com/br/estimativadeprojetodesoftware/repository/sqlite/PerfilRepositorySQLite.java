@@ -225,10 +225,10 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
 
         CampoRepositoryService campoService = new CampoRepositoryService();
 
-        carregarCampos(perfil, "tamanho app", campoService);
-        carregarCampos(perfil, "nivel ui", campoService);
-        carregarCampos(perfil, "funcionalidades", campoService);
-        carregarCampos(perfil, "taxas diária", campoService);
+        carregarCampos(perfil, "tamanho", campoService);
+        carregarCampos(perfil, "nivel", campoService);
+        carregarCampos(perfil, "funcionalidade", campoService);
+        carregarCampos(perfil, "taxa diária", campoService);
 
         return perfil;
     }
@@ -240,13 +240,13 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             Double dias = campoService.buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
 
             switch (tipoCampo) {
-                case "tamanho app" ->
+                case "tamanho" ->
                     perfil.adicionarTamanhoApp(campo.getNome(), dias.intValue());
-                case "nivel ui" ->
+                case "nivel" ->
                     perfil.adicionarNivelUI(campo.getNome(), dias.intValue());
-                case "funcionalidades" ->
+                case "funcionalidade" ->
                     perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
-                case "taxas diária" ->
+                case "taxa diária" ->
                     perfil.adicionarTaxaDiaria(campo.getNome(), dias.intValue());
             }
         }

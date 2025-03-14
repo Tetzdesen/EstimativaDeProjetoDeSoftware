@@ -5,6 +5,7 @@ import com.br.estimativadeprojetodesoftware.model.Usuario;
 public class WebBackEndBuilder extends PerfilBuilder {
     public WebBackEndBuilder(String nomePerfil, Usuario usuario) {
         super(nomePerfil, usuario);
+        perfil.setPerfilBackEnd(true);
     }
 
     @Override
