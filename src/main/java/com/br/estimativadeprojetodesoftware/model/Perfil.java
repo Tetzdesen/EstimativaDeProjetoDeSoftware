@@ -52,6 +52,11 @@ public class Perfil {
         this.isPerfilBackEnd = isPerfilBackEnd;
         this.created_at = created_at;
         this.usuario = usuario;
+        this.tamanhosApp = new LinkedHashMap<>();
+        this.niveisUI = new LinkedHashMap<>();
+        this.funcionalidades = new LinkedHashMap<>();
+        this.taxasDiarias = new LinkedHashMap<>();
+        adicionarCamposDefault();
     }
 
     public Perfil(UUID id, String nome,
@@ -73,6 +78,7 @@ public class Perfil {
         this.isPerfilBackEnd = isPerfilBackEnd;
         this.created_at = created_at;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
+        adicionarCamposDefault();
     }
 
     public Perfil(  UUID id, String nome, 
@@ -93,6 +99,7 @@ public class Perfil {
         this.isPerfilBackEnd = isPerfilBackEnd;
         this.created_at = created_at;
         this.usuario = usuario;
+        adicionarCamposDefault();
     }
     
     public UUID getId() {
