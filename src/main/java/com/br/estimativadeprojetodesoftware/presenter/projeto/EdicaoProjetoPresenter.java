@@ -1,20 +1,19 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.RealizarEdicaoProjetoProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.EdicaoProjetoView;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
@@ -25,18 +24,22 @@ import javax.swing.ListModel;
  */
 public class EdicaoProjetoPresenter {
 
+    private final ProjetoRepositoryService projetoService;
+    private PerfilRepositoryService perfilService;
     private EdicaoProjetoView view;
-    private ProjetoRepositoryMock repositoryProjeto;
+    private String nomeProjeto;
     private Usuario usuario;
     private Map<String, Perfil> perfisSelecionados;
     private Projeto projetoAtual;
 
-    public EdicaoProjetoPresenter(EdicaoProjetoView view, ProjetoRepositoryMock repositoryProjeto, String nomeProjeto) {
+    public EdicaoProjetoPresenter(ProjetoRepositoryService projetoService, EdicaoProjetoView view, String nomeProjeto) {
+        this.projetoService = projetoService;
+        this.perfilService = new PerfilRepositoryService();
         this.view = view;
-        this.repositoryProjeto = repositoryProjeto;
+        this.nomeProjeto = nomeProjeto;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
         this.perfisSelecionados = new HashMap<>();
-        this.projetoAtual = repositoryProjeto.getProjetoPorNome(nomeProjeto);
+        this.projetoAtual = projetoService.buscarProjetoPorNome(nomeProjeto).get();
 
         configuraView();
     }
@@ -58,13 +61,45 @@ public class EdicaoProjetoPresenter {
 
         view.getTxtNome().setText(projetoAtual.getNome());
 
-        DefaultListModel<String> listModel = new DefaultListModel<>();
-        for (Perfil perfil : projetoAtual.getPerfis()) {
-            listModel.addElement(perfil.getNome());
-            perfisSelecionados.put(perfil.getNome(), perfil);
+        List<Campo> campos = new CampoRepositoryService().buscarPorIdProjetoTipo(projetoAtual.getId(), "tamanho");
+
+        if (!campos.isEmpty()) {
+            Campo campoTamanho = campos.get(0); // Obter o primeiro campo
+            ListModel<String> modelTamanho = view.getCbmTamanhoApp().getModel();
+
+            for (int i = 0; i < modelTamanho.getSize(); i++) {
+                String item = modelTamanho.getElementAt(i);
+                if (item.equalsIgnoreCase(campoTamanho.getNome())) { // Comparando pelo ID, ou outro critério
+                    view.getCbmTamanhoApp().setSelectedItem(item); // Setando o item correto
+                    break;
+                }
+            }
         }
 
-        view.getJListPerfis().setModel(listModel);
+        campos = new CampoRepositoryService().buscarPorIdProjetoTipo(projetoAtual.getId(), "nivel");
+
+        if (!campos.isEmpty()) {
+            Campo campoNivel = campos.get(0); // Obter o primeiro campo
+            ListModel<String> modelNivel = view.getCbmNivelUI().getModel();
+
+            for (int i = 0; i < modelNivel.getSize(); i++) {
+                String item = modelNivel.getElementAt(i);
+                if (item.equalsIgnoreCase(campoNivel.getNome())) { // Comparando pelo ID, ou outro critério
+                    view.getCbmNivelUI().setSelectedItem(item); // Setando o item correto
+                    break;
+                }
+            }
+
+            DefaultListModel<String> listModel = new DefaultListModel<>();
+
+            for (Perfil perfil : projetoAtual.getPerfis()) {
+                listModel.addElement(perfil.getNome());
+                perfisSelecionados.put(perfil.getNome(), perfil);
+            }
+
+            view.getJListPerfis().setModel(listModel);
+        }
+
     }
 
     private void configuraActionsListerns() {
@@ -103,66 +138,12 @@ public class EdicaoProjetoPresenter {
     }
 
     private void salvarAlteracoes() {
-        String nomeProjeto = view.getTxtNome().getText().trim();
-
-        if (nomeProjeto.isEmpty()) {
-            exibirMensagem("O nome do projeto é obrigatório!");
-            return;
-        }
-
-        Projeto projetoAtualizado = new Projeto(nomeProjeto, UsuarioLogadoSingleton.getInstancia().getUsuario().getNome());
-
-        ListModel<String> listModel = view.getJListPerfis().getModel();
-        for (int i = 0; i < listModel.getSize(); i++) {
-            String nomePerfil = listModel.getElementAt(i);
-            projetoAtualizado.adicionarPerfil(perfisSelecionados.get(nomePerfil));
-        }
-
-        String tiposConcatenados = projetoAtualizado.getPerfis().stream()
-                .map(Perfil::getNome)
-                .collect(Collectors.joining(", "));
-
-        projetoAtualizado.setTipo(nomeProjeto);
-        
-        List<Campo> campos = new ArrayList<>();
-        
-        for (Perfil perfil : projetoAtualizado.getPerfis()) {
-            // Criando campos para estimativa
-            Map<String, Integer> tamanhosApp = perfil.getTamanhosApp();
-
-            for (Map.Entry<String, Integer> entry : tamanhosApp.entrySet()) {
-                campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue().doubleValue()));
-            }
-
-            // Criando campos para niveisUD
-            Map<String, Double> niveisUI = perfil.getNiveisUI();
-            for (Map.Entry<String, Double> entry : niveisUI.entrySet()) {
-                campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue()));
-            }
-
-            // Criando campos para funcionalidades
-            Map<String, Integer> funcionalidades = perfil.getFuncionalidades();
-            for (Map.Entry<String, Integer> entry : funcionalidades.entrySet()) {
-                campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue().doubleValue()));
-            }
-
-            // Criando campos para taxas diarias
-            Map<String, Double> taxasDiarias = perfil.getTaxasDiarias();
-
-            for (Map.Entry<String, Double> entry : taxasDiarias.entrySet()) {
-                campos.add(new Campo(UUID.randomUUID(), "", entry.getKey(), entry.getValue()));
-            }
-
-            //  Map<String, Integer> funcionalidades = combinarFuncionalidades(projeto.getPerfis());
-        }
-        
-        // repositoryProjeto.atualizarProjeto(projetoAtualizado);
-        exibirMensagem("Projeto atualizado com sucesso!");
+        new RealizarEdicaoProjetoProjetoCommand(this).execute();
     }
 
     private void carregarListaPerfis() {
 
-        List<Perfil> perfis = usuario.getPerfis();
+        List<Perfil> perfis = new PerfilRepositoryService().buscarTodosPerfisPorIdUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
 
         DefaultComboBoxModel<String> cmbPerfis = new DefaultComboBoxModel<>();
 
@@ -183,35 +164,64 @@ public class EdicaoProjetoPresenter {
     }
 
     private void adicionarPerfil() {
+
         String perfil = (String) view.getCbmPerfis().getSelectedItem();
 
-        if (perfil == null || perfil.isEmpty() || !perfisSelecionados.containsKey(perfil)) {
-            exibirMensagem("Selecione um perfil válido!");
-            return;
+        if (perfil == null || perfil.isEmpty()) {
+            throw new IllegalArgumentException("Selecione um perfil válido!");
+        }
+
+        if (!(view.getJListPerfis().getModel() instanceof DefaultListModel)) {
+            view.getJListPerfis().setModel(new DefaultListModel<>());
         }
 
         DefaultListModel<String> model = (DefaultListModel<String>) view.getJListPerfis().getModel();
+
         if (!model.contains(perfil)) {
             model.addElement(perfil);
-            projetoAtual.adicionarPerfil(perfisSelecionados.get(perfil));
         } else {
-            exibirMensagem("Este perfil já foi adicionado!");
+            throw new RuntimeException("Este perfil já foi adicionado!");
         }
+
+        exibirMensagem("Perfil adicionado com sucesso!");
+
     }
 
     private void removerPerfil() {
-        int selectedIndex = view.getJListPerfis().getSelectedIndex();
-        if (selectedIndex == -1) {
-            exibirMensagem("Selecione um perfil para remover!");
-            return;
+
+        String perfil = (String) view.getJListPerfis().getSelectedValue();
+
+        if (perfil == null || perfil.isEmpty()) {
+            throw new IllegalArgumentException("Selecione um perfil válido!");
         }
 
         DefaultListModel<String> model = (DefaultListModel<String>) view.getJListPerfis().getModel();
-        String perfilRemovido = model.getElementAt(selectedIndex);
-        model.remove(selectedIndex);
 
-        projetoAtual.removerPerfil(perfisSelecionados.get(perfilRemovido));
-        exibirMensagem("Perfil removido com sucesso!");
+        if (model.contains(perfil)) {
+            model.removeElement(perfil);
+            exibirMensagem("Perfil removido com sucesso!");
+        } else {
+            throw new RuntimeException("Erro: Perfil não removido!");
+        }
+
+        view.getJListPerfis().setModel(model);
+
+    }
+
+    public ProjetoRepositoryService getProjetoService() {
+        return projetoService;
+    }
+
+    public PerfilRepositoryService getPerfilService() {
+        return perfilService;
+    }
+
+    public Map<String, Perfil> getPerfisSelecionados() {
+        return perfisSelecionados;
+    }
+
+    public Projeto getProjetoAtual() {
+        return projetoAtual;
     }
 
     public EdicaoProjetoView getView() {

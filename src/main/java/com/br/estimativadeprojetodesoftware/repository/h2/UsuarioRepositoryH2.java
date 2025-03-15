@@ -199,4 +199,9 @@ public class UsuarioRepositoryH2 implements IUsuarioRepository {
         }
         return usuarios;
     }
+
+    @Override
+    public Map<String, String> buscarEmailESenhaDeUsuarios() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

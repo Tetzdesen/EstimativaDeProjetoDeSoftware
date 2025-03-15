@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.presenter.helpers;
 
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalPresenter;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
@@ -14,7 +14,7 @@ import java.util.Optional;
 public class WindowManager {
 
     private static WindowManager instance;
-    private PrincipalPresenter principalPresenter;
+    private PrincipalProjetoPresenter principalPresenter;
     private final Map<String, JDialog> dialogosAbertos;
 
     private WindowManager() {
@@ -28,7 +28,7 @@ public class WindowManager {
         return instance;
     }
 
-    public void initialize(PrincipalPresenter presenter) {
+    public void initialize(PrincipalProjetoPresenter presenter) {
         this.principalPresenter = presenter;
     }
 

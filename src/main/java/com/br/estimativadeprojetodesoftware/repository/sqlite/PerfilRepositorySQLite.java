@@ -164,7 +164,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             stmt.setString(1, projetoId.toString());
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                perfis.add(new PerfilRepositoryService().buscarPorId(UUID.fromString(rs.getString("perfil_idPerfil"))).get());
+                perfis.add(buscarPorId(UUID.fromString(rs.getString("perfil_idPerfil"))).get());
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao buscar perfis do projeto", e);

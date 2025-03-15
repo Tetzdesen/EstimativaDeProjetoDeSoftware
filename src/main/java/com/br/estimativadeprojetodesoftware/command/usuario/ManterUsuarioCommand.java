@@ -1,13 +1,10 @@
 package com.br.estimativadeprojetodesoftware.command.usuario;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalPresenter;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
-import com.br.estimativadeprojetodesoftware.presenter.projeto.CadastroProjetoPresenter;
-import com.br.estimativadeprojetodesoftware.view.projeto.CadastroProjetoView;
 import com.br.estimativadeprojetodesoftware.view.usuario.ManterUsuarioView;
-import java.util.Map;
 import javax.swing.JDesktopPane;
 
 /**
@@ -16,10 +13,10 @@ import javax.swing.JDesktopPane;
  */
 public class ManterUsuarioCommand implements ProjetoCommand {
 
-    private final PrincipalPresenter principalPresenter;
+    private final PrincipalProjetoPresenter principalPresenter;
     private final JDesktopPane desktop;
 
-    public ManterUsuarioCommand(PrincipalPresenter principalPresenter, JDesktopPane desktop) {
+    public ManterUsuarioCommand(PrincipalProjetoPresenter principalPresenter, JDesktopPane desktop) {
         this.principalPresenter = principalPresenter;
         this.desktop = desktop;
     }
@@ -36,7 +33,7 @@ public class ManterUsuarioCommand implements ProjetoCommand {
         } else {
 
             ManterUsuarioView view = new ManterUsuarioView();
-            new ManterUsuarioPresenter(view);
+            new ManterUsuarioPresenter(principalPresenter.getUsuarioService(), view);
             
             view.setTitle(tituloJanela);
             windowManager.registrarDialog(tituloJanela, view);

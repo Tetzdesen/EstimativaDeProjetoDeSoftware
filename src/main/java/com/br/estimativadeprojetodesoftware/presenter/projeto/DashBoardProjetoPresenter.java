@@ -4,31 +4,39 @@ import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.DashBoardProjetoView;
+import java.util.ArrayList;
 import org.jfree.data.general.DefaultPieDataset;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class DashBoardProjetoPresenter implements Observer {
 
     private final DashBoardProjetoView view;
     private final EstimaProjetoService estimaService;
-    private final ProjetoRepositoryMock repository;
+    private final ProjetoRepositoryService projetoService;
 
-    public DashBoardProjetoPresenter(DashBoardProjetoView view, ProjetoRepositoryMock repository) {
+    public DashBoardProjetoPresenter(DashBoardProjetoView view, ProjetoRepositoryService projetoService) {
         this.view = view;
-        this.repository = repository;
+        this.projetoService = projetoService;
         this.estimaService = new EstimaProjetoService();
 
-        this.repository.addObserver(this);
+        this.projetoService.addObserver(this);
         carregarDashboard();
     }
 
     private void carregarDashboard() {
-        List<Projeto> projetos = repository.getProjetos();
+        List<String> idsProjetos = projetoService.buscarProjetosPorUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
 
+        List<Projeto> projetos = new ArrayList<>();
+        
+        idsProjetos.forEach((projeto) -> projetos.add(projetoService.buscarPorId(UUID.fromString(projeto)).get()));
+     
         int totalProjetos = projetos.size();
         int diasTotais = projetos.stream()
                 .mapToInt(estimaService::calcularDiasTotais)

@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.state.perfil;
 
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.ExcluirPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;

@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.command.usuario;
 
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
@@ -19,7 +19,7 @@ public class ExcluirUsuarioCommand implements ProjetoCommand {
 
     @Override
     public void execute() {
-        boolean removido = usuarioPresenter.getRepository().removerPorId(usuarioPresenter.getUsuario().getId());
+        boolean removido = usuarioPresenter.getUsuarioService().removerPorId(usuarioPresenter.getUsuario().getId());
         if (removido) {
             new MostrarMensagemProjetoCommand("Usuário \"" + usuarioPresenter.getUsuario().getNome() + "\" removido com sucesso!").execute();
             usuarioPresenter.setUsuario(null);

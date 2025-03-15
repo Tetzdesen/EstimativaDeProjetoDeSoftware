@@ -9,17 +9,27 @@ public class Projeto {
     private String nome;
     private String criador;
     private String tipo;
-    private final LocalDateTime created_at;
+    private LocalDateTime created_at;
     private String status;
     private boolean compartilhado;
     private String compartilhadoPor;
-    private final List<Perfil> perfis;
-    private final List<Usuario> usuarios;
+    private List<Perfil> perfis;
+    private List<Usuario> usuarios;
     private List<Campo> campos;
 
     // lembrar set para compartilhado, compartilhadoPor e estimativa
     public Projeto(String nome, String criador) {
         this(nome, criador, null);
+    }
+
+    public Projeto(UUID id, String nome, String status, String criador) {
+        this.id = id;
+        this.nome = nome;
+        this.status = status;
+        this.criador = criador;
+        this.perfis = new ArrayList<>();
+        this.usuarios = new ArrayList<>();
+        this.campos = new ArrayList<>();
     }
 
     public Projeto(String nome, String criador, String tipo) {

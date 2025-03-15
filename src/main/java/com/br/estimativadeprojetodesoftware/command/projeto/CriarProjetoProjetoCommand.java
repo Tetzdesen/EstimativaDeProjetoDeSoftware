@@ -1,5 +1,6 @@
-package com.br.estimativadeprojetodesoftware.command;
+package com.br.estimativadeprojetodesoftware.command.projeto;
 
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
@@ -25,7 +26,7 @@ public class CriarProjetoProjetoCommand implements ProjetoCommand {
 
     @Override
     public void execute() {
-        Optional<Projeto> projetoCriado = criarProjetoMock.criarProjetoAleatorio();
+        Optional<Projeto> projetoCriado = null;
 
         projetoCriado.ifPresentOrElse(
                 projeto -> {
@@ -44,9 +45,8 @@ public class CriarProjetoProjetoCommand implements ProjetoCommand {
                             projeto.getCompartilhadoPor()
                     );
 
-                    new MostrarMensagemProjetoCommand("Projeto \"" + projeto.getNome() + "\" criado com sucesso!").execute();
                 },
-                () -> new MostrarMensagemProjetoCommand("Falha ao criar o projeto.").execute()
+                () -> new MostrarMensagemProjetoCommand("Falha ao criar o projeto mockado.").execute()
         );
     }
 }
