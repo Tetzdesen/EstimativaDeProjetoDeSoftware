@@ -107,6 +107,10 @@ public class ManterPerfilPresenter {
         this.estado = estado;
     }
 
+    public void setPerfil(Perfil perfil) {
+        this.perfil = perfil;
+    }
+
     public ManterPerfilPresenterState getEstado() {
         return estado;
     }

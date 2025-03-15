@@ -250,11 +250,11 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                 case "tamanho" ->
                     perfil.adicionarTamanhoApp(campo.getNome(), dias.intValue());
                 case "nivel" ->
-                    perfil.adicionarNivelUI(campo.getNome(), dias.intValue());
+                    perfil.adicionarNivelUI(campo.getNome(), dias.doubleValue());
                 case "funcionalidade" ->
                     perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
                 case "taxa diária" ->
-                    perfil.adicionarTaxaDiaria(campo.getNome(), dias.intValue());
+                    perfil.adicionarTaxaDiaria(campo.getNome(), dias.doubleValue());
             }
         }
     }

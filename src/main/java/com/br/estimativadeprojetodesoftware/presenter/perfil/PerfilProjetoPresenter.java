@@ -93,7 +93,7 @@ public class PerfilProjetoPresenter implements Observer {
 
             for (Campo campo : camposNivelUI) {
                 Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-                perfil.adicionarNivelUI(campo.getNome(), dias.intValue());
+                perfil.adicionarNivelUI(campo.getNome(), dias.doubleValue());
             }
 
             List<Campo> camposFuncionalidades = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(),
@@ -109,7 +109,7 @@ public class PerfilProjetoPresenter implements Observer {
 
             for (Campo campo : taxasDiarias) {
                 Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-                perfil.adicionarTaxaDiaria(campo.getNome(), dias.intValue());
+                perfil.adicionarTaxaDiaria(campo.getNome(), dias.doubleValue());
             }
 
             perfisNovos.add(perfil);

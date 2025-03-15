@@ -98,6 +98,7 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
             JOptionPane.showMessageDialog(presenter.getView(), "Perfil alterado com sucesso!");
 
             presenter.setAllBtnVisibleFalse();
+            presenter.setPerfil(perfil);
             presenter.setEstado(new VisualizacaoPerfilState(presenter));
         }
 
