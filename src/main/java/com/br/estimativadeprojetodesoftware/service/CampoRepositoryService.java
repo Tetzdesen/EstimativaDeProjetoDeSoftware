@@ -51,6 +51,10 @@ public class CampoRepositoryService {
         campoRepository.removerPorID(id);
     }
 
+    public void removerPorIdPerfil(UUID idPerfil) {
+        campoRepository.removerPorIdPerfil(idPerfil);
+    }
+
     public Campo buscarPorId(UUID id) {
         return campoRepository.buscarPorId(id);
     }

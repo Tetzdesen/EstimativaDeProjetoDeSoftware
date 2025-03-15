@@ -25,6 +25,7 @@ public interface ICampoRepository {
     void atualizarDiasPerfilCampo(Perfil perfil, Campo campo);
     
     void removerPorID(UUID id);
+    void removerPorIdPerfil(UUID idPerfil);
 
     Campo buscarPorId(UUID id);
 

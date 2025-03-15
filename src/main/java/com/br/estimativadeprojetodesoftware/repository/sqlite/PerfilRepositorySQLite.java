@@ -87,21 +87,21 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
 
             List<Campo> campos;
 
+            new CampoRepositoryService().removerPorIdPerfil(perfil.getId());
+
             campos = new CampoRepositoryService().listarTodosPorTipo("tamanho");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getTamanhosApp().get(campo.getNome()).doubleValue());
-                new CampoRepositoryService().atualizarDiasPerfilCampo(perfil, campo);
+                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
             }
 
             campos = new CampoRepositoryService().listarTodosPorTipo("nivel");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getNiveisUI().get(campo.getNome()));
-                new CampoRepositoryService().atualizarDiasPerfilCampo(perfil, campo);
+                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
             }
-
-            campos = new CampoRepositoryService().listarTodosPorTipo("funcionalidade");
 
             for (Entry<String, Integer> entry : perfil.getFuncionalidades().entrySet()) {
                 Campo campo = new CampoRepositoryService().buscarPorNome(entry.getKey());
@@ -110,20 +110,15 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                     new CampoRepositoryService().salvar(campo);
                 }
 
-                if (!new CampoRepositoryService().isCampoInPerfil(perfil.getId(), campo.getId())) {
-                    campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
-                    new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
-                }
-
                 campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
-                new CampoRepositoryService().atualizarDiasPerfilCampo(perfil, campo); 
+                new CampoRepositoryService().salvarPerfilCampo(perfil, campo); 
             }
 
             campos = new CampoRepositoryService().listarTodosPorTipo("taxa diária");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getTaxasDiarias().get(campo.getNome()));
-                new CampoRepositoryService().atualizarDiasPerfilCampo(perfil, campo);
+                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
             }
 
             statement.executeUpdate();

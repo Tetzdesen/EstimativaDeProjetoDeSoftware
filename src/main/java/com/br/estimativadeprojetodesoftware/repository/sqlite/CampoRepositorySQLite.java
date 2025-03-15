@@ -91,7 +91,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
     public void atualizarDiasPerfilCampo(Perfil perfil, Campo campo) {
         String sql = "UPDATE perfil_has_campo SET diasPerfil = ? WHERE perfil_idPerfil = ? AND campo_idCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, campo.getDias().intValue());
+            stmt.setDouble(1, campo.getDias().doubleValue());
             stmt.setString(2, perfil.getId().toString());
             stmt.setString(3, campo.getId().toString());
             stmt.executeUpdate();
@@ -108,6 +108,17 @@ public class CampoRepositorySQLite implements ICampoRepository {
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao deletar campo: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void removerPorIdPerfil(UUID idPerfil) {
+        String sql = "DELETE FROM perfil_has_campo WHERE perfil_idPerfil = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, idPerfil.toString());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao deletar campo por ID de perfil: " + e.getMessage(), e);
         }
     }
 
