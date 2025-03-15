@@ -30,6 +30,7 @@ public class Campo {
         this.tipo = tipo;
         this.nome = nome;
         this.dias = dias;
+        this.id = UUID.randomUUID();
     }
     
     public UUID getId() {

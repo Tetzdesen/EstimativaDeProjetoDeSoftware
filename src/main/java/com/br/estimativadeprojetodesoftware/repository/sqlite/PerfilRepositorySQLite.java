@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 public class PerfilRepositorySQLite implements IPerfilRepository {
 
@@ -81,41 +82,43 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, perfil.getNome());
             statement.setBoolean(2, perfil.isPerfilBackEnd());
-            statement.setString(4, perfil.getUsuario().getId().toString());
-            statement.setString(5, perfil.getId().toString());
+            statement.setString(3, perfil.getUsuario().getId().toString());
+            statement.setString(4, perfil.getId().toString());
 
             List<Campo> campos;
+
+            new CampoRepositoryService().removerPorIdPerfil(perfil.getId());
 
             campos = new CampoRepositoryService().listarTodosPorTipo("tamanho");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getTamanhosApp().get(campo.getNome()).doubleValue());
-                new CampoRepositoryService().atualizarDiasPerfilCampo(perfil, campo);
+                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
             }
 
             campos = new CampoRepositoryService().listarTodosPorTipo("nivel");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getNiveisUI().get(campo.getNome()));
-                new CampoRepositoryService().atualizarDiasPerfilCampo(perfil, campo);
+                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
             }
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("funcionalidade");
-
-            for (Campo campo : campos) {
-                campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
-                if (!perfil.getFuncionalidades().containsKey(campo.getNome()) && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
-                    new CampoRepositoryService().atualizar(campo);
-                    new CampoRepositoryService().atualizarDiasPerfilCampo(perfil, campo);
+            for (Entry<String, Integer> entry : perfil.getFuncionalidades().entrySet()) {
+                Campo campo = new CampoRepositoryService().buscarPorNome(entry.getKey());
+                if (campo == null) {
+                    campo = new Campo("funcionalidade", entry.getKey(), entry.getValue().doubleValue());
+                    new CampoRepositoryService().salvar(campo);
                 }
-                new CampoRepositoryService().atualizarDiasPerfilCampo(perfil, campo);
+
+                campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
+                new CampoRepositoryService().salvarPerfilCampo(perfil, campo); 
             }
 
             campos = new CampoRepositoryService().listarTodosPorTipo("taxa diária");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getTaxasDiarias().get(campo.getNome()));
-                new CampoRepositoryService().atualizarDiasPerfilCampo(perfil, campo);
+                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
             }
 
             statement.executeUpdate();
@@ -235,7 +238,6 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
 
     private void carregarCampos(Perfil perfil, String tipoCampo, CampoRepositoryService campoService) throws SQLException {
         List<Campo> campos = campoService.buscarPorIdPerfilTipo(perfil.getId(), tipoCampo);
-        System.out.println(campos);
         for (Campo campo : campos) {
             Double dias = campoService.buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
 
@@ -243,11 +245,11 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                 case "tamanho" ->
                     perfil.adicionarTamanhoApp(campo.getNome(), dias.intValue());
                 case "nivel" ->
-                    perfil.adicionarNivelUI(campo.getNome(), dias.intValue());
+                    perfil.adicionarNivelUI(campo.getNome(), dias.doubleValue());
                 case "funcionalidade" ->
                     perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
                 case "taxa diária" ->
-                    perfil.adicionarTaxaDiaria(campo.getNome(), dias.intValue());
+                    perfil.adicionarTaxaDiaria(campo.getNome(), dias.doubleValue());
             }
         }
     }

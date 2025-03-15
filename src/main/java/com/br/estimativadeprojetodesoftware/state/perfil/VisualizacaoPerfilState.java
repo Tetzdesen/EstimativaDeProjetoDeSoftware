@@ -1,16 +1,10 @@
 package com.br.estimativadeprojetodesoftware.state.perfil;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.ExcluirPerfilProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
-import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 public class VisualizacaoPerfilState extends ManterPerfilPresenterState {
 

@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.model;
 
+import com.br.estimativadeprojetodesoftware.prototype.PerfilProjetoPrototype;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -7,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Perfil {
+public class Perfil implements PerfilProjetoPrototype {
 
     private final UUID id;
     private String nome;
@@ -78,7 +79,6 @@ public class Perfil {
         this.isPerfilBackEnd = isPerfilBackEnd;
         this.created_at = created_at;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
-        adicionarCamposDefault();
     }
 
     public Perfil(  UUID id, String nome, 
@@ -99,7 +99,6 @@ public class Perfil {
         this.isPerfilBackEnd = isPerfilBackEnd;
         this.created_at = created_at;
         this.usuario = usuario;
-        adicionarCamposDefault();
     }
     
     public UUID getId() {
@@ -236,6 +235,32 @@ public class Perfil {
         this.taxasDiarias.put("gerência de projeto", 0.0);
         this.taxasDiarias.put("desenvolvimento", 0.0);
     }
+
+    @Override
+    public Perfil clone() {
+        Map<String, Integer> tamanhosAppClone = new LinkedHashMap<>();
+        Map<String, Double> niveisUIClone = new LinkedHashMap<>();
+        Map<String, Integer> funcionalidadesClone = new LinkedHashMap<>();
+        Map<String, Double> taxasDiariasClone = new LinkedHashMap<>();
+
+        tamanhosAppClone.putAll(this.tamanhosApp);
+        niveisUIClone.putAll(this.niveisUI);
+        funcionalidadesClone.putAll(this.funcionalidades);
+        taxasDiariasClone.putAll(this.taxasDiarias);
+        
+        return new Perfil(
+            UUID.randomUUID(),
+            this.nome + " - Cópia",
+            tamanhosAppClone,
+            niveisUIClone,
+            funcionalidadesClone,
+            taxasDiariasClone,
+            this.isPerfilBackEnd,
+            this.created_at,
+            this.usuario
+        );
+    }
+
 
     @Override
     public String toString() {

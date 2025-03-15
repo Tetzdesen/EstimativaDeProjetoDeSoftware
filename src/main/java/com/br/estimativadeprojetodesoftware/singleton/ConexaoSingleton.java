@@ -35,7 +35,7 @@ public class ConexaoSingleton {
         this.tipo = DotenvService.getEnv("TIPO_BANCO");
 
         DatabaseInitializer initializer = inicializadores.entrySet().stream()
-                .filter(entry -> tipo.contains(entry.getKey()))
+                .filter(entry -> tipo.toLowerCase().contains(entry.getKey().toLowerCase()))
                 .map(Map.Entry::getValue)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Banco de dados não suportado"));
