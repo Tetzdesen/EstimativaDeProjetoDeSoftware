@@ -75,7 +75,6 @@ public class ConexaoSingleton {
         if (!arquivo.exists()) {
             try {
                 if (arquivo.createNewFile()) {
-                    System.out.println("Banco de dados criado: " + caminho);
                     return true;
                 }
             } catch (Exception e) {

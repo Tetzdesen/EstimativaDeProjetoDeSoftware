@@ -18,9 +18,9 @@ public class ManterPerfilPresenter {
     private ManterPerfilPresenterState estado;
     private Perfil perfil;
 
-    public ManterPerfilPresenter(ManterPerfilView view, Perfil perfil) {
+    public ManterPerfilPresenter(ManterPerfilView view, Perfil perfil, PerfilRepositoryService repository) {
         this.view = view;
-        this.repository = new PerfilRepositoryService();
+        this.repository = repository;
         this.perfil = perfil;
         setStatusBotaoRemover(false);
         configuraActionsListerns();
@@ -105,6 +105,10 @@ public class ManterPerfilPresenter {
 
     public void setEstado(ManterPerfilPresenterState estado) {
         this.estado = estado;
+    }
+
+    public void setPerfil(Perfil perfil) {
+        this.perfil = perfil;
     }
 
     public ManterPerfilPresenterState getEstado() {

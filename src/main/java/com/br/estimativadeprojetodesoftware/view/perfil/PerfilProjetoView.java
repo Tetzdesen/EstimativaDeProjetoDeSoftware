@@ -4,8 +4,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  *
@@ -13,7 +11,7 @@ import java.util.UUID;
  */
 public class PerfilProjetoView extends JInternalFrame {
     private JTable tabelaDetalhes;
-    private JButton btnNovoPerfil, btnVisualizar;
+    private JButton btnNovoPerfil, btnVisualizar, btnDuplicar;
     private DefaultTableModel modeloTabela;
     private JDesktopPane desktop;
 
@@ -38,6 +36,10 @@ public class PerfilProjetoView extends JInternalFrame {
         btnVisualizar = new JButton("Visualizar");
         btnVisualizar.setSize(120, 20);
         painelNorte.add(btnVisualizar);
+
+        btnDuplicar = new JButton("Duplicar");
+        btnDuplicar.setSize(120, 20);
+        painelNorte.add(btnDuplicar);
 
         painelPrincipal.add(painelNorte, BorderLayout.NORTH);
 
@@ -77,6 +79,10 @@ public class PerfilProjetoView extends JInternalFrame {
 
     public JButton getBtnNovoPerfil() {
         return btnNovoPerfil;
+    }
+
+    public JButton getBtnDuplicar() {
+        return btnDuplicar;
     }
 
     public JDesktopPane getDesktop() {

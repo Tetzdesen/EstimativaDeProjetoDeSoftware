@@ -7,6 +7,7 @@ public class Diretor {
         perfilBuilder.addTamanhoApp();
         perfilBuilder.addNivelUI();
         perfilBuilder.addFuncionalidades();
+        perfilBuilder.addTaxasDiarias();
         
         return perfilBuilder.getPerfil();
     }

@@ -57,7 +57,7 @@ public class InclusaoPerfilState extends ManterPerfilPresenterState {
 
     @Override
     public void salvar() {
-        new SalvarPerfilProjetoCommand(presenter).execute();
+        new SalvarPerfilProjetoCommand(presenter, presenter.getRepository()).execute();
     }
 
     @Override

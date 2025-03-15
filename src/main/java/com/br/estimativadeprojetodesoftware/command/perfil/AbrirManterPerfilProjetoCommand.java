@@ -7,15 +7,18 @@ import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
+import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
 
 public class AbrirManterPerfilProjetoCommand implements ProjetoCommand {
     private final JDesktopPane desktop;
     private final Perfil perfil;
+    private final PerfilRepositoryService repository;
 
-    public AbrirManterPerfilProjetoCommand(JDesktopPane desktop, Perfil perfil) {
+    public AbrirManterPerfilProjetoCommand(JDesktopPane desktop, Perfil perfil, PerfilRepositoryService repository) {
         this.desktop = desktop;
         this.perfil = perfil;
+        this.repository = repository;
     }
 
     @Override
@@ -41,7 +44,7 @@ public class AbrirManterPerfilProjetoCommand implements ProjetoCommand {
 
         } else {
             ManterPerfilView manterPerfilView = new ManterPerfilView(desktop);
-            new ManterPerfilPresenter(manterPerfilView, perfil);
+            new ManterPerfilPresenter(manterPerfilView, perfil, repository);
             manterPerfilView.setTitle(tituloJanela);
 
             manterPerfilView.setSize(700, 700);

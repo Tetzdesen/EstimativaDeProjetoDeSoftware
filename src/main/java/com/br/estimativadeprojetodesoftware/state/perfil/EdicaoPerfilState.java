@@ -17,20 +17,8 @@ public class EdicaoPerfilState extends ManterPerfilPresenterState {
 
     private void configuraView() {
         Perfil perfil = presenter.getPerfil();
-        presenter.getView().getTxtNome().setText(perfil.getNome());
-        presenter.getView().getTglBackEnd().setSelected(perfil.isPerfilBackEnd());
 
-        presenter.getView().getJspPequeno().setValue(perfil.getTamanhosApp().get("pequeno"));
-        presenter.getView().getJspMedio().setValue(perfil.getTamanhosApp().get("médio"));
-        presenter.getView().getJspGrande().setValue(perfil.getTamanhosApp().get("grande"));
-
-        presenter.getView().getTxtMvp().setText((perfil.getNiveisUI().get("mvp")).toString());
-        presenter.getView().getTxtBasico().setText((perfil.getNiveisUI().get("básico")).toString());
-        presenter.getView().getTxtProfissional().setText((perfil.getNiveisUI().get("profissional")).toString());
-
-        presenter.getView().getTxtDesignerUI().setText((perfil.getTaxasDiarias().get("designer ui/ux")).toString());
-        presenter.getView().getTxtGerenciaProjeto().setText((perfil.getTaxasDiarias().get("gerência de projeto")).toString());
-        presenter.getView().getTxtDesenvolvimento().setText((perfil.getTaxasDiarias().get("desenvolvimento")).toString());
+        carregarCamposObrigatorios(perfil);
 
         presenter.getView().getTxtNome().setEnabled(true);
         presenter.getView().getTglBackEnd().setEnabled(true);
@@ -54,6 +42,23 @@ public class EdicaoPerfilState extends ManterPerfilPresenterState {
         presenter.getView().getBtnRemoverCampo().setVisible(true);
         presenter.getView().getBtnSalvar().setVisible(true);
         presenter.getView().getBtnCancelar().setVisible(true);
+    }
+
+    private void carregarCamposObrigatorios(Perfil perfil) {
+        presenter.getView().getTxtNome().setText(perfil.getNome());
+        presenter.getView().getTglBackEnd().setSelected(perfil.isPerfilBackEnd());
+
+        presenter.getView().getJspPequeno().setValue(perfil.getTamanhosApp().get("pequeno"));
+        presenter.getView().getJspMedio().setValue(perfil.getTamanhosApp().get("médio"));
+        presenter.getView().getJspGrande().setValue(perfil.getTamanhosApp().get("grande"));
+
+        presenter.getView().getTxtMvp().setText((perfil.getNiveisUI().get("mvp")).toString());
+        presenter.getView().getTxtBasico().setText((perfil.getNiveisUI().get("básico")).toString());
+        presenter.getView().getTxtProfissional().setText((perfil.getNiveisUI().get("profissional")).toString());
+
+        presenter.getView().getTxtDesignerUI().setText((perfil.getTaxasDiarias().get("designer ui/ux")).toString());
+        presenter.getView().getTxtGerenciaProjeto().setText((perfil.getTaxasDiarias().get("gerência de projeto")).toString());
+        presenter.getView().getTxtDesenvolvimento().setText((perfil.getTaxasDiarias().get("desenvolvimento")).toString());
     }
 
     private void configuraActionsListerns() {
@@ -92,7 +97,7 @@ public class EdicaoPerfilState extends ManterPerfilPresenterState {
 
     @Override
     public void salvar() {
-        new SalvarPerfilProjetoCommand(presenter).execute();
+        new SalvarPerfilProjetoCommand(presenter, presenter.getRepository()).execute();
     }
 
     @Override

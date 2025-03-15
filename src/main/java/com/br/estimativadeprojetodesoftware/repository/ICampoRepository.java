@@ -25,6 +25,7 @@ public interface ICampoRepository {
     void atualizarDiasPerfilCampo(Perfil perfil, Campo campo);
     
     void removerPorID(UUID id);
+    void removerPorIdPerfil(UUID idPerfil);
 
     Campo buscarPorId(UUID id);
 
@@ -36,6 +37,8 @@ public interface ICampoRepository {
     
     Double buscarDiasPorPerfilCampo(UUID idPerfil, UUID idCampo);
     
+    boolean isCampoInPerfil(UUID idPerfil, UUID idCampo);
+    Campo buscarPorNome(String nome);
     Integer buscarDiasPorProjeto(UUID idProjeto);
     Double buscarDiasPorPerfil(UUID idPerfil);
    // List<Campo> listarTodosPorIdProjetoCampo(UUID idProjeto, UUID idCampo);
