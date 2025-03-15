@@ -185,6 +185,6 @@ public class PerfilProjetoPresenter implements Observer {
     }
 
     private void setStatusBotaoDuplicar(boolean status) {
-        this.view.getBtnVisualizar().setEnabled(status);
+        this.view.getBtnDuplicar().setEnabled(status);
     }
 }
