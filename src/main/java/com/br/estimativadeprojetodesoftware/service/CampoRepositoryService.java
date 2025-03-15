@@ -26,27 +26,27 @@ public class CampoRepositoryService {
     public void salvar(Campo campo) {
         campoRepository.salvar(campo);
     }
-    
-    public void salvarProjetoCampo(Projeto projeto, Campo campo){
+
+    public void salvarProjetoCampo(Projeto projeto, Campo campo) {
         campoRepository.salvarProjetoCampo(projeto, campo);
     }
-    
-    public void salvarPerfilCampo(Perfil perfil, Campo campo){
+
+    public void salvarPerfilCampo(Perfil perfil, Campo campo) {
         campoRepository.salvarPerfilCampo(perfil, campo);
     }
 
     public void atualizar(Campo campo) {
         campoRepository.atualizar(campo);
     }
-    
-    public void atualizarDiasProjetoCampo(Projeto projeto, Campo campo){
+
+    public void atualizarDiasProjetoCampo(Projeto projeto, Campo campo) {
         campoRepository.atualizarDiasProjetoCampo(projeto, campo);
     }
 
-    public void atualizarDiasPerfilCampo(Perfil perfil, Campo campo){
+    public void atualizarDiasPerfilCampo(Perfil perfil, Campo campo) {
         campoRepository.atualizarDiasPerfilCampo(perfil, campo);
     }
-    
+
     public void removerPorID(UUID id) {
         campoRepository.removerPorID(id);
     }
@@ -58,7 +58,7 @@ public class CampoRepositoryService {
     public List<Campo> listarTodos() {
         return campoRepository.listarTodos();
     }
-    
+
     public List<Campo> listarTodosPorTipo(String tipo) {
         return campoRepository.listarTodosPorTipo(tipo);
     }
@@ -83,13 +83,10 @@ public class CampoRepositoryService {
         return campoRepository.listarTodosPorIdProjeto(idProjeto);
     }
 
-    public List<Campo> listarTodosPorIdPerfil(UUID idPerfil){
+    public List<Campo> listarTodosPorIdPerfil(UUID idPerfil) {
         return campoRepository.listarTodosPorIdPerfil(idPerfil);
     }
-
-    //public List<Campo> listarTodosPorIdProjetoCampo(UUID idProjeto, UUID idCampo) {
-    // return campoRepository.listarTodosPorIdProjetoCampo(idProjeto, idCampo);
-    //}
+    
     public Campo buscarPorIdProjeto(UUID idProjeto) {
         return campoRepository.buscarPorIdProjeto(idProjeto);
     }
@@ -98,12 +95,16 @@ public class CampoRepositoryService {
         return campoRepository.buscarPorIdPerfil(idPerfil);
     }
 
-    public Campo buscarPorIdProjetoTipo(UUID idProjeto, String tipo) {
+    public List<Campo> buscarPorIdProjetoTipo(UUID idProjeto, String tipo) {
         return campoRepository.buscarPorIdProjetoTipo(idProjeto, tipo);
     }
 
     public List<Campo> buscarPorIdPerfilTipo(UUID idPerfil, String tipo) {
         return campoRepository.buscarPorIdPerfilTipo(idPerfil, tipo);
+    }
+
+    public double buscarValorPorNomeProjetoCampo(UUID idProjeto, String nome) {
+        return campoRepository.buscarValorPorNomeProjetoCampo(idProjeto, nome);
     }
 
 }

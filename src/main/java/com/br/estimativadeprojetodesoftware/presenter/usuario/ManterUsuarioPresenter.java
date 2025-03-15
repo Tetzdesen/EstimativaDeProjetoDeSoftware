@@ -32,16 +32,16 @@ public class ManterUsuarioPresenter implements Observer {
 
     private ManterUsuarioView view;
     private Usuario usuario;
-    private UsuarioRepositoryService usuarioRepository;
+    private UsuarioRepositoryService usuarioService;
     private ManterUsuarioPresenterState estado;
     private final Map<String, ProjetoCommand> comandos;
     private BarraService barraService;
 
-    public ManterUsuarioPresenter(ManterUsuarioView view) {
+    public ManterUsuarioPresenter(UsuarioRepositoryService usuarioService, ManterUsuarioView view) {
         this.view = view;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
-        this.usuarioRepository = new UsuarioRepositoryService();
-        this.usuarioRepository.addObserver(this);
+        this.usuarioService = usuarioService;
+        this.usuarioService.addObserver(this);
         this.comandos = inicializarComandos();
         barraService = new BarraService(comandos);
         configuraView();
@@ -123,8 +123,8 @@ public class ManterUsuarioPresenter implements Observer {
         return usuario.getPerfis().size();
     }
 
-    public UsuarioRepositoryService getRepository() {
-        return usuarioRepository;
+    public UsuarioRepositoryService getUsuarioService() {
+        return usuarioService;
     }
 
     public Usuario getUsuario() {

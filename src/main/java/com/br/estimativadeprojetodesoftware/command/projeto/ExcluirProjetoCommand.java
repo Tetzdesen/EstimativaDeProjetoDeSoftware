@@ -6,9 +6,10 @@ import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import javax.swing.*;
 
 public class ExcluirProjetoCommand implements ProjetoCommand {
+
     private final ProjetoRepositoryService projetoService;
     private String projetoNome;
-    
+
     public ExcluirProjetoCommand(ProjetoRepositoryService projetoService, String projetoNome) {
         this.projetoService = projetoService;
         this.projetoNome = projetoNome;
@@ -33,14 +34,12 @@ public class ExcluirProjetoCommand implements ProjetoCommand {
         );
 
         if (confirmacao == JOptionPane.YES_OPTION) {
-            // buscar pelo nome
-            
-         //   boolean removido = projetoService.removerProjetoPorNome(projetoNome);
-            if (true) {
-                new MostrarMensagemProjetoCommand("Projeto \"" + projetoNome + "\" removido com sucesso!").execute();
-            } else {
-                new MostrarMensagemProjetoCommand("Erro ao remover o projeto \"" + projetoNome + "\".").execute();
+            try {
+                projetoService.removerPorId(projetoService.buscarProjetoPorNome(projetoNome).get().getId());
+            } catch (Exception e){
+                new MostrarMensagemProjetoCommand("Erro ao remover o projeto \"" + projetoNome + "\"." + e).execute();
             }
+      
         }
     }
 }

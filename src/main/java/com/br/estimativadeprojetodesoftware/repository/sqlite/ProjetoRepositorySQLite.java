@@ -35,12 +35,13 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             stmt.setString(3, projeto.getTipo());
             stmt.setTimestamp(4, Timestamp.valueOf(projeto.getCreated_at()));
             stmt.setString(5, projeto.getStatus());
-
-            for (Campo campo : projeto.getCampos()) {
-                new CampoRepositoryService().salvarProjetoCampo(projeto, campo);
-            }
-
             stmt.executeUpdate();
+
+            for (Perfil perfil : projeto.getPerfis()) {
+                if (!existeAssociacaoProjetoPerfil(projeto.getId(), perfil.getId())) {  // Verifica se já existe a associação
+                    salvarPerfilProjeto(projeto, perfil);
+                }
+            }
 
             salvarCampos(projeto);
             salvarUsuarioProjeto(projeto);
@@ -72,6 +73,19 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
         }
     }
 
+    private void salvarPerfilProjeto(Projeto projeto, Perfil perfil) {
+        String sql = "INSERT INTO projeto_has_perfil (projeto_idProjeto, perfil_idPerfil) VALUES (?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, projeto.getId().toString());
+            stmt.setString(2, perfil.getId().toString());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao salvar perfil-projeto", e);
+        }
+    }
+
     @Override
     public void atualizar(Projeto projeto) {
         String sql = "UPDATE projeto SET nomeProjeto = ?, tipoProjeto = ?, updated_atProjeto = CURRENT_TIMESTAMP, status = ? WHERE idProjeto = ?";
@@ -81,15 +95,56 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             stmt.setString(3, projeto.getStatus());
             stmt.setString(4, projeto.getId().toString());
 
-            for (Campo campo : projeto.getCampos()) {
-                new CampoRepositoryService().atualizar(campo);
-                new CampoRepositoryService().atualizarDiasProjetoCampo(projeto, campo);
-            }
-
+            System.out.println("ID do projeto: " + projeto.getId());
+            System.out.println("Nome do projeto: " + projeto.getNome());
+            System.out.println("Tipo do projeto: " + projeto.getTipo());
+            System.out.println("Status do projeto: " + projeto.getStatus());
             stmt.executeUpdate();
 
+            // Remover associações antigas antes de salvar as novas
+            String sqlRemoverCampos = "DELETE FROM projeto_has_campo WHERE projeto_idProjeto = ?";
+            try (PreparedStatement stmtRemover = connection.prepareStatement(sqlRemoverCampos)) {
+                stmtRemover.setString(1, projeto.getId().toString());
+                stmtRemover.executeUpdate();
+            }
+
+            // Salvar novos campos
+            salvarCampos(projeto);
+
+            for (Campo campo : projeto.getCampos()) {
+                new CampoRepositoryService().atualizar(campo);
+                if (!existeAssociacaoProjetoCampo(projeto.getId(), campo.getId())) {
+                    new CampoRepositoryService().salvarProjetoCampo(projeto, campo);
+                }
+            }
+
         } catch (SQLException e) {
+            System.out.println(e);
             throw new RuntimeException("Erro ao atualizar projeto", e);
+        }
+    }
+
+    private boolean existeAssociacaoProjetoPerfil(UUID idProjeto, UUID idPerfil) {
+        String sql = "SELECT COUNT(*) FROM projeto_has_perfil WHERE projeto_idProjeto = ? AND perfil_idPerfil = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, idProjeto.toString());
+            stmt.setString(2, idPerfil.toString());
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao verificar associação de perfil", e);
+        }
+    }
+
+    private boolean existeAssociacaoProjetoCampo(UUID idProjeto, UUID idCampo) {
+        String sql = "SELECT COUNT(*) FROM projeto_has_campo WHERE projeto_idProjeto = ? AND campo_idCampo = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, idProjeto.toString());
+            stmt.setString(2, idCampo.toString());
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao verificar associação", e);
         }
     }
 
@@ -168,7 +223,6 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
 
     private Projeto mapProjetoFromResultSet(ResultSet rs) throws SQLException {
         UUID idProjeto = UUID.fromString(rs.getString("idProjeto"));
-
         List<Perfil> perfis = new PerfilRepositoryService().buscarPerfisPorProjeto(idProjeto);
         List<Usuario> usuarios = new UsuarioRepositoryService().buscarUsuariosPorProjeto(idProjeto);
         List<Campo> campos = new CampoRepositoryService().listarTodosPorIdProjeto(idProjeto);

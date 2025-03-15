@@ -4,10 +4,7 @@ import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
-import com.br.estimativadeprojetodesoftware.presenter.projeto.CadastroProjetoPresenter;
-import com.br.estimativadeprojetodesoftware.view.projeto.CadastroProjetoView;
 import com.br.estimativadeprojetodesoftware.view.usuario.ManterUsuarioView;
-import java.util.Map;
 import javax.swing.JDesktopPane;
 
 /**
@@ -36,7 +33,7 @@ public class ManterUsuarioCommand implements ProjetoCommand {
         } else {
 
             ManterUsuarioView view = new ManterUsuarioView();
-            new ManterUsuarioPresenter(view);
+            new ManterUsuarioPresenter(principalPresenter.getUsuarioService(), view);
             
             view.setTitle(tituloJanela);
             windowManager.registrarDialog(tituloJanela, view);

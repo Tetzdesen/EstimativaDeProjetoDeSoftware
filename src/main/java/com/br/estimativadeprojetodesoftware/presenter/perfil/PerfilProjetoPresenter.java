@@ -4,13 +4,11 @@ import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProje
 import com.br.estimativadeprojetodesoftware.command.perfil.AbrirManterPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
-import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.WindowCommand;
 import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.perfil.PerfilProjetoView;
 
@@ -124,7 +122,6 @@ public class PerfilProjetoPresenter implements Observer {
 
         perfis = carregarCamposPerfil(perfis);
 
-        System.out.println(perfis);
         for (Perfil perfil : perfis) {
             // if (perfisCarregados.add(perfil.getId())) {
             //     carregarDetalhes(perfil);

@@ -26,7 +26,7 @@ public class CriarProjetoProjetoCommand implements ProjetoCommand {
 
     @Override
     public void execute() {
-        Optional<Projeto> projetoCriado = criarProjetoMock.criarProjetoAleatorio();
+        Optional<Projeto> projetoCriado = null;
 
         projetoCriado.ifPresentOrElse(
                 projeto -> {
@@ -45,9 +45,8 @@ public class CriarProjetoProjetoCommand implements ProjetoCommand {
                             projeto.getCompartilhadoPor()
                     );
 
-                    new MostrarMensagemProjetoCommand("Projeto \"" + projeto.getNome() + "\" criado com sucesso!").execute();
                 },
-                () -> new MostrarMensagemProjetoCommand("Falha ao criar o projeto.").execute()
+                () -> new MostrarMensagemProjetoCommand("Falha ao criar o projeto mockado.").execute()
         );
     }
 }

@@ -43,6 +43,7 @@ public interface ICampoRepository {
     List<Campo> listarTodosPorIdPerfil(UUID idPerfil);
     Campo buscarPorIdProjeto(UUID idProjeto);
     Campo buscarPorIdPerfil(UUID idPerfil);
-    Campo buscarPorIdProjetoTipo(UUID idProjeto, String tipo);
+    List<Campo> buscarPorIdProjetoTipo(UUID idProjeto, String tipo);
     List<Campo> buscarPorIdPerfilTipo(UUID idPerfil, String tipo);
+    double buscarValorPorNomeProjetoCampo(UUID idProjeto, String nome);
 }

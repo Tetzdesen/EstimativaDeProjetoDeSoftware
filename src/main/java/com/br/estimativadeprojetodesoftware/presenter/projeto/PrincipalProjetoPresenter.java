@@ -13,11 +13,11 @@ import com.br.estimativadeprojetodesoftware.presenter.DesktopMemento;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.Zelador;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.*;
-import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.GlobalWindowManager;
 import com.br.estimativadeprojetodesoftware.view.projeto.PrincipalProjetoView;
@@ -28,7 +28,7 @@ public final class PrincipalProjetoPresenter implements Observer {
 
     private final PrincipalProjetoView view;
     private final ProjetoRepositoryService projetoService;
-    private final UsuarioRepositoryMock usuarioRepository;
+    private final UsuarioRepositoryService usuarioService;
     private final Map<String, ProjetoCommand> comandos;
     private BarraService criarBarraService;
     private final List<WindowCommand> windowCommands = new ArrayList<>();
@@ -37,9 +37,9 @@ public final class PrincipalProjetoPresenter implements Observer {
     public PrincipalProjetoPresenter(ProjetoRepositoryService projetoService, UsuarioRepositoryMock usuarioRepository) {
         this.view = new PrincipalProjetoView();
         this.projetoService = projetoService;
-        this.usuarioRepository = usuarioRepository;
+        this.usuarioService = new UsuarioRepositoryService();
         this.projetoService.addObserver(this);
-        this.usuarioRepository.addObserver(this);
+        this.usuarioService.addObserver(this);
         construtorDeArvoreNavegacaoService = new ConstrutorDeArvoreNavegacaoService();
         GlobalWindowManager.initialize(view);
         this.comandos = inicializarComandos();
@@ -98,8 +98,8 @@ public final class PrincipalProjetoPresenter implements Observer {
         return projetoService;
     }
 
-    public UsuarioRepositoryMock getUsuarioRepository() {
-        return usuarioRepository;
+    public UsuarioRepositoryService getUsuarioService() {
+        return usuarioService;
     }
 
     public PrincipalProjetoView getView() {

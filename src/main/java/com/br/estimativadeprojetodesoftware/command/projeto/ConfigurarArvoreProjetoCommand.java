@@ -64,8 +64,7 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
         raiz.adicionarFilho(noProjetosCompartilhados);
 
         nomesProjetos = projetoService.buscarNomesDeProjetosPorUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
-        
-        System.out.println(nomesProjetos + "AAAAAAAAAAAAAAAAAAA");
+    
         nomesProjetos.forEach((projeto) -> {
         });
         for (final String projeto : nomesProjetos) {
