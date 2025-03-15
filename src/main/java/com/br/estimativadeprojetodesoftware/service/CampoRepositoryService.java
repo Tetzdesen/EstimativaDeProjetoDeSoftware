@@ -63,12 +63,20 @@ public class CampoRepositoryService {
         return campoRepository.listarTodosPorTipo(tipo);
     }
 
+    public Campo buscarPorNome(String nome) {
+        return campoRepository.buscarPorNome(nome);
+    }
+
     public Integer buscarDiasPorProjetoCampo(UUID idProjeto, UUID idCampo) {
         return campoRepository.buscarDiasPorProjetoCampo(idProjeto, idCampo);
     }
 
     public Double buscarDiasPorPerfilCampo(UUID idPerfil, UUID idCampo) {
         return campoRepository.buscarDiasPorPerfilCampo(idPerfil, idCampo);
+    }
+
+    public boolean isCampoInPerfil(UUID idPerfil, UUID idCampo) {
+        return campoRepository.isCampoInPerfil(idPerfil, idCampo);
     }
 
     public Integer buscarDiasPorProjeto(UUID idProjeto) {

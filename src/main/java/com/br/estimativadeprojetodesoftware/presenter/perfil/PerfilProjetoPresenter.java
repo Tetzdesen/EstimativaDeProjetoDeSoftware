@@ -26,7 +26,7 @@ public class PerfilProjetoPresenter implements Observer {
     private final PerfilProjetoView view;
     private final PerfilRepositoryService repository;
 
-    //private final Set<UUID> perfisCarregados = new HashSet<>();
+    // private final Set<UUID> perfisCarregados = new HashSet<>();
 
     public PerfilProjetoPresenter(PerfilProjetoView view) {
         this.view = view;
@@ -44,14 +44,13 @@ public class PerfilProjetoPresenter implements Observer {
 
     private void inicializarEExecutarWindowCommands() {
         Arrays.asList(
-                new SetLookAndFeelCommand()
-        ).forEach(WindowCommand::execute);
+                new SetLookAndFeelCommand()).forEach(WindowCommand::execute);
     }
 
     private void configuraActionsListerns() {
         view.getBtnNovoPerfil().addActionListener(e -> {
             try {
-                new AbrirManterPerfilProjetoCommand(view.getDesktop(), null).execute();
+                new AbrirManterPerfilProjetoCommand(view.getDesktop(), null, repository).execute();
             } catch (Exception ex) {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
@@ -59,17 +58,20 @@ public class PerfilProjetoPresenter implements Observer {
 
         view.getBtnVisualizar().addActionListener(e -> {
             try {
-                
-                int linha = view.getTablePerfis().getSelectedRow();
-                DefaultTableModel model = (DefaultTableModel) view.getModeloTabela();
-                UUID id = (UUID) model.getValueAt(linha, 0);
-
-                Perfil perfil = repository.buscarPorId(id).orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
-                new AbrirManterPerfilProjetoCommand(view.getDesktop(), perfil).execute();
+                processarPerfilSelecionado();
             } catch (Exception ex) {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
         });
+    }
+
+    private void processarPerfilSelecionado() {
+        int linha = view.getTablePerfis().getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel) view.getModeloTabela();
+        UUID id = (UUID) model.getValueAt(linha, 0);
+
+        Perfil perfil = repository.buscarPorId(id).orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
+        new AbrirManterPerfilProjetoCommand(view.getDesktop(), perfil, repository).execute();
     }
 
     private List<Perfil> carregarCamposPerfil(List<Perfil> perfis) {
@@ -78,7 +80,8 @@ public class PerfilProjetoPresenter implements Observer {
         for (Perfil perfil : perfis) {
 
             // buscar nome do campo pelo id do Perfil
-            List<Campo> camposTamanhoApp = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "tamanho");
+            List<Campo> camposTamanhoApp = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(),
+                    "tamanho");
 
             for (Campo campo : camposTamanhoApp) {
                 Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
@@ -87,26 +90,28 @@ public class PerfilProjetoPresenter implements Observer {
             }
 
             List<Campo> camposNivelUI = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "nivel");
-            
+
             for (Campo campo : camposNivelUI) {
                 Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
                 perfil.adicionarNivelUI(campo.getNome(), dias.intValue());
             }
-            
-            List<Campo> camposFuncionalidades = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "funcionalidade");
-            
+
+            List<Campo> camposFuncionalidades = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(),
+                    "funcionalidade");
+
             for (Campo campo : camposFuncionalidades) {
                 Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
                 perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
             }
-            
-            List<Campo> taxasDiarias = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "taxa diária");
-            
+
+            List<Campo> taxasDiarias = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(),
+                    "taxa diária");
+
             for (Campo campo : taxasDiarias) {
                 Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
                 perfil.adicionarTaxaDiaria(campo.getNome(), dias.intValue());
             }
-            
+
             perfisNovos.add(perfil);
         }
 
@@ -119,24 +124,19 @@ public class PerfilProjetoPresenter implements Observer {
         modelo.setRowCount(0);
 
         List<Perfil> perfis = repository.buscarTodosPerfisPorIdUsuario(
-                UsuarioLogadoSingleton.getInstancia().getUsuario().getId()
-        );
+                UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
 
         perfis = carregarCamposPerfil(perfis);
 
-        System.out.println(perfis);
         for (Perfil perfil : perfis) {
-            // if (perfisCarregados.add(perfil.getId())) {
-            //     carregarDetalhes(perfil);
-            // }
             carregarDetalhes(perfil);
         }
     }
 
     private void carregarDetalhes(Perfil perfil) {
-        Object[] dadosTabela = new Object[]{
-            perfil.getId(),
-            perfil.getNome()
+        Object[] dadosTabela = new Object[] {
+                perfil.getId(),
+                perfil.getNome()
         };
 
         view.atualizarTabela(dadosTabela);

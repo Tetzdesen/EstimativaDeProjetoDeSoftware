@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 public class PerfilRepositorySQLite implements IPerfilRepository {
 
@@ -81,8 +82,8 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, perfil.getNome());
             statement.setBoolean(2, perfil.isPerfilBackEnd());
-            statement.setString(4, perfil.getUsuario().getId().toString());
-            statement.setString(5, perfil.getId().toString());
+            statement.setString(3, perfil.getUsuario().getId().toString());
+            statement.setString(4, perfil.getId().toString());
 
             List<Campo> campos;
 
@@ -102,13 +103,20 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
 
             campos = new CampoRepositoryService().listarTodosPorTipo("funcionalidade");
 
-            for (Campo campo : campos) {
-                campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
-                if (!perfil.getFuncionalidades().containsKey(campo.getNome()) && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
-                    new CampoRepositoryService().atualizar(campo);
-                    new CampoRepositoryService().atualizarDiasPerfilCampo(perfil, campo);
+            for (Entry<String, Integer> entry : perfil.getFuncionalidades().entrySet()) {
+                Campo campo = new CampoRepositoryService().buscarPorNome(entry.getKey());
+                if (campo == null) {
+                    campo = new Campo("funcionalidade", entry.getKey(), entry.getValue().doubleValue());
+                    new CampoRepositoryService().salvar(campo);
                 }
-                new CampoRepositoryService().atualizarDiasPerfilCampo(perfil, campo);
+
+                if (!new CampoRepositoryService().isCampoInPerfil(perfil.getId(), campo.getId())) {
+                    campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
+                    new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                }
+
+                campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
+                new CampoRepositoryService().atualizarDiasPerfilCampo(perfil, campo); 
             }
 
             campos = new CampoRepositoryService().listarTodosPorTipo("taxa diária");
@@ -235,7 +243,6 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
 
     private void carregarCampos(Perfil perfil, String tipoCampo, CampoRepositoryService campoService) throws SQLException {
         List<Campo> campos = campoService.buscarPorIdPerfilTipo(perfil.getId(), tipoCampo);
-        System.out.println(campos);
         for (Campo campo : campos) {
             Double dias = campoService.buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
 

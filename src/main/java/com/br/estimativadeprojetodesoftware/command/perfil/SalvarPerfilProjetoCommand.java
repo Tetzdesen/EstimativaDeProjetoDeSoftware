@@ -11,9 +11,11 @@ import com.br.estimativadeprojetodesoftware.state.perfil.VisualizacaoPerfilState
 
 public class SalvarPerfilProjetoCommand implements ProjetoCommand {
     private final ManterPerfilPresenter presenter;
+    private final PerfilRepositoryService repository;
 
-    public SalvarPerfilProjetoCommand(ManterPerfilPresenter presenter) {
+    public SalvarPerfilProjetoCommand(ManterPerfilPresenter presenter, PerfilRepositoryService repository) {
         this.presenter = presenter;
+        this.repository = repository;
     }
 
     @Override
@@ -62,7 +64,7 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
             }
             
             //presenter.getRepository().setPerfil(perfil);
-            new PerfilRepositoryService().salvar(perfil);
+            repository.salvar(perfil);
 
             presenter.getView().dispose();
 
@@ -90,6 +92,8 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
                 int numeroDeDias = Integer.parseInt(tabela.getValueAt(i, 1).toString());
                 perfil.adicionarFuncionalidade(funcionalidade, numeroDeDias);
             }
+
+            repository.atualizar(perfil);
 
             JOptionPane.showMessageDialog(presenter.getView(), "Perfil alterado com sucesso!");
 
