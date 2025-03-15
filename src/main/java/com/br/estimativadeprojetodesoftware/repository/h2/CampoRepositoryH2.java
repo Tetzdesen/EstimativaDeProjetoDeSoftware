@@ -90,6 +90,17 @@ public class CampoRepositoryH2 implements ICampoRepository {
     }
 
     @Override
+    public void removerPorIdPerfil(UUID idPerfil) {
+        String sql = "DELETE FROM perfil_has_campo WHERE perfil_idPerfil = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, idPerfil.toString());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao deletar campo por ID de perfil: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
     public Campo buscarPorId(UUID id) {
         String sql = "SELECT * FROM campo WHERE idCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -153,6 +164,21 @@ public class CampoRepositoryH2 implements ICampoRepository {
     }
 
     @Override
+    public Campo buscarPorNome(String nome) {
+        String sql = "SELECT * FROM campo WHERE nomeCampo = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, nome);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Campo(UUID.fromString(rs.getString("idCampo")), rs.getString("tipoCampo"), rs.getString("nomeCampo"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar campo por nome: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
     public Integer buscarDiasPorProjeto(UUID idProjeto) {
         Integer dias = null;
         String sql = "SELECT diasProjeto FROM projeto_has_campo WHERE projeto_idProjeto = ?";
@@ -201,6 +227,22 @@ public class CampoRepositoryH2 implements ICampoRepository {
             throw new RuntimeException("Erro ao listar campos por projeto e campo: " + e.getMessage(), e);
         }
         return campos;
+    }
+
+    @Override
+    public boolean isCampoInPerfil(UUID idPerfil, UUID idCampo) {
+        String sql = "SELECT * FROM perfil_has_campo WHERE perfil_idPerfil = ? AND campo_idCampo = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, idPerfil.toString());
+            stmt.setString(2, idCampo.toString());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar dias por perfil e campo: " + e.getMessage(), e);
+        }
+        return false;
     }
 
     @Override

@@ -4,13 +4,11 @@ import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoComman
 import com.br.estimativadeprojetodesoftware.command.perfil.AbrirManterPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
-import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.WindowCommand;
 import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.perfil.PerfilProjetoView;
 
@@ -25,8 +23,6 @@ public class PerfilProjetoPresenter implements Observer {
 
     private final PerfilProjetoView view;
     private final PerfilRepositoryService repository;
-
-    // private final Set<UUID> perfisCarregados = new HashSet<>();
 
     public PerfilProjetoPresenter(PerfilProjetoView view) {
         this.view = view;
@@ -63,15 +59,32 @@ public class PerfilProjetoPresenter implements Observer {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
         });
+
+        view.getBtnDuplicar().addActionListener(e -> {
+            try {
+                processarPerfilDuplicar();
+            } catch (Exception ex) {
+                new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+            }
+        });
     }
 
     private void processarPerfilSelecionado() {
+        Perfil perfil = buscarPerfilSelecionado();
+        new AbrirManterPerfilProjetoCommand(view.getDesktop(), perfil, repository).execute();
+    }
+
+    private void processarPerfilDuplicar() {
+        Perfil perfil = buscarPerfilSelecionado();
+        repository.salvar(perfil.clone());
+    }
+
+    private Perfil buscarPerfilSelecionado() {
         int linha = view.getTablePerfis().getSelectedRow();
         DefaultTableModel model = (DefaultTableModel) view.getModeloTabela();
         UUID id = (UUID) model.getValueAt(linha, 0);
 
-        Perfil perfil = repository.buscarPorId(id).orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
-        new AbrirManterPerfilProjetoCommand(view.getDesktop(), perfil, repository).execute();
+        return repository.buscarPorId(id).orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
     }
 
     private List<Perfil> carregarCamposPerfil(List<Perfil> perfis) {
@@ -150,12 +163,14 @@ public class PerfilProjetoPresenter implements Observer {
 
     private void configuraView() {
         setStatusBotaoVisualizar(false);
+        setStatusBotaoDuplicar(false);
 
         removeColunaId();
         this.view.getTablePerfis().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent evt) {
                 setStatusBotaoVisualizar(true);
+                setStatusBotaoDuplicar(true);
             }
         });
     }
@@ -166,6 +181,10 @@ public class PerfilProjetoPresenter implements Observer {
     }
 
     private void setStatusBotaoVisualizar(boolean status) {
+        this.view.getBtnVisualizar().setEnabled(status);
+    }
+
+    private void setStatusBotaoDuplicar(boolean status) {
         this.view.getBtnVisualizar().setEnabled(status);
     }
 }
