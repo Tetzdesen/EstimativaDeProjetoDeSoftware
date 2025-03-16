@@ -36,7 +36,7 @@ public class H2Initializer implements DatabaseInitializer {
         // throw new RuntimeException("Não foi possível iniciar o servidor H2", e);
         //   }
         new CriarTabelasH2DatabaseCommand().execute();
-        List<SeederCommand> comandosSeeder = Arrays.asList(new CriarUsuarioSeederCommand(), new CriarCamposSeederCommand());
-        comandosSeeder.forEach(seeder -> seeder.execute());
+        // List<SeederCommand> comandosSeeder = Arrays.asList(new CriarUsuarioSeederCommand(), new CriarCamposSeederCommand());
+        // comandosSeeder.forEach(seeder -> seeder.execute());
     }
 }
