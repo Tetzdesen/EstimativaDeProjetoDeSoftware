@@ -80,6 +80,37 @@ public class CampoRepositoryH2 implements ICampoRepository {
     }
 
     @Override
+    public void salvarPerfilCampos(PerfilProjeto perfil, List<Campo> campos) {
+        String sql = "INSERT INTO perfil_has_campo (perfil_idPerfil, campo_idCampo, diasPerfil) VALUES (?, ?, ?)";
+        try {
+            connection.setAutoCommit(false);
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                for (Campo campo : campos) {
+                    stmt.setString(1, perfil.getId().toString());
+                    stmt.setString(2, campo.getId().toString());
+                    stmt.setDouble(3, campo.getDias());
+                    stmt.addBatch();
+                }
+                stmt.executeBatch();
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            throw new RuntimeException("Erro ao atualizar campos de perfil: " + e.getMessage(), e);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
     public void atualizar(Campo campo) {
         String sql = "UPDATE campo SET tipoCampo = ?, nomeCampo = ? WHERE idCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -309,20 +340,24 @@ public class CampoRepositoryH2 implements ICampoRepository {
     @Override
     public List<Campo> listarTodosPorIdPerfil(UUID idPerfil) {
         List<Campo> campos = new ArrayList<>();
-        String sql = "SELECT * FROM perfil_has_campo WHERE perfil_idPerfil = ?";
+        String sql = "SELECT c.idCampo, c.tipoCampo, c.nomeCampo, phc.diasPerfil " +
+             "FROM perfil_has_campo phc " +
+             "JOIN campo c ON c.idCampo = phc.campo_idCampo " +
+             "WHERE phc.perfil_idPerfil = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, idPerfil.toString());
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Campo campo = buscarPorId(UUID.fromString(rs.getString("campo_idCampo")));
-                if (campo != null) {
-                    campo.setDias(buscarDiasPorPerfilCampo(idPerfil, campo.getId()));
-                    campos.add(campo);
-                }
+                UUID idCampo = UUID.fromString(rs.getString("idCampo"));
+                String tipoCampo = rs.getString("tipoCampo");
+                String nomeCampo = rs.getString("nomeCampo");
+                Double dias = rs.getDouble("diasPerfil");
+                campos.add(new Campo(idCampo, tipoCampo, nomeCampo, dias));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar campos por projeto e campo: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao listar campos por perfil: " + e.getMessage(), e);
         }
+
         return campos;
     }
 

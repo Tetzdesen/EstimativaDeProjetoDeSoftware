@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.repository.h2;
 
+import com.br.estimativadeprojetodesoftware.chain.carregarcampos.EmpilhadorDeCampoPerfilService;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.repository.IPerfilRepository;
@@ -222,31 +223,10 @@ public class PerfilRepositoryH2 implements IPerfilRepository {
                 UsuarioLogadoSingleton.getInstancia().getUsuario()
         );
 
-        CampoRepositoryService campoService = new CampoRepositoryService();
-
-        carregarCampos(perfil, "tamanho", campoService);
-        carregarCampos(perfil, "nivel", campoService);
-        carregarCampos(perfil, "funcionalidade", campoService);
-        carregarCampos(perfil, "taxa diária", campoService);
+        EmpilhadorDeCampoPerfilService empilhador = new EmpilhadorDeCampoPerfilService();
+        empilhador.carregarCampos(perfil);
 
         return perfil;
     }
 
-    private void carregarCampos(PerfilProjeto perfil, String tipoCampo, CampoRepositoryService campoService) throws SQLException {
-        List<Campo> campos = campoService.buscarPorIdPerfilTipo(perfil.getId(), tipoCampo);
-        for (Campo campo : campos) {
-            Double dias = campoService.buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-
-            switch (tipoCampo) {
-                case "tamanho" ->
-                    perfil.adicionarTamanhoApp(campo.getNome(), dias.intValue());
-                case "nivel" ->
-                    perfil.adicionarNivelUI(campo.getNome(), dias.doubleValue());
-                case "funcionalidade" ->
-                    perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
-                case "taxa diária" ->
-                    perfil.adicionarTaxaDiaria(campo.getNome(), dias.doubleValue());
-            }
-        }
-    }
 }

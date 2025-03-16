@@ -17,6 +17,8 @@ public interface ICampoRepository {
     void salvarProjetoCampo(Projeto projeto, Campo campo);
     
     void salvarPerfilCampo(PerfilProjeto perfil, Campo campo);
+
+    void salvarPerfilCampos(PerfilProjeto perfil, List<Campo> campos);
     
     void atualizar(Campo campo);
     
