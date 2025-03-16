@@ -2,8 +2,6 @@ package com.br.estimativadeprojetodesoftware.templatemethod;
 
 import java.io.File;
 
-import javax.swing.JOptionPane;
-
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 
@@ -28,9 +26,7 @@ public abstract class ExportadorProjeto {
         try {
             gerarArquivo(filePath);
             File arquivo = new File(filePath);
-            if (arquivo.exists() && arquivo.length() > 0) {
-                JOptionPane.showMessageDialog(null, "Arquivo gerado com sucesso: " + filePath);
-            } else {
+            if (!arquivo.exists() || arquivo.length() <= 0) {
                 throw new RuntimeException("O arquivo não foi gerado corretamente.");
             }
         } catch (Exception e) {
@@ -45,6 +41,5 @@ public abstract class ExportadorProjeto {
     }
 
     protected abstract String carregarCaminhoArquivo();
-
     protected abstract void gerarArquivo(String filePath);
 }

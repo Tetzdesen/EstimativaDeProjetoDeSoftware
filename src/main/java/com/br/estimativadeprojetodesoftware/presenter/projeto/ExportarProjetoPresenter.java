@@ -1,5 +1,7 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
+import javax.swing.JOptionPane;
+
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.templatemethod.ExportarCsvTemplate;
 import com.br.estimativadeprojetodesoftware.templatemethod.ExportarPdfTemplate;
@@ -19,7 +21,7 @@ public class ExportarProjetoPresenter {
     private void configuraListeners() {
         view.getBtnExportarPdf().addActionListener(e -> {
             try {
-                new ExportarPdfTemplate().exportar(projetoNome);
+                exportarPdf();
             } catch (Exception ex) {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
@@ -27,11 +29,22 @@ public class ExportarProjetoPresenter {
 
         view.getBtnExportarCsv().addActionListener(e -> {
             try {
-                new ExportarCsvTemplate().exportar(projetoNome);
+                exportarCsv();
             } catch (Exception ex) {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
         });
-        //view.getBtnExportarCsv().addActionListener(e -> exportarCsv());
+    }
+
+    private void exportarPdf() {
+        new ExportarPdfTemplate().exportar(projetoNome);
+        JOptionPane.showMessageDialog(null, "Arquivo gerado com sucesso!");
+        view.dispose();
+    }
+
+    private void exportarCsv() {
+        new ExportarCsvTemplate().exportar(projetoNome);
+        JOptionPane.showMessageDialog(null, "Arquivo gerado com sucesso!");
+        view.dispose();
     }
 }

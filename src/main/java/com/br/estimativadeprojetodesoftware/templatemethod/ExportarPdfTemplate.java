@@ -1,15 +1,18 @@
 package com.br.estimativadeprojetodesoftware.templatemethod;
 
 import java.io.File;
-
 import javax.swing.JFileChooser;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import com.br.estimativadeprojetodesoftware.adapter.exportarprojeto.FileExportAdapter;
+import com.br.estimativadeprojetodesoftware.adapter.exportarprojeto.PDFExportAdapter;
 
 public class ExportarPdfTemplate extends ExportadorProjeto {
+    
+    private FileExportAdapter adapter;
+
+    public ExportarPdfTemplate() {
+        adapter = new PDFExportAdapter();
+    }
 
     @Override
     protected String carregarCaminhoArquivo() {
@@ -32,34 +35,22 @@ public class ExportarPdfTemplate extends ExportadorProjeto {
 
     @Override
     protected void gerarArquivo(String filePath) {
-        try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
-            document.addPage(page);
-
-            try (PDPageContentStream contentStream = 
-                     new PDPageContentStream(document, page)) {
-
-                contentStream.beginText();
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
-                contentStream.newLineAtOffset(50, 750);
-                contentStream.showText("Projeto: " + projeto.getNome());
-                contentStream.endText();
-
-                contentStream.beginText();
-                contentStream.setFont(PDType1Font.HELVETICA, 12);
-                contentStream.newLineAtOffset(50, 720);
-                contentStream.showText("Criador: " + projeto.getCriador());
-                contentStream.newLineAtOffset(0, -15);
-                contentStream.showText("Tipo: " + projeto.getTipo());
-                contentStream.newLineAtOffset(0, -15);
-                contentStream.showText("Status: " + projeto.getStatus());
-
-                contentStream.endText();
-            }
-
-            document.save(filePath);
+        try {
+            adapter.createDocument();
+            adapter.addPage();
+            adapter.addText("Projeto: " + projeto.getNome(), 50, 750, "HELVETICA_BOLD", 18);
+            adapter.addText("Criador: " + projeto.getCriador(), 50, 720, "HELVETICA", 12);
+            adapter.addText("Tipo: " + projeto.getTipo(), 50, 700, "HELVETICA", 12);
+            adapter.addText("Status: " + projeto.getStatus(), 50, 680, "HELVETICA", 12);
+            adapter.save(filePath);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao exportar o projeto: " + e.getMessage());
+            throw new RuntimeException("Erro ao exportar o projeto: " + e.getMessage(), e);
+        } finally {
+            try {
+                adapter.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

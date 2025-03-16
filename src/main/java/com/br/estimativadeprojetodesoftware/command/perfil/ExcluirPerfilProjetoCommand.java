@@ -16,7 +16,7 @@ public class ExcluirPerfilProjetoCommand implements ProjetoCommand {
     public void execute() {
         int confirmacao = JOptionPane.showConfirmDialog(
             presenter.getView(), 
-            "Tem certeza de que deseja remover o produto selecionado?", 
+            "Tem certeza de que deseja remover o perfil selecionado?", 
             "Confirmação de Remoção", 
             JOptionPane.YES_NO_OPTION
         );
