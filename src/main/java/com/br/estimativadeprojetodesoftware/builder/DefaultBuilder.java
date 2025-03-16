@@ -23,6 +23,8 @@ public class DefaultBuilder extends PerfilBuilder {
 
     @Override
     public void addFuncionalidades() {
+        perfil.adicionarFuncionalidade("Cadastro por E-mail e Senha", 0);
+        perfil.adicionarFuncionalidade("Cadastro pelo Facebook", 0);
         perfil.adicionarFuncionalidade("Cadastro pelo Twitter", 0);
         perfil.adicionarFuncionalidade("Cadastro pelo Google", 0);
         perfil.adicionarFuncionalidade("Cadastro pelo LinkedIn", 0);
@@ -85,8 +87,7 @@ public class DefaultBuilder extends PerfilBuilder {
         perfil.adicionarFuncionalidade("Dados de Sensores do Dispositivo (Device Sensor Data)", 0);
         perfil.adicionarFuncionalidade("Códigos de Barras ou QR Codes", 0);
         perfil.adicionarFuncionalidade("Dados de Saúde (Health Data)", 0);
-        perfil.adicionarFuncionalidade("Apple Watch", 0);
-        
+        perfil.adicionarFuncionalidade("Gerente de Projeto (Project Manager)", 0);
     }
 
     @Override
