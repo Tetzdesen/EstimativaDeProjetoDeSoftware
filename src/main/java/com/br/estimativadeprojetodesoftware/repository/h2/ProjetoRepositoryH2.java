@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository.h2;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.IProjetoRepository;
@@ -10,11 +10,8 @@ import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -111,7 +108,7 @@ public class ProjetoRepositoryH2 implements IProjetoRepository {
 
     private Projeto mapProjetoFromResultSet(ResultSet rs) throws SQLException {
         UUID idProjeto = UUID.fromString(rs.getString("idProjeto"));
-        List<Perfil> perfis = new PerfilRepositoryService().buscarPerfisPorProjeto(idProjeto);
+        List<PerfilProjeto> perfis = new PerfilRepositoryService().buscarPerfisPorProjeto(idProjeto);
         List<Usuario> usuarios = new UsuarioRepositoryService().buscarUsuariosPorProjeto(idProjeto);
         List<Campo> campos = new CampoRepositoryService().listarTodosPorIdProjeto(idProjeto);
         List<Campo> camposNovos = new ArrayList<>();
@@ -166,6 +163,16 @@ public class ProjetoRepositoryH2 implements IProjetoRepository {
             e.printStackTrace();
         }
         return projetos;
+    }
+
+    @Override
+    public List<String> buscarNomesDeProjetosPorUsuario(UUID idUsuario) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Optional<Projeto> buscarProjetoPorNome(String nomeProjeto) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

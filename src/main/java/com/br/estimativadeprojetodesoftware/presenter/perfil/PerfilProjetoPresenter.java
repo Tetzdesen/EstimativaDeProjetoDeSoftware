@@ -1,9 +1,9 @@
 package com.br.estimativadeprojetodesoftware.presenter.perfil;
 
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.AbrirManterPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.WindowCommand;
@@ -70,16 +70,16 @@ public class PerfilProjetoPresenter implements Observer {
     }
 
     private void processarPerfilSelecionado() {
-        Perfil perfil = buscarPerfilSelecionado();
+        PerfilProjeto perfil = buscarPerfilSelecionado();
         new AbrirManterPerfilProjetoCommand(view.getDesktop(), perfil, repository).execute();
     }
 
     private void processarPerfilDuplicar() {
-        Perfil perfil = buscarPerfilSelecionado();
+        PerfilProjeto perfil = buscarPerfilSelecionado();
         repository.salvar(perfil.clone());
     }
 
-    private Perfil buscarPerfilSelecionado() {
+    private PerfilProjeto buscarPerfilSelecionado() {
         int linha = view.getTablePerfis().getSelectedRow();
         DefaultTableModel model = (DefaultTableModel) view.getModeloTabela();
         UUID id = (UUID) model.getValueAt(linha, 0);
@@ -87,8 +87,10 @@ public class PerfilProjetoPresenter implements Observer {
         return repository.buscarPorId(id).orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
     }
 
-    private void carregarCamposPerfil(List<Perfil> perfis) {
-        for (Perfil perfil : perfis) {
+    private void carregarCamposPerfil(List<PerfilProjeto> perfis) {
+        List<PerfilProjeto> perfisNovos = new ArrayList<>();
+
+        for (PerfilProjeto perfil : perfis) {
 
             // buscar nome do campo pelo id do Perfil
             List<Campo> camposTamanhoApp = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(),
@@ -132,17 +134,17 @@ public class PerfilProjetoPresenter implements Observer {
         DefaultTableModel modelo = (DefaultTableModel) view.getModeloTabela();
         modelo.setRowCount(0);
 
-        List<Perfil> perfis = repository.buscarTodosPerfisPorIdUsuario(
+        List<PerfilProjeto> perfis = repository.buscarTodosPerfisPorIdUsuario(
                 UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
 
         carregarCamposPerfil(perfis);
 
-        for (Perfil perfil : perfis) {
+        for (PerfilProjeto perfil : perfis) {
             carregarDetalhes(perfil);
         }
     }
 
-    private void carregarDetalhes(Perfil perfil) {
+    private void carregarDetalhes(PerfilProjeto perfil) {
         Object[] dadosTabela = new Object[] {
                 perfil.getId(),
                 perfil.getNome()

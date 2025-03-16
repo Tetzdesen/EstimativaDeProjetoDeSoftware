@@ -1,20 +1,15 @@
 package com.br.estimativadeprojetodesoftware.repository.sqlite;
 
-import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
-import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.IUsuarioRepository;
-import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
-import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -83,7 +78,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
         }
         return Optional.empty();
     }
-    
+
     @Override
     public Optional<Usuario> buscarPorEmail(String email) {
         String sql = "SELECT * FROM usuario WHERE email = ?";
@@ -114,68 +109,25 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
         return usuarios;
     }
 
+    @Override
+    public Map<String, String> buscarEmailESenhaDeUsuarios() {
+        Map<String, String> usuarios = new HashMap<>();
+        String sql = "SELECT email, senha FROM usuario";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String email = resultSet.getString("email");
+                String senha = resultSet.getString("senha");
+                usuarios.put(email, senha);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usuarios;
+    }
+
     private Usuario mapToUsuario(ResultSet resultSet) throws SQLException {
         UUID idUsuario = UUID.fromString(resultSet.getString("idUsuario"));
-        /* 
-        List<Perfil> perfis = new ArrayList<>();
-        perfis.addAll(new PerfilRepositoryService().buscarTodosPerfisPorIdUsuario(idUsuario));
-
-        List<Perfil> perfisNovos = new ArrayList<>();
-
-        for (Perfil perfil : perfis) {
-
-            // buscar nome do campo pelo id do Perfil
-            List<Campo> camposTamanhoApp = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "tamanho");
-
-            for (Campo campo : camposTamanhoApp) {
-                Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-                perfil.adicionarTamanhoApp(campo.getNome(), dias.intValue());
-
-            }
-
-            List<Campo> camposNivelUI = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "nivel");
-            
-            for (Campo campo : camposNivelUI) {
-                Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-                perfil.adicionarNivelUI(campo.getNome(), dias.intValue());
-            }
-            
-            List<Campo> camposFuncionalidades = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "funcionalidade");
-            
-            for (Campo campo : camposFuncionalidades) {
-                Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-                perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
-            }
-            
-            List<Campo> taxasDiarias = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "taxa diária");
-            
-            for (Campo campo : taxasDiarias) {
-                Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-                perfil.adicionarTaxaDiaria(campo.getNome(), dias.intValue());
-            }
-            
-            perfisNovos.add(perfil);
-        }
-
-        List<Projeto> projetos = new ArrayList<>();
-        List<String> idProjetos = new ProjetoRepositoryService().buscarProjetosPorUsuario(idUsuario);
-
-        for (String id : idProjetos) {
-
-            Projeto projeto = new ProjetoRepositoryService().buscarPorId(UUID.fromString(id)).get();
-
-            Campo campo = new CampoRepositoryService().buscarPorIdProjeto(projeto.getId());
-
-            Integer dias = new CampoRepositoryService().buscarDiasPorProjeto(projeto.getId());
-
-            campo.setDias(dias.doubleValue());;
-
-            projeto.adicionarCampo(campo);
-
-            projetos.add(projeto);
-        }
-            
-*/
         return new Usuario(
                 idUsuario,
                 resultSet.getString("nomeUsuario"),
@@ -188,12 +140,24 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
 
     @Override
     public List<Usuario> buscarUsuariosPorProjeto(UUID idProjeto) {
-        List<Usuario> usuarios = new ArrayList<>();
-        List<String> usuarioIds = new ProjetoRepositoryService().buscarProjetosPorUsuario(idProjeto);
-
-        for (String userId : usuarioIds) {
-            new UsuarioRepositoryService().buscarPorId(UUID.fromString(userId)).ifPresent(usuarios::add);
+        List<String> usuarioIds = new ArrayList<>();
+        String query = "SELECT usuario_idUsuario FROM usuario_has_projeto WHERE projeto_idProjeto = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, idProjeto.toString());
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                usuarioIds.add(resultSet.getString("usuario_idUsuario"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        
+        List<Usuario> usuarios = new ArrayList<>();
+  
+        for (String userId : usuarioIds) {
+           usuarios.add(new UsuarioRepositoryService().buscarPorId(UUID.fromString(userId)).get());
+        }
+        
         return usuarios;
     }
 }

@@ -17,10 +17,14 @@ public interface IProjetoRepository {
     void removerPorId(UUID id);
 
     Optional<Projeto> buscarPorId(UUID id);
+    
+    Optional<Projeto> buscarProjetoPorNome(String nomeProjeto);
 
     List<Projeto> buscarTodos();
     
     boolean buscarIsCompartilhadoPorId(UUID idUsuario, UUID idProjeto);
+       
+    List<String> buscarNomesDeProjetosPorUsuario(UUID idUsuario);
     
     List<String> buscarProjetosPorUsuario(UUID idUsuario);
 }

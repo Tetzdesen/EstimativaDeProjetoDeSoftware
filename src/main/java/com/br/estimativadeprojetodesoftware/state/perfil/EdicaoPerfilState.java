@@ -1,9 +1,9 @@
 package com.br.estimativadeprojetodesoftware.state.perfil;
 
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.CancelarPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.SalvarPerfilProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
 
 public class EdicaoPerfilState extends ManterPerfilPresenterState {
@@ -16,7 +16,7 @@ public class EdicaoPerfilState extends ManterPerfilPresenterState {
     }
 
     private void configuraView() {
-        Perfil perfil = presenter.getPerfil();
+        PerfilProjeto perfil = presenter.getPerfil();
 
         carregarCamposObrigatorios(perfil);
 
@@ -44,7 +44,7 @@ public class EdicaoPerfilState extends ManterPerfilPresenterState {
         presenter.getView().getBtnCancelar().setVisible(true);
     }
 
-    private void carregarCamposObrigatorios(Perfil perfil) {
+    private void carregarCamposObrigatorios(PerfilProjeto perfil) {
         presenter.getView().getTxtNome().setText(perfil.getNome());
         presenter.getView().getTglBackEnd().setSelected(perfil.isPerfilBackEnd());
 

@@ -1,12 +1,11 @@
 package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
-import com.br.authifyjava.ResultadoAutenticacao;
 import com.br.estimativadeprojetodesoftware.command.AbrirPrincipalPresenterCommand;
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.service.AutenticacaoService;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.RealizarAutenticacaoUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.presenter.window_command.FecharJanelaCommand;
 import com.br.estimativadeprojetodesoftware.service.IconService;
-import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.usuario.LoginView;
 import java.awt.event.MouseAdapter;
@@ -20,24 +19,17 @@ import javax.swing.SwingUtilities;
 public class LoginPresenter {
 
     private LoginView view;
-    private UsuarioRepositoryService repositoryUsuario;
-    private UsuarioLogadoSingleton usuarioLogado;
-    private AutenticacaoService autenticacaoService;
+    private ProjetoCommand comandoDeLogin;
 
-    public LoginPresenter() {
-        this.view = new LoginView();
-        this.repositoryUsuario = new UsuarioRepositoryService();
-        this.usuarioLogado = UsuarioLogadoSingleton.getInstancia();
-        this.autenticacaoService = new AutenticacaoService();
+    public LoginPresenter(LoginView view) {
+        this.view = view;
         configuraView();
     }
 
     private void configuraView() {
-        view.setSize(546, 450);
-        view.setLocationRelativeTo(null);
         configuraListerns();
         SwingUtilities.invokeLater(() -> {
-            view.setVisible(true); // Força a modalidade após configurar a localização
+            view.setVisible(true);
         });
     }
 
@@ -68,29 +60,16 @@ public class LoginPresenter {
     private void efetuarLogin() throws Exception {
         String email = view.getTxtEmail().getText();
         String senha = new String(view.getTxtSenha().getPassword());
+        this.comandoDeLogin = new RealizarAutenticacaoUsuarioCommand(email, senha);
+        comandoDeLogin.execute();
 
-        if (camposInvalidos(email, senha)) {
-            throw new IllegalArgumentException("Os campos de nome e senha não podem estar vazios");
-        }
-
-        //ResultadoAutenticacao resultadoAutenticacao = autenticacaoService.autenticar(email, senha);
-
-        if (autenticacaoService.autenticar(email, senha)) {
-            Usuario usuario = repositoryUsuario.buscarPorEmail(email).get();
-            usuarioLogado.setUsuario(usuario);
-            view.dispose();
+        if (UsuarioLogadoSingleton.getInstancia().getUsuario() != null) {
+            new FecharJanelaCommand(view).execute();
             new AbrirPrincipalPresenterCommand().execute();
-        } else {
-            throw new IllegalArgumentException("não foi logado");
         }
     }
 
     public LoginView getView() {
         return view;
     }
-
-    private boolean camposInvalidos(String email, String senha) {
-        return email == null || email.trim().isEmpty() || senha == null || senha.trim().isEmpty();
-    }
-
 }

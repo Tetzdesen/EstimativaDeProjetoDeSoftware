@@ -1,5 +1,6 @@
-package com.br.estimativadeprojetodesoftware.command;
+package com.br.estimativadeprojetodesoftware.command.projeto;
 
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.DetalheProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
@@ -8,26 +9,25 @@ import com.br.estimativadeprojetodesoftware.view.projeto.DetalheProjetoView;
 import javax.swing.*;
 
 public class AbrirDetalhesProjetoProjetoCommand implements ProjetoCommand {
-    private final ProjetoRepositoryMock repository;
     private final JDesktopPane desktop;
-    private String projetoNome;
+    private String nomeProjeto;
 
-    public AbrirDetalhesProjetoProjetoCommand(ProjetoRepositoryMock repository, JDesktopPane desktop) {
-        this.repository = repository;
+    public AbrirDetalhesProjetoProjetoCommand(String nomeProjeto, JDesktopPane desktop) {
+        this.nomeProjeto = nomeProjeto;
         this.desktop = desktop;
     }
 
-    public void setProjetoNome(String projetoNome) {
-        this.projetoNome = projetoNome;
+    public void setProjetoNome(String nomeProjeto) {
+        this.nomeProjeto = nomeProjeto;
     }
 
     @Override
     public void execute() {
-        if (projetoNome == null || projetoNome.isEmpty()) {
+        if (nomeProjeto == null || nomeProjeto.isEmpty()) {
             throw new IllegalStateException("O nome do projeto não foi definido para este comando.");
         }
 
-        String tituloJanela = "Detalhes do Projeto: " + projetoNome;
+        String tituloJanela = "Detalhes do Projeto: " + nomeProjeto;
         WindowManager windowManager = WindowManager.getInstance();
 
         if (windowManager.isFrameAberto(tituloJanela)) {
@@ -35,7 +35,7 @@ public class AbrirDetalhesProjetoProjetoCommand implements ProjetoCommand {
         } else {
             DetalheProjetoView detalheView = new DetalheProjetoView();
             detalheView.setTitle(tituloJanela);
-            new DetalheProjetoPresenter(detalheView, repository, projetoNome);
+            new DetalheProjetoPresenter(detalheView, nomeProjeto);
             desktop.add(detalheView);
             detalheView.setVisible(true);
             try {

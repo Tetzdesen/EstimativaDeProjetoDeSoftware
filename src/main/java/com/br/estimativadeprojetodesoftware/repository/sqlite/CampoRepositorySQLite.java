@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository.sqlite;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ICampoRepository;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
@@ -37,19 +37,35 @@ public class CampoRepositorySQLite implements ICampoRepository {
 
     @Override
     public void salvarProjetoCampo(Projeto projeto, Campo campo) {
-        String sql = "INSERT INTO projeto_has_campo (projeto_idProjeto, campo_idCampo, diasProjeto) VALUES (?, ?, ?)";
+        if (!existeAssociacao(projeto.getId(), campo.getId())) {
+            String sql = "INSERT INTO projeto_has_campo (projeto_idProjeto, campo_idCampo, diasProjeto) VALUES (?, ?, ?)";
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, projeto.getId().toString());
+                stmt.setString(2, campo.getId().toString());
+                stmt.setInt(3, campo.getDias().intValue());
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException("Erro ao salvar campo de projeto: " + e.getMessage(), e);
+            }
+        } else {
+            System.out.println("Associação entre o projeto e o campo já existe.");
+        }
+    }
+
+    private boolean existeAssociacao(UUID idProjeto, UUID idCampo) {
+        String sql = "SELECT COUNT(*) FROM projeto_has_campo WHERE projeto_idProjeto = ? AND campo_idCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, projeto.getId().toString());
-            stmt.setString(2, campo.getId().toString());
-            stmt.setInt(3, campo.getDias().intValue());
-            stmt.executeUpdate();
+            stmt.setString(1, idProjeto.toString());
+            stmt.setString(2, idCampo.toString());
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar campo de projeto: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao verificar associação", e);
         }
     }
 
     @Override
-    public void salvarPerfilCampo(Perfil perfil, Campo campo) {
+    public void salvarPerfilCampo(PerfilProjeto perfil, Campo campo) {
         String sql = "INSERT INTO perfil_has_campo (perfil_idPerfil, campo_idCampo, diasPerfil) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, perfil.getId().toString());
@@ -88,7 +104,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
     }
 
     @Override
-    public void atualizarDiasPerfilCampo(Perfil perfil, Campo campo) {
+    public void atualizarDiasPerfilCampo(PerfilProjeto perfil, Campo campo) {
         String sql = "UPDATE perfil_has_campo SET diasPerfil = ? WHERE perfil_idPerfil = ? AND campo_idCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setDouble(1, campo.getDias().doubleValue());
@@ -171,8 +187,8 @@ public class CampoRepositorySQLite implements ICampoRepository {
         List<Campo> campos = new ArrayList<>();
         String sql = "SELECT * FROM campo WHERE tipoCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, tipo);  
-            ResultSet rs = stmt.executeQuery(); 
+            stmt.setString(1, tipo);
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 campos.add(new Campo(
                         UUID.fromString(rs.getString("idCampo")),
@@ -278,6 +294,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
             while (rs.next()) {
                 Campo campo = buscarPorId(UUID.fromString(rs.getString("campo_idCampo")));
                 if (campo != null) {
+                    campo.setDias(buscarDiasPorProjetoCampo(idProjeto, campo.getId()).doubleValue());
                     campos.add(campo);
                 }
             }
@@ -297,6 +314,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
             while (rs.next()) {
                 Campo campo = buscarPorId(UUID.fromString(rs.getString("campo_idCampo")));
                 if (campo != null) {
+                    campo.setDias(buscarDiasPorPerfilCampo(idPerfil, campo.getId()));
                     campos.add(campo);
                 }
             }
@@ -361,20 +379,24 @@ public class CampoRepositorySQLite implements ICampoRepository {
     }
 
     @Override
-    public Campo buscarPorIdProjetoTipo(UUID idProjeto, String tipo) {
+    public List<Campo> buscarPorIdProjetoTipo(UUID idProjeto, String tipo) {
+        List<Campo> campos = new ArrayList<>();
         String sql = "SELECT * FROM campo WHERE idCampo IN (SELECT campo_idCampo FROM projeto_has_campo WHERE projeto_idProjeto = ?) AND tipoCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, idProjeto.toString());
             stmt.setString(2, tipo);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                Integer dias = buscarDiasPorProjeto(idProjeto);
-                return new Campo(UUID.fromString(rs.getString("idCampo")), rs.getString("tipoCampo"), rs.getString("nomeCampo"), dias.doubleValue());
+                Campo campo = buscarPorId(UUID.fromString(rs.getString("idCampo")));
+                if (campo != null) {
+                    campo.setDias(buscarDiasPorProjetoCampo(idProjeto, campo.getId()).doubleValue());
+                    campos.add(campo);
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao buscar campo por ID de projeto e tipo: " + e.getMessage(), e);
         }
-        return null;
+        return campos;
     }
 
     @Override
@@ -388,6 +410,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
             while (rs.next()) {
                 Campo campo = buscarPorId(UUID.fromString(rs.getString("idCampo")));
                 if (campo != null) {
+                    campo.setDias(buscarDiasPorPerfilCampo(idPerfil, campo.getId()));
                     campos.add(campo);
                 }
             }
@@ -397,4 +420,23 @@ public class CampoRepositorySQLite implements ICampoRepository {
         return campos;
     }
 
+    @Override
+    public double buscarValorPorNomeProjetoCampo(UUID idProjeto, String nome) {
+        String sql = "SELECT * FROM campo WHERE idCampo IN (SELECT campo_idCampo FROM projeto_has_campo WHERE projeto_idProjeto = ?) AND nomeCampo = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, idProjeto.toString());
+            stmt.setString(2, nome);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Campo campo = buscarPorId(UUID.fromString(rs.getString("idCampo")));
+                if (campo != null) {
+                    return (buscarDiasPorProjetoCampo(idProjeto, campo.getId()));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar campo por ID de projeto e nome de campo: " + e.getMessage(), e);
+        }
+        return 0.0;
+    }
 }

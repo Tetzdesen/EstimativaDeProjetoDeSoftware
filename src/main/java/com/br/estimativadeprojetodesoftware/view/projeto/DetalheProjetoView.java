@@ -6,6 +6,7 @@ import java.awt.*;
 import java.text.DecimalFormat;
 
 public class DetalheProjetoView extends JInternalFrame {
+    private JButton btnExportar;
     private JLabel lblNome, lblCriador, lblData, lblTipoProjeto, lblStatus, lblValorTotal;
     private JTable tabelaDetalhes;
     private DefaultTableModel modeloTabela;
@@ -31,11 +32,15 @@ public class DetalheProjetoView extends JInternalFrame {
         lblTipoProjeto = new JLabel("Tipo de Projeto: ");
         lblStatus = new JLabel("Status: ");
 
+        btnExportar = new JButton("Exportar");
+
         painelCabecalho.add(lblNome);
         painelCabecalho.add(lblCriador);
         painelCabecalho.add(lblData);
         painelCabecalho.add(lblTipoProjeto);
         painelCabecalho.add(lblStatus);
+
+        painelCabecalho.add(btnExportar);
 
         painelPrincipal.add(painelCabecalho, BorderLayout.NORTH);
 
@@ -79,4 +84,9 @@ public class DetalheProjetoView extends JInternalFrame {
         DecimalFormat df = new DecimalFormat("R$ #,##0.00");
         lblValorTotal.setText("Valor Total: " + df.format(valorTotal));
     }
+
+    public JButton getBtnExportar() {
+        return btnExportar;
+    }
+
 }

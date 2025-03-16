@@ -3,13 +3,13 @@ package com.br.estimativadeprojetodesoftware.view.projeto;
 import javax.swing.*;
 import java.awt.*;
 
-public final class PrincipalView extends JFrame {
+public final class PrincipalProjetoView extends JFrame {
     private JDesktopPane desktop;
     private JToolBar barraPrincipal;
     private JTree tree;
     private JScrollPane treeScrollPane;
 
-    public PrincipalView() {
+    public PrincipalProjetoView() {
         setTitle("Sistema de Estimativa de Projetos");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1200, 800);

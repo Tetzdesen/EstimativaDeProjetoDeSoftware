@@ -1,5 +1,6 @@
-package com.br.estimativadeprojetodesoftware.command;
+package com.br.estimativadeprojetodesoftware.command.projeto;
 
+import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import javax.swing.*;
 
 public class MostrarMensagemProjetoCommand implements ProjetoCommand {

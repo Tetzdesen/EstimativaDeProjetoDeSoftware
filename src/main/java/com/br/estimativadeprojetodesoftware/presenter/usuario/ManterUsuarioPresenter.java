@@ -1,13 +1,12 @@
 package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.BotaoEditarUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.BotaoExcluirUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.BotaoSalvarUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
-import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 import com.br.estimativadeprojetodesoftware.service.DataHoraService;
 import com.br.estimativadeprojetodesoftware.service.IconService;
@@ -32,16 +31,16 @@ public class ManterUsuarioPresenter implements Observer {
 
     private ManterUsuarioView view;
     private Usuario usuario;
-    private UsuarioRepositoryService usuarioRepository;
+    private UsuarioRepositoryService usuarioService;
     private ManterUsuarioPresenterState estado;
     private final Map<String, ProjetoCommand> comandos;
     private BarraService barraService;
 
-    public ManterUsuarioPresenter(ManterUsuarioView view) {
+    public ManterUsuarioPresenter(UsuarioRepositoryService usuarioService, ManterUsuarioView view) {
         this.view = view;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
-        this.usuarioRepository = new UsuarioRepositoryService();
-        this.usuarioRepository.addObserver(this);
+        this.usuarioService = usuarioService;
+        this.usuarioService.addObserver(this);
         this.comandos = inicializarComandos();
         barraService = new BarraService(comandos);
         configuraView();
@@ -123,8 +122,8 @@ public class ManterUsuarioPresenter implements Observer {
         return usuario.getPerfis().size();
     }
 
-    public UsuarioRepositoryService getRepository() {
-        return usuarioRepository;
+    public UsuarioRepositoryService getUsuarioService() {
+        return usuarioService;
     }
 
     public Usuario getUsuario() {

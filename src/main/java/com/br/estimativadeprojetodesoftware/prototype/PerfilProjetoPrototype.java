@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.prototype;
 
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 
 public interface PerfilProjetoPrototype {
-    Perfil clone();
+    PerfilProjeto clone();
 }

@@ -1,8 +1,9 @@
 package com.br.estimativadeprojetodesoftware.state.perfil;
 
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.ExcluirPerfilProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
 
 public class VisualizacaoPerfilState extends ManterPerfilPresenterState {
@@ -14,7 +15,7 @@ public class VisualizacaoPerfilState extends ManterPerfilPresenterState {
     }
 
     private void configuraView() {
-        Perfil perfil = presenter.getPerfil();
+        PerfilProjeto perfil = presenter.getPerfil();
 
         setCamposPreenchidos(perfil);
         desabilitarCampos();
@@ -43,7 +44,7 @@ public class VisualizacaoPerfilState extends ManterPerfilPresenterState {
         });
     }
 
-    private void setCamposPreenchidos(Perfil perfil) {
+    private void setCamposPreenchidos(PerfilProjeto perfil) {
         presenter.getView().getTxtNome().setText(perfil.getNome());
         presenter.getView().getTglBackEnd().setSelected(perfil.isPerfilBackEnd());
 

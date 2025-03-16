@@ -2,11 +2,7 @@ package com.br.estimativadeprojetodesoftware.service;
 
 import com.br.estimativadeprojetodesoftware.abstractfactory.FabricaRepository;
 import com.br.estimativadeprojetodesoftware.abstractfactory.SeletorFabricaRepository;
-import com.br.estimativadeprojetodesoftware.builder.AndroidBuilder;
-import com.br.estimativadeprojetodesoftware.builder.Diretor;
-import com.br.estimativadeprojetodesoftware.builder.IosBuilder;
-import com.br.estimativadeprojetodesoftware.builder.WebBackEndBuilder;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Subject;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.repository.IPerfilRepository;
@@ -32,12 +28,12 @@ public class PerfilRepositoryService implements Subject {
         this.observers = new ArrayList<>();
     }
 
-    public void salvar(Perfil perfil){
+    public void salvar(PerfilProjeto perfil){
         perfilRepository.salvar(perfil);
         notifyObservers();
     }
 
-    public void atualizar(Perfil perfil){
+    public void atualizar(PerfilProjeto perfil){
         perfilRepository.atualizar(perfil);
         notifyObservers();
     }
@@ -47,19 +43,19 @@ public class PerfilRepositoryService implements Subject {
         notifyObservers();
     }
 
-    public Optional<Perfil> buscarPorId(UUID id){
+    public Optional<PerfilProjeto> buscarPorId(UUID id){
         return perfilRepository.buscarPorId(id);
     }
     
-    public List<Perfil> buscarPerfisPorProjeto(UUID idProjeto){
+    public List<PerfilProjeto> buscarPerfisPorProjeto(UUID idProjeto){
         return perfilRepository.buscarPerfisPorProjeto(idProjeto);
     }
 
-    public List<Perfil> buscarTodos(){
+    public List<PerfilProjeto> buscarTodos(){
       return perfilRepository.buscarTodos();
     }
     
-    public List<Perfil> buscarTodosPerfisPorIdUsuario(UUID id
+    public List<PerfilProjeto> buscarTodosPerfisPorIdUsuario(UUID id
     ) {
         return perfilRepository.buscarTodosPerfisPorIdUsuario(id);
     }

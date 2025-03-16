@@ -1,15 +1,8 @@
 package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
-import com.br.estimativadeprojetodesoftware.builder.AndroidBuilder;
-import com.br.estimativadeprojetodesoftware.builder.Diretor;
-import com.br.estimativadeprojetodesoftware.builder.IosBuilder;
-import com.br.estimativadeprojetodesoftware.builder.WebBackEndBuilder;
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Usuario;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.RealizarCadastroUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.service.IconService;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
 import com.br.estimativadeprojetodesoftware.view.usuario.CadastroUsuarioView;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -20,14 +13,10 @@ import java.awt.event.MouseEvent;
  */
 public class CadastroUsuarioPresenter {
 
-    private CadastroUsuarioView view;
-    private UsuarioRepositoryService repositoryUsuario;
-    private ValidadorSenhaService validadorDeSenha;
-
-    public CadastroUsuarioPresenter() {
-        this.view = new CadastroUsuarioView();
-        this.repositoryUsuario = new UsuarioRepositoryService();
-        this.validadorDeSenha = new ValidadorSenhaService();
+    private final CadastroUsuarioView view;
+    
+    public CadastroUsuarioPresenter(CadastroUsuarioView view) {
+        this.view = view;
         configuraView();
     }
 
@@ -88,54 +77,22 @@ public class CadastroUsuarioPresenter {
     private void efetuarCadastro() throws Exception {
 
         String email = view.getTxtEmail().getText();
-
-        Usuario usuario = repositoryUsuario.buscarPorEmail(email).orElse(null);
-
-        if (usuario == null) {
-            String nome = view.getTxtNomeUsuario().getText();
-            String senha = new String(view.getTxtSenha().getPassword());
-            String senhaConfirmada = new String(view.getTxtConfirmarSenha().getPassword());
-
-            if (camposInvalidos(email, nome, senha, senhaConfirmada)) {
-                throw new IllegalArgumentException("Os campos não podem estar vazios");
-            }
-
-            if (senha.equals(senhaConfirmada)) {
-                try {
-                    if (validadorDeSenha.validarSenha(senha)) {
-                        usuario = new Usuario(nome, email, senha);
-                        repositoryUsuario.salvar(usuario);
-
-                        PerfilRepositoryService repositoryPerfil = new PerfilRepositoryService();
-                        repositoryPerfil.salvar(Diretor.build(new AndroidBuilder("Android", usuario)));
-                        repositoryPerfil.salvar(Diretor.build(new IosBuilder("iOS", usuario)));
-                        repositoryPerfil.salvar(Diretor.build(new WebBackEndBuilder("Web Back-End", usuario)));
-
-                        exibirMensagem("Cadastro realizado com sucesso!");
-                        view.dispose();
-                    }
-                } catch (Exception ex) {
-                    throw new Exception("Erro na validação da senha:\n" + ex.getMessage());
-                }
-
-            } else {
-                throw new IllegalArgumentException("Senhas não conferem");
-            }
-        } else {
-            throw new IllegalArgumentException("Usuário já cadastrado no sistema, por favor cadastrar outro usuário");
-        }
+        String nome = view.getTxtNomeUsuario().getText();
+        String senha = new String(view.getTxtSenha().getPassword());
+        String senhaConfirmada = new String(view.getTxtConfirmarSenha().getPassword());
+        
+        // usar um DTO de Usuario
+        new RealizarCadastroUsuarioCommand(nome, email, senha, senhaConfirmada).execute();
+        
+        view.dispose();
+            
     }
 
     public CadastroUsuarioView getView() {
         return view;
     }
 
-    private boolean camposInvalidos(String email, String nome, String senha, String senhaConfirmada) {
-        return email == null || email.trim().isEmpty() || senha == null || senha.trim().isEmpty() || nome == null
-                || nome.trim().isEmpty() || senhaConfirmada == null || senhaConfirmada.isEmpty();
-    }
-
-    public void exibirMensagem(String mensagem) {
+    private void exibirMensagem(String mensagem) {
         new MostrarMensagemProjetoCommand(mensagem).execute();
     }
 }

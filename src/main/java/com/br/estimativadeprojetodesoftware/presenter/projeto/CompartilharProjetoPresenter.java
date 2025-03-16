@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.CompartilharProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.CompartilharProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
@@ -11,22 +11,20 @@ import com.br.estimativadeprojetodesoftware.view.projeto.CompartilharProjetoView
 import java.util.List;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 public class CompartilharProjetoPresenter /*implements Observer*/ {
 
     private final CompartilharProjetoView view;
     // private final EstimaProjetoService estimaService;
-    private String nomeProjeto;
     private final UsuarioRepositoryMock usuarioRepository;
     private final ProjetoRepositoryMock projetoRepository;
-    private final PrincipalPresenter principalPresenter;
+    private final String nomeProjeto;
 
-    public CompartilharProjetoPresenter(CompartilharProjetoView view, PrincipalPresenter principalPresenter) {
+    public CompartilharProjetoPresenter(CompartilharProjetoView view, String nomeProjeto) {
         this.view = view;
-        this.principalPresenter = principalPresenter;
-        this.usuarioRepository = principalPresenter.getUsuarioRepository();
-        this.projetoRepository = principalPresenter.getProjetoRepository();
+        this.nomeProjeto = nomeProjeto;
+        this.usuarioRepository = new UsuarioRepositoryMock();
+        this.projetoRepository = new ProjetoRepositoryMock();
         // this.repository.addObserver(this);
         configurarView();
         carregarListaUsuarios();
@@ -46,8 +44,6 @@ public class CompartilharProjetoPresenter /*implements Observer*/ {
         
         this.view.getBtnCompartilharProjeto().addActionListener(e -> {
             try {
-                // buscar usuario remetente
-                this.nomeProjeto = getProjetoSelecionado();
 
                 if (nomeProjeto == null) {
                     new MostrarMensagemProjetoCommand("Nenhum projeto selecionado.").execute();
@@ -93,26 +89,6 @@ public class CompartilharProjetoPresenter /*implements Observer*/ {
 
     private void setStatusBotaoCompartilhar(boolean status) {
         this.view.getBtnCompartilharProjeto().setEnabled(status);
-    }
-
-    private String getProjetoSelecionado() {
-        Object node = principalPresenter.getView().getTree().getLastSelectedPathComponent();
-
-        if (node instanceof DefaultMutableTreeNode) {
-            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
-
-            // Obtém o nó pai (penúltimo nível)
-            DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) treeNode.getParent();
-
-            if (parentNode != null) {
-                Object userObject = parentNode.getUserObject();
-
-                if (userObject != null) {
-                    return userObject.toString();
-                }
-            }
-        }
-        return null;
     }
     /*
     @Override

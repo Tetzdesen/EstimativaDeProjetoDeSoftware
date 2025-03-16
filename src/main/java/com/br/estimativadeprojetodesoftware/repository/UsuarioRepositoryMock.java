@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.repository;
 
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Subject;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
@@ -23,7 +23,7 @@ public class UsuarioRepositoryMock implements Subject {
 
         // Usuário 1
         Usuario usuario1 = new Usuario("Alice Silva", "alice@email.com", "senha123");
-        usuario1.adicionarPerfil(new Perfil("Desenvolvedor Back-End"));
+        usuario1.adicionarPerfil(new PerfilProjeto("Desenvolvedor Back-End"));
         usuario1.adicionarProjeto(new Projeto("Sistema ERP", "Alice Silva", "Web/Back-End"));
         usuarios.add(usuario1);
 

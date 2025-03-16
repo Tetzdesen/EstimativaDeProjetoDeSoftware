@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository.h2;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ICampoRepository;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
@@ -66,7 +66,7 @@ public class CampoRepositoryH2 implements ICampoRepository {
     }
 
     @Override
-    public void atualizarDiasPerfilCampo(Perfil perfil, Campo campo) {
+    public void atualizarDiasPerfilCampo(PerfilProjeto perfil, Campo campo) {
         String sql = "UPDATE perfil_has_campo SET diasPerfil = ? WHERE perfil_idPerfil = ? AND campo_idCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, campo.getDias().intValue());
@@ -319,15 +319,18 @@ public class CampoRepositoryH2 implements ICampoRepository {
     }
 
     @Override
-    public Campo buscarPorIdProjetoTipo(UUID idProjeto, String tipo) {
+    public List<Campo> buscarPorIdProjetoTipo(UUID idProjeto, String tipo) {
+        List<Campo> campos = new ArrayList<>();
         String sql = "SELECT * FROM campo WHERE idCampo IN (SELECT campo_idCampo FROM projeto_has_campo WHERE projeto_idProjeto = ?) AND tipoCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, idProjeto.toString());
             stmt.setString(2, tipo);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                Integer dias = buscarDiasPorProjeto(idProjeto);
-                return new Campo(UUID.fromString(rs.getString("idCampo")), rs.getString("tipoCampo"), rs.getString("nomeCampo"), dias.doubleValue());
+                Campo campo = buscarPorId(UUID.fromString(rs.getString("campo_idCampo")));
+                if (campo != null) {
+                    campos.add(campo);
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao buscar campo por ID de projeto e tipo: " + e.getMessage(), e);
@@ -361,12 +364,17 @@ public class CampoRepositoryH2 implements ICampoRepository {
     }
 
     @Override
-    public void salvarPerfilCampo(Perfil perfil, Campo campo) {
+    public void salvarPerfilCampo(PerfilProjeto perfil, Campo campo) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public List<Campo> listarTodosPorTipo(String tipo) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public double buscarValorPorNomeProjetoCampo(UUID idProjeto, String nome) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

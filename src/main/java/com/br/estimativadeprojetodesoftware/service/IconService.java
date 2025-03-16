@@ -22,6 +22,8 @@ public class IconService {
         icons.put("salvar", loadIcon("salvar-icon.png"));
         icons.put("editar", loadIcon("editar-icon.png"));
         icons.put("excluir", loadIcon("excluir-icon.png"));
+        icons.put("exportar-pdf", loadIcon("exportar-pdf-icon.png"));
+        icons.put("exportar-csv", loadIcon("exportar-csv-icon.png"));
     }
 
     private static ImageIcon loadIcon(String path) {

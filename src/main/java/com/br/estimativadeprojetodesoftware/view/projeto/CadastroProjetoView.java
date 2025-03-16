@@ -3,6 +3,11 @@ package com.br.estimativadeprojetodesoftware.view.projeto;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *
+ * @author Hiago Lopes
+ */
+
 public class CadastroProjetoView extends JDialog {
 
     private JButton btnAdicionarPerfil;
