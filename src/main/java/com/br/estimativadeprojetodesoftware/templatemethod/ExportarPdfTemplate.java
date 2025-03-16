@@ -27,7 +27,7 @@ public class ExportarPdfTemplate extends ExportadorProjeto {
             File diretorioSelecionado = fileChooser.getSelectedFile();
             return diretorioSelecionado.getAbsolutePath() 
                     + File.separator 
-                    + projeto.getNome() 
+                    + projeto.getNome().replaceAll("\\s+", "_")
                     + ".pdf";
         }
         return null;
