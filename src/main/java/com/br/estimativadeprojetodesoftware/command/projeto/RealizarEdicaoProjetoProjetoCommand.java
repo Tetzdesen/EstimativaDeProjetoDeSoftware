@@ -4,7 +4,6 @@ import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
-import com.br.estimativadeprojetodesoftware.presenter.projeto.CadastroProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.EdicaoProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
@@ -41,7 +40,6 @@ public class RealizarEdicaoProjetoProjetoCommand implements ProjetoCommand {
             throw new IllegalArgumentException("Adicione no mínimo um perfil obrigatório!");
         }
 
-        // pegar do DTO
         Optional<Projeto> optionalProjeto = criarProjeto(nomeProjeto, tamanho, nivel);
 
         if (optionalProjeto.isPresent()) {
@@ -83,25 +81,21 @@ public class RealizarEdicaoProjetoProjetoCommand implements ProjetoCommand {
 
             for (Campo campo : tamanhos) {
                 if (campo.getNome().equalsIgnoreCase(tamanho)) {
-                    //  campo.setDias(new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId()));
                     projeto.adicionarCampo(campo);
                 }
             }
 
             for (Campo campo : nivelUI) {
                 if (campo.getNome().equalsIgnoreCase(nivel)) {
-                    //   campo.setDias(new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId()));
                     projeto.adicionarCampo(campo);
                 }
             }
 
             for (Campo campo : funcionalidades) {
-                //campo.setDias(new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId()));
                 projeto.adicionarCampo(campo);
             }
 
             for (Campo campo : taxasDiarias) {
-                // campo.setDias(new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId()));
                 projeto.adicionarCampo(campo);
             }
 
@@ -112,8 +106,6 @@ public class RealizarEdicaoProjetoProjetoCommand implements ProjetoCommand {
 
             }
         }
-        //  System.out.println(projeto.getCampos());
-        // System.out.println(projeto.getCampos());
         return Optional.of(projeto);
     }
 }

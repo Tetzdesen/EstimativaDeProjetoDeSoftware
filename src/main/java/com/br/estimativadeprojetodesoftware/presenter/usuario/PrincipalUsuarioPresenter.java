@@ -1,9 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
-/**
- *
- * @author tetzner
- */
+
 import com.br.estimativadeprojetodesoftware.command.usuario.AbrirCadastroUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.AbrirLoginUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
@@ -17,7 +14,6 @@ public class PrincipalUsuarioPresenter {
 
     private final PrincipalUsuarioView view;
 
-    // adicionar map de comandos
     public PrincipalUsuarioPresenter() {
         this.view = new PrincipalUsuarioView();
         configuraView();
@@ -35,13 +31,13 @@ public class PrincipalUsuarioPresenter {
         new SetLookAndFeelCommand().execute();
         view.getBtnAutenticarPorSenha().addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {
-                new AbrirLoginUsuarioCommand().execute();
+                new AbrirLoginUsuarioCommand(this).execute();
             });
         });
 
         view.getBtnCadastrar().addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {
-                new AbrirCadastroUsuarioCommand().execute();
+                new AbrirCadastroUsuarioCommand(this).execute();
             });
         });
     }

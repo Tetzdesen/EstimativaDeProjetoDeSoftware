@@ -139,6 +139,8 @@ public class EdicaoProjetoPresenter {
 
     private void salvarAlteracoes() {
         new RealizarEdicaoProjetoProjetoCommand(this).execute();
+
+        carregarListaPerfis();
     }
 
     private void carregarListaPerfis() {
@@ -198,10 +200,14 @@ public class EdicaoProjetoPresenter {
         DefaultListModel<String> model = (DefaultListModel<String>) view.getJListPerfis().getModel();
 
         if (model.contains(perfil)) {
+            PerfilProjeto perfilSelecionado = perfisSelecionados.get(perfil);
+
+            projetoAtual.removerPerfil(perfilSelecionado);
+
             model.removeElement(perfil);
             exibirMensagem("Perfil removido com sucesso!");
         } else {
-            throw new RuntimeException("Erro: Perfil não removido!");
+            throw new RuntimeException("Erro: Perfil não encontrado!");
         }
 
         view.getJListPerfis().setModel(model);

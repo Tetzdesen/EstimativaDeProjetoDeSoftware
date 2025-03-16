@@ -4,34 +4,37 @@ import com.br.estimativadeprojetodesoftware.command.projeto.CompartilharProjetoC
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
-import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.CompartilharProjetoView;
 import java.util.List;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-public class CompartilharProjetoPresenter /*implements Observer*/ {
+public class CompartilharProjetoPresenter  {
 
     private final CompartilharProjetoView view;
-    // private final EstimaProjetoService estimaService;
-    private final UsuarioRepositoryMock usuarioRepository;
-    private final ProjetoRepositoryMock projetoRepository;
+    private final UsuarioRepositoryService usuarioService;
+    private final ProjetoRepositoryService projetoService;
+    private List<Usuario> usuarios;
     private final String nomeProjeto;
 
-    public CompartilharProjetoPresenter(CompartilharProjetoView view, String nomeProjeto) {
+    public CompartilharProjetoPresenter(ProjetoRepositoryService projetoService, CompartilharProjetoView view, String nomeProjeto) {
         this.view = view;
         this.nomeProjeto = nomeProjeto;
-        this.usuarioRepository = new UsuarioRepositoryMock();
-        this.projetoRepository = new ProjetoRepositoryMock();
-        // this.repository.addObserver(this);
+        this.usuarioService = new UsuarioRepositoryService();
+        this.projetoService = projetoService;
+        this.usuarios = usuarioService.buscarTodos();
         configurarView();
         carregarListaUsuarios();
 
     }
 
     private void configurarView() {
+
+        this.view.setModal(true);
+        this.view.setSize(1000, 700);
         
         setStatusBotaoCompartilhar(false);
         
@@ -43,18 +46,19 @@ public class CompartilharProjetoPresenter /*implements Observer*/ {
         });
         
         this.view.getBtnCompartilharProjeto().addActionListener(e -> {
+            
             try {
 
                 if (nomeProjeto == null) {
                     new MostrarMensagemProjetoCommand("Nenhum projeto selecionado.").execute();
                     return;
                 }
-                Projeto projeto = projetoRepository.getProjetoPorNome(nomeProjeto);
+                Projeto projeto = projetoService.buscarProjetoPorNome(nomeProjeto).get();
                 int linhaSelecionada = this.view.getTabelaUsuarios().getSelectedRow();
 
                 if (linhaSelecionada != -1) {
-                    Usuario usuario = usuarioRepository.getUsuarios().get(linhaSelecionada);
-                    new CompartilharProjetoCommand(usuarioRepository, projetoRepository,  UsuarioLogadoSingleton.getInstancia().getUsuario(), usuario, projeto).execute();
+                    Usuario usuario = usuarios.get(linhaSelecionada);
+                    new CompartilharProjetoCommand(usuarioService, projetoService, UsuarioLogadoSingleton.getInstancia().getUsuario(), usuario, projeto).execute();
                 }
                 
             } catch (Exception ex) {
@@ -66,9 +70,8 @@ public class CompartilharProjetoPresenter /*implements Observer*/ {
 
     private void carregarListaUsuarios() {
         Usuario usuarioLogado = UsuarioLogadoSingleton.getInstancia().getUsuario();
-        List<Usuario> usuarioList = usuarioRepository.getUsuarios();
 
-        for (Usuario usuario : usuarioList) {
+        for (Usuario usuario : usuarios) {
             if (usuario != null && !usuario.getEmail().equals(usuarioLogado.getEmail())) {
                 carregarDetalhes(usuario);
             }
@@ -83,16 +86,7 @@ public class CompartilharProjetoPresenter /*implements Observer*/ {
         view.atualizarTabela(dadosTabela);
     }
 
-    private void realizarCompartilhamento() throws Exception {
-
-    }
-
     private void setStatusBotaoCompartilhar(boolean status) {
         this.view.getBtnCompartilharProjeto().setEnabled(status);
     }
-    /*
-    @Override
-    public void update() {
-        carregarDetalhes();
-    }*/
 }

@@ -10,12 +10,11 @@ public class CustomTableRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-        // Pega o valor da primeira coluna da linha atual
         Object firstColumnValue = table.getValueAt(row, 0);
 
         if (firstColumnValue != null && isCategoria(firstColumnValue.toString())) {
             cell.setFont(new Font("Arial", Font.BOLD, 14));
-            cell.setBackground(new Color(200, 200, 200)); // 🔹 Cinza claro mais visível
+            cell.setBackground(new Color(200, 200, 200)); 
             cell.setForeground(Color.BLACK);
         } else {
             cell.setFont(new Font("Arial", Font.PLAIN, 12));

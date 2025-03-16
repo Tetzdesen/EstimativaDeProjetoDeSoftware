@@ -18,10 +18,12 @@ import javax.swing.SwingUtilities;
  */
 public class LoginPresenter {
 
-    private LoginView view;
+    private final LoginView view;
+    private final PrincipalUsuarioPresenter principalUsuarioPresenter;
     private ProjetoCommand comandoDeLogin;
 
-    public LoginPresenter(LoginView view) {
+    public LoginPresenter(LoginView view, PrincipalUsuarioPresenter principalUsuarioPresenter) {
+        this.principalUsuarioPresenter = principalUsuarioPresenter;
         this.view = view;
         configuraView();
     }
@@ -60,10 +62,12 @@ public class LoginPresenter {
     private void efetuarLogin() throws Exception {
         String email = view.getTxtEmail().getText();
         String senha = new String(view.getTxtSenha().getPassword());
+
         this.comandoDeLogin = new RealizarAutenticacaoUsuarioCommand(email, senha);
         comandoDeLogin.execute();
 
         if (UsuarioLogadoSingleton.getInstancia().getUsuario() != null) {
+            principalUsuarioPresenter.getView().dispose();
             new FecharJanelaCommand(view).execute();
             new AbrirPrincipalPresenterCommand().execute();
         }

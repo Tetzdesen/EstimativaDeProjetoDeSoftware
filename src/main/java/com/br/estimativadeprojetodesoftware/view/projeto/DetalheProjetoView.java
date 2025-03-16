@@ -148,26 +148,6 @@ public class DetalheProjetoView extends JInternalFrame {
         lblValorTotal.setText("Valor Total: " + df.format(valorTotal));
     }
 
-    /*
-    public void atualizarTabela(Object[][] dados, List<String> perfis, double valorTotal) {
-        String[] colunas = new String[perfis.size() + 3];
-        colunas[0] = "Funcionalidade";
-
-        for (int i = 0; i < perfis.size(); i++) {
-            colunas[i + 1] = perfis.get(i) + " (Dias ou %)";
-        }
-
-        colunas[perfis.size() + 1] = "Total";
-        colunas[perfis.size() + 2] = "Valor Total (R$)";
-
-        modeloTabela.setDataVector(dados, colunas);
-
-        tabelaDetalhes.setDefaultRenderer(Object.class, new CustomTableRenderer());
-
-        DecimalFormat df = new DecimalFormat("R$ #,##0.00");
-        lblValorTotal.setText("Valor Total: " + df.format(valorTotal));
-    } */
-
     public void setImpostos(double valor) {
         lblImpostos.setText(String.format("Impostos: %.2f%%", valor));
     }

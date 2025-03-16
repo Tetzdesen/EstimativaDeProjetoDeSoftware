@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.chain.calculoestimativa;
 
+import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
 import java.util.UUID;
 
 /**

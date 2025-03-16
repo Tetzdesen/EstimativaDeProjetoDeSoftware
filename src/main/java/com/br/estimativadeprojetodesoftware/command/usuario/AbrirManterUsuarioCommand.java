@@ -11,14 +11,12 @@ import javax.swing.JDesktopPane;
  *
  * @author tetzner
  */
-public class ManterUsuarioCommand implements ProjetoCommand {
+public class AbrirManterUsuarioCommand implements ProjetoCommand {
 
     private final PrincipalProjetoPresenter principalPresenter;
-    private final JDesktopPane desktop;
 
-    public ManterUsuarioCommand(PrincipalProjetoPresenter principalPresenter, JDesktopPane desktop) {
+    public AbrirManterUsuarioCommand(PrincipalProjetoPresenter principalPresenter) {
         this.principalPresenter = principalPresenter;
-        this.desktop = desktop;
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
+import org.h2.tools.Server;
 
 public class ConexaoSingleton {
 
@@ -22,7 +23,7 @@ public class ConexaoSingleton {
 
     private final Map<String, DatabaseInitializer> inicializadores = Map.of(
             "SQLite", new SQLiteInitializer(),
-            "H2:", new H2Initializer() // trocar para h2 depois
+            "H2", new H2Initializer() // trocar para h2 depois
     );
 
     private ConexaoSingleton() {
@@ -47,6 +48,8 @@ public class ConexaoSingleton {
             try (var stmt = this.conexao.createStatement()) {
                 stmt.execute("PRAGMA foreign_keys = ON;");
             }
+         
+
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao conectar com o banco de dados: " + e.getMessage());
         }

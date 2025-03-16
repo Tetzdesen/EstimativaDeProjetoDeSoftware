@@ -2,7 +2,6 @@ package com.br.estimativadeprojetodesoftware.command.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
-import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 
 /**

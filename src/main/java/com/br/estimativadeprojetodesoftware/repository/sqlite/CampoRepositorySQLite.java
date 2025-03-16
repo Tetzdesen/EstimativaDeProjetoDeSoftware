@@ -322,28 +322,6 @@ public class CampoRepositorySQLite implements ICampoRepository {
         return campos;
     }
 
-    /*
-    @Override
-    public List<Campo> listarTodosPorIdProjetoCampo(UUID idProjeto, UUID idCampo) {
-        List<Campo> campos = new ArrayList<>();
-        String sql = "SELECT * FROM projeto_has_campo WHERE projeto_idProjeto = ? AND campo_idCampo = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, idProjeto.toString());
-            stmt.setString(2, idCampo.toString());
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Campo campo = buscarPorId(UUID.fromString(rs.getString("campo_idCampo")));
-                if (campo != null) {
-                    campos.add(campo);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar campos por projeto e campo: " + e.getMessage(), e);
-        }
-        return campos;
-    }
-
-     */
     @Override
     public Campo buscarPorIdProjeto(UUID idProjeto) {
         String sql = "SELECT * FROM campo WHERE idCampo IN (SELECT campo_idCampo FROM projeto_has_campo WHERE projeto_idProjeto = ?)";
