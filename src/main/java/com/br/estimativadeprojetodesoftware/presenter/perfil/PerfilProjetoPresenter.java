@@ -2,6 +2,7 @@ package com.br.estimativadeprojetodesoftware.presenter.perfil;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.AbrirManterPerfilProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.perfil.CarregarCamposPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
@@ -86,49 +87,7 @@ public class PerfilProjetoPresenter implements Observer {
 
         return repository.buscarPorId(id).orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
     }
-
-    private void carregarCamposPerfil(List<PerfilProjeto> perfis) {
-        List<PerfilProjeto> perfisNovos = new ArrayList<>();
-
-        for (PerfilProjeto perfil : perfis) {
-
-            // buscar nome do campo pelo id do Perfil
-            List<Campo> camposTamanhoApp = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(),
-                    "tamanho");
-
-            for (Campo campo : camposTamanhoApp) {
-                Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-                perfil.adicionarTamanhoApp(campo.getNome(), dias.intValue());
-
-            }
-
-            List<Campo> camposNivelUI = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "nivel");
-
-            for (Campo campo : camposNivelUI) {
-                Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-                perfil.adicionarNivelUI(campo.getNome(), dias.doubleValue());
-            }
-
-            List<Campo> camposFuncionalidades = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(),
-                    "funcionalidade");
-
-            for (Campo campo : camposFuncionalidades) {
-                Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-                perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
-            }
-
-            List<Campo> taxasDiarias = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(),
-                    "taxa diária");
-
-            for (Campo campo : taxasDiarias) {
-                Double dias = new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-                perfil.adicionarTaxaDiaria(campo.getNome(), dias.doubleValue());
-            }
-
-            perfis.add(perfil);
-        }
-
-    }
+    
 
     private void carregarDetalhesPerfil() {
         DefaultTableModel modelo = (DefaultTableModel) view.getModeloTabela();
@@ -137,7 +96,7 @@ public class PerfilProjetoPresenter implements Observer {
         List<PerfilProjeto> perfis = repository.buscarTodosPerfisPorIdUsuario(
                 UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
 
-        carregarCamposPerfil(perfis);
+        new CarregarCamposPerfilProjetoCommand(perfis).execute();
 
         for (PerfilProjeto perfil : perfis) {
             carregarDetalhes(perfil);
