@@ -87,9 +87,7 @@ public class PerfilProjetoPresenter implements Observer {
         return repository.buscarPorId(id).orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
     }
 
-    private List<Perfil> carregarCamposPerfil(List<Perfil> perfis) {
-        List<Perfil> perfisNovos = new ArrayList<>();
-
+    private void carregarCamposPerfil(List<Perfil> perfis) {
         for (Perfil perfil : perfis) {
 
             // buscar nome do campo pelo id do Perfil
@@ -125,10 +123,8 @@ public class PerfilProjetoPresenter implements Observer {
                 perfil.adicionarTaxaDiaria(campo.getNome(), dias.doubleValue());
             }
 
-            perfisNovos.add(perfil);
+            perfis.add(perfil);
         }
-
-        return perfisNovos;
 
     }
 
@@ -139,7 +135,7 @@ public class PerfilProjetoPresenter implements Observer {
         List<Perfil> perfis = repository.buscarTodosPerfisPorIdUsuario(
                 UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
 
-        perfis = carregarCamposPerfil(perfis);
+        carregarCamposPerfil(perfis);
 
         for (Perfil perfil : perfis) {
             carregarDetalhes(perfil);
