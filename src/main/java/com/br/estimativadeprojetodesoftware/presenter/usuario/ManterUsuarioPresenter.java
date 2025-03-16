@@ -7,7 +7,6 @@ import com.br.estimativadeprojetodesoftware.command.usuario.BotaoExcluirUsuarioC
 import com.br.estimativadeprojetodesoftware.command.usuario.BotaoSalvarUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
-import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 import com.br.estimativadeprojetodesoftware.service.DataHoraService;
 import com.br.estimativadeprojetodesoftware.service.IconService;

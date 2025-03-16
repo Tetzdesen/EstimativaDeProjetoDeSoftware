@@ -1,7 +1,6 @@
 package com.br.estimativadeprojetodesoftware.adapter;
 
 import com.pss.senha.validacao.ValidadorSenha;
-import java.util.List;
 
 /**
  *

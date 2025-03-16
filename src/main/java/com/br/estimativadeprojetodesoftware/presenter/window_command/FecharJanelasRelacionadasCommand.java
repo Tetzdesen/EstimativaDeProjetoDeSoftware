@@ -1,6 +1,5 @@
 package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 
 import javax.swing.*;

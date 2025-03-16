@@ -6,9 +6,6 @@ import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Subject;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.repository.IProjetoRepository;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import java.util.List;

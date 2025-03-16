@@ -4,8 +4,6 @@ import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.repository.IPerfilRepository;
 import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 

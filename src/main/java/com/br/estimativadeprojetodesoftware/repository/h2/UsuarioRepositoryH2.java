@@ -10,11 +10,9 @@ import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
-import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

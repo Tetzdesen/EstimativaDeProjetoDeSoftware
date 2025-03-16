@@ -11,7 +11,6 @@ import com.br.estimativadeprojetodesoftware.view.projeto.CompartilharProjetoView
 import java.util.List;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 public class CompartilharProjetoPresenter /*implements Observer*/ {
 

@@ -4,10 +4,7 @@ import com.br.authifyjava.AutenticadorSenha;
 import com.br.authifyjava.Credenciais;
 import com.br.authifyjava.MetodoAutenticacao;
 import com.br.authifyjava.ResultadoAutenticacao;
-import com.br.estimativadeprojetodesoftware.model.Usuario;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  *

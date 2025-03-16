@@ -5,9 +5,7 @@ import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProje
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.RealizarAutenticacaoUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.FecharJanelaCommand;
-import com.br.estimativadeprojetodesoftware.service.AutenticacaoService;
 import com.br.estimativadeprojetodesoftware.service.IconService;
-import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.usuario.LoginView;
 import java.awt.event.MouseAdapter;
