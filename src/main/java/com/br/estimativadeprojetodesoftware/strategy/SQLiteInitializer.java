@@ -39,8 +39,8 @@ public class SQLiteInitializer implements DatabaseInitializer {
 
     private void configurarBancoSQLite() {
         new CriarTabelasSQLiteDatabaseCommand().execute();
-        List<SeederCommand> comandosSeeder = Arrays.asList(new CriarUsuarioSeederCommand(), new CriarCamposSeederCommand());
-        comandosSeeder.forEach(seeder -> seeder.execute());
+        // List<SeederCommand> comandosSeeder = Arrays.asList(new CriarUsuarioSeederCommand(), new CriarCamposSeederCommand());
+        // comandosSeeder.forEach(seeder -> seeder.execute());
     }
 
 }
