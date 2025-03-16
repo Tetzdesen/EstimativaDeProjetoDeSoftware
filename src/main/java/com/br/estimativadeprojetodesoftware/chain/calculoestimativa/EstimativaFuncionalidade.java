@@ -12,18 +12,21 @@ public class EstimativaFuncionalidade {
     private UUID idProjeto;
     private String nomeFuncionalidade;
     private int quantidadeDias;
-    private String tipo;
+    private String tipoFuncionalidade;
+    private String tipoCampo;
     private double valorPorDia;
-    private String perfilNome; // 🔥 Novo atributo
+    private String perfilNome;
 
-
-    public EstimativaFuncionalidade(UUID idProjeto, String nomeFuncionalidade, int quantidadeDias, String tipo
-    ) {
+    public EstimativaFuncionalidade(UUID idProjeto, String nomeFuncionalidade, int quantidadeDias, String tipoFuncionalidade, String tipoCampo,
+            String perfilNome) {
         this.idProjeto = idProjeto;
         this.nomeFuncionalidade = nomeFuncionalidade;
         this.quantidadeDias = quantidadeDias;
-        this.tipo = tipo;
-        this.valorPorDia = 10.0;
+        this.tipoFuncionalidade = tipoFuncionalidade;
+        this.tipoCampo = tipoCampo;
+        this.valorPorDia = new CampoRepositoryService().buscarValorPorNomeProjetoCampo(this.idProjeto, tipoFuncionalidade);
+        this.perfilNome = perfilNome;
+        //this.valorPorDia = 10.0;
     }
 
     public double calcularCustoTotal() {
@@ -41,4 +44,17 @@ public class EstimativaFuncionalidade {
     public double getValorPorDia() {
         return valorPorDia;
     }
+
+    public String getPerfilNome() {
+        return perfilNome;
+    }
+
+    public String getTipoFuncionalidade() {
+        return tipoFuncionalidade;
+    }
+
+    public String getTipoCampo() {
+        return tipoCampo;
+    }
+
 }

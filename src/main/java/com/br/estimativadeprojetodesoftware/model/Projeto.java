@@ -1,5 +1,7 @@
 package com.br.estimativadeprojetodesoftware.model;
 
+import com.br.estimativadeprojetodesoftware.state.projeto.NaoEstimadoState;
+import com.br.estimativadeprojetodesoftware.state.projeto.ProjetoState;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -17,9 +19,12 @@ public class Projeto {
     private List<Usuario> usuarios;
     private List<Campo> campos;
 
+    private ProjetoState estado;
+
     // lembrar set para compartilhado, compartilhadoPor e estimativa
     public Projeto(String nome, String criador) {
         this(nome, criador, null);
+        this.estado = new NaoEstimadoState(this);
     }
 
     public Projeto(UUID id, String nome, String status, String criador) {
@@ -30,6 +35,7 @@ public class Projeto {
         this.perfis = new ArrayList<>();
         this.usuarios = new ArrayList<>();
         this.campos = new ArrayList<>();
+        this.estado = new NaoEstimadoState(this); 
     }
 
     public Projeto(String nome, String criador, String tipo) {
@@ -42,6 +48,7 @@ public class Projeto {
         this.perfis = new ArrayList<>();
         this.usuarios = new ArrayList<>();
         this.campos = new ArrayList<>();
+        this.estado = new NaoEstimadoState(this); 
     }
 
     public Projeto(String nome, String criador, String tipo, List<Campo> campos) {
@@ -54,6 +61,7 @@ public class Projeto {
         this.perfis = new ArrayList<>();
         this.usuarios = new ArrayList<>();
         this.campos = new ArrayList<>();
+        this.estado = new NaoEstimadoState(this); 
     }
 
     public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, String status, boolean compartilhado, String compartilhadoPor, List<Perfil> perfis, List<Usuario> usuarios, List<Campo> campos) {
@@ -161,8 +169,29 @@ public class Projeto {
         campos.remove(Objects.requireNonNull(campo, "Campo não pode ser nulo."));
     }
 
+    public void setEstado(ProjetoState estado) {
+        this.estado = estado;
+    }
+
+    public void estimarProjeto() {
+        estado.estimar();
+    }
+
+    public void cancelarEstimativa() {
+        estado.cancelarEstimativa();
+    }
+    
+    public void compartilharProjeto() {
+        estado.compartilharProjeto();
+    }
+     
+    public void exportarProjeto() {
+        estado.exportarProjeto();
+    }
+
     @Override
     public String toString() {
-        return "Projeto{" + "id=" + id + ", nome=" + nome + ", criador=" + criador + ", tipo=" + tipo + ", created_at=" + created_at + ", status=" + status + ", compartilhado=" + compartilhado + ", compartilhadoPor=" + compartilhadoPor + ", perfis=" + perfis + ", usuarios=" + usuarios + ", campos=" + campos + '}';
+        return "Projeto{" + "id=" + id + ", nome=" + nome + ", criador=" + criador + ", tipo=" + tipo + ", created_at=" + created_at + ", status=" + status + ", compartilhado=" + compartilhado + ", compartilhadoPor=" + compartilhadoPor + ", perfis=" + perfis + ", usuarios=" + usuarios + ", campos=" + campos + ", estado=" + estado + '}';
     }
+ 
 }

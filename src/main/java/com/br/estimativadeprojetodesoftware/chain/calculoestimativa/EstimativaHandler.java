@@ -10,5 +10,5 @@ import java.util.UUID;
  * @author tetzner
  */
 public interface EstimativaHandler {
-    void calcularEstimativa(UUID idProjeto, Campo campo, List<EstimativaFuncionalidade> estimativas);
+    void calcularEstimativa(UUID idProjeto, String perfilNome, Campo campo, List<EstimativaFuncionalidade> estimativas);
 }

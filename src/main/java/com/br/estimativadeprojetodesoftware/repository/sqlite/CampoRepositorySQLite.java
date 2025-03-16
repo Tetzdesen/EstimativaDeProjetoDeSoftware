@@ -47,8 +47,6 @@ public class CampoRepositorySQLite implements ICampoRepository {
             } catch (SQLException e) {
                 throw new RuntimeException("Erro ao salvar campo de projeto: " + e.getMessage(), e);
             }
-        } else {
-            System.out.println("Associação entre o projeto e o campo já existe.");
         }
     }
 

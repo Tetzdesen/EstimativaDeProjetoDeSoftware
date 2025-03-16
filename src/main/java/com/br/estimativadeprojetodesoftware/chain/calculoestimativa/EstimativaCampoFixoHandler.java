@@ -15,13 +15,15 @@ import java.util.UUID;
 public class EstimativaCampoFixoHandler implements EstimativaHandler {
 
     @Override
-    public void calcularEstimativa(UUID idProjeto, Campo campo, List<EstimativaFuncionalidade> estimativas) {
+    public void calcularEstimativa(UUID idProjeto, String perfilNome, Campo campo, List<EstimativaFuncionalidade> estimativas) {
         if (isCampoFixo(campo.getTipo())) {
             estimativas.add(new EstimativaFuncionalidade(
                     idProjeto,
                     campo.getNome(),
                     campo.getDias().intValue(),
-                    campo.getTipo()
+                    "campo fixo",
+                    campo.getTipo(),
+                    perfilNome
             ));
         }
     }
