@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.CriarProjetoMock;
@@ -32,7 +32,7 @@ public class CriarProjetoProjetoCommand implements ProjetoCommand {
                 projeto -> {
                     
                     List<String> nomesPerfis = projeto.getPerfis().stream()
-                            .map(Perfil::getNome)
+                            .map(PerfilProjeto::getNome)
                             .collect(Collectors.toList());
 
                     repository.adicionarProjeto(

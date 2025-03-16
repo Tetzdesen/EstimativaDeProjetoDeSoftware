@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository.h2;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ICampoRepository;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
@@ -66,7 +66,7 @@ public class CampoRepositoryH2 implements ICampoRepository {
     }
 
     @Override
-    public void atualizarDiasPerfilCampo(Perfil perfil, Campo campo) {
+    public void atualizarDiasPerfilCampo(PerfilProjeto perfil, Campo campo) {
         String sql = "UPDATE perfil_has_campo SET diasPerfil = ? WHERE perfil_idPerfil = ? AND campo_idCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, campo.getDias().intValue());
@@ -364,7 +364,7 @@ public class CampoRepositoryH2 implements ICampoRepository {
     }
 
     @Override
-    public void salvarPerfilCampo(Perfil perfil, Campo campo) {
+    public void salvarPerfilCampo(PerfilProjeto perfil, Campo campo) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

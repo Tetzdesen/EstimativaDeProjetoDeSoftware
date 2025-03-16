@@ -1,7 +1,8 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
 import com.br.estimativadeprojetodesoftware.chain.calculoestimativa.EstimativaFuncionalidade;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.command.projeto.AbrirExportarProjetoCommand;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class DetalheProjetoPresenter implements Observer {
         this.estimativas = new ArrayList<>();
         this.projetoService.addObserver(this);
         carregarDetalhesProjeto();
+        carregarListeners();
     }
 
     private void carregarDetalhesProjeto() {
@@ -36,6 +38,14 @@ public class DetalheProjetoPresenter implements Observer {
             carregarCabecalho(projeto);
             carregarDetalhes(projeto);
         }
+    }
+
+    private void carregarListeners() {
+        view.getBtnExportar().addActionListener(e -> exportarProjeto());
+    }
+
+    private void exportarProjeto() {
+        new AbrirExportarProjetoCommand(projetoNome).execute();
     }
 
     private void carregarCabecalho(Projeto projeto) {
@@ -61,7 +71,7 @@ public class DetalheProjetoPresenter implements Observer {
         List<Object[]> linhas = new ArrayList<>();
 
         for (EstimativaFuncionalidade estimativa : estimativas) {
-            for (Perfil perfil : projeto.getPerfis()) {
+            for (PerfilProjeto perfil : projeto.getPerfis()) {
                 // Adiciona cada linha na tabela com os valores de estimativa
                 linhas.add(new Object[]{
                     perfil.getNome(),

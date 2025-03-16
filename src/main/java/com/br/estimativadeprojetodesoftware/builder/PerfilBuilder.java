@@ -1,16 +1,16 @@
 package com.br.estimativadeprojetodesoftware.builder;
 
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 
 public abstract class PerfilBuilder {
-    protected Perfil perfil;
+    protected PerfilProjeto perfil;
 
     public PerfilBuilder(String nomePerfil, Usuario usuario) {
-        this.perfil = new Perfil(nomePerfil, usuario);
+        this.perfil = new PerfilProjeto(nomePerfil, usuario);
     }
 
-    public final Perfil getPerfil() {
+    public final PerfilProjeto getPerfil() {
         return perfil;
     }
 

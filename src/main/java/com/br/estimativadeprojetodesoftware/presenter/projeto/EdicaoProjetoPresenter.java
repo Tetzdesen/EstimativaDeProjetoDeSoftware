@@ -3,7 +3,7 @@ package com.br.estimativadeprojetodesoftware.presenter.projeto;
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.projeto.RealizarEdicaoProjetoProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
@@ -29,7 +29,7 @@ public class EdicaoProjetoPresenter {
     private EdicaoProjetoView view;
     private String nomeProjeto;
     private Usuario usuario;
-    private Map<String, Perfil> perfisSelecionados;
+    private Map<String, PerfilProjeto> perfisSelecionados;
     private Projeto projetoAtual;
 
     public EdicaoProjetoPresenter(ProjetoRepositoryService projetoService, EdicaoProjetoView view, String nomeProjeto) {
@@ -92,7 +92,7 @@ public class EdicaoProjetoPresenter {
 
             DefaultListModel<String> listModel = new DefaultListModel<>();
 
-            for (Perfil perfil : projetoAtual.getPerfis()) {
+            for (PerfilProjeto perfil : projetoAtual.getPerfis()) {
                 listModel.addElement(perfil.getNome());
                 perfisSelecionados.put(perfil.getNome(), perfil);
             }
@@ -143,11 +143,11 @@ public class EdicaoProjetoPresenter {
 
     private void carregarListaPerfis() {
 
-        List<Perfil> perfis = new PerfilRepositoryService().buscarTodosPerfisPorIdUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
+        List<PerfilProjeto> perfis = new PerfilRepositoryService().buscarTodosPerfisPorIdUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
 
         DefaultComboBoxModel<String> cmbPerfis = new DefaultComboBoxModel<>();
 
-        for (Perfil perfil : perfis) {
+        for (PerfilProjeto perfil : perfis) {
             cmbPerfis.addElement(perfil.getNome());
             perfisSelecionados.put(perfil.getNome(), perfil);
         }
@@ -155,9 +155,9 @@ public class EdicaoProjetoPresenter {
         view.getCbmPerfis().setModel(cmbPerfis);
     }
 
-    private Map<String, Integer> combinarFuncionalidades(List<Perfil> perfis) {
+    private Map<String, Integer> combinarFuncionalidades(List<PerfilProjeto> perfis) {
         Map<String, Integer> funcionalidadesCombinadas = new HashMap<>();
-        for (Perfil perfil : perfis) {
+        for (PerfilProjeto perfil : perfis) {
             perfil.getFuncionalidades().forEach(funcionalidadesCombinadas::putIfAbsent);
         }
         return funcionalidadesCombinadas;
@@ -216,7 +216,7 @@ public class EdicaoProjetoPresenter {
         return perfilService;
     }
 
-    public Map<String, Perfil> getPerfisSelecionados() {
+    public Map<String, PerfilProjeto> getPerfisSelecionados() {
         return perfisSelecionados;
     }
 

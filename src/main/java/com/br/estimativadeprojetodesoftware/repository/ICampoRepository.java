@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import java.util.List;
 import java.util.UUID;
@@ -16,13 +16,13 @@ public interface ICampoRepository {
     
     void salvarProjetoCampo(Projeto projeto, Campo campo);
     
-    void salvarPerfilCampo(Perfil perfil, Campo campo);
+    void salvarPerfilCampo(PerfilProjeto perfil, Campo campo);
     
     void atualizar(Campo campo);
     
     void atualizarDiasProjetoCampo(Projeto projeto, Campo campo);
 
-    void atualizarDiasPerfilCampo(Perfil perfil, Campo campo);
+    void atualizarDiasPerfilCampo(PerfilProjeto perfil, Campo campo);
     
     void removerPorID(UUID id);
     void removerPorIdPerfil(UUID idPerfil);

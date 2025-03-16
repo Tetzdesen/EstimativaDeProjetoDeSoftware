@@ -2,7 +2,7 @@ package com.br.estimativadeprojetodesoftware.command.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.CadastroProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
@@ -67,12 +67,12 @@ public class RealizarCadastroProjetoCommand implements ProjetoCommand {
         }
 
         String tiposConcatenados = projeto.getPerfis().stream()
-                .map(Perfil::getNome)
+                .map(PerfilProjeto::getNome)
                 .collect(Collectors.joining(", "));
 
         projeto.setTipo(tiposConcatenados);
 
-        for (Perfil perfil : projeto.getPerfis()) {
+        for (PerfilProjeto perfil : projeto.getPerfis()) {
             // Criando campos para estimativa
 
             List<Campo> tamanhos = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "tamanho");

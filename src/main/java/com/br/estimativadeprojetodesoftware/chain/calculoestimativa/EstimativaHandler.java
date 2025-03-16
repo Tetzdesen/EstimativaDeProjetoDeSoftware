@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.chain.calculoestimativa;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import java.util.List;
 import java.util.UUID;
 

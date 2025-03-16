@@ -2,7 +2,7 @@ package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.projeto.RealizarCadastroProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
@@ -24,7 +24,7 @@ public class CadastroProjetoPresenter {
     private ProjetoRepositoryService projetoService;
     private PerfilRepositoryService perfilService;
     private Usuario usuario;
-    private Map<String, Perfil> perfisSelecionados;
+    private Map<String, PerfilProjeto> perfisSelecionados;
 
     public CadastroProjetoPresenter(CadastroProjetoView view, ProjetoRepositoryService projetoService) {
         this.view = view;
@@ -78,7 +78,7 @@ public class CadastroProjetoPresenter {
     }
 
     private void carregarListaPerfis() {
-        List<Perfil> perfis = perfilService.buscarTodosPerfisPorIdUsuario(usuario.getId());
+        List<PerfilProjeto> perfis = perfilService.buscarTodosPerfisPorIdUsuario(usuario.getId());
         DefaultComboBoxModel<String> cmbPerfis = new DefaultComboBoxModel<>();
 
         perfis.stream()
@@ -95,9 +95,9 @@ public class CadastroProjetoPresenter {
         new RealizarCadastroProjetoCommand(this).execute();
     }
 
-    private Map<String, Integer> combinarFuncionalidades(List<Perfil> perfis) {
+    private Map<String, Integer> combinarFuncionalidades(List<PerfilProjeto> perfis) {
         Map<String, Integer> funcionalidadesCombinadas = new HashMap<>();
-        for (Perfil perfil : perfis) {
+        for (PerfilProjeto perfil : perfis) {
             perfil.getFuncionalidades().forEach(funcionalidadesCombinadas::putIfAbsent);
         }
         return funcionalidadesCombinadas;
@@ -160,7 +160,7 @@ public class CadastroProjetoPresenter {
         return perfilService;
     }
 
-    public Map<String, Perfil> getPerfisSelecionados() {
+    public Map<String, PerfilProjeto> getPerfisSelecionados() {
         return perfisSelecionados;
     }
 

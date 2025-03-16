@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository.sqlite;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ICampoRepository;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
@@ -65,7 +65,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
     }
 
     @Override
-    public void salvarPerfilCampo(Perfil perfil, Campo campo) {
+    public void salvarPerfilCampo(PerfilProjeto perfil, Campo campo) {
         String sql = "INSERT INTO perfil_has_campo (perfil_idPerfil, campo_idCampo, diasPerfil) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, perfil.getId().toString());
@@ -104,7 +104,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
     }
 
     @Override
-    public void atualizarDiasPerfilCampo(Perfil perfil, Campo campo) {
+    public void atualizarDiasPerfilCampo(PerfilProjeto perfil, Campo campo) {
         String sql = "UPDATE perfil_has_campo SET diasPerfil = ? WHERE perfil_idPerfil = ? AND campo_idCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setDouble(1, campo.getDias().doubleValue());
