@@ -2,10 +2,8 @@ package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.projeto.ConfigurarArvoreProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
-import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
 
 import javax.swing.*;
 

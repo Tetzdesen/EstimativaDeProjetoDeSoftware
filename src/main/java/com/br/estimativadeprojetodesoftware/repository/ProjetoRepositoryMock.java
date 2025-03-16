@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Subject;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
@@ -18,7 +18,7 @@ public class ProjetoRepositoryMock implements Subject {
         observers = new ArrayList<>();
 
         // Criação do perfil 1
-        Perfil perfil1 = new Perfil("Web/Back-end");
+        PerfilProjeto perfil1 = new PerfilProjeto("Web/Back-end");
 
         perfil1.adicionarFuncionalidade("Cadastro por E-mail e Senha", 1);
         perfil1.adicionarFuncionalidade("Painel (Dashboard)", 5);
@@ -153,7 +153,7 @@ public class ProjetoRepositoryMock implements Subject {
         Projeto novoProjeto = new Projeto(nome, criador, tipos.get(0));
 
         for (String tipo : tipos) {
-            novoProjeto.adicionarPerfil(new Perfil(tipo));
+            novoProjeto.adicionarPerfil(new PerfilProjeto(tipo));
         }
 
         novoProjeto.setCompartilhado(compartilhado);

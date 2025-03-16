@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository.sqlite;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.IProjetoRepository;
@@ -37,7 +37,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             stmt.setString(5, projeto.getStatus());
             stmt.executeUpdate();
 
-            for (Perfil perfil : projeto.getPerfis()) {
+            for (PerfilProjeto perfil : projeto.getPerfis()) {
                 if (!existeAssociacaoProjetoPerfil(projeto.getId(), perfil.getId())) {  // Verifica se já existe a associação
                     salvarPerfilProjeto(projeto, perfil);
                 }
@@ -73,7 +73,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
         }
     }
 
-    private void salvarPerfilProjeto(Projeto projeto, Perfil perfil) {
+    private void salvarPerfilProjeto(Projeto projeto, PerfilProjeto perfil) {
         String sql = "INSERT INTO projeto_has_perfil (projeto_idProjeto, perfil_idPerfil) VALUES (?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -223,7 +223,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
 
     private Projeto mapProjetoFromResultSet(ResultSet rs) throws SQLException {
         UUID idProjeto = UUID.fromString(rs.getString("idProjeto"));
-        List<Perfil> perfis = new PerfilRepositoryService().buscarPerfisPorProjeto(idProjeto);
+        List<PerfilProjeto> perfis = new PerfilRepositoryService().buscarPerfisPorProjeto(idProjeto);
         List<Usuario> usuarios = new UsuarioRepositoryService().buscarUsuariosPorProjeto(idProjeto);
         List<Campo> campos = new CampoRepositoryService().listarTodosPorIdProjeto(idProjeto);
 

@@ -4,7 +4,6 @@ import com.br.estimativadeprojetodesoftware.service.DotenvService;
 import com.br.estimativadeprojetodesoftware.strategy.DatabaseInitializer;
 import com.br.estimativadeprojetodesoftware.strategy.H2Initializer;
 import com.br.estimativadeprojetodesoftware.strategy.SQLiteInitializer;
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

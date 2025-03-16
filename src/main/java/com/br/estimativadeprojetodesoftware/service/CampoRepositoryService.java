@@ -3,7 +3,7 @@ package com.br.estimativadeprojetodesoftware.service;
 import com.br.estimativadeprojetodesoftware.abstractfactory.FabricaRepository;
 import com.br.estimativadeprojetodesoftware.abstractfactory.SeletorFabricaRepository;
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.repository.ICampoRepository;
 import java.util.List;
@@ -31,7 +31,7 @@ public class CampoRepositoryService {
         campoRepository.salvarProjetoCampo(projeto, campo);
     }
 
-    public void salvarPerfilCampo(Perfil perfil, Campo campo) {
+    public void salvarPerfilCampo(PerfilProjeto perfil, Campo campo) {
         campoRepository.salvarPerfilCampo(perfil, campo);
     }
 
@@ -43,7 +43,7 @@ public class CampoRepositoryService {
         campoRepository.atualizarDiasProjetoCampo(projeto, campo);
     }
 
-    public void atualizarDiasPerfilCampo(Perfil perfil, Campo campo) {
+    public void atualizarDiasPerfilCampo(PerfilProjeto perfil, Campo campo) {
         campoRepository.atualizarDiasPerfilCampo(perfil, campo);
     }
 

@@ -7,7 +7,7 @@ import com.br.estimativadeprojetodesoftware.chain.calculoestimativa.EstimativaHa
 import com.br.estimativadeprojetodesoftware.chain.calculoestimativa.EstimativaNivelHandler;
 import com.br.estimativadeprojetodesoftware.chain.calculoestimativa.EstimativaTamanhoHandler;
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -28,11 +28,11 @@ public class EstimaProjetoService {
         this.estimativas = new ArrayList<>();
     }
 
-    public List<EstimativaFuncionalidade> calcularEstimativas(UUID idProjeto, List<Perfil> perfis, List<Campo> campos) {
+    public List<EstimativaFuncionalidade> calcularEstimativas(UUID idProjeto, List<PerfilProjeto> perfis, List<Campo> campos) {
         List<EstimativaFuncionalidade> estimativas = new ArrayList<>();
         List<EstimativaHandler> handlers = configurarHandlers();
 
-        for (Perfil perfil : perfis) {
+        for (PerfilProjeto perfil : perfis) {
             for (Campo campo : campos) {
                 for (EstimativaHandler handler : handlers) {
                     handler.calcularEstimativa(idProjeto, perfil.getNome(), campo, estimativas);

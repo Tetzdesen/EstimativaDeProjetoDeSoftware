@@ -4,7 +4,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.state.perfil.VisualizacaoPerfilState;
@@ -41,7 +41,7 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
         }
 
         if (presenter.getPerfil() == null) {
-            Perfil perfil = new Perfil(nome);
+            PerfilProjeto perfil = new PerfilProjeto(nome);
         
             perfil.setPerfilBackEnd(isBackEnd);
 
@@ -69,7 +69,7 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
             presenter.getView().dispose();
 
         } else {
-            Perfil perfil = presenter.getRepository().buscarPorId(presenter.getPerfil().getId()).get();
+            PerfilProjeto perfil = presenter.getRepository().buscarPorId(presenter.getPerfil().getId()).get();
             perfil.removerFuncionalidades();
 
             perfil.setPerfilBackEnd(isBackEnd);

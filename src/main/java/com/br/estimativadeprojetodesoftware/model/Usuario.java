@@ -15,7 +15,7 @@ public class Usuario {
     private LocalDateTime created_at;
     private String log;
     private List<Projeto> projetos;
-    private List<Perfil> perfis;
+    private List<PerfilProjeto> perfis;
 
     public Usuario(String nome, String email, String senha) {
         this.id = UUID.randomUUID();
@@ -28,7 +28,7 @@ public class Usuario {
         this.perfis = new ArrayList<>();
     }
 
-    public Usuario(UUID id, String nome, String email, String senha, LocalDateTime created_at, String log, List<Projeto> projetos, List<Perfil> perfis) {
+    public Usuario(UUID id, String nome, String email, String senha, LocalDateTime created_at, String log, List<Projeto> projetos, List<PerfilProjeto> perfis) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -78,7 +78,7 @@ public class Usuario {
         return Collections.unmodifiableList(projetos);
     }
 
-    public List<Perfil> getPerfis() {
+    public List<PerfilProjeto> getPerfis() {
         return Collections.unmodifiableList(perfis);
     }
 
@@ -93,7 +93,7 @@ public class Usuario {
         projetos.add(projeto);
     }
 
-    public void adicionarPerfil(Perfil perfil) {
+    public void adicionarPerfil(PerfilProjeto perfil) {
         if (perfil == null) {
             throw new IllegalArgumentException("Erro: Perfil não pode ser nulo.");
         }
@@ -107,7 +107,7 @@ public class Usuario {
         projetos.remove(projeto);
     }
 
-    public void removerPerfil(Perfil perfil) {
+    public void removerPerfil(PerfilProjeto perfil) {
         if (perfil == null) {
             throw new IllegalArgumentException("Erro: Perfil não pode ser nulo.");
         }

@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Perfil implements PerfilProjetoPrototype {
+public class PerfilProjeto implements PerfilProjetoPrototype {
 
     private final UUID id;
     private String nome;
@@ -20,7 +20,7 @@ public class Perfil implements PerfilProjetoPrototype {
     private final LocalDateTime created_at;
     private Usuario usuario;
 
-    public Perfil(String nome) {
+    public PerfilProjeto(String nome) {
         this.id = UUID.randomUUID();
         this.nome = nome;
         this.tamanhosApp = new LinkedHashMap<>();
@@ -32,7 +32,7 @@ public class Perfil implements PerfilProjetoPrototype {
         adicionarCamposDefault();
     }
 
-    public Perfil(String nome, Usuario usuario) {
+    public PerfilProjeto(String nome, Usuario usuario) {
         this.id = UUID.randomUUID();
         this.nome = nome;
         this.tamanhosApp = new LinkedHashMap<>();
@@ -44,7 +44,7 @@ public class Perfil implements PerfilProjetoPrototype {
         adicionarCamposDefault();
     }
 
-    public Perfil(UUID id, String nome,
+    public PerfilProjeto(UUID id, String nome,
             boolean isPerfilBackEnd,
             LocalDateTime created_at, Usuario usuario
     ) {
@@ -60,7 +60,7 @@ public class Perfil implements PerfilProjetoPrototype {
         adicionarCamposDefault();
     }
 
-    public Perfil(UUID id, String nome,
+    public PerfilProjeto(UUID id, String nome,
             Map<String, Integer> tamanhosApp,
             Map<String, Double> niveisUI,
             Map<String, Integer> funcionalidades,
@@ -81,7 +81,7 @@ public class Perfil implements PerfilProjetoPrototype {
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
     }
 
-    public Perfil(  UUID id, String nome, 
+    public PerfilProjeto(  UUID id, String nome, 
                     Map<String, Integer> tamanhosApp, 
                     Map<String, Double> niveisUI, 
                     Map<String, Integer> funcionalidades, 
@@ -237,7 +237,7 @@ public class Perfil implements PerfilProjetoPrototype {
     }
 
     @Override
-    public Perfil clone() {
+    public PerfilProjeto clone() {
         Map<String, Integer> tamanhosAppClone = new LinkedHashMap<>();
         Map<String, Double> niveisUIClone = new LinkedHashMap<>();
         Map<String, Integer> funcionalidadesClone = new LinkedHashMap<>();
@@ -248,7 +248,7 @@ public class Perfil implements PerfilProjetoPrototype {
         funcionalidadesClone.putAll(this.funcionalidades);
         taxasDiariasClone.putAll(this.taxasDiarias);
         
-        return new Perfil(
+        return new PerfilProjeto(
             UUID.randomUUID(),
             this.nome + " - Cópia",
             tamanhosAppClone,

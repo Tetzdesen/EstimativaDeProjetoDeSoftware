@@ -15,7 +15,7 @@ public class Projeto {
     private String status;
     private boolean compartilhado;
     private String compartilhadoPor;
-    private List<Perfil> perfis;
+    private List<PerfilProjeto> perfis;
     private List<Usuario> usuarios;
     private List<Campo> campos;
 
@@ -64,7 +64,7 @@ public class Projeto {
         this.estado = new NaoEstimadoState(this); 
     }
 
-    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, String status, boolean compartilhado, String compartilhadoPor, List<Perfil> perfis, List<Usuario> usuarios, List<Campo> campos) {
+    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, String status, boolean compartilhado, String compartilhadoPor, List<PerfilProjeto> perfis, List<Usuario> usuarios, List<Campo> campos) {
         this.id = id;
         this.nome = nome;
         this.criador = criador;
@@ -110,7 +110,7 @@ public class Projeto {
         return compartilhadoPor;
     }
 
-    public List<Perfil> getPerfis() {
+    public List<PerfilProjeto> getPerfis() {
         return Collections.unmodifiableList(perfis);
     }
 
@@ -145,7 +145,7 @@ public class Projeto {
         this.compartilhadoPor = Objects.requireNonNullElse(compartilhadoPor, "").trim();
     }
 
-    public void adicionarPerfil(Perfil perfil) {
+    public void adicionarPerfil(PerfilProjeto perfil) {
         perfis.add(Objects.requireNonNull(perfil, "Perfil não pode ser nulo."));
     }
 
@@ -157,7 +157,7 @@ public class Projeto {
         campos.add(Objects.requireNonNull(campo, "Campo não pode ser nulo."));
     }
 
-    public void removerPerfil(Perfil perfil) {
+    public void removerPerfil(PerfilProjeto perfil) {
         perfis.remove(Objects.requireNonNull(perfil, "Perfil não pode ser nulo."));
     }
 

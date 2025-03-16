@@ -5,7 +5,7 @@ import javax.swing.event.ListSelectionListener;
 
 import com.br.estimativadeprojetodesoftware.command.perfil.AdicionarNovaFuncionalidadePerfilCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.RemoverFuncionalidadePerfilCommand;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.state.perfil.InclusaoPerfilState;
 import com.br.estimativadeprojetodesoftware.state.perfil.ManterPerfilPresenterState;
@@ -16,9 +16,9 @@ public class ManterPerfilPresenter {
     private ManterPerfilView view;
     private PerfilRepositoryService repository;
     private ManterPerfilPresenterState estado;
-    private Perfil perfil;
+    private PerfilProjeto perfil;
 
-    public ManterPerfilPresenter(ManterPerfilView view, Perfil perfil, PerfilRepositoryService repository) {
+    public ManterPerfilPresenter(ManterPerfilView view, PerfilProjeto perfil, PerfilRepositoryService repository) {
         this.view = view;
         this.repository = repository;
         this.perfil = perfil;
@@ -64,7 +64,7 @@ public class ManterPerfilPresenter {
         new RemoverFuncionalidadePerfilCommand(this).execute();
     }
 
-    public void carregarCampos(Perfil perfil) {
+    public void carregarCampos(PerfilProjeto perfil) {
         Object[][] dadosTabela = perfil.getFuncionalidades()
                 .entrySet()
                 .stream()
@@ -99,7 +99,7 @@ public class ManterPerfilPresenter {
         return repository;
     }
 
-    public Perfil getPerfil() {
+    public PerfilProjeto getPerfil() {
         return perfil;
     }
 
@@ -107,7 +107,7 @@ public class ManterPerfilPresenter {
         this.estado = estado;
     }
 
-    public void setPerfil(Perfil perfil) {
+    public void setPerfil(PerfilProjeto perfil) {
         this.perfil = perfil;
     }
 

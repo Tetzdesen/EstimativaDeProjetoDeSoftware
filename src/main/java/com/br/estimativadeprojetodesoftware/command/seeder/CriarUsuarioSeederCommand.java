@@ -4,7 +4,6 @@ import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.UUID;
 
 /**
  *
@@ -16,14 +15,12 @@ public class CriarUsuarioSeederCommand implements SeederCommand {
 
     @Override
     public void execute() {
-        UUID idUsuario = UUID.randomUUID();
-        // Inserção do usuário
         String sqlUsuario = """
               INSERT INTO usuario (idUsuario, nomeUsuario, email, senha, log) VALUES (?, ?, ?, ?, ?);
           """;
           
         try (PreparedStatement stmt = conexao.prepareStatement(sqlUsuario)) {
-            stmt.setString(1, idUsuario.toString());
+            stmt.setString(1, "533ee667-86a2-47c7-8f99-b8fb18f19fd8");
             stmt.setString(2, "kaua");
             stmt.setString(3, "kaua@email.com");
             stmt.setString(4, "A@#bb");

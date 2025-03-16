@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.service;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
@@ -30,7 +30,7 @@ public class CriarProjetoMock {
 
     private Optional<Projeto> criarProjetoAleatorio() {
         List<Projeto> projetosExistentes = repository.getProjetos();
-        List<Perfil> perfis = new ArrayList<>();
+        List<PerfilProjeto> perfis = new ArrayList<>();
 
         if (projetosExistentes.isEmpty()) {
             return Optional.empty();
@@ -51,7 +51,7 @@ public class CriarProjetoMock {
         String compartilhadoPor = compartilhado ? projetoBase.getCriador() : null;
         
         
-        Perfil perfil = new Perfil("Android");
+        PerfilProjeto perfil = new PerfilProjeto("Android");
         
         
         perfis.add(perfil);
@@ -110,7 +110,7 @@ public class CriarProjetoMock {
 
         for (Projeto projeto : projetos) {
             todosOsTipos.addAll(projeto.getPerfis().stream()
-                    .map(Perfil::getNome)
+                    .map(PerfilProjeto::getNome)
                     .collect(Collectors.toList()));
         }
 

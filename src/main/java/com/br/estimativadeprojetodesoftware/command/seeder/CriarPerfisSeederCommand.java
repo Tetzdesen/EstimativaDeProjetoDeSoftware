@@ -4,7 +4,7 @@ import com.br.estimativadeprojetodesoftware.builder.AndroidBuilder;
 import com.br.estimativadeprojetodesoftware.builder.Diretor;
 import com.br.estimativadeprojetodesoftware.builder.IosBuilder;
 import com.br.estimativadeprojetodesoftware.builder.WebBackEndBuilder;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

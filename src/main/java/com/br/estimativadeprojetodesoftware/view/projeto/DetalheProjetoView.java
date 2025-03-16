@@ -1,10 +1,19 @@
 package com.br.estimativadeprojetodesoftware.view.projeto;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.List;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.text.DecimalFormat;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class DetalheProjetoView extends JInternalFrame {
 
@@ -35,6 +44,8 @@ public class DetalheProjetoView extends JInternalFrame {
         lblData = new JLabel("Data de Criação: ");
         lblTipoProjeto = new JLabel("Tipo de Projeto: ");
         lblStatus = new JLabel("Status: ");
+
+        btnExportar = new JButton("Exportar");
 
         painelInfo.add(lblNome);
         painelInfo.add(lblCriador);

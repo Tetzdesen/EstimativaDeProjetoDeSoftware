@@ -1,7 +1,7 @@
 package com.br.estimativadeprojetodesoftware.repository.h2;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
-import com.br.estimativadeprojetodesoftware.model.Perfil;
+import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.IUsuarioRepository;
@@ -10,11 +10,9 @@ import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
-import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -119,12 +117,12 @@ public class UsuarioRepositoryH2 implements IUsuarioRepository {
     private Usuario mapToUsuario(ResultSet resultSet) throws SQLException {
         UUID idUsuario = UUID.fromString(resultSet.getString("idUsuario"));
 
-        List<Perfil> perfis = new ArrayList<>();
+        List<PerfilProjeto> perfis = new ArrayList<>();
         perfis.addAll(new PerfilRepositoryService().buscarTodosPerfisPorIdUsuario(idUsuario));
 
-        List<Perfil> perfisNovos = new ArrayList<>();
+        List<PerfilProjeto> perfisNovos = new ArrayList<>();
 
-        for (Perfil perfil : perfis) {
+        for (PerfilProjeto perfil : perfis) {
 
             // buscar nome do campo pelo id do Perfil
             List<Campo> camposTamanhoApp = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "tamanho app");
