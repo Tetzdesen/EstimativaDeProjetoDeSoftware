@@ -3,22 +3,22 @@ package com.br.estimativadeprojetodesoftware.presenter.perfil;
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.AbrirManterPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.CarregarCamposPerfilProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.WindowCommand;
-import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.perfil.PerfilProjetoView;
+
+import java.util.Arrays;
+import java.util.UUID;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import java.util.*;
+
 
 public class PerfilProjetoPresenter implements Observer {
 
@@ -93,17 +93,10 @@ public class PerfilProjetoPresenter implements Observer {
         DefaultTableModel modelo = (DefaultTableModel) view.getModeloTabela();
         modelo.setRowCount(0);
 
-        List<PerfilProjeto> perfis = repository.buscarTodosPerfisPorIdUsuario(
-                UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
-
-        new CarregarCamposPerfilProjetoCommand(perfis).execute();
-
-        for (PerfilProjeto perfil : perfis) {
-            carregarDetalhes(perfil);
-        }
+        new CarregarCamposPerfilProjetoCommand(this, repository).execute();
     }
 
-    private void carregarDetalhes(PerfilProjeto perfil) {
+    public void carregarDetalhes(PerfilProjeto perfil) {
         Object[] dadosTabela = new Object[] {
                 perfil.getId(),
                 perfil.getNome()

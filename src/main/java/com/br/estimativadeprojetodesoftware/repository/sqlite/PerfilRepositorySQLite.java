@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.repository.sqlite;
 
+import com.br.estimativadeprojetodesoftware.chain.carregarcampos.EmpilhadorDeCampoPerfilService;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.repository.IPerfilRepository;
@@ -36,37 +37,38 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
 
             statement.executeUpdate();
 
+            CampoRepositoryService campoService = new CampoRepositoryService();
             List<Campo> campos;
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("tamanho");
+            campos = campoService.listarTodosPorTipo("tamanho");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getTamanhosApp().get(campo.getNome()).doubleValue());
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                campoService.salvarPerfilCampo(perfil, campo);
             }
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("nivel");
+            campos = campoService.listarTodosPorTipo("nivel");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getNiveisUI().get(campo.getNome()));
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                campoService.salvarPerfilCampo(perfil, campo);
             }
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("funcionalidade");
+            campos = campoService.listarTodosPorTipo("funcionalidade");
   
             // lembrar de colocar quando é uma funcionalidade nova
             
             for (Campo campo : campos) {
                 if (perfil.getFuncionalidades().containsKey(campo.getNome()) && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
                     campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
-                    new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                    campoService.salvarPerfilCampo(perfil, campo);
                 }
             }
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("taxa diária");
+            campos = campoService.listarTodosPorTipo("taxa diária");
             for (Campo campo : campos) {
                 campo.setDias(perfil.getTaxasDiarias().get(campo.getNome()));
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                campoService.salvarPerfilCampo(perfil, campo);
             }
 
         } catch (SQLException e) {
@@ -83,40 +85,41 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             statement.setString(3, perfil.getUsuario().getId().toString());
             statement.setString(4, perfil.getId().toString());
 
+            CampoRepositoryService campoService = new CampoRepositoryService();
             List<Campo> campos;
 
-            new CampoRepositoryService().removerPorIdPerfil(perfil.getId());
+            campoService.removerPorIdPerfil(perfil.getId());
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("tamanho");
+            campos = campoService.listarTodosPorTipo("tamanho");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getTamanhosApp().get(campo.getNome()).doubleValue());
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                campoService.salvarPerfilCampo(perfil, campo);
             }
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("nivel");
+            campos = campoService.listarTodosPorTipo("nivel");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getNiveisUI().get(campo.getNome()));
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                campoService.salvarPerfilCampo(perfil, campo);
             }
 
             for (Entry<String, Integer> entry : perfil.getFuncionalidades().entrySet()) {
-                Campo campo = new CampoRepositoryService().buscarPorNome(entry.getKey());
+                Campo campo = campoService.buscarPorNome(entry.getKey());
                 if (campo == null) {
                     campo = new Campo("funcionalidade", entry.getKey(), entry.getValue().doubleValue());
-                    new CampoRepositoryService().salvar(campo);
+                    campoService.salvar(campo);
                 }
 
                 campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo); 
+                campoService.salvarPerfilCampo(perfil, campo); 
             }
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("taxa diária");
+            campos = campoService.listarTodosPorTipo("taxa diária");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getTaxasDiarias().get(campo.getNome()));
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                campoService.salvarPerfilCampo(perfil, campo);
             }
 
             statement.executeUpdate();
@@ -224,31 +227,9 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                 UsuarioLogadoSingleton.getInstancia().getUsuario()
         );
 
-        CampoRepositoryService campoService = new CampoRepositoryService();
-
-        carregarCampos(perfil, "tamanho", campoService);
-        carregarCampos(perfil, "nivel", campoService);
-        carregarCampos(perfil, "funcionalidade", campoService);
-        carregarCampos(perfil, "taxa diária", campoService);
+        EmpilhadorDeCampoPerfilService empilhador = new EmpilhadorDeCampoPerfilService();
+        empilhador.carregarCampos(perfil);
 
         return perfil;
-    }
-
-    private void carregarCampos(PerfilProjeto perfil, String tipoCampo, CampoRepositoryService campoService) throws SQLException {
-        List<Campo> campos = campoService.buscarPorIdPerfilTipo(perfil.getId(), tipoCampo);
-        for (Campo campo : campos) {
-            Double dias = campoService.buscarDiasPorPerfilCampo(perfil.getId(), campo.getId());
-
-            switch (tipoCampo) {
-                case "tamanho" ->
-                    perfil.adicionarTamanhoApp(campo.getNome(), dias.intValue());
-                case "nivel" ->
-                    perfil.adicionarNivelUI(campo.getNome(), dias.doubleValue());
-                case "funcionalidade" ->
-                    perfil.adicionarFuncionalidade(campo.getNome(), dias.intValue());
-                case "taxa diária" ->
-                    perfil.adicionarTaxaDiaria(campo.getNome(), dias.doubleValue());
-            }
-        }
     }
 }
