@@ -47,7 +47,7 @@ public class PerfilProjetoPresenter implements Observer {
     private void configuraActionsListerns() {
         view.getBtnNovoPerfil().addActionListener(e -> {
             try {
-                new AbrirManterPerfilProjetoCommand(view.getDesktop(), null, repository).execute();
+                new AbrirManterPerfilProjetoCommand(null, repository).execute();
             } catch (Exception ex) {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }
@@ -72,7 +72,7 @@ public class PerfilProjetoPresenter implements Observer {
 
     private void processarPerfilSelecionado() {
         PerfilProjeto perfil = buscarPerfilSelecionado();
-        new AbrirManterPerfilProjetoCommand(view.getDesktop(), perfil, repository).execute();
+        new AbrirManterPerfilProjetoCommand(perfil, repository).execute();
     }
 
     private void processarPerfilDuplicar() {

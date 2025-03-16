@@ -8,7 +8,6 @@ import javax.swing.table.DefaultTableModel;
 
 public class ManterPerfilView extends JDialog {
     private boolean isCellEditable;
-    private JDesktopPane desktop;
     private JTable tabelaDetalhes;
     private DefaultTableModel modeloTabela;
     private JTextField txtNome;
@@ -20,12 +19,11 @@ public class ManterPerfilView extends JDialog {
     private JButton btnSalvar, btnEditar, btnExcluir, btnCancelar, btnRemoverCampo, btnAdicionarCampo;
     private JSpinner jspPequeno, jspMedio, jspGrande;
 
-    public ManterPerfilView(JDesktopPane desktop) {
+    public ManterPerfilView() {
         setTitle("Manter Perfis");
         setResizable(true);
         // Inicializa o map de campos obrigatórios
         setCamposObrigatorios();
-        this.desktop = desktop;
         isCellEditable = false;
 
         // Painel Principal
@@ -184,10 +182,6 @@ public class ManterPerfilView extends JDialog {
     }
 
     // Métodos getters e atualizadores
-
-    public JDesktopPane getDesktop() {
-        return desktop;
-    }
 
     public void atualizarTabela(Object[][] dados) {
         modeloTabela.setRowCount(0);
