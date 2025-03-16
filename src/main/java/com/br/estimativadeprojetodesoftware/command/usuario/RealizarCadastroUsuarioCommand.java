@@ -10,8 +10,6 @@ import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -58,7 +56,6 @@ public class RealizarCadastroUsuarioCommand implements ProjetoCommand {
                         repositoryPerfil.salvar(Diretor.build(new WebBackEndBuilder("Web Back-End", usuario)));
                         
                         exibirMensagem("Cadastro realizado com sucesso!");
-                        //  view.dispose();
                     }
                 } catch (Exception ex) {
                     throw new RuntimeException("Erro na validação de senha: " + ex.getMessage());

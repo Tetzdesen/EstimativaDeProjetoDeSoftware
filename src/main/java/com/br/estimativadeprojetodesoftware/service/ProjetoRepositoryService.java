@@ -67,7 +67,6 @@ public class ProjetoRepositoryService implements Subject {
         return projetoRepository.buscarProjetosPorUsuario(idUsuario);
     }
 
-    // Implementação do padrão Observer
     @Override
     public void addObserver(Observer observer) {
         observers.add(observer);

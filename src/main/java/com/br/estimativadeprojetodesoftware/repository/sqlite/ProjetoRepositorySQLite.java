@@ -101,14 +101,18 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             System.out.println("Status do projeto: " + projeto.getStatus());
             stmt.executeUpdate();
 
-            // Remover associações antigas antes de salvar as novas
+            removerPerfisProjeto(projeto.getId());
+
+            for (PerfilProjeto perfil : projeto.getPerfis()) {
+                salvarPerfilProjeto(projeto, perfil);
+            }
+
             String sqlRemoverCampos = "DELETE FROM projeto_has_campo WHERE projeto_idProjeto = ?";
             try (PreparedStatement stmtRemover = connection.prepareStatement(sqlRemoverCampos)) {
                 stmtRemover.setString(1, projeto.getId().toString());
                 stmtRemover.executeUpdate();
             }
 
-            // Salvar novos campos
             salvarCampos(projeto);
 
             for (Campo campo : projeto.getCampos()) {
@@ -121,6 +125,16 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
         } catch (SQLException e) {
             System.out.println(e);
             throw new RuntimeException("Erro ao atualizar projeto", e);
+        }
+    }
+
+    private void removerPerfisProjeto(UUID idProjeto) {
+        String sql = "DELETE FROM projeto_has_perfil WHERE projeto_idProjeto = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, idProjeto.toString());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao remover perfis do projeto", e);
         }
     }
 

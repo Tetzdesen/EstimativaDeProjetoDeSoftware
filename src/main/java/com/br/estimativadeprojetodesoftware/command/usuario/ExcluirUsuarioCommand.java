@@ -3,7 +3,6 @@ package com.br.estimativadeprojetodesoftware.command.usuario;
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
-import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 /**
  *
@@ -23,8 +22,7 @@ public class ExcluirUsuarioCommand implements ProjetoCommand {
         if (removido) {
             new MostrarMensagemProjetoCommand("Usuário \"" + usuarioPresenter.getUsuario().getNome() + "\" removido com sucesso!").execute();
             usuarioPresenter.setUsuario(null);
-            UsuarioLogadoSingleton.getInstancia().setUsuario(usuarioPresenter.getUsuario());
-       //     new LogoutCommand().execute();
+            new RealizarLogoutUsuarioCommand().execute();
         } else {
             new MostrarMensagemProjetoCommand("Erro ao remover o usuário \"" + usuarioPresenter.getUsuario().getNome() + "\".").execute();
         }

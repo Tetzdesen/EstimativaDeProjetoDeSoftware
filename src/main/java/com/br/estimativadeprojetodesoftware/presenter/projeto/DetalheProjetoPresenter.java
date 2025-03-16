@@ -1,10 +1,8 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
-import com.br.estimativadeprojetodesoftware.chain.calculoestimativa.EstimativaFuncionalidade;
+import com.br.estimativadeprojetodesoftware.command.projeto.AbrirCompartilhamentoProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.projeto.AbrirExportarProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
-import java.util.ArrayList;
-import java.util.List;
+import com.br.estimativadeprojetodesoftware.command.projeto.CarregarDetalhesProjetoProjetoCommand;
 
 import javax.swing.JOptionPane;
 
@@ -13,41 +11,43 @@ import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.service.DataHoraService;
 import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.state.projeto.NaoEstimadoState;
 import com.br.estimativadeprojetodesoftware.view.projeto.DetalheProjetoView;
+import java.awt.event.ActionEvent;
 
-public class DetalheProjetoPresenter implements Observer {
+import javax.swing.JOptionPane;
+
+public final class DetalheProjetoPresenter implements Observer {
 
     private final DetalheProjetoView view;
-    private final EstimaProjetoService estimaService;
     private final ProjetoRepositoryService projetoService;
-    private final String projetoNome;
-    List<EstimativaFuncionalidade> estimativas;
+    private final Projeto projeto;
 
     public DetalheProjetoPresenter(DetalheProjetoView view, String projetoNome) {
         this.view = view;
         this.projetoService = new ProjetoRepositoryService();
-        this.projetoNome = projetoNome;
-        this.estimaService = new EstimaProjetoService();
-        this.estimativas = new ArrayList<>();
-        this.projetoService.addObserver(this);
+        this.projeto = projetoService.buscarProjetoPorNome(projetoNome).get();
+        projeto.setEstado(new NaoEstimadoState(projeto));
+        configurarPresenter();
         carregarDetalhesProjeto();
-        carregarListeners();
+    }
+
+    public void configurarPresenter() {
+        this.projetoService.addObserver(this);
+        this.view.getBtnEstimar().setEnabled(true);
+        this.view.getBtnCancelar().setEnabled(false);
+        this.view.getBtnCompartilhar().setEnabled(false);
+        this.view.getBtnExportar().setEnabled(false);
+        configurarListeners();
     }
 
     private void carregarDetalhesProjeto() {
-        Projeto projeto = projetoService.buscarProjetoPorNome(projetoNome).get();
-        if (projeto != null) {
-            carregarCabecalho(projeto);
-            carregarDetalhes(projeto);
-        }
-    }
+        // verificar se projeto é != null
+        carregarCabecalho(projeto);
+        new CarregarDetalhesProjetoProjetoCommand(view, projeto, isProjetoEstimado()).execute();
 
-    private void carregarListeners() {
-        view.getBtnExportar().addActionListener(e -> exportarProjeto());
-    }
-
-    private void exportarProjeto() {
-        new AbrirExportarProjetoCommand(projetoNome).execute();
+        view.revalidate(); 
+        view.repaint();
     }
 
     private void carregarCabecalho(Projeto projeto) {
@@ -60,41 +60,59 @@ public class DetalheProjetoPresenter implements Observer {
         );
     }
 
-    private void carregarDetalhes(Projeto projeto) {
-        estimativas = estimaService.calcularEstimativas(projeto.getId(), projeto.getPerfis(), projeto.getCampos());
-        // Converte a lista para array
-        Object[][] dadosTabela = prepararTabela(projeto, estimativas);
-
-        // Atualiza a view com o valor total
-        view.atualizarTabela(dadosTabela, estimaService.calcularValorTotal());
-    }
-
-    private Object[][] prepararTabela(Projeto projeto, List<EstimativaFuncionalidade> estimativas) {
-        List<Object[]> linhas = new ArrayList<>();
-
-        for (EstimativaFuncionalidade estimativa : estimativas) {
-            for (PerfilProjeto perfil : projeto.getPerfis()) {
-                // Adiciona cada linha na tabela com os valores de estimativa
-                linhas.add(new Object[]{
-                    perfil.getNome(),
-                    estimativa.getNomeFuncionalidade(),
-                    estimativa.getQuantidadeDias(),
-                    "R$ " + estimativa.calcularCustoTotal()
-                });
-            }
-        }
-
-        return linhas.toArray(new Object[0][]);
-    }
-
-    /*
-    private double calcularValorTotal() {
-        return estimativas.stream()
-                .mapToDouble(EstimativaFuncionalidade::calcularCustoTotal)
-                .sum();
-    }*/
     @Override
     public void update() {
         carregarDetalhesProjeto();
+    }
+
+    private void configurarListeners() {
+
+        view.getBtnEstimar().addActionListener((ActionEvent e) -> {
+            if (projeto != null) {
+
+                //  RealizarEstimativaProjetoProjetoCommand
+                projeto.estimarProjeto();
+                carregarDetalhesProjeto();
+                atualizarEstadoBotoes();
+                JOptionPane.showMessageDialog(view, "Projeto estimado com sucesso!", "Estimativa", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        view.getBtnCancelar().addActionListener((ActionEvent e) -> {
+            if (projeto != null) {
+
+                // CancelarEstimativaProjetoProjetoCommand
+                projeto.cancelarEstimativa();
+                carregarDetalhesProjeto();
+                atualizarEstadoBotoes();
+                JOptionPane.showMessageDialog(view, "Estimativa cancelada!", "Cancelamento", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        view.getBtnCompartilhar().addActionListener((ActionEvent e) -> {
+            if (projeto != null) {
+                new AbrirCompartilhamentoProjetoCommand(projetoService, projeto.getNome()).execute();
+            }
+        });
+
+        view.getBtnExportar().addActionListener((ActionEvent e) -> {
+            if (projeto != null) {
+                new AbrirExportarProjetoCommand(projeto.getNome()).execute();
+            }
+        });
+
+    }
+
+    private void atualizarEstadoBotoes() {
+        boolean isEstimado = isProjetoEstimado();
+
+        view.getBtnEstimar().setEnabled(!isEstimado);
+        view.getBtnCancelar().setEnabled(isEstimado);
+        view.getBtnCompartilhar().setEnabled(isEstimado);
+        view.getBtnExportar().setEnabled(isEstimado);
+    }
+
+    private boolean isProjetoEstimado() {
+        return projeto.getStatus().equalsIgnoreCase("Estimado");
     }
 }

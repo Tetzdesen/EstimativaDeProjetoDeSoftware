@@ -7,16 +7,17 @@ import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPrese
  *
  * @author tetzner
  */
-public class BotaoSalvarUsuarioCommand implements ProjetoCommand {
+public class AcionarBotaoEditarUsuarioCommand implements ProjetoCommand {
+
     private final ManterUsuarioPresenter usuarioPresenter;
 
-    public BotaoSalvarUsuarioCommand(ManterUsuarioPresenter usuarioPresenter) {
+    public AcionarBotaoEditarUsuarioCommand(ManterUsuarioPresenter usuarioPresenter) {
         this.usuarioPresenter = usuarioPresenter;
     }
 
     @Override
     public void execute() {
-        usuarioPresenter.salvar();
+        usuarioPresenter.editar();
     }
     
 }

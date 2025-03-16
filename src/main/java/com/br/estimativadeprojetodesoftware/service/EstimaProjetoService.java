@@ -35,7 +35,7 @@ public class EstimaProjetoService {
         for (PerfilProjeto perfil : perfis) {
             for (Campo campo : campos) {
                 for (EstimativaHandler handler : handlers) {
-                    handler.calcularEstimativa(idProjeto, campo, estimativas);
+                    handler.calcularEstimativa(idProjeto, perfil.getNome(), campo, estimativas);
                 }
             }
         }
@@ -53,25 +53,12 @@ public class EstimaProjetoService {
         return handlers;
     }
 
-    public double calcularValorTotal() {
+    public double calcularValorTotal(List<EstimativaFuncionalidade> estimativas) {
         return estimativas.stream()
                 .mapToDouble(EstimativaFuncionalidade::calcularCustoTotal)
                 .sum();
     }
 
-    /*
-    public double calcularValorUnitario(String tipoProjeto, int dias) {
-
-        switch (tipoProjeto) {
-            case "Web/Back end":
-            case "Android":
-                return dias * VALOR_DIARIA_DESENVOLVIMENTO;
-            case "iOS":
-                return dias * VALOR_DIARIA_UI_UX;
-            default:
-                throw new IllegalArgumentException("Tipo de projeto desconhecido: " + tipoProjeto);
-        }
-    }*/
     public int calcularDiasFuncionalidades(List<Campo> funcionalidadesEscolhidas) {
         int totalDias = 0;
         for (int i = 0; i < funcionalidadesEscolhidas.size(); i++) {

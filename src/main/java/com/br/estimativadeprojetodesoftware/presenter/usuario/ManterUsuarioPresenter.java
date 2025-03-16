@@ -2,9 +2,9 @@ package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.usuario.BotaoEditarUsuarioCommand;
-import com.br.estimativadeprojetodesoftware.command.usuario.BotaoExcluirUsuarioCommand;
-import com.br.estimativadeprojetodesoftware.command.usuario.BotaoSalvarUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.AcionarBotaoEditarUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.AcionarBotaoExcluirUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.AcionarBotaoSalvarUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
@@ -29,12 +29,12 @@ import javax.swing.JPanel;
  */
 public class ManterUsuarioPresenter implements Observer {
 
-    private ManterUsuarioView view;
+    private final ManterUsuarioView view;
     private Usuario usuario;
-    private UsuarioRepositoryService usuarioService;
+    private final UsuarioRepositoryService usuarioService;
     private ManterUsuarioPresenterState estado;
     private final Map<String, ProjetoCommand> comandos;
-    private BarraService barraService;
+    private final BarraService barraService;
 
     public ManterUsuarioPresenter(UsuarioRepositoryService usuarioService, ManterUsuarioView view) {
         this.view = view;
@@ -49,9 +49,9 @@ public class ManterUsuarioPresenter implements Observer {
 
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
-        comandos.put("Salvar usuário", new BotaoSalvarUsuarioCommand(this));
-        comandos.put("Editar usuário", new BotaoEditarUsuarioCommand(this));
-        comandos.put("Excluir usuário", new BotaoExcluirUsuarioCommand(this));
+        comandos.put("Salvar usuário", new AcionarBotaoSalvarUsuarioCommand(this));
+        comandos.put("Editar usuário", new AcionarBotaoEditarUsuarioCommand(this));
+        comandos.put("Excluir usuário", new AcionarBotaoExcluirUsuarioCommand(this));
         return comandos;
     }
 

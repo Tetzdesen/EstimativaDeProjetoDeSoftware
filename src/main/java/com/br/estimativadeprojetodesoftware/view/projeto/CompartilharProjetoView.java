@@ -4,20 +4,13 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class CompartilharProjetoView extends JInternalFrame {
+public class CompartilharProjetoView extends JDialog {
 
     private JButton btnCompartilharProjeto;
     private JTable tabelaUsuarios;
     private DefaultTableModel modeloTabela;
 
     public CompartilharProjetoView() {
-        setTitle("Detalhes do Projeto");
-        setClosable(true);
-        setMaximizable(true);
-        setIconifiable(false);
-        setResizable(true);
-        setSize(1000, 700);
-
         JPanel painelPrincipal = new JPanel(new BorderLayout());
         add(painelPrincipal);
 
