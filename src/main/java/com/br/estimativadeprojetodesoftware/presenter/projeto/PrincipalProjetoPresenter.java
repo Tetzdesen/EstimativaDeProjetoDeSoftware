@@ -2,8 +2,8 @@ package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.projeto.AbrirDashboardProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.usuario.LogoutCommand;
-import com.br.estimativadeprojetodesoftware.command.usuario.ManterUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.RealizarLogoutUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.AbrirManterUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.*;
 import com.br.estimativadeprojetodesoftware.command.perfil.VisualizarPerfisProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.projeto.AbrirCriarProjetoCommand;
@@ -40,6 +40,7 @@ public final class PrincipalProjetoPresenter implements Observer {
         this.usuarioService = new UsuarioRepositoryService();
         this.projetoService.addObserver(this);
         this.usuarioService.addObserver(this);
+        UsuarioLogadoSingleton.getInstancia().addObserver(this);
         construtorDeArvoreNavegacaoService = new ConstrutorDeArvoreNavegacaoService();
         GlobalWindowManager.initialize(view);
         this.comandos = inicializarComandos();
@@ -60,23 +61,10 @@ public final class PrincipalProjetoPresenter implements Observer {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), projetoService));
         comandos.put("Novo projeto", new AbrirCriarProjetoCommand(view.getDesktop(), projetoService));
-        comandos.put("Usuário", new ManterUsuarioCommand(this, view.getDesktop()));
+        comandos.put("Usuário", new AbrirManterUsuarioCommand(this));
         comandos.put("Ver perfis de projeto", new VisualizarPerfisProjetoCommand(view.getDesktop()));
-        comandos.put("Logout", new LogoutCommand(this.getView().getDesktop()));
+        comandos.put("Logout", new RealizarLogoutUsuarioCommand());
         return comandos;
-    }
-
-    @Override
-    public void update() {
-        SwingUtilities.invokeLater(() -> {
-            List<String> idsProjetos = projetoService.buscarProjetosPorUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
-            List<Projeto> projetos = new ArrayList<>();
-            idsProjetos.forEach((projeto) -> projetos.add(projetoService.buscarPorId(UUID.fromString(projeto)).get()));
-            WindowCommand fecharJanelasCommand = new FecharJanelasRelacionadasCommand(view.getDesktop(), projetos);
-            fecharJanelasCommand.execute();
-            new ConfigurarArvoreProjetoCommand(projetoService, construtorDeArvoreNavegacaoService, comandos, view).execute();
-            new AtualizarViewCommand(this).execute();
-        });
     }
 
     public void restaurarJanelas() {
@@ -112,5 +100,23 @@ public final class PrincipalProjetoPresenter implements Observer {
 
     public void setCriarBarraService(BarraService criarBarraService) {
         this.criarBarraService = criarBarraService;
+    }
+
+    @Override
+    public void update() {
+        if (UsuarioLogadoSingleton.getInstancia().usuarioLogado()) {
+            SwingUtilities.invokeLater(() -> {
+                List<String> idsProjetos = projetoService.buscarProjetosPorUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
+                List<Projeto> projetos = new ArrayList<>();
+                idsProjetos.forEach((projeto) -> projetos.add(projetoService.buscarPorId(UUID.fromString(projeto)).get()));
+                WindowCommand fecharJanelasCommand = new FecharJanelasRelacionadasCommand(view.getDesktop(), projetos);
+                fecharJanelasCommand.execute();
+                new ConfigurarArvoreProjetoCommand(projetoService, construtorDeArvoreNavegacaoService, comandos, view).execute();
+                new AtualizarViewCommand(this).execute();
+            });
+        } else {
+            this.view.dispose();
+        }
+
     }
 }

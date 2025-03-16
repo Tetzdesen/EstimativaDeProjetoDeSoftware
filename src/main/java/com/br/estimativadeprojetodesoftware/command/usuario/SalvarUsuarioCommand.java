@@ -25,12 +25,13 @@ public class SalvarUsuarioCommand implements ProjetoCommand {
     public void execute() {
         String email = usuarioPresenter.getView().getTxtEmail().getText();
         String nome = usuarioPresenter.getView().getTxtNome().getText();
-        String senha = usuarioPresenter.getView().getTxtSenhaAtual().getText();
+        char[] senhaArray = usuarioPresenter.getView().getTxtSenhaAtual().getPassword();
+        String senha = new String(senhaArray);
 
         try {
             validadorService.validarSenha(senha);
         } catch (Exception ex) {
-
+            // lançar exceção
         }
 
         Usuario usuario = usuarioPresenter.getUsuario();
@@ -39,7 +40,7 @@ public class SalvarUsuarioCommand implements ProjetoCommand {
 
         UsuarioLogadoSingleton.getInstancia().setUsuario(usuarioNovo);
         usuarioPresenter.setUsuario(usuarioNovo);
-        
+
         usuarioPresenter.getUsuarioService().atualizar(usuarioNovo);
         new MostrarMensagemProjetoCommand("Usuário salvo com sucesso").execute();
     }

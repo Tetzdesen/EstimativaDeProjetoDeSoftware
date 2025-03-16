@@ -12,8 +12,8 @@ import java.util.Map;
  */
 public class AutenticacaoService {
 
-    private MetodoAutenticacao metodoAutenticacao;
-    private UsuarioRepositoryService usuarioRepository;
+    private final MetodoAutenticacao metodoAutenticacao;
+    private final UsuarioRepositoryService usuarioRepository;
 
     public AutenticacaoService() {
         this.usuarioRepository = new UsuarioRepositoryService();
@@ -22,17 +22,6 @@ public class AutenticacaoService {
     }
 
     public ResultadoAutenticacao autenticar(String email, String senha) {
-        /*
-        Optional<Usuario> usuario = usuarioRepository.buscarPorEmail(email);
-        if (!usuario.isPresent()) {
-            throw new RuntimeException("Usuário não encontrado");
-        } else {
-            if (usuario.get().getSenha().equals(senha)) {
-                return true;
-            }
-        }*/
-
-     //   throw new RuntimeException("E-mail ou senha não conferem");
         Credenciais credenciais = new Credenciais(email, senha);
         return metodoAutenticacao.autenticar(credenciais);
     }

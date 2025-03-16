@@ -2,19 +2,16 @@ package com.br.estimativadeprojetodesoftware.command.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.CompartilharProjetoPresenter;
-import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.view.projeto.CompartilharProjetoView;
 
-import javax.swing.*;
-
 public class AbrirCompartilhamentoProjetoCommand implements ProjetoCommand {
-
-    private final JDesktopPane desktop;
+    private final ProjetoRepositoryService projetoService;
     private final String nomeProjeto;
 
-    public AbrirCompartilhamentoProjetoCommand(JDesktopPane desktop, String nomeProjeto) {
-        this.desktop = desktop;
+    public AbrirCompartilhamentoProjetoCommand(ProjetoRepositoryService projetoService, String nomeProjeto) {
+        this.projetoService = projetoService;
         this.nomeProjeto = nomeProjeto;
     }
 
@@ -27,14 +24,9 @@ public class AbrirCompartilhamentoProjetoCommand implements ProjetoCommand {
             windowManager.bringToFront(tituloJanela);
         } else {
             CompartilharProjetoView compartilharView = new CompartilharProjetoView();
-            new CompartilharProjetoPresenter(compartilharView, nomeProjeto);
+            new CompartilharProjetoPresenter(projetoService, compartilharView, nomeProjeto);
             compartilharView.setTitle(tituloJanela);
-            desktop.add(compartilharView);
             compartilharView.setVisible(true);
-            try {
-                compartilharView.setMaximum(true);
-            } catch (Exception ignored) {
-            }
         }
     }
 }

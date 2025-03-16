@@ -11,13 +11,15 @@ import java.util.UUID;
 public class EstimativaNivelHandler implements EstimativaHandler {
     
     @Override
-    public void calcularEstimativa(UUID idProjeto, Campo campo, List<EstimativaFuncionalidade> estimativas) {
+    public void calcularEstimativa(UUID idProjeto, String perfilNome, Campo campo, List<EstimativaFuncionalidade> estimativas) {
         if (campo.getTipo().equalsIgnoreCase("nivel")) {
             EstimativaFuncionalidade estimativa = new EstimativaFuncionalidade(
                     idProjeto,
                     campo.getNome(),
                     campo.getDias().intValue(),
-                    "designer"
+                    "designer ui/ux",
+                    campo.getTipo(),
+                    perfilNome
             );
             estimativas.add(estimativa);
         } 

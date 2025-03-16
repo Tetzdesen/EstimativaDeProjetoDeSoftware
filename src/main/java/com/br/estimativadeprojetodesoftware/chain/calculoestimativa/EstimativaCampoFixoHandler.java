@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.br.estimativadeprojetodesoftware.chain.calculoestimativa;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
@@ -15,13 +11,15 @@ import java.util.UUID;
 public class EstimativaCampoFixoHandler implements EstimativaHandler {
 
     @Override
-    public void calcularEstimativa(UUID idProjeto, Campo campo, List<EstimativaFuncionalidade> estimativas) {
+    public void calcularEstimativa(UUID idProjeto, String perfilNome, Campo campo, List<EstimativaFuncionalidade> estimativas) {
         if (isCampoFixo(campo.getTipo())) {
             estimativas.add(new EstimativaFuncionalidade(
                     idProjeto,
                     campo.getNome(),
                     campo.getDias().intValue(),
-                    campo.getTipo()
+                    "campo fixo",
+                    campo.getTipo(),
+                    perfilNome
             ));
         }
     }

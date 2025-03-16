@@ -8,19 +8,20 @@ import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
  *
  * @author tetzner
  */
-public class SalvarProjetoCommand implements ProjetoCommand {
+public class RealizarEstimativaProjetoProjetoCommand implements ProjetoCommand {
 
     private final ProjetoRepositoryService projetoService;
     private final Projeto projeto;
-
-    // utilizar um DTO
-    public SalvarProjetoCommand(ProjetoRepositoryService projetoService, Projeto projeto) {
+    
+    public RealizarEstimativaProjetoProjetoCommand(ProjetoRepositoryService projetoService, Projeto projeto) {
         this.projetoService = projetoService;
         this.projeto = projeto;
     }
 
+    
     @Override
     public void execute() {
-        projetoService.salvar(projeto);
+        projetoService.atualizar(projeto);
     }
+    
 }

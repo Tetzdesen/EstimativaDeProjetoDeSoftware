@@ -14,9 +14,11 @@ import java.awt.event.MouseEvent;
 public class CadastroUsuarioPresenter {
 
     private final CadastroUsuarioView view;
+    private final PrincipalUsuarioPresenter principalUsuarioPresenter;
     
-    public CadastroUsuarioPresenter(CadastroUsuarioView view) {
+    public CadastroUsuarioPresenter(CadastroUsuarioView view, PrincipalUsuarioPresenter principalUsuarioPresenter) {
         this.view = view;
+        this.principalUsuarioPresenter = principalUsuarioPresenter;
         configuraView();
     }
 
@@ -80,12 +82,10 @@ public class CadastroUsuarioPresenter {
         String nome = view.getTxtNomeUsuario().getText();
         String senha = new String(view.getTxtSenha().getPassword());
         String senhaConfirmada = new String(view.getTxtConfirmarSenha().getPassword());
-        
-        // usar um DTO de Usuario
+       
         new RealizarCadastroUsuarioCommand(nome, email, senha, senhaConfirmada).execute();
-        
-        view.dispose();
-            
+        principalUsuarioPresenter.getView().dispose();
+        view.dispose();         
     }
 
     public CadastroUsuarioView getView() {
