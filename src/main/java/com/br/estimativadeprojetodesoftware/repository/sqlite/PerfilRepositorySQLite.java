@@ -55,15 +55,28 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             }
 
             campos = campoService.listarTodosPorTipo("funcionalidade");
-  
-            // lembrar de colocar quando é uma funcionalidade nova
-            
+/*
             for (Campo campo : campos) {
                 if (perfil.getFuncionalidades().containsKey(campo.getNome()) && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
                     campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
+                    long start = System.currentTimeMillis();
+                    logStart("PerfilRepositorySQLite.salvar: funcionalidades");
+                    //a lerdeza está aqui
                     campoService.salvarPerfilCampo(perfil, campo);
+                    logEnd("PerfilRepositorySQLite.salvar: funcionalidades", start);
                 }
             }
+*/
+            List<Campo> camposParaSalvar = new ArrayList<>();
+            for (Campo campo : campos) {
+                if (perfil.getFuncionalidades().containsKey(campo.getNome()) 
+                    && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
+                    campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
+                    camposParaSalvar.add(campo);
+                }
+            }
+            campoService.salvarPerfilCampos(perfil, camposParaSalvar);
+
 
             campos = campoService.listarTodosPorTipo("taxa diária");
             for (Campo campo : campos) {

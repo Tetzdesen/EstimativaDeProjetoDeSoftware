@@ -76,6 +76,37 @@ public class CampoRepositorySQLite implements ICampoRepository {
     }
 
     @Override
+    public void salvarPerfilCampos(PerfilProjeto perfil, List<Campo> campos) {
+        String sql = "INSERT INTO perfil_has_campo (perfil_idPerfil, campo_idCampo, diasPerfil) VALUES (?, ?, ?)";
+        try {
+            connection.setAutoCommit(false);
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                for (Campo campo : campos) {
+                    stmt.setString(1, perfil.getId().toString());
+                    stmt.setString(2, campo.getId().toString());
+                    stmt.setDouble(3, campo.getDias());
+                    stmt.addBatch();
+                }
+                stmt.executeBatch();
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            throw new RuntimeException("Erro ao atualizar campos de perfil: " + e.getMessage(), e);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
     public void atualizar(Campo campo) {
         String sql = "UPDATE campo SET tipoCampo = ?, nomeCampo = ? WHERE idCampo = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
