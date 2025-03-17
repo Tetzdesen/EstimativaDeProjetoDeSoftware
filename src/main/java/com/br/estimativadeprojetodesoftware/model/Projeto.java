@@ -158,7 +158,7 @@ public class Projeto {
 
     @Override
     public String toString() {
-        return "Projeto{" + "id=" + id + ", nome=" + nome + ", criador=" + criador + ", tipo=" + tipo + ", created_at=" + created_at + ", status=" + status + ", compartilhado=" + compartilhado + ", perfis=" + perfis + ", usuarios=" + usuarios + ", campos=" + campos + ", estado=" + estado + '}';
+        return "Projeto{" + "id=" + id + ", nome=" + nome + ", criador=" + criador + ", tipo=" + tipo + ", created_at=" + created_at + ", status=" + status + ", compartilhado=" + compartilhado + ", perfis=" + perfis + ", usuarios=" + usuarios + ", campos=" + campos + '}';
     }
 
 }
