@@ -34,6 +34,5 @@ public class CompartilharProjetoCommand implements ProjetoCommand {
         repository.salvar(projeto, usuarioCompartilhado);
 
         new MostrarMensagemProjetoCommand("Projeto compartilhado com sucesso.").execute();
-        
     }
 }

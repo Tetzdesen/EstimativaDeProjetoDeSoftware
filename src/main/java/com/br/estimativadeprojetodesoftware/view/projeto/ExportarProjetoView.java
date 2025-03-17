@@ -8,8 +8,9 @@ import javax.swing.*;
 import com.br.estimativadeprojetodesoftware.service.IconService;
 
 public class ExportarProjetoView extends JDialog {
-    private JButton btnExportarPdf, btnExportarCsv;
-    private JLabel lblPrincipal;
+    private final JButton btnExportarPdf;
+    private final JButton btnExportarCsv;
+    private final JLabel lblPrincipal;
 
     public ExportarProjetoView() {
         setModal(true);

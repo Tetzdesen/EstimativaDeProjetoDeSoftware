@@ -229,4 +229,9 @@ public class PerfilRepositoryH2 implements IPerfilRepository {
         return perfil;
     }
 
+    @Override
+    public int obterQuantidadePerfisPorUsuario(UUID idUsuario) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }

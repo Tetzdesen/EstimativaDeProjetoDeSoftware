@@ -9,21 +9,19 @@ import com.br.estimativadeprojetodesoftware.chain.calculoestimativa.EstimativaTa
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
 public class EstimaProjetoService {
 
-    private static final double VALOR_DIARIA_DESENVOLVIMENTO = 450.0;
-    private static final double VALOR_DIARIA_GERENCIA = 300.0;
-    private static final double VALOR_DIARIA_UI_UX = 550.0;
-
+    private PerfilRepositoryService perfilService;
     private final CampoRepositoryService campoRepositoryService;
     private final List<EstimativaFuncionalidade> estimativas;
 
     public EstimaProjetoService() {
+        this.perfilService = new PerfilRepositoryService();
         this.campoRepositoryService = new CampoRepositoryService();
         this.estimativas = new ArrayList<>();
     }
@@ -40,7 +38,6 @@ public class EstimaProjetoService {
             }
         }
 
-        // ordenarEstimativas(estimativas); // Ordenação dos tipos antes de retornar
         return estimativas;
     }
 
@@ -59,6 +56,28 @@ public class EstimaProjetoService {
                 .sum();
     }
 
+    public double calcularTotalNivelUI(List<EstimativaFuncionalidade> estimativas) {
+        int totalPerfis = perfilService.obterQuantidadePerfisPorUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
+
+        int diasTamanhoApp = estimativas.stream()
+                .filter(e -> e.getTipoCampo().equalsIgnoreCase("tamanho"))
+                .mapToInt(EstimativaFuncionalidade::getQuantidadeDias)
+                .sum(); 
+
+        System.out.println(diasTamanhoApp);
+
+        double totalAtualUI = estimativas.stream()
+                .filter(e -> e.getTipoCampo().equalsIgnoreCase("nivel"))
+                .mapToDouble(EstimativaFuncionalidade::getQuantidadeDias)
+                .sum(); 
+
+        if (totalPerfis == 0 || diasTamanhoApp == 0) {
+            return 0; 
+        }
+
+        return ((totalAtualUI / totalPerfis) / 100) * diasTamanhoApp;
+    }
+
     public int calcularDiasFuncionalidades(List<Campo> funcionalidadesEscolhidas) {
         int totalDias = 0;
         for (int i = 0; i < funcionalidadesEscolhidas.size(); i++) {
@@ -69,11 +88,6 @@ public class EstimaProjetoService {
 
     public int calcularDiasTotais(Projeto projeto) {
         return calcularDiasFuncionalidades(projeto.getCampos());
-    }
-
-    public double calcularCusto(Projeto projeto) {
-        int diasTotais = calcularDiasTotais(projeto);
-        return diasTotais * VALOR_DIARIA_DESENVOLVIMENTO;
     }
 
     public double calcularCustosAdicionais(double custoHardware, double custoSoftware, double custoRiscos, double custoGarantia, double fundoReserva, double outrosCustos) {

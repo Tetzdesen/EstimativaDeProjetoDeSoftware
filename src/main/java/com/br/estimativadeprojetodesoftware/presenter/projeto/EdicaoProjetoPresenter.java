@@ -56,7 +56,7 @@ public class EdicaoProjetoPresenter {
 
     private void carregarDadosProjeto() {
         if (projetoAtual == null) {
-            return;
+            throw new RuntimeException("Erro: Projeto nulo.");
         }
 
         view.getTxtNome().setText(projetoAtual.getNome());
@@ -64,13 +64,13 @@ public class EdicaoProjetoPresenter {
         List<Campo> campos = new CampoRepositoryService().buscarPorIdProjetoTipo(projetoAtual.getId(), "tamanho");
 
         if (!campos.isEmpty()) {
-            Campo campoTamanho = campos.get(0); // Obter o primeiro campo
+            Campo campoTamanho = campos.get(0); 
             ListModel<String> modelTamanho = view.getCbmTamanhoApp().getModel();
 
             for (int i = 0; i < modelTamanho.getSize(); i++) {
                 String item = modelTamanho.getElementAt(i);
-                if (item.equalsIgnoreCase(campoTamanho.getNome())) { // Comparando pelo ID, ou outro critério
-                    view.getCbmTamanhoApp().setSelectedItem(item); // Setando o item correto
+                if (item.equalsIgnoreCase(campoTamanho.getNome())) { 
+                    view.getCbmTamanhoApp().setSelectedItem(item); 
                     break;
                 }
             }
@@ -79,13 +79,13 @@ public class EdicaoProjetoPresenter {
         campos = new CampoRepositoryService().buscarPorIdProjetoTipo(projetoAtual.getId(), "nivel");
 
         if (!campos.isEmpty()) {
-            Campo campoNivel = campos.get(0); // Obter o primeiro campo
+            Campo campoNivel = campos.get(0); 
             ListModel<String> modelNivel = view.getCbmNivelUI().getModel();
 
             for (int i = 0; i < modelNivel.getSize(); i++) {
                 String item = modelNivel.getElementAt(i);
-                if (item.equalsIgnoreCase(campoNivel.getNome())) { // Comparando pelo ID, ou outro critério
-                    view.getCbmNivelUI().setSelectedItem(item); // Setando o item correto
+                if (item.equalsIgnoreCase(campoNivel.getNome())) {
+                    view.getCbmNivelUI().setSelectedItem(item); 
                     break;
                 }
             }
@@ -139,7 +139,6 @@ public class EdicaoProjetoPresenter {
 
     private void salvarAlteracoes() {
         new RealizarEdicaoProjetoProjetoCommand(this).execute();
-
         carregarListaPerfis();
     }
 
@@ -171,6 +170,16 @@ public class EdicaoProjetoPresenter {
 
         if (perfil == null || perfil.isEmpty()) {
             throw new IllegalArgumentException("Selecione um perfil válido!");
+        }
+
+        PerfilProjeto perfilSelecionado = perfisSelecionados.get(perfil);
+
+        if (perfilSelecionado == null) {
+            throw new RuntimeException("Perfil não encontrado!");
+        }
+
+        if (perfilSelecionado.isPerfilBackEnd() && isMaisDeUmPerfilBackend()) {
+            throw new RuntimeException("Não é possível adicionar mais de um perfil backend!");
         }
 
         if (!(view.getJListPerfis().getModel() instanceof DefaultListModel)) {
@@ -212,6 +221,21 @@ public class EdicaoProjetoPresenter {
 
         view.getJListPerfis().setModel(model);
 
+    }
+
+    private boolean isMaisDeUmPerfilBackend() {
+        DefaultListModel<String> model = (DefaultListModel<String>) view.getJListPerfis().getModel();
+
+        long countBackend = 0;
+
+        for (int i = 0; i < model.getSize(); i++) {
+            String perfilNome = model.getElementAt(i);
+            if (perfisSelecionados.get(perfilNome).isPerfilBackEnd()) {
+                countBackend++;
+            }
+        }
+
+        return countBackend > 0;
     }
 
     public ProjetoRepositoryService getProjetoService() {

@@ -5,8 +5,6 @@ import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.EdicaoProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.view.projeto.EdicaoProjetoView;
-import javax.swing.JDesktopPane;
-
 /**
  *
  * @author tetzner

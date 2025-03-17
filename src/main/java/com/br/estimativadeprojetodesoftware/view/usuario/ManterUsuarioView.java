@@ -11,7 +11,6 @@ import javax.swing.JTextField;
 public class ManterUsuarioView extends javax.swing.JDialog {
 
     public ManterUsuarioView() {
-     // super(parent, modal);
         initComponents();
     }
 
@@ -42,9 +41,7 @@ public class ManterUsuarioView extends javax.swing.JDialog {
     public JButton getBtnExibirSenha() {
         return btnExibirSenha;
     }
-
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+                    
     private void initComponents() {
 
         lblTotalPerfis = new javax.swing.JLabel();
@@ -168,9 +165,8 @@ public class ManterUsuarioView extends javax.swing.JDialog {
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    }                   
+                
     private javax.swing.JButton btnExibirSenha;
     private javax.swing.JLabel lblDataCriacao;
     private javax.swing.JLabel lblEmail;
@@ -183,6 +179,5 @@ public class ManterUsuarioView extends javax.swing.JDialog {
     private javax.swing.JTextField txtNome;
     private javax.swing.JPasswordField txtSenhaAtual;
     private javax.swing.JTextField txtTotalPerfis;
-    private javax.swing.JTextField txtTotalProjetos;
-    // End of variables declaration//GEN-END:variables
+    private javax.swing.JTextField txtTotalProjetos;            
 }

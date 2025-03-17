@@ -17,7 +17,7 @@ import javax.swing.DefaultListModel;
 /**
  *
  * @author Hiago Lopes
- */   
+ */
 public class CadastroProjetoPresenter {
 
     private CadastroProjetoView view;
@@ -111,6 +111,16 @@ public class CadastroProjetoPresenter {
             throw new IllegalArgumentException("Selecione um perfil válido!");
         }
 
+        PerfilProjeto perfilSelecionado = perfisSelecionados.get(perfil);
+
+        if (perfilSelecionado == null) {
+            throw new RuntimeException("Perfil não encontrado!");
+        }
+
+        if (perfilSelecionado.isPerfilBackEnd() && isMaisDeUmPerfilBackend()) {
+            throw new RuntimeException("Não é possível adicionar mais de um perfil backend!");
+        }
+
         if (!(view.getJListPerfis().getModel() instanceof DefaultListModel)) {
             view.getJListPerfis().setModel(new DefaultListModel<>());
         }
@@ -146,6 +156,21 @@ public class CadastroProjetoPresenter {
 
         view.getJListPerfis().setModel(model);
 
+    }
+
+    private boolean isMaisDeUmPerfilBackend() {
+        DefaultListModel<String> model = (DefaultListModel<String>) view.getJListPerfis().getModel();
+
+        long countBackend = 0;
+
+        for (int i = 0; i < model.getSize(); i++) {
+            String perfilNome = model.getElementAt(i);
+            if (perfisSelecionados.get(perfilNome).isPerfilBackEnd()) {
+                countBackend++;
+            }
+        }
+
+        return countBackend > 0; 
     }
 
     public CadastroProjetoView getView() {

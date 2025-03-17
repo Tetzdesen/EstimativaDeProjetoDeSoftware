@@ -26,7 +26,7 @@ public class CarregarDetalhesProjetoProjetoCommand implements ProjetoCommand {
     private List<EstimativaFuncionalidade> estimativas;
     private final EstimaProjetoService estimaService;
     private final boolean isProjetoEstimado;
-    
+
     private static final Map<String, Integer> ORDEM_ESTIMATIVAS = Map.of(
             "tamanho", 1,
             "nivel", 2,
@@ -35,11 +35,11 @@ public class CarregarDetalhesProjetoProjetoCommand implements ProjetoCommand {
     );
 
     public CarregarDetalhesProjetoProjetoCommand(DetalheProjetoView view, Projeto projeto, boolean isProjetoEstimado) {
-            this.view = view;
-            this.projeto = projeto;
-            this.estimativas = new ArrayList<>();
-            this.estimaService = new EstimaProjetoService();
-            this.isProjetoEstimado = isProjetoEstimado;
+        this.view = view;
+        this.projeto = projeto;
+        this.estimativas = new ArrayList<>();
+        this.estimaService = new EstimaProjetoService();
+        this.isProjetoEstimado = isProjetoEstimado;
     }
 
     @Override
@@ -110,6 +110,10 @@ public class CarregarDetalhesProjetoProjetoCommand implements ProjetoCommand {
                         totalDias += dias;
                     }
 
+                    if (estimativa.getTipoCampo().equalsIgnoreCase("nivel")) {
+                        totalDias = (int) estimaService.calcularTotalNivelUI(estimativas); 
+                    }
+
                     linha[perfis.size() + 1] = totalDias;
                     linha[perfis.size() + 2] = "R$ " + String.format("%.2f", totalDias * valorPorDia);
 
@@ -130,5 +134,4 @@ public class CarregarDetalhesProjetoProjetoCommand implements ProjetoCommand {
         }
         return perfis;
     }
-
 }

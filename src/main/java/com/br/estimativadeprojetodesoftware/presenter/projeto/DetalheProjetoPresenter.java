@@ -1,16 +1,12 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.projeto.AbrirCompartilhamentoProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.projeto.AbrirExportarProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.projeto.CarregarDetalhesProjetoProjetoCommand;
-
-import javax.swing.JOptionPane;
-
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.service.DataHoraService;
-import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.state.projeto.DetalheProjetoPresenterState;
+import com.br.estimativadeprojetodesoftware.state.projeto.EstimadoState;
 import com.br.estimativadeprojetodesoftware.state.projeto.NaoEstimadoState;
 import com.br.estimativadeprojetodesoftware.view.projeto.DetalheProjetoView;
 import java.awt.event.ActionEvent;
@@ -22,22 +18,24 @@ public final class DetalheProjetoPresenter implements Observer {
     private final DetalheProjetoView view;
     private final ProjetoRepositoryService projetoService;
     private final Projeto projeto;
+    private DetalheProjetoPresenterState estado;
 
     public DetalheProjetoPresenter(DetalheProjetoView view, String projetoNome) {
         this.view = view;
         this.projetoService = new ProjetoRepositoryService();
         this.projeto = projetoService.buscarProjetoPorNome(projetoNome).get();
-        projeto.setEstado(new NaoEstimadoState(projeto));
         configurarPresenter();
+
+        if (!isProjetoEstimado()) {
+            this.estado = new NaoEstimadoState(this);
+        } else {
+            this.estado = new EstimadoState(this);
+        }
         carregarDetalhesProjeto();
     }
 
     public void configurarPresenter() {
         this.projetoService.addObserver(this);
-        this.view.getBtnEstimar().setEnabled(true);
-        this.view.getBtnCancelar().setEnabled(false);
-        this.view.getBtnCompartilhar().setEnabled(false);
-        this.view.getBtnExportar().setEnabled(false);
         configurarListeners();
     }
 
@@ -46,7 +44,7 @@ public final class DetalheProjetoPresenter implements Observer {
         carregarCabecalho(projeto);
         new CarregarDetalhesProjetoProjetoCommand(view, projeto, isProjetoEstimado()).execute();
 
-        view.revalidate(); 
+        view.revalidate();
         view.repaint();
     }
 
@@ -60,59 +58,63 @@ public final class DetalheProjetoPresenter implements Observer {
         );
     }
 
+    private void configurarListeners() {
+
+        view.getBtnEstimar().addActionListener((ActionEvent e) -> {
+            estado.estimar();
+            carregarDetalhesProjeto();
+            JOptionPane.showMessageDialog(view, "Projeto estimado com sucesso!", "Estimativa", JOptionPane.INFORMATION_MESSAGE);
+
+        });
+
+        view.getBtnCancelar().addActionListener((ActionEvent e) -> {
+
+            // CancelarEstimativaProjetoProjetoCommand
+            // projeto.cancelarEstimativa();
+            estado.cancelarEstimativa();
+            carregarDetalhesProjeto();
+            JOptionPane.showMessageDialog(view, "Estimativa cancelada!", "Cancelamento", JOptionPane.WARNING_MESSAGE);
+
+        });
+
+        view.getBtnCompartilhar().addActionListener((ActionEvent e) -> {
+            estado.compartilharProjeto();
+        });
+
+        view.getBtnExportar().addActionListener((ActionEvent e) -> {
+
+            estado.exportarProjeto();
+        });
+
+    }
+
+    public boolean isProjetoEstimado() {
+        return projeto.getStatus().equalsIgnoreCase("Estimado");
+    }
+
+    public DetalheProjetoView getView() {
+        return view;
+    }
+
+    public ProjetoRepositoryService getProjetoService() {
+        return projetoService;
+    }
+
+    public Projeto getProjeto() {
+        return projeto;
+    }
+
+    public DetalheProjetoPresenterState getEstado() {
+        return estado;
+    }
+
+    public void setEstado(DetalheProjetoPresenterState estado) {
+        this.estado = estado;
+    }
+
     @Override
     public void update() {
         carregarDetalhesProjeto();
     }
 
-    private void configurarListeners() {
-
-        view.getBtnEstimar().addActionListener((ActionEvent e) -> {
-            if (projeto != null) {
-
-                //  RealizarEstimativaProjetoProjetoCommand
-                projeto.estimarProjeto();
-                carregarDetalhesProjeto();
-                atualizarEstadoBotoes();
-                JOptionPane.showMessageDialog(view, "Projeto estimado com sucesso!", "Estimativa", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-
-        view.getBtnCancelar().addActionListener((ActionEvent e) -> {
-            if (projeto != null) {
-
-                // CancelarEstimativaProjetoProjetoCommand
-                projeto.cancelarEstimativa();
-                carregarDetalhesProjeto();
-                atualizarEstadoBotoes();
-                JOptionPane.showMessageDialog(view, "Estimativa cancelada!", "Cancelamento", JOptionPane.WARNING_MESSAGE);
-            }
-        });
-
-        view.getBtnCompartilhar().addActionListener((ActionEvent e) -> {
-            if (projeto != null) {
-                new AbrirCompartilhamentoProjetoCommand(projetoService, projeto.getNome()).execute();
-            }
-        });
-
-        view.getBtnExportar().addActionListener((ActionEvent e) -> {
-            if (projeto != null) {
-                new AbrirExportarProjetoCommand(projeto.getNome()).execute();
-            }
-        });
-
-    }
-
-    private void atualizarEstadoBotoes() {
-        boolean isEstimado = isProjetoEstimado();
-
-        view.getBtnEstimar().setEnabled(!isEstimado);
-        view.getBtnCancelar().setEnabled(isEstimado);
-        view.getBtnCompartilhar().setEnabled(isEstimado);
-        view.getBtnExportar().setEnabled(isEstimado);
-    }
-
-    private boolean isProjetoEstimado() {
-        return projeto.getStatus().equalsIgnoreCase("Estimado");
-    }
 }

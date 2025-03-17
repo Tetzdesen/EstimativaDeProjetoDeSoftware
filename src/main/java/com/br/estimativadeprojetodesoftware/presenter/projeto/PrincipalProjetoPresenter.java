@@ -13,7 +13,6 @@ import com.br.estimativadeprojetodesoftware.presenter.DesktopMemento;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.Zelador;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.*;
-import com.br.estimativadeprojetodesoftware.repository.UsuarioRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
@@ -34,9 +33,9 @@ public final class PrincipalProjetoPresenter implements Observer {
     private final List<WindowCommand> windowCommands = new ArrayList<>();
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
 
-    public PrincipalProjetoPresenter(ProjetoRepositoryService projetoService, UsuarioRepositoryMock usuarioRepository) {
+    public PrincipalProjetoPresenter() {
         this.view = new PrincipalProjetoView();
-        this.projetoService = projetoService;
+        this.projetoService = new ProjetoRepositoryService();
         this.usuarioService = new UsuarioRepositoryService();
         this.projetoService.addObserver(this);
         this.usuarioService.addObserver(this);
