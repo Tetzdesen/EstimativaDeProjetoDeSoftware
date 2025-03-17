@@ -2,15 +2,12 @@ package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.CompartilharProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
-import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.CompartilharProjetoView;
 import java.util.List;
-import java.util.UUID;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -19,15 +16,15 @@ import javax.swing.table.DefaultTableModel;
 public class CompartilharProjetoPresenter  {
 
     private final CompartilharProjetoView view;
-    private final UsuarioRepositoryService usuarioService;
-    private final ProjetoRepositoryService projetoService;
+    private final UsuarioService usuarioService;
+    private final ProjetoService projetoService;
     private List<Usuario> usuarios;
     private final String nomeProjeto;
 
-    public CompartilharProjetoPresenter(ProjetoRepositoryService projetoService, CompartilharProjetoView view, String nomeProjeto) {
+    public CompartilharProjetoPresenter(ProjetoService projetoService, CompartilharProjetoView view, String nomeProjeto) {
         this.view = view;
         this.nomeProjeto = nomeProjeto;
-        this.usuarioService = new UsuarioRepositoryService();
+        this.usuarioService = new UsuarioService();
         this.projetoService = projetoService;
         this.usuarios = usuarioService.buscarTodos();
         configurarView();
@@ -51,19 +48,11 @@ public class CompartilharProjetoPresenter  {
         
         this.view.getBtnCompartilharProjeto().addActionListener(e -> {
             try {
-                if (nomeProjeto == null) {
-                    new MostrarMensagemProjetoCommand("Nenhum projeto selecionado.").execute();
-                    return;
-                }
+                
                 String email = buscarUsuarioSelecionado();
 
                 new CompartilharProjetoCommand(projetoService, email, nomeProjeto).execute();
-
-                // if (linhaSelecionada != -1) {
-                //     Usuario usuario = usuarios.get(linhaSelecionada);
-                //     new CompartilharProjetoCommand(usuarioService, projetoService, UsuarioLogadoSingleton.getInstancia().getUsuario(), usuario, projeto).execute();
-                // }
-                
+                view.dispose();
             } catch (Exception ex) {
                 new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
             }

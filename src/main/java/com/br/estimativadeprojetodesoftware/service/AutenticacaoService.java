@@ -13,10 +13,10 @@ import java.util.Map;
 public class AutenticacaoService {
 
     private final MetodoAutenticacao metodoAutenticacao;
-    private final UsuarioRepositoryService usuarioRepository;
+    private final UsuarioService usuarioRepository;
 
     public AutenticacaoService() {
-        this.usuarioRepository = new UsuarioRepositoryService();
+        this.usuarioRepository = new UsuarioService();
         this.metodoAutenticacao = new AutenticadorSenha();
         carregarUsuariosNoAutenticador();
     }

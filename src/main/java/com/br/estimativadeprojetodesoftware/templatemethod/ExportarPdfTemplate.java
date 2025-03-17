@@ -6,11 +6,11 @@ import javax.swing.JFileChooser;
 import com.br.estimativadeprojetodesoftware.adapter.exportarprojeto.FileExportAdapter;
 import com.br.estimativadeprojetodesoftware.adapter.exportarprojeto.PDFExportAdapter;
 
-public class ExportarPdfTemplate extends ExportadorProjeto {
+public class ExportarPDFTemplate extends ExportadorProjeto {
     
     private FileExportAdapter adapter;
 
-    public ExportarPdfTemplate() {
+    public ExportarPDFTemplate() {
         adapter = new PDFExportAdapter();
     }
 

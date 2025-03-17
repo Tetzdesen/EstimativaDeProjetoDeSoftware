@@ -1,26 +1,25 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.DetalheProjetoPresenter;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.view.projeto.DetalheProjetoView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import java.util.Map;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
-
-public class RealizarEstimativaProjetoProjetoCommand implements ProjetoCommand {
+public class RealizarEstimativaProjetoCommand implements Command {
 
     private final DetalheProjetoPresenter detalheProjetoPresenter;
-    private final ProjetoRepositoryService projetoService;
+    private final ProjetoService projetoService;
     private final Projeto projeto;
     private final DetalheProjetoView view;
 
-    public RealizarEstimativaProjetoProjetoCommand(DetalheProjetoPresenter detalheProjetoPresenter) {
+    public RealizarEstimativaProjetoCommand(DetalheProjetoPresenter detalheProjetoPresenter) {
         this.detalheProjetoPresenter = detalheProjetoPresenter;
         this.projetoService = detalheProjetoPresenter.getProjetoService();
         this.projeto = detalheProjetoPresenter.getProjeto();
@@ -39,36 +38,35 @@ public class RealizarEstimativaProjetoProjetoCommand implements ProjetoCommand {
         boolean houveAlteracao = false;
 
         for (int i = 0; i < model.getRowCount(); i++) {
-            String nomeCampo = (String) model.getValueAt(i, 0); 
+            String nomeCampo = (String) model.getValueAt(i, 0);
 
-            for (int j = 1; j <= perfis.size(); j++) { 
+            for (int j = 1; j <= perfis.size(); j++) {
                 Object valorCelula = model.getValueAt(i, j);
                 int diasNovos = extrairValorComoInteiro(valorCelula);
 
                 if (valorCelula == null || valorCelula.toString().isEmpty()) {
-                    continue; 
+                    continue;
                 }
 
-                PerfilProjeto perfil = perfis.get(j - 1); 
+                PerfilProjeto perfil = perfis.get(j - 1);
 
                 if (perfil.getFuncionalidades().containsKey(nomeCampo)) {
                     int diasOriginais = perfil.getFuncionalidades().get(nomeCampo);
 
- 
                     if (diasNovos != diasOriginais) {
                         Map<String, Integer> funcionalidadesAtualizadas = perfil.getFuncionalidades();
                         funcionalidadesAtualizadas.put(nomeCampo, diasNovos);
-                        houveAlteracao = true; 
+                        houveAlteracao = true;
                     }
                 }
             }
         }
+        projeto.setStatus("Estimado");
+        detalheProjetoPresenter.setProjeto(projeto);
+        projetoService.atualizar(projeto);
 
-        if (houveAlteracao) {
-            projetoService.atualizar(projeto);
-           // detalheProjetoPresenter.setProjeto(projeto);
-            new CarregarDetalhesProjetoProjetoCommand(view, projeto, true).execute(); // Recarrega os dados
-        }
+        new CarregarDetalhesProjetoCommand(view, projeto, true).execute(); // Recarrega os dados
+
     }
 
     private int extrairValorComoInteiro(Object valor) {

@@ -4,21 +4,21 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.br.estimativadeprojetodesoftware.command.perfil.AdicionarNovaFuncionalidadePerfilCommand;
-import com.br.estimativadeprojetodesoftware.command.perfil.RemoverFuncionalidadePerfilCommand;
+import com.br.estimativadeprojetodesoftware.command.perfil.RemoverFuncionalidadePerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
 import com.br.estimativadeprojetodesoftware.state.perfil.InclusaoPerfilState;
 import com.br.estimativadeprojetodesoftware.state.perfil.ManterPerfilPresenterState;
 import com.br.estimativadeprojetodesoftware.state.perfil.VisualizacaoPerfilState;
 import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
 
-public class ManterPerfilPresenter {
-    private ManterPerfilView view;
-    private PerfilRepositoryService repository;
+public final class ManterPerfilPresenter {
+    private final ManterPerfilView view;
+    private final PerfilProjetoService repository;
     private ManterPerfilPresenterState estado;
     private PerfilProjeto perfil;
 
-    public ManterPerfilPresenter(ManterPerfilView view, PerfilProjeto perfil, PerfilRepositoryService repository) {
+    public ManterPerfilPresenter(ManterPerfilView view, PerfilProjeto perfil, PerfilProjetoService repository) {
         this.view = view;
         this.repository = repository;
         this.perfil = perfil;
@@ -61,7 +61,7 @@ public class ManterPerfilPresenter {
     }
 
     public void removerCampo() {
-        new RemoverFuncionalidadePerfilCommand(this).execute();
+        new RemoverFuncionalidadePerfilProjetoCommand(this).execute();
     }
 
     public void carregarCampos(PerfilProjeto perfil) {
@@ -95,7 +95,7 @@ public class ManterPerfilPresenter {
         return view;
     }
 
-    public PerfilRepositoryService getRepository() {
+    public PerfilProjetoService getRepository() {
         return repository;
     }
 

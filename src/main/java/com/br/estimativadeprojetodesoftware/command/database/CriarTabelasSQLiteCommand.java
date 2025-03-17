@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.command.database;
 
+import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -8,7 +9,7 @@ import java.sql.SQLException;
  *
  * @author tetzner
  */
-public class CriarTabelasSQLiteDatabaseCommand implements DatabaseCommand {
+public class CriarTabelasSQLiteCommand implements Command {
 
     @Override
     public void execute() {

@@ -1,9 +1,9 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
 import com.br.estimativadeprojetodesoftware.model.Projeto;
-import com.br.estimativadeprojetodesoftware.presenter.Observer;
+import com.br.estimativadeprojetodesoftware.observer.Observer;
 import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.DashBoardProjetoView;
 import java.util.ArrayList;
@@ -18,9 +18,9 @@ public class DashBoardProjetoPresenter implements Observer {
 
     private final DashBoardProjetoView view;
     private final EstimaProjetoService estimaService;
-    private final ProjetoRepositoryService projetoService;
+    private final ProjetoService projetoService;
 
-    public DashBoardProjetoPresenter(DashBoardProjetoView view, ProjetoRepositoryService projetoService) {
+    public DashBoardProjetoPresenter(DashBoardProjetoView view, ProjetoService projetoService) {
         this.view = view;
         this.projetoService = projetoService;
         this.estimaService = new EstimaProjetoService();

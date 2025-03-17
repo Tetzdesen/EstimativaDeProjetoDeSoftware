@@ -4,13 +4,13 @@ import java.util.List;
 
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
-import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.CampoService;
 
 public class TipoCampoTamanhoApp implements ITipoCampoPerfil {
 
     @Override
     public void carregarCampos(PerfilProjeto perfil) {
-        CampoRepositoryService campoService = new CampoRepositoryService();
+        CampoService campoService = new CampoService();
         List<Campo> campos = campoService.buscarPorIdPerfilTipo(perfil.getId(), "tamanho");
         if (campos != null) {
             campos.forEach(campo -> {

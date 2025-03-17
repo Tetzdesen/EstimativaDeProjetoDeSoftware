@@ -2,7 +2,7 @@ package com.br.estimativadeprojetodesoftware.repository.sqlite;
 
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.IUsuarioRepository;
-import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 
 import java.sql.*;
@@ -32,9 +32,9 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
             statement.setTimestamp(5, Timestamp.valueOf(usuario.getCreated_at()));
             statement.setString(6, "JSON");
             statement.executeUpdate();
- 
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao salvar usuário", e);
         }
     }
 
@@ -49,7 +49,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
             statement.setString(5, usuario.getId().toString());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao atualizar usuário", e);
         }
     }
 
@@ -60,7 +60,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
             statement.setString(1, id.toString());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao remover por ID de usuário", e);
         }
         return true;
     }
@@ -75,7 +75,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
                 return Optional.of(mapToUsuario(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar por ID de usuário", e);
         }
         return Optional.empty();
     }
@@ -90,7 +90,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
                 return Optional.of(mapToUsuario(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar por email de usuário", e);
         }
         return Optional.empty();
     }
@@ -105,7 +105,7 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
                 usuarios.add(mapToUsuario(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar todos usuários", e);
         }
         return usuarios;
     }
@@ -122,21 +122,9 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
                 usuarios.put(email, senha);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar email e senha de todos usuários", e);
         }
         return usuarios;
-    }
-
-    private Usuario mapToUsuario(ResultSet resultSet) throws SQLException {
-        UUID idUsuario = UUID.fromString(resultSet.getString("idUsuario"));
-        return new Usuario(
-                idUsuario,
-                resultSet.getString("nomeUsuario"),
-                resultSet.getString("email"),
-                resultSet.getString("senha"),
-                resultSet.getTimestamp("created_atUsuario").toLocalDateTime(),
-                resultSet.getString("log")
-        );
     }
 
     @Override
@@ -150,15 +138,27 @@ public class UsuarioRepositorySQLite implements IUsuarioRepository {
                 usuarioIds.add(resultSet.getString("usuario_idUsuario"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar usuários por projeto", e);
         }
-        
+
         List<Usuario> usuarios = new ArrayList<>();
-  
+
         for (String userId : usuarioIds) {
-           usuarios.add(new UsuarioRepositoryService().buscarPorId(UUID.fromString(userId)).get());
+            usuarios.add(new UsuarioService().buscarPorId(UUID.fromString(userId)).get());
         }
-        
+
         return usuarios;
+    }
+
+    private Usuario mapToUsuario(ResultSet resultSet) throws SQLException {
+        UUID idUsuario = UUID.fromString(resultSet.getString("idUsuario"));
+        return new Usuario(
+                idUsuario,
+                resultSet.getString("nomeUsuario"),
+                resultSet.getString("email"),
+                resultSet.getString("senha"),
+                resultSet.getTimestamp("created_atUsuario").toLocalDateTime(),
+                resultSet.getString("log")
+        );
     }
 }

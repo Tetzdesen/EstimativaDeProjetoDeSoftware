@@ -5,11 +5,10 @@ import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.repository.IProjetoRepository;
-import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.CampoService;
+import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
-import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,9 +19,11 @@ import java.util.UUID;
 public class ProjetoRepositorySQLite implements IProjetoRepository {
 
     private final Connection connection;
+    private CampoService campoService;
 
     public ProjetoRepositorySQLite() {
         this.connection = ConexaoSingleton.getInstancia().getConexao();
+        this.campoService = new CampoService();
     }
 
     @Override
@@ -67,8 +68,6 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
     }
 
     private void salvarCampos(Projeto projeto) {
-        CampoRepositoryService campoService = new CampoRepositoryService();
-
         for (Campo campo : projeto.getCampos()) {
             campoService.salvarProjetoCampo(projeto, campo);
         }
@@ -108,7 +107,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
                 return Optional.of(rs.getString("nomeUsuario"));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar projeto", e);
+            throw new RuntimeException("Erro ao buscar criador de projeto", e);
         }
         return Optional.empty();
     }
@@ -152,9 +151,9 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             salvarCampos(projeto);
 
             for (Campo campo : projeto.getCampos()) {
-                new CampoRepositoryService().atualizar(campo);
+                campoService.atualizar(campo);
                 if (!existeAssociacaoProjetoCampo(projeto.getId(), campo.getId())) {
-                    new CampoRepositoryService().salvarProjetoCampo(projeto, campo);
+                    campoService.salvarProjetoCampo(projeto, campo);
                 }
             }
 
@@ -193,7 +192,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             ResultSet rs = stmt.executeQuery();
             return rs.next() && rs.getInt(1) > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao verificar associação", e);
+            throw new RuntimeException("Erro ao verificar associação de projeto campo", e);
         }
     }
 
@@ -204,7 +203,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             stmt.setString(1, id.toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao remover projeto", e);
+            throw new RuntimeException("Erro ao remover projeto por ID", e);
         }
     }
 
@@ -219,7 +218,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
                 return Optional.of(mapProjetoFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar projeto", e);
+            throw new RuntimeException("Erro ao buscar projeto por ID", e);
         }
         return Optional.empty();
     }
@@ -234,7 +233,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
                 return Optional.of(mapProjetoFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar projeto", e);
+            throw new RuntimeException("Erro ao buscar projeto por nome", e);
         }
         return Optional.empty();
     }
@@ -251,7 +250,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
                 projetos.add(projeto.getNome());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar nomes de projetos por usuário", e);
         }
         return projetos;
     }
@@ -268,7 +267,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
                 projetos.add(projeto.getNome());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar nomes de projetos compartilhados", e);
         }
         return projetos;
     }
@@ -287,28 +286,6 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
         return projetos;
     }
 
-    private Projeto mapProjetoFromResultSet(ResultSet rs) throws SQLException {
-        UUID idProjeto = UUID.fromString(rs.getString("idProjeto"));
-        List<PerfilProjeto> perfis = new PerfilRepositoryService().buscarPerfisPorProjeto(idProjeto);
-        List<Usuario> usuarios = new UsuarioRepositoryService().buscarUsuariosPorProjeto(idProjeto);
-        List<Campo> campos = new CampoRepositoryService().listarTodosPorIdProjeto(idProjeto);
-
-        // Tratamento para evitar o erro:
-        UUID idUsuario = usuarios.isEmpty() ? null : usuarios.get(0).getId();
-        return new Projeto(
-                idProjeto,
-                rs.getString("nomeProjeto"),
-                buscarCriadorProjeto(rs.getString("nomeProjeto")).orElse("Desconhecido"),
-                rs.getString("tipoProjeto"),
-                rs.getTimestamp("created_atProjeto").toLocalDateTime(),
-                rs.getString("status"),
-                buscarIsCompartilhadoPorId(idUsuario, idProjeto),
-                perfis,
-                usuarios,
-                campos
-        );
-    }
-
     @Override
     public boolean buscarIsCompartilhadoPorId(UUID idUsuario, UUID idProjeto) {
         boolean isCompartilhado = false;
@@ -319,7 +296,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             ResultSet resultSet = statement.executeQuery();
             isCompartilhado = resultSet.getBoolean("isCompartilhado");
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar se é compartilhado por id de usuário e projeto", e);
         }
         return isCompartilhado;
     }
@@ -335,7 +312,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
                 projetos.add(resultSet.getString("projeto_idProjeto"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao  buscar projetos por usuário", e);
         }
         return projetos;
     }
@@ -348,12 +325,33 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                return resultSet.getInt(1); 
+                return resultSet.getInt(1);
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao obter a quantidade de projetos do usuário", e);
         }
         return 0;
+    }
+
+    private Projeto mapProjetoFromResultSet(ResultSet rs) throws SQLException {
+        UUID idProjeto = UUID.fromString(rs.getString("idProjeto"));
+        List<PerfilProjeto> perfis = new PerfilProjetoService().buscarPerfisPorProjeto(idProjeto);
+        List<Usuario> usuarios = new UsuarioService().buscarUsuariosPorProjeto(idProjeto);
+        List<Campo> campos = campoService.listarTodosPorIdProjeto(idProjeto);
+
+        UUID idUsuario = usuarios.isEmpty() ? null : usuarios.get(0).getId();
+        return new Projeto(
+                idProjeto,
+                rs.getString("nomeProjeto"),
+                buscarCriadorProjeto(rs.getString("nomeProjeto")).orElse("Desconhecido"),
+                rs.getString("tipoProjeto"),
+                rs.getTimestamp("created_atProjeto").toLocalDateTime(),
+                rs.getString("status"),
+                buscarIsCompartilhadoPorId(idUsuario, idProjeto),
+                perfis,
+                usuarios,
+                campos
+        );
     }
 
 }

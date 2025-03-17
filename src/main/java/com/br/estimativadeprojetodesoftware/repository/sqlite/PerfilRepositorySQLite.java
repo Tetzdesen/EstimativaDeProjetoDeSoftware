@@ -4,7 +4,7 @@ import com.br.estimativadeprojetodesoftware.chain.carregarcampos.EmpilhadorDeCam
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.repository.IPerfilRepository;
-import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.CampoService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
@@ -20,9 +20,11 @@ import java.util.Map.Entry;
 public class PerfilRepositorySQLite implements IPerfilRepository {
 
     private final Connection connection;
+    private CampoService campoService;
 
     public PerfilRepositorySQLite() {
         this.connection = ConexaoSingleton.getInstancia().getConexao();
+        this.campoService = new CampoService();
     }
 
     @Override
@@ -37,7 +39,6 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
 
             statement.executeUpdate();
 
-            CampoRepositoryService campoService = new CampoRepositoryService();
             List<Campo> campos;
 
             campos = campoService.listarTodosPorTipo("tamanho");
@@ -84,7 +85,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao salvar perfil de projeto", e);
         }
     }
 
@@ -97,7 +98,6 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             statement.setString(3, perfil.getUsuario().getId().toString());
             statement.setString(4, perfil.getId().toString());
 
-            CampoRepositoryService campoService = new CampoRepositoryService();
             List<Campo> campos;
 
             campoService.removerPorIdPerfil(perfil.getId());
@@ -136,7 +136,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao atualizar perfil de projeto", e);
         }
     }
 
@@ -148,7 +148,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             statement.setString(1, id.toString());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao remover por id de perfil de projeto", e);
         }
     }
 
@@ -163,7 +163,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                 return Optional.of(mapToPerfil(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar por id perfil de projeto", e);
         }
         return Optional.empty();
     }
@@ -195,7 +195,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                 perfis.add(mapToPerfil(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar todos os perfis de projeto", e);
         }
         return perfis;
     }
@@ -214,7 +214,6 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             while (resultSet.next()) {
                 UUID idPerfil = UUID.fromString(resultSet.getString("idPerfil"));
 
-                // Evita perfis duplicados
                 if (!perfisIds.contains(idPerfil)) {
                     PerfilProjeto perfil = mapToPerfil(resultSet);
                     perfis.add(perfil);
@@ -222,27 +221,10 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao buscar todos os perfis por id de usuário", e);
         }
 
         return perfis;
-    }
-
-    private PerfilProjeto mapToPerfil(ResultSet resultSet) throws SQLException {
-        UUID idPerfil = UUID.fromString(resultSet.getString("idPerfil"));
-
-        PerfilProjeto perfil = new PerfilProjeto(
-                idPerfil,
-                resultSet.getString("nomePerfil"),
-                resultSet.getBoolean("perfilBackend"),
-                resultSet.getTimestamp("created_atPerfil").toLocalDateTime(),
-                UsuarioLogadoSingleton.getInstancia().getUsuario()
-        );
-
-        EmpilhadorDeCampoPerfilService empilhador = new EmpilhadorDeCampoPerfilService();
-        empilhador.carregarCampos(perfil);
-
-        return perfil;
     }
 
     @Override
@@ -258,6 +240,23 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao obter a quantidade de perfis do usuário", e);
         }
-        return 0; 
+        return 0;
+    }
+    
+      private PerfilProjeto mapToPerfil(ResultSet resultSet) throws SQLException {
+        UUID idPerfil = UUID.fromString(resultSet.getString("idPerfil"));
+
+        PerfilProjeto perfil = new PerfilProjeto(
+                idPerfil,
+                resultSet.getString("nomePerfil"),
+                resultSet.getBoolean("perfilBackend"),
+                resultSet.getTimestamp("created_atPerfil").toLocalDateTime(),
+                UsuarioLogadoSingleton.getInstancia().getUsuario()
+        );
+
+        EmpilhadorDeCampoPerfilService empilhador = new EmpilhadorDeCampoPerfilService();
+        empilhador.carregarCampos(perfil);
+
+        return perfil;
     }
 }

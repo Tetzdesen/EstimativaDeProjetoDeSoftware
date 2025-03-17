@@ -1,18 +1,18 @@
 package com.br.estimativadeprojetodesoftware.service;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 public class NoArvoreComposite implements ComponenteNoArvore {
     private final String texto;
     private final String chaveIcone;
-    private final ProjetoCommand comando;
+    private final Command comando;
     private final List<ComponenteNoArvore> filhos = new ArrayList<>();
     private ProvedorMenuContextual menuContextual;
 
-    public NoArvoreComposite(String texto, String chaveIcone, ProjetoCommand comando) {
+    public NoArvoreComposite(String texto, String chaveIcone, Command comando) {
         this.texto = texto;
         this.chaveIcone = chaveIcone;
         this.comando = comando;
@@ -29,7 +29,7 @@ public class NoArvoreComposite implements ComponenteNoArvore {
     }
 
     @Override
-    public ProjetoCommand obterComando() {
+    public Command obterComando() {
         return comando;
     }
 

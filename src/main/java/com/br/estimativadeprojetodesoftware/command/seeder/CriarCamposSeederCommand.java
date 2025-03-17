@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.command.seeder;
 
+import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +11,7 @@ import java.util.UUID;
  *
  * @author tetzner
  */
-public class CriarCamposSeederCommand implements SeederCommand {
+public class CriarCamposSeederCommand implements Command {
 
     private final Connection conexao = ConexaoSingleton.getInstancia().getConexao();
 
@@ -20,7 +21,6 @@ public class CriarCamposSeederCommand implements SeederCommand {
               INSERT INTO campo(idCampo, tipoCampo, nomeCampo) VALUES (?, ?, ?);
           """;
         try (PreparedStatement stmt = conexao.prepareStatement(sqlCampo)) {
-            // Inserção dos campos
             String[][] campos = {
                 {"tamanho", "pequeno"},
                 {"tamanho", "médio"},

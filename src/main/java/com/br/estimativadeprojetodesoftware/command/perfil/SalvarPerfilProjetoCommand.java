@@ -3,17 +3,17 @@ package com.br.estimativadeprojetodesoftware.command.perfil;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
 import com.br.estimativadeprojetodesoftware.state.perfil.VisualizacaoPerfilState;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
-public class SalvarPerfilProjetoCommand implements ProjetoCommand {
+public class SalvarPerfilProjetoCommand implements Command {
     private final ManterPerfilPresenter presenter;
-    private final PerfilRepositoryService repository;
+    private final PerfilProjetoService repository;
 
-    public SalvarPerfilProjetoCommand(ManterPerfilPresenter presenter, PerfilRepositoryService repository) {
+    public SalvarPerfilProjetoCommand(ManterPerfilPresenter presenter, PerfilProjetoService repository) {
         this.presenter = presenter;
         this.repository = repository;
     }
@@ -63,7 +63,6 @@ public class SalvarPerfilProjetoCommand implements ProjetoCommand {
                 perfil.adicionarFuncionalidade(funcionalidade, numeroDeDias);
             }
             
-            //presenter.getRepository().setPerfil(perfil);
             repository.salvar(perfil);
 
             presenter.getView().dispose();

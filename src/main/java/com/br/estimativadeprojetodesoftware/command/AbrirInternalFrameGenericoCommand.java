@@ -4,11 +4,11 @@ import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 
 import javax.swing.*;
 
-public class AbrirInternalFrameGenericoProjetoCommand implements ProjetoCommand {
+public class AbrirInternalFrameGenericoCommand implements Command {
     private final JDesktopPane desktop;
     private final String titulo;
 
-    public AbrirInternalFrameGenericoProjetoCommand(JDesktopPane desktop, String titulo) {
+    public AbrirInternalFrameGenericoCommand(JDesktopPane desktop, String titulo) {
         this.desktop = desktop;
         this.titulo = titulo;
     }
@@ -25,7 +25,6 @@ public class AbrirInternalFrameGenericoProjetoCommand implements ProjetoCommand 
             frame.setIconifiable(false);
             frame.setVisible(true);
             desktop.add(frame);
-            //PerfilProjetoView perfilProjetoView = new PerfilProjetoView();
             try {
                 frame.setMaximum(true);
             } catch (Exception ignored) {

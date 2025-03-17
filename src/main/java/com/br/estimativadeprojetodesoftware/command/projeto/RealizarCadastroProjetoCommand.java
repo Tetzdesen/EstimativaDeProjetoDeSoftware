@@ -1,27 +1,31 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.swing.ListModel;
+
+import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.CadastroProjetoPresenter;
-import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.CampoService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.swing.ListModel;
 
 /**
  *
  * @author tetzner
  */
-public class RealizarCadastroProjetoCommand implements ProjetoCommand {
+public class RealizarCadastroProjetoCommand implements Command {
 
     private final CadastroProjetoPresenter presenter;
-    
+    private CampoService campoService;
+
     public RealizarCadastroProjetoCommand(CadastroProjetoPresenter presenter) {
         this.presenter = presenter;
+        this.campoService = new CampoService();
     }
 
     @Override
@@ -73,10 +77,10 @@ public class RealizarCadastroProjetoCommand implements ProjetoCommand {
 
         for (PerfilProjeto perfil : projeto.getPerfis()) {
 
-            List<Campo> tamanhos = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "tamanho");
-            List<Campo> nivelUI = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "nivel");
-            List<Campo> funcionalidades = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "funcionalidade");
-            List<Campo> taxasDiarias = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "taxa diária");
+            List<Campo> tamanhos = campoService.buscarPorIdPerfilTipo(perfil.getId(), "tamanho");
+            List<Campo> nivelUI = campoService.buscarPorIdPerfilTipo(perfil.getId(), "nivel");
+            List<Campo> funcionalidades = campoService.buscarPorIdPerfilTipo(perfil.getId(), "funcionalidade");
+            List<Campo> taxasDiarias = campoService.buscarPorIdPerfilTipo(perfil.getId(), "taxa diária");
 
             for (Campo campo : tamanhos) {
                 if (campo.getNome().equalsIgnoreCase(tamanho)) {
@@ -98,9 +102,9 @@ public class RealizarCadastroProjetoCommand implements ProjetoCommand {
                 projeto.adicionarCampo(campo);
             }
 
-            List<Campo> camposFixos = new CampoRepositoryService().listarTodosPorTipo("campo fixo");
+            List<Campo> camposFixos = campoService.listarTodosPorTipo("campo fixo");
             for (Campo campo : camposFixos) {
-                campo.setDias(new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId()));
+                campo.setDias(campoService.buscarDiasPorPerfilCampo(perfil.getId(), campo.getId()));
                 projeto.adicionarCampo(campo);
 
             }

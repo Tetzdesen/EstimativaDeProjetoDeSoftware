@@ -7,7 +7,7 @@ import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
  *
  * @author tetzner
  */
-public class AbrirPrincipalPresenterCommand implements ProjetoCommand {
+public class AbrirPrincipalPresenterCommand implements Command {
 
     @Override
     public void execute() {

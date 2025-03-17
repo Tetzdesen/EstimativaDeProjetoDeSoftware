@@ -2,6 +2,7 @@ package com.br.estimativadeprojetodesoftware.state.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.AbrirCompartilhamentoProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.projeto.AbrirExportarProjetoCommand;
+import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.DetalheProjetoPresenter;
 
 /**
@@ -20,7 +21,10 @@ public class EstimadoState extends DetalheProjetoPresenterState {
 
     @Override
     public void cancelarEstimativa() {
-        detalheProjetoPresenter.getProjeto().setStatus("Não estimado");
+        Projeto projeto = detalheProjetoPresenter.getProjeto();
+        projeto.setStatus("Não estimado");
+        projeto.setCompartilhado(false);
+        detalheProjetoPresenter.getProjetoService().atualizar(projeto);
         detalheProjetoPresenter.setEstado(new NaoEstimadoState(detalheProjetoPresenter));
     }
 

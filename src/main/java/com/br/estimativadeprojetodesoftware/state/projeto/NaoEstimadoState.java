@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.state.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.projeto.RealizarEstimativaProjetoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.RealizarEstimativaProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.DetalheProjetoPresenter;
 
 /**
@@ -19,8 +19,7 @@ public class NaoEstimadoState extends DetalheProjetoPresenterState {
 
     @Override
     public void estimar() {
-        new RealizarEstimativaProjetoProjetoCommand(detalheProjetoPresenter).execute();
-        detalheProjetoPresenter.getProjeto().setStatus("Estimado");
+        new RealizarEstimativaProjetoCommand(detalheProjetoPresenter).execute();
         detalheProjetoPresenter.setEstado(new EstimadoState(detalheProjetoPresenter));
     }
 

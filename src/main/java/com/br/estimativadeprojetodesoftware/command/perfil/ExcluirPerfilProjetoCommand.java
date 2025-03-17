@@ -2,10 +2,10 @@ package com.br.estimativadeprojetodesoftware.command.perfil;
 
 import javax.swing.JOptionPane;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
-public class ExcluirPerfilProjetoCommand implements ProjetoCommand {
+public class ExcluirPerfilProjetoCommand implements Command {
     private final ManterPerfilPresenter presenter;
 
     public ExcluirPerfilProjetoCommand(ManterPerfilPresenter presenter) {

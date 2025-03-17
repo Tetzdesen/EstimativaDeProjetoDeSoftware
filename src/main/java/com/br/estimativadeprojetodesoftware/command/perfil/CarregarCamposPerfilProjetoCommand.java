@@ -1,17 +1,18 @@
 package com.br.estimativadeprojetodesoftware.command.perfil;
 
+import com.br.estimativadeprojetodesoftware.command.Command;
 import java.util.List;
 
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.PerfilProjetoPresenter;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
-public class CarregarCamposPerfilProjetoCommand implements PerfilProjetoCommand {
-    private final PerfilRepositoryService repository;
+public class CarregarCamposPerfilProjetoCommand implements Command {
+    private final PerfilProjetoService repository;
     private final PerfilProjetoPresenter presenter;
 
-    public CarregarCamposPerfilProjetoCommand(PerfilProjetoPresenter presenter, PerfilRepositoryService repository) {
+    public CarregarCamposPerfilProjetoCommand(PerfilProjetoPresenter presenter, PerfilProjetoService repository) {
         this.presenter = presenter;
         this.repository = repository;
     }

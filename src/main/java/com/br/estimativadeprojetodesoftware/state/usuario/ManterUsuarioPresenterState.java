@@ -6,7 +6,7 @@ import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPrese
  *
  * @author tetzner
  */
-public class ManterUsuarioPresenterState {
+public abstract class ManterUsuarioPresenterState {
 
     protected ManterUsuarioPresenter usuarioPresenter;
 

@@ -1,10 +1,12 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.projeto.CarregarDetalhesProjetoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.CarregarDetalhesProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
-import com.br.estimativadeprojetodesoftware.presenter.Observer;
+import com.br.estimativadeprojetodesoftware.observer.Observer;
 import com.br.estimativadeprojetodesoftware.service.DataHoraService;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.state.projeto.DetalheProjetoPresenterState;
 import com.br.estimativadeprojetodesoftware.state.projeto.EstimadoState;
 import com.br.estimativadeprojetodesoftware.state.projeto.NaoEstimadoState;
@@ -16,39 +18,33 @@ import javax.swing.JOptionPane;
 public final class DetalheProjetoPresenter implements Observer {
 
     private final DetalheProjetoView view;
-    private final ProjetoRepositoryService projetoService;
+    private final ProjetoService projetoService;
+    private final EstimaProjetoService estimaService;
     private Projeto projeto;
     private DetalheProjetoPresenterState estado;
 
-    public DetalheProjetoPresenter(DetalheProjetoView view, ProjetoRepositoryService projetoService, String projetoNome) {
+    public DetalheProjetoPresenter(DetalheProjetoView view, ProjetoService projetoService, String projetoNome) {
         this.view = view;
         this.projetoService = projetoService;
         this.projeto = projetoService.buscarProjetoPorNome(projetoNome).get();
-
+        this.estimaService = new EstimaProjetoService();
         if (!isProjetoEstimado()) {
             this.estado = new NaoEstimadoState(this);
         } else {
             this.estado = new EstimadoState(this);
         }
+        verificarBotoesDeProjetoCompartilhado();
         configurarPresenter();
-        carregarDetalhesProjeto();
+        update();
     }
 
     public void configurarPresenter() {
-       // this.projetoService.addObserver(this);
+        this.projetoService.addObserver(this);
         configurarListeners();
     }
 
-    private void carregarDetalhesProjeto() {
-        carregarCabecalho(projeto);
-        new CarregarDetalhesProjetoProjetoCommand(view, projeto, isProjetoEstimado()).execute();
-
-        view.revalidate();
-        view.repaint();
-    }
-
     private void carregarCabecalho(Projeto projeto) {
-        String status = estado.toString();
+        String status = projeto.getStatus();
         view.atualizarCabecalho(
                 projeto.getNome(),
                 projeto.getCriador(),
@@ -62,6 +58,8 @@ public final class DetalheProjetoPresenter implements Observer {
 
         view.getBtnEstimar().addActionListener((ActionEvent e) -> {
             estado.estimar();
+          //  projeto.setStatus("Estimado");
+            // update();
             JOptionPane.showMessageDialog(view, "Projeto estimado com sucesso!", "Estimativa", JOptionPane.INFORMATION_MESSAGE);
 
         });
@@ -69,7 +67,8 @@ public final class DetalheProjetoPresenter implements Observer {
         view.getBtnCancelar().addActionListener((ActionEvent e) -> {
 
             estado.cancelarEstimativa();
-            update();
+          //  projeto.setStatus("Não estimado");
+            // update();
             JOptionPane.showMessageDialog(view, "Estimativa cancelada!", "Cancelamento", JOptionPane.WARNING_MESSAGE);
 
         });
@@ -93,7 +92,7 @@ public final class DetalheProjetoPresenter implements Observer {
         return view;
     }
 
-    public ProjetoRepositoryService getProjetoService() {
+    public ProjetoService getProjetoService() {
         return projetoService;
     }
 
@@ -105,17 +104,43 @@ public final class DetalheProjetoPresenter implements Observer {
         return estado;
     }
 
+    public EstimaProjetoService getEstimaService() {
+        return estimaService;
+    }
+ 
     public void setEstado(DetalheProjetoPresenterState estado) {
+        if (estado == null) {
+            throw new IllegalArgumentException("Estado nulo");
+        }
         this.estado = estado;
     }
 
     public void setProjeto(Projeto projeto) {
+        if (projeto == null) {
+            throw new IllegalArgumentException("Projeto nulo");
+        }
         this.projeto = projeto;
+    }
+
+    public void verificarBotoesDeProjetoCompartilhado() {
+        if (!(projeto.getCriador().equalsIgnoreCase(UsuarioLogadoSingleton.getInstancia().getUsuario().getNome()))) {
+            view.getBtnEstimar().setEnabled(false);
+            view.getBtnCancelar().setEnabled(false);
+            view.getBtnCompartilhar().setEnabled(false);
+            view.getBtnExportar().setEnabled(false);
+        }
+    }
+
+    private void recarregarProjeto() {
+        this.projeto = projetoService.buscarProjetoPorNome(projeto.getNome()).orElse(projeto);
+        carregarCabecalho(projeto);
+        new CarregarDetalhesProjetoCommand(view, projeto, isProjetoEstimado()).execute();
+        view.revalidate();
+        view.repaint();
     }
 
     @Override
     public void update() {
-        carregarDetalhesProjeto();
+        recarregarProjeto();
     }
-
 }

@@ -1,20 +1,20 @@
 package com.br.estimativadeprojetodesoftware.service;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import java.awt.Font;
 import java.util.HashMap;
 
 import javax.swing.*;
 import java.util.Map;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 public class BarraService {
 
-    private final Map<String, ProjetoCommand> comandos;
+    private final Map<String, Command> comandos;
     private final Map<String, JButton> botoes;
     private JLabel usuarioLabel;
 
-    public BarraService(Map<String, ProjetoCommand> comandos) {
+    public BarraService(Map<String, Command> comandos) {
         this.comandos = comandos;
         this.botoes = new HashMap<>();
     }
@@ -72,7 +72,7 @@ public class BarraService {
     }
 
     private void executarComando(String comandoChave) {
-        ProjetoCommand comando = comandos.get(comandoChave);
+        Command comando = comandos.get(comandoChave);
         if (comando == null) {
             throw new IllegalArgumentException("Comando não encontrado: " + comandoChave);
         }

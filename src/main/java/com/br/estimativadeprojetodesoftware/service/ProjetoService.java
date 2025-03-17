@@ -3,9 +3,9 @@ package com.br.estimativadeprojetodesoftware.service;
 import com.br.estimativadeprojetodesoftware.abstractfactory.FabricaRepository;
 import com.br.estimativadeprojetodesoftware.abstractfactory.SeletorFabricaRepository;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
-import com.br.estimativadeprojetodesoftware.model.Subject;
+import com.br.estimativadeprojetodesoftware.observer.Subject;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.presenter.Observer;
+import com.br.estimativadeprojetodesoftware.observer.Observer;
 import com.br.estimativadeprojetodesoftware.repository.IProjetoRepository;
 import java.util.ArrayList;
 
@@ -17,13 +17,13 @@ import java.util.UUID;
  *
  * @author tetzner
  */
-public class ProjetoRepositoryService implements Subject {
+public class ProjetoService implements Subject {
 
     private final FabricaRepository fabricaDAO;
     private final IProjetoRepository projetoRepository;
     private final List<Observer> observers;
 
-    public ProjetoRepositoryService() {
+    public ProjetoService() {
         fabricaDAO = SeletorFabricaRepository.obterInstancia();
         projetoRepository = fabricaDAO.criarProjetoRepository();
         this.observers = new ArrayList<>();

@@ -4,8 +4,8 @@ import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProje
 import com.br.estimativadeprojetodesoftware.command.projeto.RealizarCadastroProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.CadastroProjetoView;
 import java.util.HashMap;
@@ -21,15 +21,15 @@ import javax.swing.DefaultListModel;
 public class CadastroProjetoPresenter {
 
     private CadastroProjetoView view;
-    private ProjetoRepositoryService projetoService;
-    private PerfilRepositoryService perfilService;
+    private ProjetoService projetoService;
+    private PerfilProjetoService perfilService;
     private Usuario usuario;
     private Map<String, PerfilProjeto> perfisSelecionados;
 
-    public CadastroProjetoPresenter(CadastroProjetoView view, ProjetoRepositoryService projetoService) {
+    public CadastroProjetoPresenter(CadastroProjetoView view, ProjetoService projetoService) {
         this.view = view;
         this.projetoService = projetoService;
-        this.perfilService = new PerfilRepositoryService();
+        this.perfilService = new PerfilProjetoService();
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
         this.perfisSelecionados = new HashMap<>();
         configuraView();
@@ -93,14 +93,6 @@ public class CadastroProjetoPresenter {
 
     private void cadastrarProjeto() {
         new RealizarCadastroProjetoCommand(this).execute();
-    }
-
-    private Map<String, Integer> combinarFuncionalidades(List<PerfilProjeto> perfis) {
-        Map<String, Integer> funcionalidadesCombinadas = new HashMap<>();
-        for (PerfilProjeto perfil : perfis) {
-            perfil.getFuncionalidades().forEach(funcionalidadesCombinadas::putIfAbsent);
-        }
-        return funcionalidadesCombinadas;
     }
 
     private void adicionarPerfil() {
@@ -177,11 +169,11 @@ public class CadastroProjetoPresenter {
         return view;
     }
 
-    public ProjetoRepositoryService getProjetoService() {
+    public ProjetoService getProjetoService() {
         return projetoService;
     }
 
-    public PerfilRepositoryService getPerfilService() {
+    public PerfilProjetoService getPerfilService() {
         return perfilService;
     }
 

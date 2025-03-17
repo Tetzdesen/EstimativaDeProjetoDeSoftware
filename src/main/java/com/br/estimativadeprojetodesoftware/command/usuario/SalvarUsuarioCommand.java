@@ -1,17 +1,17 @@
 package com.br.estimativadeprojetodesoftware.command.usuario;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**
  *
  * @author tetzner
  */
-public class SalvarUsuarioCommand implements ProjetoCommand {
+public class SalvarUsuarioCommand implements Command {
 
     private final ManterUsuarioPresenter usuarioPresenter;
     private final ValidadorSenhaService validadorService;

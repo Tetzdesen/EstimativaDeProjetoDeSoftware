@@ -2,9 +2,9 @@ package com.br.estimativadeprojetodesoftware.service;
 
 import com.br.estimativadeprojetodesoftware.abstractfactory.FabricaRepository;
 import com.br.estimativadeprojetodesoftware.abstractfactory.SeletorFabricaRepository;
-import com.br.estimativadeprojetodesoftware.model.Subject;
+import com.br.estimativadeprojetodesoftware.observer.Subject;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.presenter.Observer;
+import com.br.estimativadeprojetodesoftware.observer.Observer;
 import com.br.estimativadeprojetodesoftware.repository.IUsuarioRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +16,13 @@ import java.util.UUID;
  *
  * @author tetzner
  */
-public class UsuarioRepositoryService implements Subject {
+public class UsuarioService implements Subject {
 
     private final FabricaRepository fabricaDAO;
     private final IUsuarioRepository usuarioRepository;
     private final List<Observer> observers;
 
-    public UsuarioRepositoryService() {
+    public UsuarioService() {
         this.fabricaDAO = SeletorFabricaRepository.obterInstancia();
         this.usuarioRepository = fabricaDAO.criarUsuarioRepository();
         this.observers = new ArrayList<>();
@@ -64,7 +64,6 @@ public class UsuarioRepositoryService implements Subject {
         return usuarioRepository.buscarUsuariosPorProjeto(idProjeto);
     }
 
-    // Implementação do padrão Observer
     @Override
     public void addObserver(Observer observer) {
         observers.add(observer);

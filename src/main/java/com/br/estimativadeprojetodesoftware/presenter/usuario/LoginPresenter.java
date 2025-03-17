@@ -2,7 +2,6 @@ package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
 import com.br.estimativadeprojetodesoftware.command.AbrirPrincipalPresenterCommand;
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.RealizarAutenticacaoUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.FecharJanelaCommand;
 import com.br.estimativadeprojetodesoftware.service.IconService;
@@ -11,6 +10,7 @@ import com.br.estimativadeprojetodesoftware.view.usuario.LoginView;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.SwingUtilities;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**
  *
@@ -20,7 +20,7 @@ public class LoginPresenter {
 
     private final LoginView view;
     private final PrincipalUsuarioPresenter principalUsuarioPresenter;
-    private ProjetoCommand comandoDeLogin;
+    private Command comandoDeLogin;
 
     public LoginPresenter(LoginView view, PrincipalUsuarioPresenter principalUsuarioPresenter) {
         this.principalUsuarioPresenter = principalUsuarioPresenter;

@@ -1,16 +1,16 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 
 import javax.swing.*;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
-public class ExcluirProjetoCommand implements ProjetoCommand {
+public class ExcluirProjetoCommand implements Command {
 
-    private final ProjetoRepositoryService projetoService;
+    private final ProjetoService projetoService;
     private String projetoNome;
 
-    public ExcluirProjetoCommand(ProjetoRepositoryService projetoService, String projetoNome) {
+    public ExcluirProjetoCommand(ProjetoService projetoService, String projetoNome) {
         this.projetoService = projetoService;
         this.projetoNome = projetoNome;
     }

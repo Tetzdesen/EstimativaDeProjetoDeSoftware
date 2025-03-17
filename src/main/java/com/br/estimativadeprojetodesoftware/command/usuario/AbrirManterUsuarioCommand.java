@@ -1,17 +1,17 @@
 package com.br.estimativadeprojetodesoftware.command.usuario;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.view.usuario.ManterUsuarioView;
 import javax.swing.JDesktopPane;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**
  *
  * @author tetzner
  */
-public class AbrirManterUsuarioCommand implements ProjetoCommand {
+public class AbrirManterUsuarioCommand implements Command {
 
     private final PrincipalProjetoPresenter principalPresenter;
 

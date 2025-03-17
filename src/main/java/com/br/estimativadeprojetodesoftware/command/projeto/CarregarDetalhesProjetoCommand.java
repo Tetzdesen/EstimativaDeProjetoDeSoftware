@@ -1,7 +1,6 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
 import com.br.estimativadeprojetodesoftware.chain.calculoestimativa.EstimativaFuncionalidade;
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
@@ -14,12 +13,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**
  *
  * @author tetzner
  */
-public class CarregarDetalhesProjetoProjetoCommand implements ProjetoCommand {
+public class CarregarDetalhesProjetoCommand implements Command {
 
     private final DetalheProjetoView view;
     private final Projeto projeto;
@@ -34,7 +34,7 @@ public class CarregarDetalhesProjetoProjetoCommand implements ProjetoCommand {
             "campo fixo", 4
     );
 
-    public CarregarDetalhesProjetoProjetoCommand(DetalheProjetoView view, Projeto projeto, boolean isProjetoEstimado) {
+    public CarregarDetalhesProjetoCommand(DetalheProjetoView view, Projeto projeto, boolean isProjetoEstimado) {
         this.view = view;
         this.projeto = projeto;
         this.estimativas = new ArrayList<>();

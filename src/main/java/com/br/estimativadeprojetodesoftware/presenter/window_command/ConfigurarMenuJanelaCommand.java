@@ -1,11 +1,12 @@
 package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
 
+import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 
 import javax.swing.*;
 
-public class ConfigurarMenuJanelaCommand implements WindowCommand {
+public class ConfigurarMenuJanelaCommand implements Command {
     private final PrincipalProjetoPresenter presenter;
 
     public ConfigurarMenuJanelaCommand(PrincipalProjetoPresenter presenter) {
