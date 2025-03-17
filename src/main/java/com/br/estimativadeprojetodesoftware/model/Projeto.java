@@ -14,7 +14,6 @@ public class Projeto {
     private LocalDateTime created_at;
     private String status;
     private boolean compartilhado;
-    private String compartilhadoPor;
     private List<PerfilProjeto> perfis;
     private List<Usuario> usuarios;
     private List<Campo> campos;
@@ -64,7 +63,7 @@ public class Projeto {
         this.estado = new NaoEstimadoState(this); 
     }
 
-    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, String status, boolean compartilhado, String compartilhadoPor, List<PerfilProjeto> perfis, List<Usuario> usuarios, List<Campo> campos) {
+    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, String status, boolean compartilhado, List<PerfilProjeto> perfis, List<Usuario> usuarios, List<Campo> campos) {
         this.id = id;
         this.nome = nome;
         this.criador = criador;
@@ -72,7 +71,6 @@ public class Projeto {
         this.created_at = created_at;
         this.status = status;
         this.compartilhado = compartilhado;
-        this.compartilhadoPor = compartilhadoPor;
         this.perfis = perfis;
         this.usuarios = usuarios;
         this.campos = campos;
@@ -106,10 +104,6 @@ public class Projeto {
         return compartilhado;
     }
 
-    public String getCompartilhadoPor() {
-        return compartilhadoPor;
-    }
-
     public List<PerfilProjeto> getPerfis() {
         return Collections.unmodifiableList(perfis);
     }
@@ -136,13 +130,6 @@ public class Projeto {
 
     public void setCompartilhado(boolean compartilhado) {
         this.compartilhado = compartilhado;
-    }
-
-    public void setCompartilhadoPor(String compartilhadoPor) {
-        if (compartilhadoPor == null || compartilhadoPor.isEmpty()) {
-            throw new IllegalArgumentException("Erro: Compartilhado Por vazio ou nulo.");
-        }
-        this.compartilhadoPor = Objects.requireNonNullElse(compartilhadoPor, "").trim();
     }
 
     public void adicionarPerfil(PerfilProjeto perfil) {
@@ -191,7 +178,7 @@ public class Projeto {
 
     @Override
     public String toString() {
-        return "Projeto{" + "id=" + id + ", nome=" + nome + ", criador=" + criador + ", tipo=" + tipo + ", created_at=" + created_at + ", status=" + status + ", compartilhado=" + compartilhado + ", compartilhadoPor=" + compartilhadoPor + ", perfis=" + perfis + ", usuarios=" + usuarios + ", campos=" + campos + ", estado=" + estado + '}';
+        return "Projeto{" + "id=" + id + ", nome=" + nome + ", criador=" + criador + ", tipo=" + tipo + ", created_at=" + created_at + ", status=" + status + ", compartilhado=" + compartilhado + ", perfis=" + perfis + ", usuarios=" + usuarios + ", campos=" + campos + ", estado=" + estado + '}';
     }
  
 }
