@@ -5,12 +5,16 @@ import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioService;
 import com.br.estimativadeprojetodesoftware.command.Command;
+import com.br.estimativadeprojetodesoftware.model.RegistroOperacao;
+import com.br.estimativadeprojetodesoftware.service.LogService;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 /**
  *
  * @author flamo
  */
 public class CompartilharProjetoCommand implements Command {
+
     private final ProjetoService repository;
     private final String email;
     private final String nomeProjeto;
@@ -34,5 +38,7 @@ public class CompartilharProjetoCommand implements Command {
         repository.salvar(projeto, usuarioCompartilhado);
 
         new MostrarMensagemProjetoCommand("Projeto compartilhado com sucesso.").execute();
+        RegistroOperacao registro = new RegistroOperacao("Compartilhamento de projeto", UsuarioLogadoSingleton.getInstancia().getUsuario().getNome());
+        LogService.getInstancia().escreverMensagem(registro.formatarLog());
     }
 }

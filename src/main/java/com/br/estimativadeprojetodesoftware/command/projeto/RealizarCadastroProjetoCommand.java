@@ -10,8 +10,10 @@ import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
+import com.br.estimativadeprojetodesoftware.model.RegistroOperacao;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.CadastroProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.service.CampoService;
+import com.br.estimativadeprojetodesoftware.service.LogService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 /**
@@ -21,7 +23,7 @@ import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 public class RealizarCadastroProjetoCommand implements Command {
 
     private final CadastroProjetoPresenter presenter;
-    private CampoService campoService;
+    private final CampoService campoService;
 
     public RealizarCadastroProjetoCommand(CadastroProjetoPresenter presenter) {
         this.presenter = presenter;
@@ -30,6 +32,9 @@ public class RealizarCadastroProjetoCommand implements Command {
 
     @Override
     public void execute() {
+
+        RegistroOperacao registro;
+
         String nomeProjeto = presenter.getView().getTxtNome().getText().trim();
 
         String tamanho = (String) presenter.getView().getCbmTamanhoApp().getSelectedItem();
@@ -37,10 +42,14 @@ public class RealizarCadastroProjetoCommand implements Command {
         String nivel = (String) presenter.getView().getCbmNivelUI().getSelectedItem();
 
         if (nomeProjeto.isEmpty()) {
+            registro = new RegistroOperacao("Criação de projeto", UsuarioLogadoSingleton.getInstancia().getUsuario().getNome(), "Nome é um campo obrigatório!");
+            LogService.getInstancia().escreverMensagem(registro.formatarLog());
             throw new IllegalArgumentException("Nome é um campo obrigatório!");
         }
 
         if (presenter.getView().getJListPerfis().getModel().getSize() == 0) {
+            registro = new RegistroOperacao("Criação de projeto", UsuarioLogadoSingleton.getInstancia().getUsuario().getNome(), "Adicione no mínimo um perfil obrigatório!");
+            LogService.getInstancia().escreverMensagem(registro.formatarLog());
             throw new IllegalArgumentException("Adicione no mínimo um perfil obrigatório!");
         }
 
@@ -48,6 +57,8 @@ public class RealizarCadastroProjetoCommand implements Command {
 
         if (optionalProjeto.isPresent()) {
             new SalvarProjetoCommand(presenter.getProjetoService(), optionalProjeto.get()).execute();
+            registro = new RegistroOperacao("Criação de projeto", UsuarioLogadoSingleton.getInstancia().getUsuario().getNome());
+            LogService.getInstancia().escreverMensagem(registro.formatarLog());
             presenter.exibirMensagem("Projeto criado com sucesso!");
             presenter.getView().dispose();
         } else {

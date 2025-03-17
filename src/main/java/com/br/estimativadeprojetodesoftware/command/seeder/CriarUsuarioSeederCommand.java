@@ -29,7 +29,7 @@ public class CriarUsuarioSeederCommand implements Command {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao inserir ao criar de usuário");
         }
     }
 

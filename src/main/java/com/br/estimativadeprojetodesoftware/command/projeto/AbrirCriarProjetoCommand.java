@@ -29,21 +29,10 @@ public class AbrirCriarProjetoCommand implements Command {
 
         if (windowManager.isFrameAberto(tituloJanela)) {
             windowManager.bringToFront(tituloJanela);
-
-            try {
-                for (JInternalFrame frame : desktop.getAllFrames()) {
-                    if (frame.getTitle().equals(tituloJanela) && frame.isMaximum()) {
-
-                        frame.setMaximum(false);
-                        frame.setLocation((desktop.getWidth() - frame.getWidth()) / 2,
-                                (desktop.getHeight() - frame.getHeight()) / 2);
-                    }
-                }
-            } catch (Exception ignored) {
-            }
         } else {
             CadastroProjetoView cadastroProjetoView = new CadastroProjetoView();
             new CadastroProjetoPresenter(cadastroProjetoView, projetoService);
+            windowManager.registrarDialog(tituloJanela, cadastroProjetoView);
             cadastroProjetoView.setTitle(tituloJanela);
             cadastroProjetoView.setSize(800,400);
             cadastroProjetoView.setVisible(true);
