@@ -17,30 +17,29 @@ public final class DetalheProjetoPresenter implements Observer {
 
     private final DetalheProjetoView view;
     private final ProjetoRepositoryService projetoService;
-    private final Projeto projeto;
+    private Projeto projeto;
     private DetalheProjetoPresenterState estado;
 
-    public DetalheProjetoPresenter(DetalheProjetoView view, String projetoNome) {
+    public DetalheProjetoPresenter(DetalheProjetoView view, ProjetoRepositoryService projetoService, String projetoNome) {
         this.view = view;
-        this.projetoService = new ProjetoRepositoryService();
+        this.projetoService = projetoService;
         this.projeto = projetoService.buscarProjetoPorNome(projetoNome).get();
-        configurarPresenter();
 
         if (!isProjetoEstimado()) {
             this.estado = new NaoEstimadoState(this);
         } else {
             this.estado = new EstimadoState(this);
         }
+        configurarPresenter();
         carregarDetalhesProjeto();
     }
 
     public void configurarPresenter() {
-        this.projetoService.addObserver(this);
+       // this.projetoService.addObserver(this);
         configurarListeners();
     }
 
     private void carregarDetalhesProjeto() {
-        // verificar se projeto é != null
         carregarCabecalho(projeto);
         new CarregarDetalhesProjetoProjetoCommand(view, projeto, isProjetoEstimado()).execute();
 
@@ -49,12 +48,13 @@ public final class DetalheProjetoPresenter implements Observer {
     }
 
     private void carregarCabecalho(Projeto projeto) {
+        String status = estado.toString();
         view.atualizarCabecalho(
                 projeto.getNome(),
                 projeto.getCriador(),
                 DataHoraService.formatarData(projeto.getCreated_at().toLocalDate()),
                 projeto.getTipo(),
-                projeto.getStatus()
+                status
         );
     }
 
@@ -62,17 +62,14 @@ public final class DetalheProjetoPresenter implements Observer {
 
         view.getBtnEstimar().addActionListener((ActionEvent e) -> {
             estado.estimar();
-            carregarDetalhesProjeto();
             JOptionPane.showMessageDialog(view, "Projeto estimado com sucesso!", "Estimativa", JOptionPane.INFORMATION_MESSAGE);
 
         });
 
         view.getBtnCancelar().addActionListener((ActionEvent e) -> {
 
-            // CancelarEstimativaProjetoProjetoCommand
-            // projeto.cancelarEstimativa();
             estado.cancelarEstimativa();
-            carregarDetalhesProjeto();
+            update();
             JOptionPane.showMessageDialog(view, "Estimativa cancelada!", "Cancelamento", JOptionPane.WARNING_MESSAGE);
 
         });
@@ -110,6 +107,10 @@ public final class DetalheProjetoPresenter implements Observer {
 
     public void setEstado(DetalheProjetoPresenterState estado) {
         this.estado = estado;
+    }
+
+    public void setProjeto(Projeto projeto) {
+        this.projeto = projeto;
     }
 
     @Override

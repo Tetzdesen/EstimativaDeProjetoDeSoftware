@@ -74,7 +74,7 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
         nomesProjetos.forEach((projeto) -> {
         });
         for (final String projeto : nomesProjetos) {
-            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projeto,
+            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projeto, projetoService,
                     view.getDesktop()) {
                 @Override
                 public void execute() {
@@ -107,7 +107,7 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
 
         for (final String projeto : projetosCompartilhados) {
 
-            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projeto,
+            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projeto, projetoService,
                     view.getDesktop()) {
                 @Override
                 public void execute() {

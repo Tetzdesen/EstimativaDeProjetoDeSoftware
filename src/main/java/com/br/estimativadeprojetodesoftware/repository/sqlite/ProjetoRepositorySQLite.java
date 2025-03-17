@@ -135,10 +135,6 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             stmt.setString(3, projeto.getStatus());
             stmt.setString(4, projeto.getId().toString());
 
-            System.out.println("ID do projeto: " + projeto.getId());
-            System.out.println("Nome do projeto: " + projeto.getNome());
-            System.out.println("Tipo do projeto: " + projeto.getTipo());
-            System.out.println("Status do projeto: " + projeto.getStatus());
             stmt.executeUpdate();
 
             removerPerfisProjeto(projeto.getId());
@@ -163,7 +159,6 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             }
 
         } catch (SQLException e) {
-            System.out.println(e);
             throw new RuntimeException("Erro ao atualizar projeto", e);
         }
     }
@@ -343,6 +338,22 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             e.printStackTrace();
         }
         return projetos;
+    }
+
+    @Override
+    public int obterQuantidadeProjetosPorUsuario(UUID idUsuario) {
+        String sql = "SELECT COUNT(*) FROM usuario_has_projeto WHERE usuario_idUsuario = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, idUsuario.toString());
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1); 
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao obter a quantidade de projetos do usuário", e);
+        }
+        return 0;
     }
 
 }

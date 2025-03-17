@@ -10,6 +10,8 @@ import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 import com.br.estimativadeprojetodesoftware.service.DataHoraService;
 import com.br.estimativadeprojetodesoftware.service.IconService;
+import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.state.usuario.ManterUsuarioPresenterState;
@@ -32,6 +34,8 @@ public class ManterUsuarioPresenter implements Observer {
     private final ManterUsuarioView view;
     private Usuario usuario;
     private final UsuarioRepositoryService usuarioService;
+    private final PerfilRepositoryService perfilService;
+    private final ProjetoRepositoryService projetoService;
     private ManterUsuarioPresenterState estado;
     private final Map<String, ProjetoCommand> comandos;
     private final BarraService barraService;
@@ -40,6 +44,8 @@ public class ManterUsuarioPresenter implements Observer {
         this.view = view;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
         this.usuarioService = usuarioService;
+        this.perfilService = new PerfilRepositoryService();
+        this.projetoService = new ProjetoRepositoryService();
         this.usuarioService.addObserver(this);
         this.comandos = inicializarComandos();
         barraService = new BarraService(comandos);
@@ -115,11 +121,11 @@ public class ManterUsuarioPresenter implements Observer {
     }
 
     public int getQtdProjetos() {
-        return usuario.getProjetos().size();
+        return projetoService.obterQuantidadeProjetosPorUsuario(usuario.getId());
     }
 
     public int getQtdPerfis() {
-        return usuario.getPerfis().size();
+        return perfilService.obterQuantidadePerfisPorUsuario(usuario.getId());
     }
 
     public UsuarioRepositoryService getUsuarioService() {

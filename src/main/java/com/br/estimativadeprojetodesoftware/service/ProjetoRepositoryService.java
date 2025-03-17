@@ -76,6 +76,10 @@ public class ProjetoRepositoryService implements Subject {
     public List<String> buscarProjetosPorUsuario(UUID idUsuario) {
         return projetoRepository.buscarProjetosPorUsuario(idUsuario);
     }
+    
+    public int obterQuantidadeProjetosPorUsuario(UUID idUsuario){
+        return projetoRepository.obterQuantidadeProjetosPorUsuario(idUsuario);
+    }
 
     @Override
     public void addObserver(Observer observer) {

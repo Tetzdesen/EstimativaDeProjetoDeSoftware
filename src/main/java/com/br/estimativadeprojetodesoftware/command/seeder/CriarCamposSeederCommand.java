@@ -94,8 +94,8 @@ public class CriarCamposSeederCommand implements SeederCommand {
                 {"campo fixo", "Custo com garantia"},
                 {"campo fixo", "Fundo de reserva"},
                 {"campo fixo", "Outros custos"},
-                {"campo fixo", "Percentual com impostos (%)"},
-                {"campo fixo", "Percentual de Lucro desejado (%)"}
+                {"campo fixo", "Impostos (R$)"},
+                {"campo fixo", "Lucro desejado (R$)"}
             };
 
             for (String[] campo : campos) {

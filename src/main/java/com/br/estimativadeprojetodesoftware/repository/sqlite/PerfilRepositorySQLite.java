@@ -253,7 +253,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                return resultSet.getInt(1); // Retorna a contagem de perfis do usuário
+                return resultSet.getInt(1);
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao obter a quantidade de perfis do usuário", e);

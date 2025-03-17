@@ -3,15 +3,19 @@ package com.br.estimativadeprojetodesoftware.command.projeto;
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.DetalheProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
+import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.view.projeto.DetalheProjetoView;
 
 import javax.swing.*;
 
 public class AbrirDetalhesProjetoProjetoCommand implements ProjetoCommand {
+
     private final JDesktopPane desktop;
     private String nomeProjeto;
-
-    public AbrirDetalhesProjetoProjetoCommand(String nomeProjeto, JDesktopPane desktop) {
+    private ProjetoRepositoryService projetoService;
+    
+    public AbrirDetalhesProjetoProjetoCommand(String nomeProjeto,ProjetoRepositoryService projetoService, JDesktopPane desktop) {
+        this.projetoService = projetoService;
         this.nomeProjeto = nomeProjeto;
         this.desktop = desktop;
     }
@@ -34,7 +38,7 @@ public class AbrirDetalhesProjetoProjetoCommand implements ProjetoCommand {
         } else {
             DetalheProjetoView detalheView = new DetalheProjetoView();
             detalheView.setTitle(tituloJanela);
-            new DetalheProjetoPresenter(detalheView, nomeProjeto);
+            new DetalheProjetoPresenter(detalheView, projetoService, nomeProjeto);
             desktop.add(detalheView);
             detalheView.setVisible(true);
             try {

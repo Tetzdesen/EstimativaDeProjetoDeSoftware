@@ -1,5 +1,16 @@
 package com.br.estimativadeprojetodesoftware.repository.h2;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
@@ -10,11 +21,6 @@ import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 public class ProjetoRepositoryH2 implements IProjetoRepository {
 
@@ -109,10 +115,6 @@ public class ProjetoRepositoryH2 implements IProjetoRepository {
             stmt.setString(3, projeto.getStatus());
             stmt.setString(4, projeto.getId().toString());
 
-            System.out.println("ID do projeto: " + projeto.getId());
-            System.out.println("Nome do projeto: " + projeto.getNome());
-            System.out.println("Tipo do projeto: " + projeto.getTipo());
-            System.out.println("Status do projeto: " + projeto.getStatus());
             stmt.executeUpdate();
 
             removerPerfisProjeto(projeto.getId());
@@ -316,6 +318,11 @@ public class ProjetoRepositoryH2 implements IProjetoRepository {
             e.printStackTrace();
         }
         return projetos;
+    }
+
+    @Override
+    public int obterQuantidadeProjetosPorUsuario(UUID idUsuario) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

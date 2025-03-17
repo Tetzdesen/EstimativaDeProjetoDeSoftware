@@ -48,7 +48,7 @@ public class CarregarDetalhesProjetoProjetoCommand implements ProjetoCommand {
     }
 
     private void carregarDetalhes() {
-
+        
         estimativas = estimaService.calcularEstimativas(projeto.getId(), projeto.getPerfis(), projeto.getCampos());
 
         estimativas.sort(Comparator.comparing(estimativa -> ORDEM_ESTIMATIVAS.getOrDefault(estimativa.getTipoCampo(), Integer.MAX_VALUE)));

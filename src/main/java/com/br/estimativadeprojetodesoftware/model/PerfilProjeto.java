@@ -118,7 +118,7 @@ public class PerfilProjeto implements PerfilProjetoPrototype {
     }
 
     public Map<String, Integer> getFuncionalidades() {
-        return Collections.unmodifiableMap(funcionalidades);
+        return funcionalidades;
     }
 
     public Map<String, Double> getTaxasDiarias() {

@@ -33,4 +33,6 @@ public interface IProjetoRepository {
     List<String> buscarNomesDeProjetosCompartilhadosPorUsuario(UUID idUsuario);
     
     List<String> buscarProjetosPorUsuario(UUID idUsuario);
+    
+    int obterQuantidadeProjetosPorUsuario(UUID idUsuario);
 }
