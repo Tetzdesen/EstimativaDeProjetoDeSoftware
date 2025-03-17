@@ -11,26 +11,28 @@ import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
  * @author flamo
  */
 public class CompartilharProjetoCommand implements ProjetoCommand {
-    private final UsuarioRepositoryService usuarioService;
-    private final ProjetoRepositoryService projetoService;
-    private final Usuario usuarioRemetente;
-    private final Usuario usuarioDestinatario;
-    private final Projeto projeto;
+    private final ProjetoRepositoryService repository;
+    private final String email;
+    private final String nomeProjeto;
 
-    public CompartilharProjetoCommand(UsuarioRepositoryService usuarioService, ProjetoRepositoryService projetoService, Usuario usuarioRemetente, Usuario usuarioDestinatario, Projeto projeto) {
-        this.usuarioService = usuarioService;
-        this.projetoService = projetoService;
-        this.usuarioRemetente = usuarioRemetente;
-        this.usuarioDestinatario = usuarioDestinatario;
-        this.projeto = projeto;
+    public CompartilharProjetoCommand(ProjetoRepositoryService repository, String email, String nomeProjeto) {
+        this.repository = repository;
+        this.email = email;
+        this.nomeProjeto = nomeProjeto;
     }
 
     @Override
     public void execute() {
-        projeto.adicionarUsuario(usuarioRemetente);
+        Usuario usuarioCompartilhado = new UsuarioRepositoryService().buscarPorEmail(email).get();
+
+        Projeto projeto = new ProjetoRepositoryService().buscarProjetoPorNome(nomeProjeto).get();
         projeto.setCompartilhado(true);
-        projeto.setCompartilhadoPor(usuarioRemetente.getNome());
-        usuarioDestinatario.adicionarProjeto(projeto);
+        projeto.adicionarUsuario(usuarioCompartilhado);
+
+        usuarioCompartilhado.adicionarProjeto(projeto);
+
+        repository.salvar(projeto, usuarioCompartilhado);
+
         new MostrarMensagemProjetoCommand("Projeto compartilhado com sucesso.").execute();
         
     }

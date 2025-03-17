@@ -4,6 +4,7 @@ import com.br.estimativadeprojetodesoftware.abstractfactory.FabricaRepository;
 import com.br.estimativadeprojetodesoftware.abstractfactory.SeletorFabricaRepository;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Subject;
+import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.Observer;
 import com.br.estimativadeprojetodesoftware.repository.IProjetoRepository;
 import java.util.ArrayList;
@@ -33,6 +34,11 @@ public class ProjetoRepositoryService implements Subject {
         notifyObservers();
     }
 
+    public void salvar(Projeto projeto, Usuario usuario) {
+        projetoRepository.salvar(projeto, usuario);
+        notifyObservers();
+    }
+
     public void atualizar(Projeto projeto) {
         projetoRepository.atualizar(projeto);
         notifyObservers();
@@ -53,6 +59,10 @@ public class ProjetoRepositoryService implements Subject {
 
     public List<String> buscarNomesDeProjetosPorUsuario(UUID idUsuario) {
         return projetoRepository.buscarNomesDeProjetosPorUsuario(idUsuario);
+    }
+
+    public List<String> buscarNomesDeProjetosCompartilhadosPorUsuario(UUID idUsuario) {
+        return projetoRepository.buscarNomesDeProjetosCompartilhadosPorUsuario(idUsuario);
     }
 
     public List<Projeto> buscarTodos() {

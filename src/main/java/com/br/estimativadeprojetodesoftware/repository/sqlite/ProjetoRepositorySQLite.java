@@ -51,6 +51,21 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
         }
     }
 
+    @Override
+    public void salvar(Projeto projeto, Usuario usuario) {
+        String sql = "INSERT INTO usuario_has_projeto (usuario_idUsuario, projeto_idProjeto, isCompartilhado) VALUES (?, ?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, usuario.getId().toString());
+            stmt.setString(2, projeto.getId().toString());
+            stmt.setBoolean(3, projeto.isCompartilhado());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao salvar usuário-projeto", e);
+        }
+    }
+
     private void salvarCampos(Projeto projeto) {
         CampoRepositoryService campoService = new CampoRepositoryService();
 
@@ -72,6 +87,8 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             throw new RuntimeException("Erro ao salvar usuário-projeto", e);
         }
     }
+
+
 
     private void salvarPerfilProjeto(Projeto projeto, PerfilProjeto perfil) {
         String sql = "INSERT INTO projeto_has_perfil (projeto_idProjeto, perfil_idPerfil) VALUES (?, ?)";
@@ -207,7 +224,24 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
     @Override
     public List<String> buscarNomesDeProjetosPorUsuario(UUID idUsuario) {
         List<String> projetos = new ArrayList<>();
-        String query = "SELECT projeto_idProjeto FROM usuario_has_projeto WHERE usuario_idUsuario = ?";
+        String query = "SELECT projeto_idProjeto FROM usuario_has_projeto WHERE usuario_idUsuario = ? AND isCompartilhado = 0";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, idUsuario.toString());
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Projeto projeto = buscarPorId(UUID.fromString(resultSet.getString("projeto_idProjeto"))).get();
+                projetos.add(projeto.getNome());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return projetos;
+    }
+
+    @Override
+    public List<String> buscarNomesDeProjetosCompartilhadosPorUsuario(UUID idUsuario) {
+        List<String> projetos = new ArrayList<>();
+        String query = "SELECT projeto_idProjeto FROM usuario_has_projeto WHERE usuario_idUsuario = ? AND isCompartilhado = 1";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, idUsuario.toString());
             ResultSet resultSet = statement.executeQuery();
@@ -251,7 +285,6 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
                 rs.getTimestamp("created_atProjeto").toLocalDateTime(),
                 rs.getString("status"),
                 buscarIsCompartilhadoPorId(idUsuario, idProjeto),
-                null,
                 perfis,
                 usuarios,
                 campos
