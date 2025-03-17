@@ -1,19 +1,19 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.EdicaoProjetoPresenter;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.view.projeto.EdicaoProjetoView;
+import com.br.estimativadeprojetodesoftware.command.Command;
 /**
  *
  * @author tetzner
  */
-public class AbrirEdicaoProjetoCommand implements ProjetoCommand {
-    private final ProjetoRepositoryService projetoService;
+public class AbrirEdicaoProjetoCommand implements Command {
+    private final ProjetoService projetoService;
     private String nomeProjeto;
 
-    public AbrirEdicaoProjetoCommand(ProjetoRepositoryService projetoService, String nomeProjeto) {
+    public AbrirEdicaoProjetoCommand(ProjetoService projetoService, String nomeProjeto) {
         this.projetoService = projetoService;
         this.nomeProjeto = nomeProjeto;
     }

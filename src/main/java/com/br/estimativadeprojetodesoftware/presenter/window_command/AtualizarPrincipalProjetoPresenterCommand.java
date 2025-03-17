@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
+import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 
@@ -7,11 +8,11 @@ import com.br.estimativadeprojetodesoftware.service.BarraService;
  *
  * @author tetzner
  */
-public class AtualizarViewCommand implements WindowCommand {
+public class AtualizarPrincipalProjetoPresenterCommand implements Command {
 
     private final PrincipalProjetoPresenter presenter;
 
-    public AtualizarViewCommand(PrincipalProjetoPresenter presenter) {
+    public AtualizarPrincipalProjetoPresenterCommand(PrincipalProjetoPresenter presenter) {
         this.presenter = presenter;
     }
 

@@ -13,12 +13,12 @@ import java.util.UUID;
  *
  * @author tetzner
  */
-public class CampoRepositoryService {
+public class CampoService {
 
     private final FabricaRepository fabricaDAO;
     private final ICampoRepository campoRepository;
 
-    public CampoRepositoryService() {
+    public CampoService() {
         fabricaDAO = SeletorFabricaRepository.obterInstancia();
         campoRepository = fabricaDAO.criarCampoRepository();
     }

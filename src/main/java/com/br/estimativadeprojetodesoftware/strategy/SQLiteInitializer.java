@@ -1,9 +1,9 @@
 package com.br.estimativadeprojetodesoftware.strategy;
 
-import com.br.estimativadeprojetodesoftware.command.database.CriarTabelasSQLiteDatabaseCommand;
+import com.br.estimativadeprojetodesoftware.command.Command;
+import com.br.estimativadeprojetodesoftware.command.database.CriarTabelasSQLiteCommand;
 import com.br.estimativadeprojetodesoftware.command.seeder.CriarCamposSeederCommand;
 import com.br.estimativadeprojetodesoftware.command.seeder.CriarUsuarioSeederCommand;
-import com.br.estimativadeprojetodesoftware.command.seeder.SeederCommand;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +26,16 @@ public class SQLiteInitializer implements DatabaseInitializer {
     }
 
     private boolean criarArquivoBDSQLite(String caminho) {
+
         File arquivo = new File(caminho);
+        File diretorio = arquivo.getParentFile(); 
+
+        if (diretorio != null && !diretorio.exists()) {
+            if (!diretorio.mkdirs()) {
+                throw new RuntimeException("Erro ao criar diretório: " + diretorio.getAbsolutePath());
+            }
+        }
+
         if (!arquivo.exists()) {
             try {
                 return arquivo.createNewFile();
@@ -38,8 +47,8 @@ public class SQLiteInitializer implements DatabaseInitializer {
     }
 
     private void configurarBancoSQLite() {
-        new CriarTabelasSQLiteDatabaseCommand().execute();
-        List<SeederCommand> comandosSeeder = Arrays.asList(new CriarUsuarioSeederCommand(), new CriarCamposSeederCommand());
+        new CriarTabelasSQLiteCommand().execute();
+        List<Command> comandosSeeder = Arrays.asList(new CriarUsuarioSeederCommand(), new CriarCamposSeederCommand());
         comandosSeeder.forEach(seeder -> seeder.execute());
     }
 

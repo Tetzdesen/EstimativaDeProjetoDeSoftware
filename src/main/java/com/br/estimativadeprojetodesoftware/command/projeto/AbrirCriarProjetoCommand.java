@@ -1,23 +1,23 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.CadastroProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.view.projeto.CadastroProjetoView;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**
  *
  * @author tetzner
  */
-public class AbrirCriarProjetoCommand implements ProjetoCommand {
+public class AbrirCriarProjetoCommand implements Command {
 
     private final JDesktopPane desktop;
-    private final ProjetoRepositoryService projetoService;
+    private final ProjetoService projetoService;
 
-    public AbrirCriarProjetoCommand(JDesktopPane desktop, ProjetoRepositoryService projetoService) {
+    public AbrirCriarProjetoCommand(JDesktopPane desktop, ProjetoService projetoService) {
         this.desktop = desktop;
         this.projetoService = projetoService;
     }

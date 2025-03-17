@@ -1,18 +1,17 @@
 package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.AcionarBotaoEditarUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.AcionarBotaoExcluirUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.AcionarBotaoSalvarUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.presenter.Observer;
+import com.br.estimativadeprojetodesoftware.observer.Observer;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 import com.br.estimativadeprojetodesoftware.service.DataHoraService;
 import com.br.estimativadeprojetodesoftware.service.IconService;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.state.usuario.ManterUsuarioPresenterState;
 import com.br.estimativadeprojetodesoftware.state.usuario.VisualizacaoUsuarioState;
@@ -24,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JPanel;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**
  *
@@ -33,19 +33,19 @@ public class ManterUsuarioPresenter implements Observer {
 
     private final ManterUsuarioView view;
     private Usuario usuario;
-    private final UsuarioRepositoryService usuarioService;
-    private final PerfilRepositoryService perfilService;
-    private final ProjetoRepositoryService projetoService;
+    private final UsuarioService usuarioService;
+    private final PerfilProjetoService perfilService;
+    private final ProjetoService projetoService;
     private ManterUsuarioPresenterState estado;
-    private final Map<String, ProjetoCommand> comandos;
+    private final Map<String, Command> comandos;
     private final BarraService barraService;
 
-    public ManterUsuarioPresenter(UsuarioRepositoryService usuarioService, ManterUsuarioView view) {
+    public ManterUsuarioPresenter(UsuarioService usuarioService, ManterUsuarioView view) {
         this.view = view;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
         this.usuarioService = usuarioService;
-        this.perfilService = new PerfilRepositoryService();
-        this.projetoService = new ProjetoRepositoryService();
+        this.perfilService = new PerfilProjetoService();
+        this.projetoService = new ProjetoService();
         this.usuarioService.addObserver(this);
         this.comandos = inicializarComandos();
         barraService = new BarraService(comandos);
@@ -53,8 +53,8 @@ public class ManterUsuarioPresenter implements Observer {
         this.estado = new VisualizacaoUsuarioState(this);
     }
 
-    private Map<String, ProjetoCommand> inicializarComandos() {
-        Map<String, ProjetoCommand> comandos = new HashMap<>();
+    private Map<String, Command> inicializarComandos() {
+        Map<String, Command> comandos = new HashMap<>();
         comandos.put("Salvar usuário", new AcionarBotaoSalvarUsuarioCommand(this));
         comandos.put("Editar usuário", new AcionarBotaoEditarUsuarioCommand(this));
         comandos.put("Excluir usuário", new AcionarBotaoExcluirUsuarioCommand(this));
@@ -128,7 +128,7 @@ public class ManterUsuarioPresenter implements Observer {
         return perfilService.obterQuantidadePerfisPorUsuario(usuario.getId());
     }
 
-    public UsuarioRepositoryService getUsuarioService() {
+    public UsuarioService getUsuarioService() {
         return usuarioService;
     }
 
@@ -140,7 +140,7 @@ public class ManterUsuarioPresenter implements Observer {
         return estado;
     }
 
-    public Map<String, ProjetoCommand> getComandos() {
+    public Map<String, Command> getComandos() {
         return comandos;
     }
 

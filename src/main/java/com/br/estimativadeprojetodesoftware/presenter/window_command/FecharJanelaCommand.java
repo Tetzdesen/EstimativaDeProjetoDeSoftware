@@ -1,13 +1,13 @@
 package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import java.awt.Frame;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**
  *
  * @author tetzner
  */
-public class FecharJanelaCommand implements ProjetoCommand {
+public class FecharJanelaCommand implements Command {
 
     private final Frame frame;
     

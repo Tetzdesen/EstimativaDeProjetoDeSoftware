@@ -1,13 +1,13 @@
 package com.br.estimativadeprojetodesoftware.presenter.perfil;
 
+import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.AbrirManterPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.perfil.CarregarCamposPerfilProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
-import com.br.estimativadeprojetodesoftware.presenter.Observer;
+import com.br.estimativadeprojetodesoftware.observer.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
-import com.br.estimativadeprojetodesoftware.presenter.window_command.WindowCommand;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
 import com.br.estimativadeprojetodesoftware.view.perfil.PerfilProjetoView;
 
 import java.util.Arrays;
@@ -23,11 +23,11 @@ import javax.swing.table.TableColumnModel;
 public class PerfilProjetoPresenter implements Observer {
 
     private final PerfilProjetoView view;
-    private final PerfilRepositoryService repository;
+    private final PerfilProjetoService repository;
 
     public PerfilProjetoPresenter(PerfilProjetoView view) {
         this.view = view;
-        this.repository = new PerfilRepositoryService();
+        this.repository = new PerfilProjetoService();
 
         this.repository.addObserver(this);
         carregarDetalhesPerfil();
@@ -41,7 +41,7 @@ public class PerfilProjetoPresenter implements Observer {
 
     private void inicializarEExecutarWindowCommands() {
         Arrays.asList(
-                new SetLookAndFeelCommand()).forEach(WindowCommand::execute);
+                new SetLookAndFeelCommand()).forEach(Command::execute);
     }
 
     private void configuraActionsListerns() {

@@ -1,18 +1,18 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.DashBoardProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.view.projeto.DashBoardProjetoView;
 
 import javax.swing.*;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
-public class AbrirDashboardProjetoCommand implements ProjetoCommand {
+public class AbrirDashboardProjetoCommand implements Command {
     private final JDesktopPane desktop;
-    private final ProjetoRepositoryService projetoService;
+    private final ProjetoService projetoService;
 
-    public AbrirDashboardProjetoCommand(JDesktopPane desktop, ProjetoRepositoryService projetoService) {
+    public AbrirDashboardProjetoCommand(JDesktopPane desktop, ProjetoService projetoService) {
         this.desktop = desktop;
         this.projetoService = projetoService;
     }

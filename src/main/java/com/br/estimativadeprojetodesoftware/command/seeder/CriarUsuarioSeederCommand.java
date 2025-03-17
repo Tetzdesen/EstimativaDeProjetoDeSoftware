@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.command.seeder;
 
+import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +10,7 @@ import java.sql.SQLException;
  *
  * @author tetzner
  */
-public class CriarUsuarioSeederCommand implements SeederCommand {
+public class CriarUsuarioSeederCommand implements Command {
 
     private final Connection conexao = ConexaoSingleton.getInstancia().getConexao();
 

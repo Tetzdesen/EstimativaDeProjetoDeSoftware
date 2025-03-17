@@ -1,12 +1,13 @@
 package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
+import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.presenter.DesktopMemento;
 import com.br.estimativadeprojetodesoftware.presenter.Zelador;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class OrganizarLadoALadoCommand implements WindowCommand {
+public class OrganizarLadoALadoCommand implements Command {
     private final JDesktopPane desktop;
 
     public OrganizarLadoALadoCommand(JDesktopPane desktop) {

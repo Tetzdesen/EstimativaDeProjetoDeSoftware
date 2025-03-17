@@ -71,7 +71,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
             stmt.setDouble(3, campo.getDias());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar campo de perfil: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao salvar campo de perfil: " + e.getMessage(), e);
         }
     }
 
@@ -94,14 +94,14 @@ public class CampoRepositorySQLite implements ICampoRepository {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                throw new RuntimeException("Erro ao salvar todos os campos de perfil: " + e.getMessage(), e);
             }
-            throw new RuntimeException("Erro ao atualizar campos de perfil: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao salvar todos os campos de perfil: " + e.getMessage(), e);
         } finally {
             try {
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new RuntimeException("Erro ao salvar todos os campos de perfil: " + e.getMessage(), e);
             }
         }
     }
@@ -128,7 +128,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
             stmt.setString(3, campo.getId().toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar campo: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao atualizar dias de campo do projeto: " + e.getMessage(), e);
         }
     }
 
@@ -141,7 +141,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
             stmt.setString(3, campo.getId().toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar campo: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao atualizar dias de campo do perfil: " + e.getMessage(), e);
         }
     }
 
@@ -152,7 +152,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
             stmt.setString(1, id.toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao deletar campo: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao deletar campo por ID: " + e.getMessage(), e);
         }
     }
 
@@ -226,7 +226,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
                 ));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar campos: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao listar campos por tipo: " + e.getMessage(), e);
         }
         return campos;
     }
@@ -276,7 +276,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
                 return true;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar dias por perfil e campo: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao buscar campo por perfil: " + e.getMessage(), e);
         }
         return false;
     }
@@ -442,7 +442,7 @@ public class CampoRepositorySQLite implements ICampoRepository {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar campo por ID de projeto e nome de campo: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao buscar valor por ID de projeto e nome de campo: " + e.getMessage(), e);
         }
         return 0.0;
     }

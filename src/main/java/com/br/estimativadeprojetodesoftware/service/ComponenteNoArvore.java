@@ -1,15 +1,15 @@
 package com.br.estimativadeprojetodesoftware.service;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 
 import java.util.List;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 public interface ComponenteNoArvore {
     String obterTexto();
 
     String obterChaveIcone();
 
-    ProjetoCommand obterComando();
+    Command obterComando();
 
     List<ComponenteNoArvore> obterFilhos();
 }

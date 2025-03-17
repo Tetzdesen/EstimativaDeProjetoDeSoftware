@@ -1,14 +1,14 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.projeto.RealizarEdicaoProjetoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.RealizarEdicaoProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.CampoService;
+import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.EdicaoProjetoView;
 import java.util.HashMap;
@@ -24,17 +24,19 @@ import javax.swing.ListModel;
  */
 public class EdicaoProjetoPresenter {
 
-    private final ProjetoRepositoryService projetoService;
-    private PerfilRepositoryService perfilService;
+    private final ProjetoService projetoService;
+    private PerfilProjetoService perfilService;
+    private CampoService campoService;
     private EdicaoProjetoView view;
     private String nomeProjeto;
     private Usuario usuario;
     private Map<String, PerfilProjeto> perfisSelecionados;
     private Projeto projetoAtual;
 
-    public EdicaoProjetoPresenter(ProjetoRepositoryService projetoService, EdicaoProjetoView view, String nomeProjeto) {
+    public EdicaoProjetoPresenter(ProjetoService projetoService, EdicaoProjetoView view, String nomeProjeto) {
         this.projetoService = projetoService;
-        this.perfilService = new PerfilRepositoryService();
+        this.perfilService = new PerfilProjetoService();
+        this.campoService = new CampoService();
         this.view = view;
         this.nomeProjeto = nomeProjeto;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
@@ -61,31 +63,31 @@ public class EdicaoProjetoPresenter {
 
         view.getTxtNome().setText(projetoAtual.getNome());
 
-        List<Campo> campos = new CampoRepositoryService().buscarPorIdProjetoTipo(projetoAtual.getId(), "tamanho");
+        List<Campo> campos = campoService.buscarPorIdProjetoTipo(projetoAtual.getId(), "tamanho");
 
         if (!campos.isEmpty()) {
-            Campo campoTamanho = campos.get(0); 
+            Campo campoTamanho = campos.get(0);
             ListModel<String> modelTamanho = view.getCbmTamanhoApp().getModel();
 
             for (int i = 0; i < modelTamanho.getSize(); i++) {
                 String item = modelTamanho.getElementAt(i);
-                if (item.equalsIgnoreCase(campoTamanho.getNome())) { 
-                    view.getCbmTamanhoApp().setSelectedItem(item); 
+                if (item.equalsIgnoreCase(campoTamanho.getNome())) {
+                    view.getCbmTamanhoApp().setSelectedItem(item);
                     break;
                 }
             }
         }
 
-        campos = new CampoRepositoryService().buscarPorIdProjetoTipo(projetoAtual.getId(), "nivel");
+        campos = campoService.buscarPorIdProjetoTipo(projetoAtual.getId(), "nivel");
 
         if (!campos.isEmpty()) {
-            Campo campoNivel = campos.get(0); 
+            Campo campoNivel = campos.get(0);
             ListModel<String> modelNivel = view.getCbmNivelUI().getModel();
 
             for (int i = 0; i < modelNivel.getSize(); i++) {
                 String item = modelNivel.getElementAt(i);
                 if (item.equalsIgnoreCase(campoNivel.getNome())) {
-                    view.getCbmNivelUI().setSelectedItem(item); 
+                    view.getCbmNivelUI().setSelectedItem(item);
                     break;
                 }
             }
@@ -138,13 +140,13 @@ public class EdicaoProjetoPresenter {
     }
 
     private void salvarAlteracoes() {
-        new RealizarEdicaoProjetoProjetoCommand(this).execute();
+        new RealizarEdicaoProjetoCommand(this).execute();
         carregarListaPerfis();
     }
 
     private void carregarListaPerfis() {
 
-        List<PerfilProjeto> perfis = new PerfilRepositoryService().buscarTodosPerfisPorIdUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
+        List<PerfilProjeto> perfis = new PerfilProjetoService().buscarTodosPerfisPorIdUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
 
         DefaultComboBoxModel<String> cmbPerfis = new DefaultComboBoxModel<>();
 
@@ -154,14 +156,6 @@ public class EdicaoProjetoPresenter {
         }
 
         view.getCbmPerfis().setModel(cmbPerfis);
-    }
-
-    private Map<String, Integer> combinarFuncionalidades(List<PerfilProjeto> perfis) {
-        Map<String, Integer> funcionalidadesCombinadas = new HashMap<>();
-        for (PerfilProjeto perfil : perfis) {
-            perfil.getFuncionalidades().forEach(funcionalidadesCombinadas::putIfAbsent);
-        }
-        return funcionalidadesCombinadas;
     }
 
     private void adicionarPerfil() {
@@ -238,11 +232,11 @@ public class EdicaoProjetoPresenter {
         return countBackend > 0;
     }
 
-    public ProjetoRepositoryService getProjetoService() {
+    public ProjetoService getProjetoService() {
         return projetoService;
     }
 
-    public PerfilRepositoryService getPerfilService() {
+    public PerfilProjetoService getPerfilService() {
         return perfilService;
     }
 

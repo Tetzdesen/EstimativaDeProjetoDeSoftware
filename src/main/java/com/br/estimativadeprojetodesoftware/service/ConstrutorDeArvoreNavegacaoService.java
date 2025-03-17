@@ -1,6 +1,5 @@
 package com.br.estimativadeprojetodesoftware.service;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -10,13 +9,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 public final class ConstrutorDeArvoreNavegacaoService {
 
     public ConstrutorDeArvoreNavegacaoService() {
     }
 
-    public NoArvoreComposite criarNo(String texto, String chaveIcone, ProjetoCommand comando) {
+    public NoArvoreComposite criarNo(String texto, String chaveIcone, Command comando) {
         return new NoArvoreComposite(texto, chaveIcone, comando);
     }
 
@@ -53,7 +53,7 @@ public final class ConstrutorDeArvoreNavegacaoService {
                         TreePath path = arvore.getPathForRow(row);
                         DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                         ComponenteNoArvore comp = (ComponenteNoArvore) node.getUserObject();
-                        ProjetoCommand cmd = comp.obterComando();
+                        Command cmd = comp.obterComando();
                         if (cmd != null) {
                             cmd.execute();
                         }

@@ -1,27 +1,30 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.EdicaoProjetoPresenter;
-import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.CampoService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.swing.ListModel;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**
  *
  * @author tetzner
  */
-public class RealizarEdicaoProjetoProjetoCommand implements ProjetoCommand {
-    
-    private final EdicaoProjetoPresenter presenter;
+public class RealizarEdicaoProjetoCommand implements Command {
 
-    public RealizarEdicaoProjetoProjetoCommand(EdicaoProjetoPresenter presenter) {
+    private final EdicaoProjetoPresenter presenter;
+    private final CampoService campoService;
+
+    public RealizarEdicaoProjetoCommand(EdicaoProjetoPresenter presenter) {
         this.presenter = presenter;
+        this.campoService = new CampoService();
+
     }
 
     @Override
@@ -43,7 +46,7 @@ public class RealizarEdicaoProjetoProjetoCommand implements ProjetoCommand {
         Optional<Projeto> optionalProjeto = criarProjeto(nomeProjeto, tamanho, nivel);
 
         if (optionalProjeto.isPresent()) {
-            new EditarProjetoProjetoCommand(presenter.getProjetoService(), optionalProjeto.get()).execute();
+            new EditarProjetoCommand(presenter.getProjetoService(), optionalProjeto.get()).execute();
             presenter.exibirMensagem("Projeto editado com sucesso!");
             presenter.getView().dispose();
         } else {
@@ -72,12 +75,11 @@ public class RealizarEdicaoProjetoProjetoCommand implements ProjetoCommand {
         projeto.setTipo(tiposConcatenados);
 
         for (PerfilProjeto perfil : projeto.getPerfis()) {
-            // Criando campos para estimativa
 
-            List<Campo> tamanhos = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "tamanho");
-            List<Campo> nivelUI = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "nivel");
-            List<Campo> funcionalidades = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "funcionalidade");
-            List<Campo> taxasDiarias = new CampoRepositoryService().buscarPorIdPerfilTipo(perfil.getId(), "taxa diária");
+            List<Campo> tamanhos = campoService.buscarPorIdPerfilTipo(perfil.getId(), "tamanho");
+            List<Campo> nivelUI = campoService.buscarPorIdPerfilTipo(perfil.getId(), "nivel");
+            List<Campo> funcionalidades = campoService.buscarPorIdPerfilTipo(perfil.getId(), "funcionalidade");
+            List<Campo> taxasDiarias = campoService.buscarPorIdPerfilTipo(perfil.getId(), "taxa diária");
 
             for (Campo campo : tamanhos) {
                 if (campo.getNome().equalsIgnoreCase(tamanho)) {
@@ -99,9 +101,9 @@ public class RealizarEdicaoProjetoProjetoCommand implements ProjetoCommand {
                 projeto.adicionarCampo(campo);
             }
 
-            List<Campo> camposFixos = new CampoRepositoryService().listarTodosPorTipo("campo fixo");
+            List<Campo> camposFixos = campoService.listarTodosPorTipo("campo fixo");
             for (Campo campo : camposFixos) {
-                campo.setDias(new CampoRepositoryService().buscarDiasPorPerfilCampo(perfil.getId(), campo.getId()));
+                campo.setDias(campoService.buscarDiasPorPerfilCampo(perfil.getId(), campo.getId()));
                 projeto.adicionarCampo(campo);
 
             }

@@ -8,18 +8,17 @@ import com.br.estimativadeprojetodesoftware.command.Command;
  *
  * @author tetzner
  */
-public class SalvarProjetoCommand implements Command {
-
+public class EditarProjetoCommand implements Command {
     private final ProjetoService projetoService;
     private final Projeto projeto;
 
-    public SalvarProjetoCommand(ProjetoService projetoService, Projeto projeto) {
+    public EditarProjetoCommand(ProjetoService projetoService, Projeto projeto) {
         this.projetoService = projetoService;
         this.projeto = projeto;
     }
 
     @Override
     public void execute() {
-        projetoService.salvar(projeto);
+        projetoService.atualizar(projeto);
     }
 }

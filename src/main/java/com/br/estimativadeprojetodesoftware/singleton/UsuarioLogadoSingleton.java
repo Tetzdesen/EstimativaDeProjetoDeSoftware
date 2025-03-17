@@ -1,8 +1,8 @@
 package com.br.estimativadeprojetodesoftware.singleton;
 
-import com.br.estimativadeprojetodesoftware.model.Subject;
+import com.br.estimativadeprojetodesoftware.observer.Subject;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.presenter.Observer;
+import com.br.estimativadeprojetodesoftware.observer.Observer;
 import java.util.ArrayList;
 import java.util.List;
 

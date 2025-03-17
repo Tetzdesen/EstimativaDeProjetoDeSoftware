@@ -11,7 +11,7 @@ import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 
-public class ExportarCsvTemplate extends ExportadorProjeto {
+public class ExportarCSVTemplate extends ExportadorProjeto {
 
     @Override
     protected String carregarCaminhoArquivo() {

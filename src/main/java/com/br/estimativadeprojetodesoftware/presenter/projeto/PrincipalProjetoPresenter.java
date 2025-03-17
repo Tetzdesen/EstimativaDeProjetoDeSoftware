@@ -10,13 +10,13 @@ import com.br.estimativadeprojetodesoftware.command.projeto.AbrirCriarProjetoCom
 import com.br.estimativadeprojetodesoftware.command.projeto.ConfigurarArvoreProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.DesktopMemento;
-import com.br.estimativadeprojetodesoftware.presenter.Observer;
+import com.br.estimativadeprojetodesoftware.observer.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.Zelador;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.*;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.GlobalWindowManager;
 import com.br.estimativadeprojetodesoftware.view.projeto.PrincipalProjetoView;
@@ -26,17 +26,17 @@ import java.util.*;
 public final class PrincipalProjetoPresenter implements Observer {
 
     private final PrincipalProjetoView view;
-    private final ProjetoRepositoryService projetoService;
-    private final UsuarioRepositoryService usuarioService;
-    private final Map<String, ProjetoCommand> comandos;
+    private final ProjetoService projetoService;
+    private final UsuarioService usuarioService;
+    private final Map<String, Command> comandos;
     private BarraService criarBarraService;
-    private final List<WindowCommand> windowCommands = new ArrayList<>();
+    private final List<Command> windowCommands = new ArrayList<>();
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
 
     public PrincipalProjetoPresenter() {
         this.view = new PrincipalProjetoView();
-        this.projetoService = new ProjetoRepositoryService();
-        this.usuarioService = new UsuarioRepositoryService();
+        this.projetoService = new ProjetoService();
+        this.usuarioService = new UsuarioService();
         this.projetoService.addObserver(this);
         this.usuarioService.addObserver(this);
         UsuarioLogadoSingleton.getInstancia().addObserver(this);
@@ -53,11 +53,11 @@ public final class PrincipalProjetoPresenter implements Observer {
                 new ConfigurarViewCommand(this),
                 new ConfigurarMenuJanelaCommand(this),
                 new SetLookAndFeelCommand()
-        ).forEach(WindowCommand::execute);
+        ).forEach(Command::execute);
     }
 
-    private Map<String, ProjetoCommand> inicializarComandos() {
-        Map<String, ProjetoCommand> comandos = new HashMap<>();
+    private Map<String, Command> inicializarComandos() {
+        Map<String, Command> comandos = new HashMap<>();
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), projetoService));
         comandos.put("Novo projeto", new AbrirCriarProjetoCommand(view.getDesktop(), projetoService));
         comandos.put("Usuário", new AbrirManterUsuarioCommand(this));
@@ -77,15 +77,15 @@ public final class PrincipalProjetoPresenter implements Observer {
         }
     }
 
-    public Map<String, ProjetoCommand> getComandos() {
+    public Map<String, Command> getComandos() {
         return comandos;
     }
 
-    public ProjetoRepositoryService getProjetoService() {
+    public ProjetoService getProjetoService() {
         return projetoService;
     }
 
-    public UsuarioRepositoryService getUsuarioService() {
+    public UsuarioService getUsuarioService() {
         return usuarioService;
     }
 
@@ -108,10 +108,10 @@ public final class PrincipalProjetoPresenter implements Observer {
                 List<String> idsProjetos = projetoService.buscarProjetosPorUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
                 List<Projeto> projetos = new ArrayList<>();
                 idsProjetos.forEach((projeto) -> projetos.add(projetoService.buscarPorId(UUID.fromString(projeto)).get()));
-                WindowCommand fecharJanelasCommand = new FecharJanelasRelacionadasCommand(view.getDesktop(), projetos);
+                Command fecharJanelasCommand = new FecharJanelasRelacionadasCommand(view.getDesktop(), projetos);
                 fecharJanelasCommand.execute();
                 new ConfigurarArvoreProjetoCommand(projetoService, construtorDeArvoreNavegacaoService, comandos, view).execute();
-                new AtualizarViewCommand(this).execute();
+                new AtualizarPrincipalProjetoPresenterCommand(this).execute();
             });
         } else {
             this.view.dispose();

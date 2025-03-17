@@ -1,9 +1,9 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import javax.swing.*;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
-public class MostrarMensagemProjetoCommand implements ProjetoCommand {
+public class MostrarMensagemProjetoCommand implements Command {
     private final String mensagem;
 
     public MostrarMensagemProjetoCommand(String mensagem) {

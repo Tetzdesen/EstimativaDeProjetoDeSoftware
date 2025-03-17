@@ -1,12 +1,13 @@
 package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
+import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FecharJanelasRelacionadasCommand implements WindowCommand {
+public class FecharJanelasRelacionadasCommand implements Command {
     private final JDesktopPane desktop;
     private final List<Projeto> listaProjetos;
 

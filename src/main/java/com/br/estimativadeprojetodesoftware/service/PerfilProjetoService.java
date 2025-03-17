@@ -3,8 +3,8 @@ package com.br.estimativadeprojetodesoftware.service;
 import com.br.estimativadeprojetodesoftware.abstractfactory.FabricaRepository;
 import com.br.estimativadeprojetodesoftware.abstractfactory.SeletorFabricaRepository;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
-import com.br.estimativadeprojetodesoftware.model.Subject;
-import com.br.estimativadeprojetodesoftware.presenter.Observer;
+import com.br.estimativadeprojetodesoftware.observer.Subject;
+import com.br.estimativadeprojetodesoftware.observer.Observer;
 import com.br.estimativadeprojetodesoftware.repository.IPerfilRepository;
 
 import java.util.ArrayList;
@@ -16,13 +16,13 @@ import java.util.UUID;
  *
  * @author tetzner
  */
-public class PerfilRepositoryService implements Subject {
+public class PerfilProjetoService implements Subject {
 
     private final FabricaRepository fabricaDAO;
     private final IPerfilRepository perfilRepository;
     private final List<Observer> observers;
 
-    public PerfilRepositoryService() {
+    public PerfilProjetoService() {
         fabricaDAO = SeletorFabricaRepository.obterInstancia();
         perfilRepository = fabricaDAO.criarPerfilRepository();
         this.observers = new ArrayList<>();

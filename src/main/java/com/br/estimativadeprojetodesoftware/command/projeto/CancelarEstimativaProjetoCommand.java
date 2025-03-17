@@ -1,12 +1,12 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**
  *
  * @author tetzner
  */
-public class CancelarEstimativaProjetoProjetoCommand implements ProjetoCommand {
+public class CancelarEstimativaProjetoCommand implements Command {
 
     @Override
     public void execute() {

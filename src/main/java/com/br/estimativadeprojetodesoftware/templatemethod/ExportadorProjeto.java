@@ -3,7 +3,7 @@ package com.br.estimativadeprojetodesoftware.templatemethod;
 import java.io.File;
 
 import com.br.estimativadeprojetodesoftware.model.Projeto;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 
 /**
  * Template Method que organiza o fluxo de exportação:
@@ -35,7 +35,7 @@ public abstract class ExportadorProjeto {
     }
 
     private void carregarProjeto(String projetoNome) {
-        this.projeto = new ProjetoRepositoryService()
+        this.projeto = new ProjetoService()
                 .buscarProjetoPorNome(projetoNome)
                 .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
     }

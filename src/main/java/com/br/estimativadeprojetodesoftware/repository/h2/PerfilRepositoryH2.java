@@ -4,7 +4,7 @@ import com.br.estimativadeprojetodesoftware.chain.carregarcampos.EmpilhadorDeCam
 import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.repository.IPerfilRepository;
-import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.CampoService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import java.sql.*;
@@ -19,12 +19,14 @@ import java.util.UUID;
 public class PerfilRepositoryH2 implements IPerfilRepository {
 
     private final Connection connection;
+    private CampoService campoService;
 
     public PerfilRepositoryH2() {
         this.connection = ConexaoSingleton.getInstancia().getConexao();
+        this.campoService = new CampoService();
     }
 
-     @Override
+    @Override
     public void salvar(PerfilProjeto perfil) {
         String sql = "INSERT INTO perfil (idPerfil, nomePerfil, perfilBackend, created_atPerfil, usuario_idUsuario) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -38,35 +40,34 @@ public class PerfilRepositoryH2 implements IPerfilRepository {
 
             List<Campo> campos;
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("tamanho");
+            campos = new CampoService().listarTodosPorTipo("tamanho");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getTamanhosApp().get(campo.getNome()).doubleValue());
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                new CampoService().salvarPerfilCampo(perfil, campo);
             }
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("nivel");
+            campos = new CampoService().listarTodosPorTipo("nivel");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getNiveisUI().get(campo.getNome()));
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                new CampoService().salvarPerfilCampo(perfil, campo);
             }
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("funcionalidade");
-  
+            campos = new CampoService().listarTodosPorTipo("funcionalidade");
+
             // lembrar de colocar quando é uma funcionalidade nova
-            
             for (Campo campo : campos) {
                 if (perfil.getFuncionalidades().containsKey(campo.getNome()) && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
                     campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
-                    new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                    new CampoService().salvarPerfilCampo(perfil, campo);
                 }
             }
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("taxa diária");
+            campos = new CampoService().listarTodosPorTipo("taxa diária");
             for (Campo campo : campos) {
                 campo.setDias(perfil.getTaxasDiarias().get(campo.getNome()));
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                new CampoService().salvarPerfilCampo(perfil, campo);
             }
 
         } catch (SQLException e) {
@@ -85,38 +86,38 @@ public class PerfilRepositoryH2 implements IPerfilRepository {
 
             List<Campo> campos;
 
-            new CampoRepositoryService().removerPorIdPerfil(perfil.getId());
+            new CampoService().removerPorIdPerfil(perfil.getId());
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("tamanho");
+            campos = new CampoService().listarTodosPorTipo("tamanho");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getTamanhosApp().get(campo.getNome()).doubleValue());
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                new CampoService().salvarPerfilCampo(perfil, campo);
             }
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("nivel");
+            campos = new CampoService().listarTodosPorTipo("nivel");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getNiveisUI().get(campo.getNome()));
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                new CampoService().salvarPerfilCampo(perfil, campo);
             }
 
             for (Map.Entry<String, Integer> entry : perfil.getFuncionalidades().entrySet()) {
-                Campo campo = new CampoRepositoryService().buscarPorNome(entry.getKey());
+                Campo campo = new CampoService().buscarPorNome(entry.getKey());
                 if (campo == null) {
                     campo = new Campo("funcionalidade", entry.getKey(), entry.getValue().doubleValue());
-                    new CampoRepositoryService().salvar(campo);
+                    new CampoService().salvar(campo);
                 }
 
                 campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo); 
+                new CampoService().salvarPerfilCampo(perfil, campo);
             }
 
-            campos = new CampoRepositoryService().listarTodosPorTipo("taxa diária");
+            campos = new CampoService().listarTodosPorTipo("taxa diária");
 
             for (Campo campo : campos) {
                 campo.setDias(perfil.getTaxasDiarias().get(campo.getNome()));
-                new CampoRepositoryService().salvarPerfilCampo(perfil, campo);
+                new CampoService().salvarPerfilCampo(perfil, campo);
             }
 
             statement.executeUpdate();

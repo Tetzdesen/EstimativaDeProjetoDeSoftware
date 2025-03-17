@@ -5,19 +5,19 @@ import com.br.estimativadeprojetodesoftware.builder.Diretor;
 import com.br.estimativadeprojetodesoftware.builder.IosBuilder;
 import com.br.estimativadeprojetodesoftware.builder.WebBackEndBuilder;
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioService;
 import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**
  *
  * @author tetzner
  */
-public class RealizarCadastroUsuarioCommand implements ProjetoCommand {
+public class RealizarCadastroUsuarioCommand implements Command {
 
-    private final UsuarioRepositoryService usuarioService;
+    private final UsuarioService usuarioService;
     private final ValidadorSenhaService validadorDeSenha;
     private final String nome;
     private final String email;
@@ -29,7 +29,7 @@ public class RealizarCadastroUsuarioCommand implements ProjetoCommand {
         this.email = email;
         this.senha = senha;
         this.senhaConfirmada = senhaConfirmada;
-        this.usuarioService = new UsuarioRepositoryService();
+        this.usuarioService = new UsuarioService();
         this.validadorDeSenha = new ValidadorSenhaService();
     }
 
@@ -50,7 +50,7 @@ public class RealizarCadastroUsuarioCommand implements ProjetoCommand {
                         usuario = new Usuario(nome, email, senha);
                         usuarioService.salvar(usuario);
                         
-                        PerfilRepositoryService repositoryPerfil = new PerfilRepositoryService();
+                        PerfilProjetoService repositoryPerfil = new PerfilProjetoService();
                         repositoryPerfil.salvar(Diretor.build(new AndroidBuilder("Android", usuario)));
                         repositoryPerfil.salvar(Diretor.build(new IosBuilder("iOS", usuario)));
                         repositoryPerfil.salvar(Diretor.build(new WebBackEndBuilder("Web Back-End", usuario)));

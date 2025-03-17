@@ -1,9 +1,9 @@
 package com.br.estimativadeprojetodesoftware.command.perfil;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
-public class AdicionarNovaFuncionalidadePerfilCommand implements ProjetoCommand {
+public class AdicionarNovaFuncionalidadePerfilCommand implements Command {
     private final ManterPerfilPresenter presenter;
 
     public AdicionarNovaFuncionalidadePerfilCommand(ManterPerfilPresenter presenter) {

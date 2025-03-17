@@ -1,17 +1,17 @@
 package com.br.estimativadeprojetodesoftware.command.perfil;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
-import com.br.estimativadeprojetodesoftware.service.PerfilRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
 import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
-public class AbrirManterPerfilProjetoCommand implements ProjetoCommand {
+public class AbrirManterPerfilProjetoCommand implements Command {
     private final PerfilProjeto perfil;
-    private final PerfilRepositoryService repository;
+    private final PerfilProjetoService repository;
 
-    public AbrirManterPerfilProjetoCommand(PerfilProjeto perfil, PerfilRepositoryService repository) {
+    public AbrirManterPerfilProjetoCommand(PerfilProjeto perfil, PerfilProjetoService repository) {
         this.perfil = perfil;
         this.repository = repository;
     }

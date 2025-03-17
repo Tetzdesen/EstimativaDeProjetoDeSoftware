@@ -1,21 +1,21 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
-import com.br.estimativadeprojetodesoftware.service.UsuarioRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
+import com.br.estimativadeprojetodesoftware.service.UsuarioService;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**
  *
  * @author flamo
  */
-public class CompartilharProjetoCommand implements ProjetoCommand {
-    private final ProjetoRepositoryService repository;
+public class CompartilharProjetoCommand implements Command {
+    private final ProjetoService repository;
     private final String email;
     private final String nomeProjeto;
 
-    public CompartilharProjetoCommand(ProjetoRepositoryService repository, String email, String nomeProjeto) {
+    public CompartilharProjetoCommand(ProjetoService repository, String email, String nomeProjeto) {
         this.repository = repository;
         this.email = email;
         this.nomeProjeto = nomeProjeto;
@@ -23,9 +23,9 @@ public class CompartilharProjetoCommand implements ProjetoCommand {
 
     @Override
     public void execute() {
-        Usuario usuarioCompartilhado = new UsuarioRepositoryService().buscarPorEmail(email).get();
+        Usuario usuarioCompartilhado = new UsuarioService().buscarPorEmail(email).get();
 
-        Projeto projeto = new ProjetoRepositoryService().buscarProjetoPorNome(nomeProjeto).get();
+        Projeto projeto = new ProjetoService().buscarProjetoPorNome(nomeProjeto).get();
         projeto.setCompartilhado(true);
         projeto.adicionarUsuario(usuarioCompartilhado);
 

@@ -8,9 +8,9 @@ import java.awt.Frame;
  *
  * @author tetzner
  */
-public class ExibirMensagemCommand implements ProjetoCommand {
+public class ExibirMensagemCommand implements Command {
 
-    private Frame frame;
+    private final Frame frame;
     private final String mensagem;
 
     public ExibirMensagemCommand(Frame frame, String mensagem) {

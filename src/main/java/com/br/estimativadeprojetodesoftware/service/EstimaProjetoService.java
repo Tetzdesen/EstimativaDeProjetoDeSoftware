@@ -16,13 +16,13 @@ import java.util.UUID;
 
 public class EstimaProjetoService {
 
-    private PerfilRepositoryService perfilService;
-    private final CampoRepositoryService campoRepositoryService;
-    private final List<EstimativaFuncionalidade> estimativas;
+    private final PerfilProjetoService perfilService;
+    private final CampoService campoRepositoryService;
+    private List<EstimativaFuncionalidade> estimativas;
 
     public EstimaProjetoService() {
-        this.perfilService = new PerfilRepositoryService();
-        this.campoRepositoryService = new CampoRepositoryService();
+        this.perfilService = new PerfilProjetoService();
+        this.campoRepositoryService = new CampoService();
         this.estimativas = new ArrayList<>();
     }
 
@@ -62,15 +62,15 @@ public class EstimaProjetoService {
         int diasTamanhoApp = estimativas.stream()
                 .filter(e -> e.getTipoCampo().equalsIgnoreCase("tamanho"))
                 .mapToInt(EstimativaFuncionalidade::getQuantidadeDias)
-                .sum(); 
+                .sum();
 
         double totalAtualUI = estimativas.stream()
                 .filter(e -> e.getTipoCampo().equalsIgnoreCase("nivel"))
                 .mapToDouble(EstimativaFuncionalidade::getQuantidadeDias)
-                .sum(); 
+                .sum();
 
         if (totalPerfis == 0 || diasTamanhoApp == 0) {
-            return 0; 
+            return 0;
         }
 
         return ((totalAtualUI / totalPerfis) / 100) * diasTamanhoApp;
@@ -107,4 +107,13 @@ public class EstimaProjetoService {
     public double calcularMediaPorMes(double precoFinal, double meses) {
         return precoFinal / meses;
     }
+
+    public List<EstimativaFuncionalidade> getEstimativas() {
+        return estimativas;
+    }
+
+    public void setEstimativas(List<EstimativaFuncionalidade> estimativas) {
+        this.estimativas = estimativas;
+    }
+
 }

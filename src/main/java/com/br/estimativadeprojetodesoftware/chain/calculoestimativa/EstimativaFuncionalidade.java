@@ -1,7 +1,8 @@
 package com.br.estimativadeprojetodesoftware.chain.calculoestimativa;
 
-import com.br.estimativadeprojetodesoftware.service.CampoRepositoryService;
 import java.util.UUID;
+
+import com.br.estimativadeprojetodesoftware.service.CampoService;
 
 /**
  *
@@ -16,6 +17,7 @@ public class EstimativaFuncionalidade {
     private String tipoCampo;
     private double valorPorDia;
     private String perfilNome;
+    private CampoService campoService = new CampoService();
 
     public EstimativaFuncionalidade(UUID idProjeto, String nomeFuncionalidade, int quantidadeDias, String tipoFuncionalidade, String tipoCampo,
             String perfilNome) {
@@ -24,9 +26,8 @@ public class EstimativaFuncionalidade {
         this.quantidadeDias = quantidadeDias;
         this.tipoFuncionalidade = tipoFuncionalidade;
         this.tipoCampo = tipoCampo;
-        this.valorPorDia = new CampoRepositoryService().buscarValorPorNomeProjetoCampo(this.idProjeto, tipoFuncionalidade);
+        this.valorPorDia = campoService.buscarValorPorNomeProjetoCampo(this.idProjeto, tipoFuncionalidade);
         this.perfilNome = perfilNome;
-        //this.valorPorDia = 10.0;
     }
 
     public double calcularCustoTotal() {
@@ -51,6 +52,20 @@ public class EstimativaFuncionalidade {
 
     public String getTipoFuncionalidade() {
         return tipoFuncionalidade;
+    }
+
+    public void setQuantidadeDias(int quantidadeDias) {
+        if(quantidadeDias < 0){
+            throw new IllegalArgumentException("Quantidade de dias deve ser maior que 0");
+        }
+        this.quantidadeDias = quantidadeDias;
+    }
+
+    public void setValorPorDia(double valorPorDia) {
+        if(valorPorDia < 0){
+            throw new IllegalArgumentException("Valor por dia deve ser maior que 0");
+        }
+        this.valorPorDia = valorPorDia;
     }
 
     public String getTipoCampo() {

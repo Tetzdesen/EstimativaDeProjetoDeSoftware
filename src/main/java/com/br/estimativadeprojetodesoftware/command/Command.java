@@ -1,5 +1,5 @@
 package com.br.estimativadeprojetodesoftware.command;
 
-public interface ProjetoCommand {
+public interface Command {
     void execute();
 }

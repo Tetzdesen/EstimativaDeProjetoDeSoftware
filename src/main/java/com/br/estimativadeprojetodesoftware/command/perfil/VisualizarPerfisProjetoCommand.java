@@ -1,13 +1,13 @@
 package com.br.estimativadeprojetodesoftware.command.perfil;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.presenter.perfil.PerfilProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.view.perfil.PerfilProjetoView;
 
 import javax.swing.*;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
-public class VisualizarPerfisProjetoCommand implements ProjetoCommand {
+public class VisualizarPerfisProjetoCommand implements Command {
     private final JDesktopPane desktop;
 
     public VisualizarPerfisProjetoCommand(JDesktopPane desktop) {

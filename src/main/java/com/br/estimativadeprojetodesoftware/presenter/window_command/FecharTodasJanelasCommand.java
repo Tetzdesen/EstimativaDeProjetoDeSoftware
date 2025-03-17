@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
+import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.command.usuario.AbrirTelaPrincipalCommand;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
@@ -8,7 +9,7 @@ import javax.swing.JInternalFrame;
  *
  * @author tetzner
  */
-public class FecharTodasJanelasCommand implements WindowCommand {
+public class FecharTodasJanelasCommand implements Command {
 
     private final JDesktopPane desktop;
     

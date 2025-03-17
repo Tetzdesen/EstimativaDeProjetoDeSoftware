@@ -75,7 +75,7 @@ public class CampoRepositoryH2 implements ICampoRepository {
             stmt.setDouble(3, campo.getDias());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar campo de perfil: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao salvar campo de perfil: " + e.getMessage(), e);
         }
     }
 
@@ -98,14 +98,14 @@ public class CampoRepositoryH2 implements ICampoRepository {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                throw new RuntimeException("Erro ao salvar todos os campos de perfil: " + e.getMessage(), e);
             }
-            throw new RuntimeException("Erro ao atualizar campos de perfil: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao salvar todos os campos de perfil: " + e.getMessage(), e);
         } finally {
             try {
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new RuntimeException("Erro ao salvar todos os campos de perfil: " + e.getMessage(), e);
             }
         }
     }
@@ -132,7 +132,7 @@ public class CampoRepositoryH2 implements ICampoRepository {
             stmt.setString(3, campo.getId().toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar campo: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao atualizar dias de campo do projeto: " + e.getMessage(), e);
         }
     }
 
@@ -145,7 +145,7 @@ public class CampoRepositoryH2 implements ICampoRepository {
             stmt.setString(3, campo.getId().toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar campo: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao atualizar dias de campo do perfil: " + e.getMessage(), e);
         }
     }
 
@@ -156,7 +156,7 @@ public class CampoRepositoryH2 implements ICampoRepository {
             stmt.setString(1, id.toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao deletar campo: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao deletar campo por ID: " + e.getMessage(), e);
         }
     }
 
@@ -230,7 +230,7 @@ public class CampoRepositoryH2 implements ICampoRepository {
                 ));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar campos: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao listar campos por tipo: " + e.getMessage(), e);
         }
         return campos;
     }
@@ -280,7 +280,7 @@ public class CampoRepositoryH2 implements ICampoRepository {
                 return true;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar dias por perfil e campo: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao buscar campo por perfil: " + e.getMessage(), e);
         }
         return false;
     }
@@ -340,24 +340,20 @@ public class CampoRepositoryH2 implements ICampoRepository {
     @Override
     public List<Campo> listarTodosPorIdPerfil(UUID idPerfil) {
         List<Campo> campos = new ArrayList<>();
-        String sql = "SELECT c.idCampo, c.tipoCampo, c.nomeCampo, phc.diasPerfil " +
-             "FROM perfil_has_campo phc " +
-             "JOIN campo c ON c.idCampo = phc.campo_idCampo " +
-             "WHERE phc.perfil_idPerfil = ?";
+        String sql = "SELECT * FROM perfil_has_campo WHERE perfil_idPerfil = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, idPerfil.toString());
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                UUID idCampo = UUID.fromString(rs.getString("idCampo"));
-                String tipoCampo = rs.getString("tipoCampo");
-                String nomeCampo = rs.getString("nomeCampo");
-                Double dias = rs.getDouble("diasPerfil");
-                campos.add(new Campo(idCampo, tipoCampo, nomeCampo, dias));
+                Campo campo = buscarPorId(UUID.fromString(rs.getString("campo_idCampo")));
+                if (campo != null) {
+                    campo.setDias(buscarDiasPorPerfilCampo(idPerfil, campo.getId()));
+                    campos.add(campo);
+                }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar campos por perfil: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao listar campos por projeto e campo: " + e.getMessage(), e);
         }
-
         return campos;
     }
 
@@ -450,7 +446,7 @@ public class CampoRepositoryH2 implements ICampoRepository {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar campo por ID de projeto e nome de campo: " + e.getMessage(), e);
+            throw new RuntimeException("Erro ao buscar valor por ID de projeto e nome de campo: " + e.getMessage(), e);
         }
         return 0.0;
     }

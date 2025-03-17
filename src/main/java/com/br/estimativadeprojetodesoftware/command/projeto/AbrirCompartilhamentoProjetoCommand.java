@@ -1,16 +1,16 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.CompartilharProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.view.projeto.CompartilharProjetoView;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
-public class AbrirCompartilhamentoProjetoCommand implements ProjetoCommand {
-    private final ProjetoRepositoryService projetoService;
+public class AbrirCompartilhamentoProjetoCommand implements Command {
+    private final ProjetoService projetoService;
     private final String nomeProjeto;
 
-    public AbrirCompartilhamentoProjetoCommand(ProjetoRepositoryService projetoService, String nomeProjeto) {
+    public AbrirCompartilhamentoProjetoCommand(ProjetoService projetoService, String nomeProjeto) {
         this.projetoService = projetoService;
         this.nomeProjeto = nomeProjeto;
     }

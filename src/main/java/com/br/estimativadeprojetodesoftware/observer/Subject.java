@@ -1,6 +1,4 @@
-package com.br.estimativadeprojetodesoftware.model;
-
-import com.br.estimativadeprojetodesoftware.presenter.Observer;
+package com.br.estimativadeprojetodesoftware.observer;
 
 public interface Subject {
     void addObserver(Observer observer);

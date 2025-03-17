@@ -9,28 +9,28 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
 import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
-import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
+import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.PrincipalProjetoView;
+import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**
  *
  * @author tetzner
  */
-public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
+public class ConfigurarArvoreProjetoCommand implements Command {
 
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
     private final PrincipalProjetoView view;
     private List<String> nomesProjetos;
-    private final Map<String, ProjetoCommand> comandos;
-    private ProjetoRepositoryService projetoService;
+    private final Map<String, Command> comandos;
+    private ProjetoService projetoService;
 
-    public ConfigurarArvoreProjetoCommand(ProjetoRepositoryService projetoService,
-            ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService, Map<String, ProjetoCommand> comandos,
+    public ConfigurarArvoreProjetoCommand(ProjetoService projetoService,
+            ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService, Map<String, Command> comandos,
             PrincipalProjetoView view) {
         this.construtorDeArvoreNavegacaoService = construtorDeArvoreNavegacaoService;
         this.view = view; // passar presenter?
@@ -55,7 +55,7 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
             JPopupMenu menu = new JPopupMenu();
             JMenuItem novoProjetoItem = new JMenuItem("Novo Projeto");
             novoProjetoItem.addActionListener(e -> {
-                ProjetoCommand cmd = new AbrirCriarProjetoCommand(view.getDesktop(), projetoService);
+                Command cmd = new AbrirCriarProjetoCommand(view.getDesktop(), projetoService);
                 cmd.execute();
 
             });
@@ -74,7 +74,7 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
         nomesProjetos.forEach((projeto) -> {
         });
         for (final String projeto : nomesProjetos) {
-            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projeto, projetoService,
+            AbrirDetalhesProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoCommand(projeto, projetoService,
                     view.getDesktop()) {
                 @Override
                 public void execute() {
@@ -98,16 +98,12 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
 
         }
 
-
-
         List<String> projetosCompartilhados = projetoService.buscarNomesDeProjetosCompartilhadosPorUsuario(
             UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
 
-
-
         for (final String projeto : projetosCompartilhados) {
 
-            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projeto, projetoService,
+            AbrirDetalhesProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoCommand(projeto, projetoService,
                     view.getDesktop()) {
                 @Override
                 public void execute() {
@@ -123,14 +119,10 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
                 }
             };
             cmdDetalhes.setProjetoNome(projeto);
+            
             NoArvoreComposite noProjetoCompartilhado = construtorDeArvoreNavegacaoService.criarNo(projeto, "projeto",
                     cmdDetalhes);
 
-            adicionarMenuContextual(projeto, noProjetoCompartilhado);
-
-            adicionarMenuContextual(projeto, noProjetoCompartilhado);
-            noProjetoCompartilhado.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa",
-                    "action", comandos.get("Visualizar estimativa")));
             noProjetosCompartilhados.adicionarFilho(noProjetoCompartilhado);
 
         }
@@ -145,11 +137,11 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
             JMenuItem editarProjetoItem = new JMenuItem("Editar Projeto");
             JMenuItem excluirProjetoItem = new JMenuItem("Excluir Projeto");
             editarProjetoItem.addActionListener(e -> {
-                ProjetoCommand cmdEditar = new AbrirEdicaoProjetoCommand(projetoService, nomeProjeto);
+                Command cmdEditar = new AbrirEdicaoProjetoCommand(projetoService, nomeProjeto);
                 cmdEditar.execute();
             });
             excluirProjetoItem.addActionListener(e -> {
-                ProjetoCommand cmdExcluir = new ExcluirProjetoCommand(projetoService, nomeProjeto);
+                Command cmdExcluir = new ExcluirProjetoCommand(projetoService, nomeProjeto);
                 cmdExcluir.execute();
             });
             menu.add(editarProjetoItem);
