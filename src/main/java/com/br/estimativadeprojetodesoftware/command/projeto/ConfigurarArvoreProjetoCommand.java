@@ -1,5 +1,14 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JInternalFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
@@ -7,14 +16,6 @@ import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.PrincipalProjetoView;
-
-import java.util.List;
-import java.util.Map;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
@@ -28,7 +29,9 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
     private final Map<String, ProjetoCommand> comandos;
     private ProjetoRepositoryService projetoService;
 
-    public ConfigurarArvoreProjetoCommand(ProjetoRepositoryService projetoService, ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService, Map<String, ProjetoCommand> comandos, PrincipalProjetoView view) {
+    public ConfigurarArvoreProjetoCommand(ProjetoRepositoryService projetoService,
+            ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService, Map<String, ProjetoCommand> comandos,
+            PrincipalProjetoView view) {
         this.construtorDeArvoreNavegacaoService = construtorDeArvoreNavegacaoService;
         this.view = view; // passar presenter?
         this.projetoService = projetoService;
@@ -38,11 +41,15 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
 
     @Override
     public void execute() {
-        NoArvoreComposite raiz = construtorDeArvoreNavegacaoService.criarNo("Principal", "principal", comandos.get("Principal"));
-        NoArvoreComposite noUsuario = construtorDeArvoreNavegacaoService.criarNo("Usuário", "usuario", comandos.get("Usuário"));
-        NoArvoreComposite noPerfis = construtorDeArvoreNavegacaoService.criarNo("Ver perfis de projeto", "perfil", comandos.get("Ver perfis de projeto"));
+        NoArvoreComposite raiz = construtorDeArvoreNavegacaoService.criarNo("Principal", "principal",
+                comandos.get("Principal"));
+        NoArvoreComposite noUsuario = construtorDeArvoreNavegacaoService.criarNo("Usuário", "usuario",
+                comandos.get("Usuário"));
+        NoArvoreComposite noPerfis = construtorDeArvoreNavegacaoService.criarNo("Ver perfis de projeto", "perfil",
+                comandos.get("Ver perfis de projeto"));
         NoArvoreComposite noProjetos = construtorDeArvoreNavegacaoService.criarNo("Projetos", "projeto", null);
-        NoArvoreComposite noProjetosCompartilhados = construtorDeArvoreNavegacaoService.criarNo("Projetos Compartilhados", "compartilhar-projeto", null);
+        NoArvoreComposite noProjetosCompartilhados = construtorDeArvoreNavegacaoService
+                .criarNo("Projetos Compartilhados", "compartilhar-projeto", null);
 
         noProjetos.setMenuContextual(() -> {
             JPopupMenu menu = new JPopupMenu();
@@ -61,12 +68,14 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
         raiz.adicionarFilho(noProjetos);
         raiz.adicionarFilho(noProjetosCompartilhados);
 
-        nomesProjetos = projetoService.buscarNomesDeProjetosPorUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
-    
+        nomesProjetos = projetoService
+                .buscarNomesDeProjetosPorUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
+
         nomesProjetos.forEach((projeto) -> {
         });
         for (final String projeto : nomesProjetos) {
-            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projeto, view.getDesktop()) {
+            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projeto,
+                    view.getDesktop()) {
                 @Override
                 public void execute() {
                     String tituloJanela = "Detalhes do Projeto: " + projeto;
@@ -84,37 +93,47 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
             NoArvoreComposite noProjeto = construtorDeArvoreNavegacaoService.criarNo(projeto, "projeto", cmdDetalhes);
 
             adicionarMenuContextual(projeto, noProjeto);
+
             noProjetos.adicionarFilho(noProjeto);
 
         }
 
-        /*
-        for (final Projeto projeto : listaProjetos) {
-            if (projeto.isCompartilhado() == true) {
-                AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()) {
-                    @Override
-                    public void execute() {
-                        String tituloJanela = "Detalhes do Projeto: " + projeto.getNome();
-                        WindowManager windowManager = WindowManager.getInstance();
 
-                        if (!windowManager.isFrameAberto(tituloJanela)) {
-                            super.execute();
-                            bloquearMinimizacao(tituloJanela);
-                        } else {
-                            windowManager.bringToFront(tituloJanela);
-                        }
+
+        List<String> projetosCompartilhados = projetoService.buscarNomesDeProjetosCompartilhadosPorUsuario(
+            UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
+
+
+
+        for (final String projeto : projetosCompartilhados) {
+
+            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projeto,
+                    view.getDesktop()) {
+                @Override
+                public void execute() {
+                    String tituloJanela = "Detalhes do Projeto: " + projeto;
+                    WindowManager windowManager = WindowManager.getInstance();
+
+                    if (!windowManager.isFrameAberto(tituloJanela)) {
+                        super.execute();
+                        bloquearMinimizacao(tituloJanela);
+                    } else {
+                        windowManager.bringToFront(tituloJanela);
                     }
-                };
-                cmdDetalhes.setProjetoNome(projeto.getNome());
-                NoArvoreComposite noProjetoCompartilhado = construtorDeArvoreNavegacaoService.criarNo(projeto.getNome(), "projeto", cmdDetalhes);
+                }
+            };
+            cmdDetalhes.setProjetoNome(projeto);
+            NoArvoreComposite noProjetoCompartilhado = construtorDeArvoreNavegacaoService.criarNo(projeto, "projeto",
+                    cmdDetalhes);
 
-                adicionarMenuContextual(projeto, noProjetoCompartilhado);
+            adicionarMenuContextual(projeto, noProjetoCompartilhado);
 
-                adicionarMenuContextual(projeto, noProjetoCompartilhado);
-                noProjetoCompartilhado.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa", "action", comandos.get("Visualizar estimativa")));
-                noProjetosCompartilhados.adicionarFilho(noProjetoCompartilhado);
-            }
-        }*/
+            adicionarMenuContextual(projeto, noProjetoCompartilhado);
+            noProjetoCompartilhado.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa",
+                    "action", comandos.get("Visualizar estimativa")));
+            noProjetosCompartilhados.adicionarFilho(noProjetoCompartilhado);
+
+        }
         DefaultMutableTreeNode modeloArvore = construtorDeArvoreNavegacaoService.converterParaNoMutavel(raiz);
         JTree arvore = construtorDeArvoreNavegacaoService.criarJTreeDoModelo(modeloArvore);
         view.setTree(arvore);

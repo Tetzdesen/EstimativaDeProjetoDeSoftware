@@ -42,6 +42,11 @@ public class CompartilharProjetoView extends JDialog {
         return tabelaUsuarios;
     }
 
+    public DefaultTableModel getModeloTabela() {
+        return modeloTabela;
+    }
+
+
     public JButton getBtnCompartilharProjeto() {
         return btnCompartilharProjeto;
     }
