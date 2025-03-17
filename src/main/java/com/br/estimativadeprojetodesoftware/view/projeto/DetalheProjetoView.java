@@ -18,8 +18,8 @@ import javax.swing.table.DefaultTableModel;
 public class DetalheProjetoView extends JInternalFrame {
 
     private JLabel lblNome, lblCriador, lblData, lblTipoProjeto, lblStatus;
-    private JLabel lblImpostos, lblValorComImpostos, lblCalculoLucro, lblMediaPorMes, lblValorTotal;
-    private JTable tabelaDetalhes;
+    private final JLabel lblValorTotal;
+    private final JTable tabelaDetalhes;
     private DefaultTableModel modeloTabela;
     private JButton btnEstimar, btnCancelar, btnCompartilhar, btnExportar;
 
@@ -34,7 +34,6 @@ public class DetalheProjetoView extends JInternalFrame {
         JPanel painelPrincipal = new JPanel(new BorderLayout());
         add(painelPrincipal);
 
-        // Painel superior com informações do projeto
         JPanel painelCabecalho = new JPanel(new BorderLayout());
         painelCabecalho.setBorder(BorderFactory.createTitledBorder("Informações do Projeto"));
 
@@ -55,7 +54,6 @@ public class DetalheProjetoView extends JInternalFrame {
 
         painelCabecalho.add(painelInfo, BorderLayout.CENTER);
 
-        // Painel de botões no canto direito (organizado em duas colunas)
         JPanel painelBotoes = new JPanel(new GridLayout(2, 2, 10, 10));
 
         btnEstimar = new JButton("Estimar");
@@ -71,7 +69,6 @@ public class DetalheProjetoView extends JInternalFrame {
         painelCabecalho.add(painelBotoes, BorderLayout.EAST);
         painelPrincipal.add(painelCabecalho, BorderLayout.NORTH);
 
-        // Painel da tabela
         JPanel painelTabela = new JPanel(new BorderLayout());
         painelTabela.setBorder(BorderFactory.createTitledBorder("Funcionalidades do Projeto"));
 
@@ -88,24 +85,7 @@ public class DetalheProjetoView extends JInternalFrame {
         painelTabela.add(scrollTabela, BorderLayout.CENTER);
         painelPrincipal.add(painelTabela, BorderLayout.CENTER);
 
-        // Painel para valores finais (todos no mesmo nível)
         JPanel painelValores = new JPanel(new GridLayout(1, 10, 15, 5)); // Alinhamento na mesma linha
-
-        lblImpostos = new JLabel("Impostos: 0%");
-        lblImpostos.setFont(new Font("Arial", Font.BOLD, 14));
-        painelValores.add(lblImpostos);
-
-        lblValorComImpostos = new JLabel("Valor c/ Impostos: R$ 0,00");
-        lblValorComImpostos.setFont(new Font("Arial", Font.BOLD, 14));
-        painelValores.add(lblValorComImpostos);
-
-        lblCalculoLucro = new JLabel("Lucro: R$ 0,00");
-        lblCalculoLucro.setFont(new Font("Arial", Font.BOLD, 14));
-        painelValores.add(lblCalculoLucro);
-
-        lblMediaPorMes = new JLabel("Média por Mês: R$ 0,00");
-        lblMediaPorMes.setFont(new Font("Arial", Font.BOLD, 14));
-        painelValores.add(lblMediaPorMes);
 
         lblValorTotal = new JLabel("Valor Total: R$ 0,00");
         lblValorTotal.setFont(new Font("Arial", Font.BOLD, 14));
@@ -147,23 +127,7 @@ public class DetalheProjetoView extends JInternalFrame {
         DecimalFormat df = new DecimalFormat("R$ #,##0.00");
         lblValorTotal.setText("Valor Total: " + df.format(valorTotal));
     }
-
-    public void setImpostos(double valor) {
-        lblImpostos.setText(String.format("Impostos: %.2f%%", valor));
-    }
-
-    public void setValorComImpostos(double valor) {
-        lblValorComImpostos.setText(String.format("Valor c/ Impostos: R$ %.2f", valor));
-    }
-
-    public void setCalculoLucro(double valor) {
-        lblCalculoLucro.setText(String.format("Lucro: R$ %.2f", valor));
-    }
-
-    public void setMediaPorMes(double valor) {
-        lblMediaPorMes.setText(String.format("Média por Mês: R$ %.2f", valor));
-    }
-
+    
     public void setValorTotal(double valor) {
         lblValorTotal.setText(String.format("Valor Total: R$ %.2f", valor));
     }
@@ -183,4 +147,9 @@ public class DetalheProjetoView extends JInternalFrame {
     public JButton getBtnExportar() {
         return btnExportar;
     }
+
+    public JTable getTabelaDetalhes() {
+        return tabelaDetalhes;
+    }
+    
 }

@@ -33,16 +33,17 @@ public class DashBoardProjetoPresenter implements Observer {
         List<String> idsProjetos = projetoService.buscarProjetosPorUsuario(UsuarioLogadoSingleton.getInstancia().getUsuario().getId());
 
         List<Projeto> projetos = new ArrayList<>();
-        
+
         idsProjetos.forEach((projeto) -> projetos.add(projetoService.buscarPorId(UUID.fromString(projeto)).get()));
-     
+
         int totalProjetos = projetos.size();
         int diasTotais = projetos.stream()
                 .mapToInt(estimaService::calcularDiasTotais)
                 .sum();
-        double custoTotal = projetos.stream()
-                .mapToDouble(estimaService::calcularCusto)
-                .sum();
+        double custoTotal = 0.0;
+      //  double custoTotal = projetos.stream()
+                //.mapToDouble(estimaService::calcularCusto)
+              //  .sum();
 
         view.exibirDadosConsolidados(totalProjetos, diasTotais, custoTotal);
 
@@ -55,7 +56,8 @@ public class DashBoardProjetoPresenter implements Observer {
     private DefaultPieDataset gerarDatasetCustos(List<Projeto> projetos) {
         DefaultPieDataset dataset = new DefaultPieDataset();
         for (Projeto projeto : projetos) {
-            double custo = estimaService.calcularCusto(projeto);
+            //    double custo = estimaService.calcularCusto(projeto);
+            double custo = 0;
             dataset.setValue(projeto.getNome(), custo);
         }
         return dataset;
@@ -65,10 +67,10 @@ public class DashBoardProjetoPresenter implements Observer {
         DefaultPieDataset dataset = new DefaultPieDataset();
         Map<String, Long> tipos = projetos.stream()
                 .flatMap(projeto -> projeto.getPerfis().stream())
-                .collect(Collectors.groupingBy(perfil -> perfil.getNome(), Collectors.counting())); 
+                .collect(Collectors.groupingBy(perfil -> perfil.getNome(), Collectors.counting()));
 
         for (Map.Entry<String, Long> entry : tipos.entrySet()) {
-            dataset.setValue(entry.getKey(), entry.getValue().doubleValue()); 
+            dataset.setValue(entry.getKey(), entry.getValue().doubleValue());
         }
         return dataset;
     }

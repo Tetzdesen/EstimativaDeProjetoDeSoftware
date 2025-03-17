@@ -1,17 +1,17 @@
 package com.br.estimativadeprojetodesoftware.state.projeto;
 
-import com.br.estimativadeprojetodesoftware.model.Projeto;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.DetalheProjetoPresenter;
 
 /**
  *
  * @author tetzner
  */
-public abstract class ProjetoState {
+public abstract class DetalheProjetoPresenterState {
 
-    protected Projeto projeto;
+    protected DetalheProjetoPresenter detalheProjetoPresenter;
 
-    public ProjetoState(Projeto projeto) {
-        this.projeto = projeto;
+    public DetalheProjetoPresenterState(DetalheProjetoPresenter detalheProjetoPresenter) {
+        this.detalheProjetoPresenter = detalheProjetoPresenter;
     }
 
     public void estimar() {

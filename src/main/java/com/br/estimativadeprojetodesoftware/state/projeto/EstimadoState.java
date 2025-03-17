@@ -1,32 +1,37 @@
 package com.br.estimativadeprojetodesoftware.state.projeto;
 
-import com.br.estimativadeprojetodesoftware.model.Projeto;
+import com.br.estimativadeprojetodesoftware.command.projeto.AbrirCompartilhamentoProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.AbrirExportarProjetoCommand;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.DetalheProjetoPresenter;
 
 /**
  *
  * @author tetzner
  */
-public class EstimadoState extends ProjetoState {
+public class EstimadoState extends DetalheProjetoPresenterState {
 
-    public EstimadoState(Projeto projeto) {
-        super(projeto);
+    public EstimadoState(DetalheProjetoPresenter detalheProjetoPresenter) {
+        super(detalheProjetoPresenter);
+        detalheProjetoPresenter.getView().getBtnEstimar().setEnabled(false);
+        detalheProjetoPresenter.getView().getBtnCancelar().setEnabled(true);
+        detalheProjetoPresenter.getView().getBtnCompartilhar().setEnabled(true);
+        detalheProjetoPresenter.getView().getBtnExportar().setEnabled(true);
     }
 
     @Override
     public void cancelarEstimativa() {
-        System.out.println("Estimativa cancelada. O projeto volta ao estado 'Não Estimado'.");
-        projeto.setStatus("Não estimado");
-        projeto.setEstado(new NaoEstimadoState(projeto));
+        detalheProjetoPresenter.getProjeto().setStatus("Não estimado");
+        detalheProjetoPresenter.setEstado(new NaoEstimadoState(detalheProjetoPresenter));
     }
 
     @Override
     public void compartilharProjeto() {
-        System.out.println("Estimativa cancelada. O projeto volta ao estado 'Não Estimado'.");
+        new AbrirCompartilhamentoProjetoCommand(detalheProjetoPresenter.getProjetoService(), detalheProjetoPresenter.getProjeto().getNome()).execute();
     }
 
     @Override
     public void exportarProjeto() {
-        System.out.println("Estimativa cancelada. O projeto volta ao estado 'Não Estimado'.");
+        new AbrirExportarProjetoCommand(detalheProjetoPresenter.getProjeto().getNome()).execute();
     }
 
     @Override

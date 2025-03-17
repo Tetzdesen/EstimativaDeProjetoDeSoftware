@@ -23,5 +23,7 @@ public interface IPerfilRepository {
 
     List<PerfilProjeto> buscarTodos();
 
-    public List<PerfilProjeto> buscarTodosPerfisPorIdUsuario(UUID id);
+    List<PerfilProjeto> buscarTodosPerfisPorIdUsuario(UUID id);
+    
+    int obterQuantidadePerfisPorUsuario(UUID idUsuario);
 }

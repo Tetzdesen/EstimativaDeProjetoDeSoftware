@@ -1,6 +1,5 @@
 package com.br.estimativadeprojetodesoftware.model;
 
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -8,11 +7,12 @@ import java.util.UUID;
  * @author tetzner
  */
 public class Campo {
-    private UUID id;
+
+    private final UUID id;
     private final String tipo;
     private final String nome;
     private Double dias;
-    
+
     public Campo(UUID id, String tipo, String nome) {
         this.id = id;
         this.tipo = tipo;
@@ -32,7 +32,7 @@ public class Campo {
         this.dias = dias;
         this.id = UUID.randomUUID();
     }
-    
+
     public UUID getId() {
         return id;
     }
@@ -50,25 +50,15 @@ public class Campo {
     }
 
     public void setDias(Double dias) {
+        if (dias < 0) {
+            throw new IllegalArgumentException("Valor de dias menor que 0");
+        }
         this.dias = dias;
     }
 
     @Override
     public String toString() {
         return "Campo{" + "id=" + id + ", tipo=" + tipo + ", nome=" + nome + ", dias=" + dias + '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Campo campo = (Campo) o;
-        return tipo.equals(campo.tipo) && nome.equals(campo.nome);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(tipo, nome);
     }
 
 }

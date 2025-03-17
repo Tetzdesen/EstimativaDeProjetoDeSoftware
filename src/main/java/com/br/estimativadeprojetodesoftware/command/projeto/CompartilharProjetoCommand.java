@@ -32,6 +32,5 @@ public class CompartilharProjetoCommand implements ProjetoCommand {
         projeto.setCompartilhadoPor(usuarioRemetente.getNome());
         usuarioDestinatario.adicionarProjeto(projeto);
         new MostrarMensagemProjetoCommand("Projeto compartilhado com sucesso.").execute();
-        
     }
 }

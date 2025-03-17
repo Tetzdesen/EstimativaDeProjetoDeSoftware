@@ -59,6 +59,10 @@ public class PerfilRepositoryService implements Subject {
     ) {
         return perfilRepository.buscarTodosPerfisPorIdUsuario(id);
     }
+    
+    public int obterQuantidadePerfisPorUsuario(UUID idUsuario) {
+        return perfilRepository.obterQuantidadePerfisPorUsuario(idUsuario);
+    }
 
     @Override
     public void addObserver(Observer observer) {

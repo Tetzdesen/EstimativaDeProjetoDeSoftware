@@ -55,7 +55,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
             }
 
             campos = campoService.listarTodosPorTipo("funcionalidade");
-/*
+            /*
             for (Campo campo : campos) {
                 if (perfil.getFuncionalidades().containsKey(campo.getNome()) && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
                     campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
@@ -66,17 +66,16 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                     logEnd("PerfilRepositorySQLite.salvar: funcionalidades", start);
                 }
             }
-*/
+             */
             List<Campo> camposParaSalvar = new ArrayList<>();
             for (Campo campo : campos) {
-                if (perfil.getFuncionalidades().containsKey(campo.getNome()) 
-                    && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
+                if (perfil.getFuncionalidades().containsKey(campo.getNome())
+                        && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
                     campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
                     camposParaSalvar.add(campo);
                 }
             }
             campoService.salvarPerfilCampos(perfil, camposParaSalvar);
-
 
             campos = campoService.listarTodosPorTipo("taxa diária");
             for (Campo campo : campos) {
@@ -125,7 +124,7 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                 }
 
                 campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
-                campoService.salvarPerfilCampo(perfil, campo); 
+                campoService.salvarPerfilCampo(perfil, campo);
             }
 
             campos = campoService.listarTodosPorTipo("taxa diária");
@@ -244,5 +243,21 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
         empilhador.carregarCampos(perfil);
 
         return perfil;
+    }
+
+    @Override
+    public int obterQuantidadePerfisPorUsuario(UUID idUsuario) {
+        String sql = "SELECT COUNT(*) FROM perfil WHERE usuario_idUsuario = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, idUsuario.toString());
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1); // Retorna a contagem de perfis do usuário
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao obter a quantidade de perfis do usuário", e);
+        }
+        return 0; 
     }
 }

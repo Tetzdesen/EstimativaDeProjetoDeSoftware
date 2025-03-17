@@ -12,13 +12,13 @@ public class PerfilProjeto implements PerfilProjetoPrototype {
 
     private final UUID id;
     private String nome;
-    private Map<String, Integer> tamanhosApp;
-    private Map<String, Double> niveisUI;
-    private Map<String, Integer> funcionalidades;
-    private Map<String, Double> taxasDiarias;
+    private final Map<String, Integer> tamanhosApp;
+    private final Map<String, Double> niveisUI;
+    private final Map<String, Integer> funcionalidades;
+    private final Map<String, Double> taxasDiarias;
     private boolean isPerfilBackEnd;
     private final LocalDateTime created_at;
-    private Usuario usuario;
+    private final Usuario usuario;
 
     public PerfilProjeto(String nome) {
         this.id = UUID.randomUUID();
@@ -138,6 +138,9 @@ public class PerfilProjeto implements PerfilProjetoPrototype {
     }
 
     public void setNome(String nome) {
+        if(nome.isEmpty()){
+            throw new IllegalArgumentException("Nome vazio");
+        }
         this.nome = nome;
     }
 

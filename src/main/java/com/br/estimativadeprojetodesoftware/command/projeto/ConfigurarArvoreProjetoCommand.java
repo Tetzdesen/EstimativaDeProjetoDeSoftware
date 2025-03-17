@@ -1,15 +1,13 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
 import com.br.estimativadeprojetodesoftware.command.ProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
-import com.br.estimativadeprojetodesoftware.repository.ProjetoRepositoryMock;
 import com.br.estimativadeprojetodesoftware.service.ConstrutorDeArvoreNavegacaoService;
 import com.br.estimativadeprojetodesoftware.service.NoArvoreComposite;
 import com.br.estimativadeprojetodesoftware.service.ProjetoRepositoryService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.PrincipalProjetoView;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Map;
 import javax.swing.JInternalFrame;
@@ -86,11 +84,6 @@ public class ConfigurarArvoreProjetoCommand implements ProjetoCommand {
             NoArvoreComposite noProjeto = construtorDeArvoreNavegacaoService.criarNo(projeto, "projeto", cmdDetalhes);
 
             adicionarMenuContextual(projeto, noProjeto);
-
-            //     noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Elaborar estimativa", "action", comandos.get("Elaborar estimativa")));
-            //     noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa", "action", comandos.get("Visualizar estimativa")));
-            //   noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar projeto de estimativa", "action", comandos.get("Compartilhar projeto de estimativa")));
-            //   noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Exportar projeto de estimativa", "action", comandos.get("Exportar projeto de estimativa")));
             noProjetos.adicionarFilho(noProjeto);
 
         }
