@@ -64,8 +64,6 @@ public class EstimaProjetoService {
                 .mapToInt(EstimativaFuncionalidade::getQuantidadeDias)
                 .sum(); 
 
-        System.out.println(diasTamanhoApp);
-
         double totalAtualUI = estimativas.stream()
                 .filter(e -> e.getTipoCampo().equalsIgnoreCase("nivel"))
                 .mapToDouble(EstimativaFuncionalidade::getQuantidadeDias)

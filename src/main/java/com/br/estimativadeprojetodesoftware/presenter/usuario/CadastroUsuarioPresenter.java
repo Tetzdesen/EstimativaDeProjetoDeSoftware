@@ -84,7 +84,6 @@ public class CadastroUsuarioPresenter {
         String senhaConfirmada = new String(view.getTxtConfirmarSenha().getPassword());
        
         new RealizarCadastroUsuarioCommand(nome, email, senha, senhaConfirmada).execute();
-        principalUsuarioPresenter.getView().dispose();
         view.dispose();         
     }
 

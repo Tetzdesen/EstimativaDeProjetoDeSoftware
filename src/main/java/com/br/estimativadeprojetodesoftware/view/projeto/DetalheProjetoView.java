@@ -116,7 +116,14 @@ public class DetalheProjetoView extends JInternalFrame {
         modeloTabela = new DefaultTableModel(dados, colunas) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Permitir edição APENAS quando o projeto não está estimado e a coluna pertence a dias/perfis
+                String categoria = (String) getValueAt(row, 0);
+
+                // Permite edição SOMENTE da coluna "Valor Total (R$)" nos "Adicionais"
+                if (categoria != null && categoria.equalsIgnoreCase("Adicionais")) {
+                    return column == colunas.length - 1 && !isEstimado;
+                }
+
+                // Mantém a lógica de edição das colunas de dias/perfis apenas se o projeto NÃO estiver estimado
                 return !isEstimado && column > 0 && column <= perfis.size();
             }
         };
@@ -127,7 +134,7 @@ public class DetalheProjetoView extends JInternalFrame {
         DecimalFormat df = new DecimalFormat("R$ #,##0.00");
         lblValorTotal.setText("Valor Total: " + df.format(valorTotal));
     }
-    
+
     public void setValorTotal(double valor) {
         lblValorTotal.setText(String.format("Valor Total: R$ %.2f", valor));
     }
@@ -151,5 +158,5 @@ public class DetalheProjetoView extends JInternalFrame {
     public JTable getTabelaDetalhes() {
         return tabelaDetalhes;
     }
-    
+
 }

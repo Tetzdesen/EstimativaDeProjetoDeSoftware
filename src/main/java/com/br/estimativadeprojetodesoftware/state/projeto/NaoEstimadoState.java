@@ -19,7 +19,7 @@ public class NaoEstimadoState extends DetalheProjetoPresenterState {
 
     @Override
     public void estimar() {
-        new RealizarEstimativaProjetoProjetoCommand(detalheProjetoPresenter.getProjetoService(), detalheProjetoPresenter.getProjeto(), detalheProjetoPresenter.getView()).execute();
+        new RealizarEstimativaProjetoProjetoCommand(detalheProjetoPresenter).execute();
         detalheProjetoPresenter.getProjeto().setStatus("Estimado");
         detalheProjetoPresenter.setEstado(new EstimadoState(detalheProjetoPresenter));
     }

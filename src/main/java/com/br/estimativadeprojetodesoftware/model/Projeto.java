@@ -96,7 +96,7 @@ public class Projeto {
     }
 
     public List<PerfilProjeto> getPerfis() {
-        return Collections.unmodifiableList(perfis);
+        return perfis;
     }
 
     public List<Usuario> getUsuarios() {
