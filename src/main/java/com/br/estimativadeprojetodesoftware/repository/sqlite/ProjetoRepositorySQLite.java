@@ -88,7 +88,30 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
         }
     }
 
+    public Optional<String> buscarCriadorProjeto(String nomeProjeto) {
+        String sql = """
+            SELECT usuario.nomeUsuario FROM usuario 
+                INNER JOIN usuario_has_projeto 
+                    ON usuario_has_projeto.usuario_idUsuario = usuario.idUsuario
+                INNER JOIN projeto
+                    ON projeto.idProjeto = usuario_has_projeto.projeto_idProjeto
+                WHERE usuario_has_projeto.isCompartilhado = 0 
+                    AND projeto.nomeProjeto = ?
+        
+        """;
 
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, nomeProjeto);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return Optional.of(rs.getString("nomeUsuario"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar projeto", e);
+        }
+        return Optional.empty();
+    }
 
     private void salvarPerfilProjeto(Projeto projeto, PerfilProjeto perfil) {
         String sql = "INSERT INTO projeto_has_perfil (projeto_idProjeto, perfil_idPerfil) VALUES (?, ?)";
@@ -280,7 +303,7 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
         return new Projeto(
                 idProjeto,
                 rs.getString("nomeProjeto"),
-                UsuarioLogadoSingleton.getInstancia().getUsuario().getNome(),
+                buscarCriadorProjeto(rs.getString("nomeProjeto")).orElse("Desconhecido"),
                 rs.getString("tipoProjeto"),
                 rs.getTimestamp("created_atProjeto").toLocalDateTime(),
                 rs.getString("status"),
