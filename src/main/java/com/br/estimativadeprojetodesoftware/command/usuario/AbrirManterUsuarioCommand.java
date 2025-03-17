@@ -34,6 +34,7 @@ public class AbrirManterUsuarioCommand implements Command {
             new ManterUsuarioPresenter(principalPresenter.getUsuarioService(), view);
             
             view.setTitle(tituloJanela);
+            
             windowManager.registrarDialog(tituloJanela, view);
 
             view.setVisible(true);

@@ -4,6 +4,9 @@ import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 
 import javax.swing.*;
 import com.br.estimativadeprojetodesoftware.command.Command;
+import com.br.estimativadeprojetodesoftware.model.RegistroOperacao;
+import com.br.estimativadeprojetodesoftware.service.LogService;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 public class ExcluirProjetoCommand implements Command {
 
@@ -22,8 +25,7 @@ public class ExcluirProjetoCommand implements Command {
     @Override
     public void execute() {
         if (projetoNome == null || projetoNome.isEmpty()) {
-            new MostrarMensagemProjetoCommand("Nome do projeto não definido.").execute();
-            return;
+            throw new IllegalArgumentException("Nome do projeto não definido.");
         }
 
         int confirmacao = JOptionPane.showConfirmDialog(
@@ -36,10 +38,14 @@ public class ExcluirProjetoCommand implements Command {
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
                 projetoService.removerPorId(projetoService.buscarProjetoPorNome(projetoNome).get().getId());
-            } catch (Exception e){
-                new MostrarMensagemProjetoCommand("Erro ao remover o projeto \"" + projetoNome + "\"." + e).execute();
+                RegistroOperacao registro = new RegistroOperacao("Exclusão de projeto", UsuarioLogadoSingleton.getInstancia().getUsuario().getNome());
+                LogService.getInstancia().escreverMensagem(registro.formatarLog());
+            } catch (Exception e) {
+                RegistroOperacao registro = new RegistroOperacao("Exclusão de projeto", UsuarioLogadoSingleton.getInstancia().getUsuario().getNome(), "Erro ao remover o projeto \"" + projetoNome + "\"." + e);
+                LogService.getInstancia().escreverMensagem(registro.formatarLog());
+                throw new RuntimeException("Erro ao remover o projeto \"" + projetoNome + "\"." + e);
             }
-      
+
         }
     }
 }

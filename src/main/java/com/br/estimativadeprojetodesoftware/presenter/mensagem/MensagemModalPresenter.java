@@ -14,13 +14,11 @@ public class MensagemModalPresenter {
         this.view = view;
     }
 
-    // Exibir mensagem de erro
     public void exibirMensagemErro(String mensagem) {
         view = new MensagemModalView(null, mensagem, true);  // Passa true para indicar erro
         view.exibirModal();
     }
 
-    // Exibir mensagem de sucesso
     public void exibirMensagemSucesso(String mensagem) {
         view = new MensagemModalView(null, mensagem, false);  // Passa false para indicar sucesso
         view.exibirModal();
