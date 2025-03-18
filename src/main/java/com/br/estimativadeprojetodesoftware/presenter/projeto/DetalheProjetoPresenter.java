@@ -132,7 +132,7 @@ public final class DetalheProjetoPresenter implements Observer {
     }
 
     private void recarregarProjeto() {
-        this.projeto = projetoService.buscarProjetoPorNome(projeto.getNome()).orElse(projeto);
+        // this.projeto = projetoService.buscarProjetoPorNome(projeto.getNome()).orElse(projeto);
         carregarCabecalho(projeto);
         new CarregarDetalhesProjetoCommand(view, projeto, isProjetoEstimado()).execute();
         view.revalidate();

@@ -79,9 +79,12 @@ public class CriarTabelasSQLiteCommand implements Command {
                        CREATE TABLE IF NOT EXISTS projeto_has_perfil (
                          projeto_idProjeto TEXT NOT NULL,
                          perfil_idPerfil TEXT NOT NULL,
-                         PRIMARY KEY (projeto_idProjeto, perfil_idPerfil),
-                         FOREIGN KEY (projeto_idProjeto) REFERENCES projeto(idProjeto) ON UPDATE CASCADE ON DELETE CASCADE,
-                         FOREIGN KEY (perfil_idPerfil) REFERENCES perfil(idPerfil) ON UPDATE CASCADE ON DELETE CASCADE
+                         campo_idCampo TEXT NOT NULL,
+                         dias DOUBLE NOT NULL,
+                         PRIMARY KEY (projeto_idProjeto, perfil_idPerfil, campo_idCampo),
+                          FOREIGN KEY (projeto_idProjeto) REFERENCES projeto(idProjeto) ON UPDATE CASCADE ON DELETE CASCADE,
+                          FOREIGN KEY (perfil_idPerfil) REFERENCES perfil(idPerfil) ON UPDATE CASCADE ON DELETE CASCADE,
+                          FOREIGN KEY (campo_idCampo) REFERENCES campo(idCampo) ON UPDATE CASCADE ON DELETE CASCADE
                        );
            
                        -- Tabela projeto_has_campo

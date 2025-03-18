@@ -11,8 +11,8 @@ public class ConstrutorDeSeederService {
         this.seeders = List.of(
                 new AdminSeeder(),
                 new PerfilSeeder(),
-                new ProjetoSeeder(),
-                new CampoSeeder()
+                new ProjetoSeeder()
+                //new CampoSeeder()
         );
     }
 

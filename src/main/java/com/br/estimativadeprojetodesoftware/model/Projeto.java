@@ -141,6 +141,12 @@ public class Projeto {
     }
 
     public void adicionarCampo(Campo campo) {
+        for (Campo c : campos) {
+            if (c.getTipo().equals(campo.getTipo()) && c.getNome().equals(campo.getNome())) {
+                c.setDias(campo.getDias());
+                return;
+            }
+        }
         campos.add(Objects.requireNonNull(campo, "Campo não pode ser nulo."));
     }
 

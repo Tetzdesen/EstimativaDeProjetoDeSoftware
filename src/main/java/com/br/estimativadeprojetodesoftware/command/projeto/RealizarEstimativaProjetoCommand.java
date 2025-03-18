@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
+import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.DetalheProjetoPresenter;
@@ -37,25 +38,71 @@ public class RealizarEstimativaProjetoCommand implements Command {
         List<PerfilProjeto> perfis = projeto.getPerfis();
         boolean houveAlteracao = false;
 
+        double soma;
         for (int i = 0; i < model.getRowCount(); i++) {
             String nomeCampo = (String) model.getValueAt(i, 0);
+            soma = 0;
 
             for (int j = 1; j <= perfis.size(); j++) {
                 Object valorCelula = model.getValueAt(i, j);
-                int diasNovos = extrairValorComoInteiro(valorCelula);
+                double diasNovos = extrairValorComoInteiro(valorCelula);
 
                 if (valorCelula == null || valorCelula.toString().isEmpty()) {
                     continue;
                 }
 
+                // if (j != perfis.size()) {
+                //     soma += diasNovos;
+                //     continue;
+                // }
+
                 PerfilProjeto perfil = perfis.get(j - 1);
+
+                if (perfil.getTamanhosApp().containsKey(nomeCampo)) {
+                    int diasOriginais = perfil.getTamanhosApp().get(nomeCampo);
+
+                    if (diasNovos != diasOriginais) {
+                        //projeto.adicionarCampo(new Campo("tamanho", nomeCampo, soma));
+                        // Map<String, Integer> funcionalidadesAtualizadas = perfil.getTamanhosApp();
+                        // funcionalidadesAtualizadas.put(nomeCampo, (int) diasNovos);
+                        perfil.adicionarTamanhoApp(nomeCampo, (int) diasNovos);
+                        houveAlteracao = true;
+                    }
+                }
+
+                if (perfil.getNiveisUI().containsKey(nomeCampo)) {
+                    double diasOriginais = perfil.getNiveisUI().get(nomeCampo);
+
+                    if (diasNovos != diasOriginais) {
+                        // projeto.adicionarCampo(new Campo("nivel", nomeCampo, soma));
+                        // Map<String, Double> funcionalidadesAtualizadas = perfil.getNiveisUI();
+                        // funcionalidadesAtualizadas.put(nomeCampo, diasNovos);
+                        perfil.adicionarNivelUI(nomeCampo, diasNovos);
+                        houveAlteracao = true;
+                    }
+                }
 
                 if (perfil.getFuncionalidades().containsKey(nomeCampo)) {
                     int diasOriginais = perfil.getFuncionalidades().get(nomeCampo);
 
                     if (diasNovos != diasOriginais) {
-                        Map<String, Integer> funcionalidadesAtualizadas = perfil.getFuncionalidades();
-                        funcionalidadesAtualizadas.put(nomeCampo, diasNovos);
+                        //perfil.adicionarFuncionalidade(nomeCampo, (int) diasNovos);
+                        //projeto.adicionarCampo(new Campo("funcionalidade", nomeCampo, soma));
+                        // Map<String, Integer> funcionalidadesAtualizadas = perfil.getFuncionalidades();
+                        // funcionalidadesAtualizadas.put(nomeCampo, (int) diasNovos);
+                        perfil.adicionarFuncionalidade(nomeCampo, (int) diasNovos);
+                        houveAlteracao = true;
+                    }
+                }
+
+                if (perfil.getTaxasDiarias().containsKey(nomeCampo)) {
+                    double diasOriginais = perfil.getTaxasDiarias().get(nomeCampo);
+
+                    if (diasNovos != diasOriginais) {
+                        //projeto.adicionarCampo(new Campo("taxa diária", nomeCampo, soma));
+                        // Map<String, Double> funcionalidadesAtualizadas = perfil.getTaxasDiarias();
+                        // funcionalidadesAtualizadas.put(nomeCampo, diasNovos);
+                        perfil.adicionarTaxaDiaria(nomeCampo, diasNovos);
                         houveAlteracao = true;
                     }
                 }
@@ -65,7 +112,7 @@ public class RealizarEstimativaProjetoCommand implements Command {
         detalheProjetoPresenter.setProjeto(projeto);
         projetoService.atualizar(projeto);
 
-        new CarregarDetalhesProjetoCommand(view, projeto, true).execute(); // Recarrega os dados
+        //new CarregarDetalhesProjetoCommand(view, projeto, true).execute(); // Recarrega os dados
 
     }
 
