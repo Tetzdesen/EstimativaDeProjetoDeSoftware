@@ -5,7 +5,6 @@ import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.view.projeto.CadastroProjetoView;
 import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
 import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**

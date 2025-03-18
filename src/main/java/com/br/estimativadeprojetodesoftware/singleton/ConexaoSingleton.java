@@ -2,13 +2,11 @@ package com.br.estimativadeprojetodesoftware.singleton;
 
 import com.br.estimativadeprojetodesoftware.service.DotenvService;
 import com.br.estimativadeprojetodesoftware.strategy.DatabaseInitializer;
-import com.br.estimativadeprojetodesoftware.strategy.H2Initializer;
 import com.br.estimativadeprojetodesoftware.strategy.SQLiteInitializer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
-import org.h2.tools.Server;
 
 public class ConexaoSingleton {
 
@@ -22,8 +20,7 @@ public class ConexaoSingleton {
     private String tipo;
 
     private final Map<String, DatabaseInitializer> inicializadores = Map.of(
-            "SQLite", new SQLiteInitializer(),
-            "H2", new H2Initializer() // trocar para h2 depois
+            "SQLite", new SQLiteInitializer()
     );
 
     private ConexaoSingleton() {
@@ -49,7 +46,6 @@ public class ConexaoSingleton {
                 stmt.execute("PRAGMA foreign_keys = ON;");
             }
          
-
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao conectar com o banco de dados: " + e.getMessage());
         }
