@@ -37,3 +37,6 @@ target/
 
 # Folder db
 db
+
+# logs
+logs
