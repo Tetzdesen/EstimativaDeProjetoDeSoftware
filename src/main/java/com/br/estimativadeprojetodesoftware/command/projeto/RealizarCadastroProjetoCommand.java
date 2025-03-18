@@ -62,7 +62,9 @@ public class RealizarCadastroProjetoCommand implements Command {
             presenter.exibirMensagem("Projeto criado com sucesso!");
             presenter.getView().dispose();
         } else {
-            throw new RuntimeException("Erro ao criar o projeto!");
+            registro = new RegistroOperacao("Criação de Projeto", UsuarioLogadoSingleton.getInstancia().getUsuario().getNome(), "Erro ao criar o projeto : Projeto nulo");
+            LogService.getInstancia().escreverMensagem(registro.formatarLog());
+            throw new RuntimeException("Erro ao criar o projeto : Projeto nulo");
         }
     }
 

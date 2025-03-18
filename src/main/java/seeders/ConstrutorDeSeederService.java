@@ -10,7 +10,7 @@ public class ConstrutorDeSeederService {
     public ConstrutorDeSeederService() {
         this.seeders = List.of(
                 new AdminSeeder(),
-                new PerfilSeeder(),
+//                new PerfilSeeder(),
                 new ProjetoSeeder(),
                 new CampoSeeder()
         );

@@ -96,20 +96,20 @@ public class CampoSeeder implements ITipoSeeder {
                         '298e8fde-f57b-459f-adf6-df175c69d5ba', 'campo fixo', 'Percentual de Lucro desejado (%)'                         
                     );
                 """;
-        try (PreparedStatement stmt = connection.prepareStatement(sqlCampo)) {
+      //  try (PreparedStatement stmt = connection.prepareStatement(sqlCampo)) {
             // Inserção dos campos
            
 
-            for (String[] campo : campos) {
-                stmt.setString(1, UUID.randomUUID().toString());
-                stmt.setString(2, campo[0]);
-                stmt.setString(3, campo[1]);
-                stmt.execute();
-            }
+//            for (String[] campo : campos) {
+            //    stmt.setString(1, UUID.randomUUID().toString());
+             //   stmt.setString(2, campo[0]);
+             //   stmt.setString(3, campo[1]);
+            //    stmt.execute();
+         //   }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+       // } catch (SQLException e) {
+          //  e.printStackTrace();
+       // }
 
     }
 }
