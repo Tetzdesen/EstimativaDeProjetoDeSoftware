@@ -12,6 +12,7 @@ import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class EstimaProjetoService {
@@ -26,20 +27,106 @@ public class EstimaProjetoService {
         this.estimativas = new ArrayList<>();
     }
 
-    public List<EstimativaFuncionalidade> calcularEstimativas(UUID idProjeto, List<PerfilProjeto> perfis, List<Campo> campos) {
+    // public List<EstimativaFuncionalidade> calcularEstimativas(UUID idProjeto, List<PerfilProjeto> perfis, List<Campo> campos) {
+    //     List<EstimativaFuncionalidade> estimativas = new ArrayList<>();
+    //     List<EstimativaHandler> handlers = configurarHandlers();
+
+    //     for (PerfilProjeto perfil : perfis) {
+    //         for (Campo campo : campos) {
+    //             for (EstimativaHandler handler : handlers) {
+    //                 handler.calcularEstimativa(idProjeto, perfil.getNome(), campo, estimativas);
+    //             }
+    //         }
+    //     }
+
+    //     return estimativas;
+    // }
+    public List<EstimativaFuncionalidade> calcularEstimativas(Projeto projeto) {
         List<EstimativaFuncionalidade> estimativas = new ArrayList<>();
         List<EstimativaHandler> handlers = configurarHandlers();
-
-        for (PerfilProjeto perfil : perfis) {
-            for (Campo campo : campos) {
+    
+        // Para cada perfil do projeto
+        for (PerfilProjeto perfil : projeto.getPerfis()) {
+            
+            // 1) Tamanhos do App
+            for (Map.Entry<String, Integer> entry : perfil.getTamanhosApp().entrySet()) {
+                Campo campo = new Campo("tamanho", entry.getKey(), entry.getValue());
+                // Aplica a chain
                 for (EstimativaHandler handler : handlers) {
-                    handler.calcularEstimativa(idProjeto, perfil.getNome(), campo, estimativas);
+                    handler.calcularEstimativa(projeto.getId(), perfil.getNome(), campo, estimativas);
+                }
+            }
+    
+            // 2) Níveis de UI
+            for (Map.Entry<String, Double> entry : perfil.getNiveisUI().entrySet()) {
+                Campo campo = new Campo("nivel", entry.getKey(), entry.getValue());
+                for (EstimativaHandler handler : handlers) {
+                    handler.calcularEstimativa(projeto.getId(), perfil.getNome(), campo, estimativas);
+                }
+            }
+    
+            // 3) Funcionalidades
+            for (Map.Entry<String, Integer> entry : perfil.getFuncionalidades().entrySet()) {
+                Campo campo = new Campo("funcionalidade", entry.getKey(), entry.getValue());
+                for (EstimativaHandler handler : handlers) {
+                    handler.calcularEstimativa(projeto.getId(), perfil.getNome(), campo, estimativas);
+                }
+            }
+    
+            // 4) Taxas diárias
+            for (Map.Entry<String, Double> entry : perfil.getTaxasDiarias().entrySet()) {
+                Campo campo = new Campo("taxa diária", entry.getKey(), entry.getValue());
+                for (EstimativaHandler handler : handlers) {
+                    handler.calcularEstimativa(projeto.getId(), perfil.getNome(), campo, estimativas);
                 }
             }
         }
-
+    
         return estimativas;
     }
+    
+
+    public List<EstimativaFuncionalidade> calcularEstimativasPorPerfil(UUID idProjeto, PerfilProjeto perfil) {
+        List<EstimativaFuncionalidade> estimativas = new ArrayList<>();
+        List<EstimativaHandler> handlers = configurarHandlers();
+    
+        // Converte somente os campos deste perfil
+        List<Campo> camposDoPerfil = converterCamposDoPerfil(perfil);
+    
+        // Aplica a chain de cálculo
+        for (Campo campo : camposDoPerfil) {
+            for (EstimativaHandler handler : handlers) {
+                handler.calcularEstimativa(idProjeto, perfil.getNome(), campo, estimativas);
+            }
+        }
+    
+        return estimativas;
+    }
+
+    private List<Campo> converterCamposDoPerfil(PerfilProjeto perfil) {
+        List<Campo> campos = new ArrayList<>();
+        
+        // Campos de tamanhosApp
+        for (Map.Entry<String, Integer> entry : perfil.getTamanhosApp().entrySet()) {
+            campos.add(new Campo("tamanho", entry.getKey(), entry.getValue()));
+        }
+        // Campos de niveisUI
+        for (Map.Entry<String, Double> entry : perfil.getNiveisUI().entrySet()) {
+            campos.add(new Campo("nivel", entry.getKey(), entry.getValue()));
+        }
+        // Funcionalidades
+        for (Map.Entry<String, Integer> entry : perfil.getFuncionalidades().entrySet()) {
+            campos.add(new Campo("funcionalidade", entry.getKey(), entry.getValue()));
+        }
+        // Taxas diárias
+        for (Map.Entry<String, Double> entry : perfil.getTaxasDiarias().entrySet()) {
+            campos.add(new Campo("taxa diária", entry.getKey(), entry.getValue()));
+        }
+        
+        return campos;
+    }
+
+    
 
     private List<EstimativaHandler> configurarHandlers() {
         List<EstimativaHandler> handlers = new ArrayList<>();

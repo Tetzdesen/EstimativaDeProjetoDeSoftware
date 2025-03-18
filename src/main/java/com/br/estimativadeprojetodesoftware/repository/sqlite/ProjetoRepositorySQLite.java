@@ -116,26 +116,81 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
 
     private void salvarPerfilProjeto(Projeto projeto, PerfilProjeto perfil) {
         String sql = "INSERT INTO projeto_has_perfil (projeto_idProjeto, perfil_idPerfil, campo_idCampo, dias) VALUES (?, ?, ?, ?)";
-
-        // perfil.getTamanhosApp().keySet()
-        PerfilProjetoService perfilService = new PerfilProjetoService();
-        Map<String, Double> camposPerfil = perfilService.buscarTodosCamposPorPerfil(perfil);
-
+        
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-
-            for (Map.Entry<String, Double> entry : camposPerfil.entrySet()) {
-                stmt.setString(1, projeto.getId().toString());
-                stmt.setString(2, perfil.getId().toString());
-                stmt.setString(3, entry.getKey());
-                stmt.setDouble(4, entry.getValue());
-                stmt.execute();
+            
+            // Salva as funcionalidades (map: String, Integer)
+            for (Map.Entry<String, Integer> entry : perfil.getFuncionalidades().entrySet()) {
+                String campoId = buscarCampoId("funcionalidade", entry.getKey());
+                if (campoId != null) {
+                    stmt.setString(1, projeto.getId().toString());
+                    stmt.setString(2, perfil.getId().toString());
+                    stmt.setString(3, campoId);
+                    stmt.setDouble(4, entry.getValue());
+                    stmt.executeUpdate();
+                }
             }
-            ;
-
+            
+            // Salva os tamanhos do app (map: String, Integer)
+            for (Map.Entry<String, Integer> entry : perfil.getTamanhosApp().entrySet()) {
+                String campoId = buscarCampoId("tamanho", entry.getKey());
+                if (campoId != null) {
+                    stmt.setString(1, projeto.getId().toString());
+                    stmt.setString(2, perfil.getId().toString());
+                    stmt.setString(3, campoId);
+                    stmt.setDouble(4, entry.getValue());
+                    stmt.executeUpdate();
+                }
+            }
+            
+            // Salva os níveis de UI (map: String, Double)
+            for (Map.Entry<String, Double> entry : perfil.getNiveisUI().entrySet()) {
+                String campoId = buscarCampoId("nivel", entry.getKey());
+                if (campoId != null) {
+                    stmt.setString(1, projeto.getId().toString());
+                    stmt.setString(2, perfil.getId().toString());
+                    stmt.setString(3, campoId);
+                    stmt.setDouble(4, entry.getValue());
+                    stmt.executeUpdate();
+                }
+            }
+            
+            // Salva as taxas diárias (map: String, Double)
+            for (Map.Entry<String, Double> entry : perfil.getTaxasDiarias().entrySet()) {
+                String campoId = buscarCampoId("taxa diária", entry.getKey());
+                if (campoId != null) {
+                    stmt.setString(1, projeto.getId().toString());
+                    stmt.setString(2, perfil.getId().toString());
+                    stmt.setString(3, campoId);
+                    stmt.setDouble(4, entry.getValue());
+                    stmt.executeUpdate();
+                }
+            }
+            
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao salvar perfil-projeto " + e.getMessage());
+            throw new RuntimeException("Erro ao salvar perfil-projeto: " + e.getMessage(), e);
         }
     }
+    
+    /**
+     * Busca o id do Campo na tabela "campo" com base no tipo e no nome.
+     * Retorna null caso não encontre.
+     */
+    private String buscarCampoId(String tipoCampo, String nomeCampo) {
+        String sql = "SELECT idCampo FROM campo WHERE LOWER(tipoCampo) = ? AND LOWER(nomeCampo) = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, tipoCampo.toLowerCase());
+            stmt.setString(2, nomeCampo.toLowerCase());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("idCampo");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar campo com tipo '" + tipoCampo + "' e nome '" + nomeCampo + "'", e);
+        }
+        return null;
+    }
+    
 
     @Override
     public void atualizar(Projeto projeto) {

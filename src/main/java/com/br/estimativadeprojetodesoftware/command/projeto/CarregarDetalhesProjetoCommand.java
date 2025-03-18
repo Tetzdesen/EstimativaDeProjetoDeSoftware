@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
 import com.br.estimativadeprojetodesoftware.chain.calculoestimativa.EstimativaFuncionalidade;
+import com.br.estimativadeprojetodesoftware.model.Campo;
 import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.service.EstimaProjetoService;
@@ -49,7 +50,7 @@ public class CarregarDetalhesProjetoCommand implements Command {
 
     private void carregarDetalhes() {
         
-        estimativas = estimaService.calcularEstimativas(projeto.getId(), projeto.getPerfis(), projeto.getCampos());
+        estimativas = estimaService.calcularEstimativas(projeto);
 
         estimativas.sort(Comparator.comparing(estimativa -> ORDEM_ESTIMATIVAS.getOrDefault(estimativa.getTipoCampo(), Integer.MAX_VALUE)));
 
@@ -62,8 +63,8 @@ public class CarregarDetalhesProjetoCommand implements Command {
     }
 
     private Object[][] prepararTabela(Projeto projeto, List<EstimativaFuncionalidade> estimativas) {
+        // 1) Definições para ordem e nomes
         List<String> ordemCategorias = List.of("tamanho", "nivel", "funcionalidade", "taxa diária", "campo fixo");
-
         Map<String, String> mapeamentoNomes = Map.of(
                 "tamanho", "Tamanho do Aplicativo",
                 "nivel", "Nível da UI",
@@ -71,59 +72,96 @@ public class CarregarDetalhesProjetoCommand implements Command {
                 "taxa diária", "Taxas Diárias",
                 "campo fixo", "Adicionais"
         );
-
-        Map<String, List<EstimativaFuncionalidade>> categorias = new LinkedHashMap<>();
-
-        for (EstimativaFuncionalidade estimativa : estimativas) {
-            categorias.computeIfAbsent(estimativa.getTipoCampo(), k -> new ArrayList<>()).add(estimativa);
+    
+        // 2) Agrupa as estimativas em um mapa aninhado
+        Map<String, Map<String, Map<String, EstimativaFuncionalidade>>> agrupado = new LinkedHashMap<>();
+        for (EstimativaFuncionalidade e : estimativas) {
+            agrupado
+                .computeIfAbsent(e.getTipoCampo(), k -> new LinkedHashMap<>())
+                .computeIfAbsent(e.getNomeFuncionalidade(), k -> new LinkedHashMap<>())
+                .put(e.getPerfilNome(), e);
         }
-
-        List<Object[]> linhasTabela = new ArrayList<>();
+    
+        // 3) Monta as linhas da tabela
         List<String> perfis = extrairPerfis(projeto);
-
+        List<Object[]> linhasTabela = new ArrayList<>();
+    
         for (String categoria : ordemCategorias) {
-            if (categorias.containsKey(categoria)) {
-                String nomeCategoria = mapeamentoNomes.getOrDefault(categoria, categoria.toUpperCase());
-                Object[] linhaCategoria = new Object[perfis.size() + 3];
-                linhaCategoria[0] = nomeCategoria;
-                Arrays.fill(linhaCategoria, 1, linhaCategoria.length, "");
-                linhasTabela.add(linhaCategoria);
-
-                Set<String> funcionalidadesAdicionadas = new HashSet<>();
-
-                for (EstimativaFuncionalidade estimativa : categorias.get(categoria)) {
-                    String funcionalidade = estimativa.getNomeFuncionalidade();
-
-                    if (funcionalidadesAdicionadas.contains(funcionalidade)) {
-                        continue;
-                    }
-                    funcionalidadesAdicionadas.add(funcionalidade);
-
-                    Object[] linha = new Object[perfis.size() + 3];
-                    linha[0] = funcionalidade;
-                    int totalDias = 0;
-                    double valorPorDia = estimativa.getValorPorDia();
-
-                    for (int i = 0; i < perfis.size(); i++) {
-                        int dias = estimativa.getQuantidadeDias();
+            if (!agrupado.containsKey(categoria)) {
+                continue;
+            }
+            
+            // Linha de "cabeçalho" da categoria
+            String nomeCategoria = mapeamentoNomes.getOrDefault(categoria, categoria.toUpperCase());
+            Object[] linhaCategoria = new Object[perfis.size() + 3];
+            linhaCategoria[0] = nomeCategoria;
+            Arrays.fill(linhaCategoria, 1, linhaCategoria.length, "");
+            linhasTabela.add(linhaCategoria);
+    
+            // Pega o mapa de (nomeFuncionalidade -> (perfil -> EstimativaFuncionalidade))
+            Map<String, Map<String, EstimativaFuncionalidade>> mapaPorFunc = agrupado.get(categoria);
+    
+            // Para cada funcionalidade dentro dessa categoria
+            for (String nomeFunc : mapaPorFunc.keySet()) {
+                Object[] linha = new Object[perfis.size() + 3];
+                linha[0] = nomeFunc;
+    
+                int totalDias = 0;
+                double valorPorDia = 0.0;
+    
+                // Para cada perfil, tenta achar a estimativa correspondente
+                for (int i = 0; i < perfis.size(); i++) {
+                    String perfilNome = perfis.get(i);
+                    EstimativaFuncionalidade est = mapaPorFunc.get(nomeFunc).get(perfilNome);
+    
+                    if (est != null) {
+                        int dias = est.getQuantidadeDias();
                         linha[i + 1] = dias;
                         totalDias += dias;
+                        valorPorDia = est.getValorPorDia();
+                    } else {
+                        linha[i + 1] = 0; // ou ""
                     }
-
-                    if (estimativa.getTipoCampo().equalsIgnoreCase("nivel")) {
-                        totalDias = (int) estimaService.calcularTotalNivelUI(estimativas); 
-                    }
-
-                    linha[perfis.size() + 1] = totalDias;
-                    linha[perfis.size() + 2] = "R$ " + String.format("%.2f", totalDias * valorPorDia);
-
-                    linhasTabela.add(linha);
                 }
+    
+                // Se for "nivel", faça seu ajuste de totalDias se necessário
+                // (por exemplo, totalDias = (int) estimaService.calcularTotalNivelUI(estimativas))
+                if (categoria.equalsIgnoreCase("nivel")) {
+                    totalDias = (int) estimaService.calcularTotalNivelUI(estimativas);
+                }
+    
+                linha[perfis.size() + 1] = totalDias;
+                linha[perfis.size() + 2] = "R$ " + String.format("%.2f", totalDias * valorPorDia);
+    
+                linhasTabela.add(linha);
             }
         }
-
+    
+        // 4) Retorna em formato de array bidimensional
         return linhasTabela.toArray(new Object[0][]);
     }
+    
+
+    // private List<Campo> conversorParaCampos() {
+    //     List<Campo> campos = new ArrayList<>();
+
+    //     projeto.getPerfis().forEach(perfil -> {
+    //         for (Map.Entry<String, Integer> entry : perfil.getTamanhosApp().entrySet()) {
+    //             campos.add(new Campo("tamanho", entry.getKey(), entry.getValue()));
+    //         }
+    //         for (Map.Entry<String, Double> entry : perfil.getNiveisUI().entrySet()) {
+    //             campos.add(new Campo("nivel", entry.getKey(), entry.getValue()));
+    //         }
+    //         for (Map.Entry<String, Integer> entry : perfil.getFuncionalidades().entrySet()) {
+    //             campos.add(new Campo("funcionalidade", entry.getKey(), entry.getValue()));
+    //         }
+    //         for (Map.Entry<String, Double> entry : perfil.getTaxasDiarias().entrySet()) {
+    //             campos.add(new Campo("taxa diária", entry.getKey(), entry.getValue()));
+    //         }
+    //     });
+
+    //     return campos;
+    // }
 
     private List<String> extrairPerfis(Projeto projeto) {
         List<String> perfis = new ArrayList<>();
