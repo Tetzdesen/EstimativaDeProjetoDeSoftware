@@ -10,6 +10,7 @@ import com.br.estimativadeprojetodesoftware.state.perfil.VisualizacaoPerfilState
 import com.br.estimativadeprojetodesoftware.command.Command;
 
 public class SalvarPerfilProjetoCommand implements Command {
+
     private final ManterPerfilPresenter presenter;
     private final PerfilProjetoService repository;
 
@@ -20,6 +21,22 @@ public class SalvarPerfilProjetoCommand implements Command {
 
     @Override
     public void execute() {
+        if (presenter.getView().getTxtNome().getText().trim().isEmpty()) {
+            throw new IllegalArgumentException("O campo 'Nome' é obrigatório!");
+        }
+
+        if (presenter.getView().getTxtMvp().getText().trim().isEmpty()
+                || presenter.getView().getTxtBasico().getText().trim().isEmpty()
+                || presenter.getView().getTxtProfissional().getText().trim().isEmpty()) {
+            throw new IllegalArgumentException("Preencha todos os campos de nível UI!");      
+        }
+
+        if (presenter.getView().getTxtDesignerUI().getText().trim().isEmpty()
+                || presenter.getView().getTxtGerenciaProjeto().getText().trim().isEmpty()
+                || presenter.getView().getTxtDesenvolvimento().getText().trim().isEmpty()) {
+            throw new IllegalArgumentException("Preencha todos os campos de taxa diária!");
+        }
+
         String nome = presenter.getView().getTxtNome().getText();
         boolean isBackEnd = presenter.getView().getTglBackEnd().isSelected();
         DefaultTableModel tabela = presenter.getView().getModeloTabela();
@@ -28,9 +45,17 @@ public class SalvarPerfilProjetoCommand implements Command {
         int medio = (int) presenter.getView().getJspMedio().getValue();
         int grande = (int) presenter.getView().getJspGrande().getValue();
 
+        if (!(pequeno < medio && medio < grande && grande > pequeno && grande > medio)) {
+            throw new IllegalArgumentException("Os valores devem seguir a ordem: Pequeno < Médio < Grande, e Grande deve ser o maior.");
+        }
+
         double mvp = Double.parseDouble(presenter.getView().getTxtMvp().getText());
         double basico = Double.parseDouble(presenter.getView().getTxtBasico().getText());
         double profissional = Double.parseDouble(presenter.getView().getTxtProfissional().getText());
+
+        if (!(mvp < basico && basico < profissional && profissional > mvp && profissional > basico)) {
+            throw new IllegalArgumentException("Os valores devem seguir a ordem: MVP < Básico < Profissional, e Profissional deve ser o maior.");
+        }
 
         double designer = Double.parseDouble(presenter.getView().getTxtDesignerUI().getText());
         double gerencia = Double.parseDouble(presenter.getView().getTxtGerenciaProjeto().getText());
@@ -42,7 +67,7 @@ public class SalvarPerfilProjetoCommand implements Command {
 
         if (presenter.getPerfil() == null) {
             PerfilProjeto perfil = new PerfilProjeto(nome);
-        
+
             perfil.setPerfilBackEnd(isBackEnd);
 
             perfil.adicionarTamanhoApp("pequeno", pequeno);
@@ -57,12 +82,15 @@ public class SalvarPerfilProjetoCommand implements Command {
             perfil.adicionarTaxaDiaria("gerência de projeto", gerencia);
             perfil.adicionarTaxaDiaria("desenvolvimento", desenvolvimento);
 
-            for (int i=0; i<tabela.getRowCount(); i++) {
+            for (int i = 0; i < tabela.getRowCount(); i++) {
                 String funcionalidade = tabela.getValueAt(i, 0).toString();
                 int numeroDeDias = Integer.parseInt(tabela.getValueAt(i, 1).toString());
+                if (funcionalidade.isEmpty() && tabela.getValueAt(i, 1).toString().isEmpty()) {
+                    throw new RuntimeException("Campos de funcionalidades vazios");
+                }
                 perfil.adicionarFuncionalidade(funcionalidade, numeroDeDias);
             }
-            
+
             repository.salvar(perfil);
 
             presenter.getView().dispose();
@@ -86,9 +114,12 @@ public class SalvarPerfilProjetoCommand implements Command {
             perfil.adicionarTaxaDiaria("gerência de projeto", gerencia);
             perfil.adicionarTaxaDiaria("desenvolvimento", desenvolvimento);
 
-            for (int i=0; i<tabela.getRowCount(); i++) {
+            for (int i = 0; i < tabela.getRowCount(); i++) {
                 String funcionalidade = tabela.getValueAt(i, 0).toString();
                 int numeroDeDias = Integer.parseInt(tabela.getValueAt(i, 1).toString());
+                if (funcionalidade.isEmpty() && tabela.getValueAt(i, 1).toString().isEmpty()) {
+                    throw new RuntimeException("Campos de funcionalidades vazios");
+                }
                 perfil.adicionarFuncionalidade(funcionalidade, numeroDeDias);
             }
 
@@ -103,4 +134,3 @@ public class SalvarPerfilProjetoCommand implements Command {
 
     }
 }
-

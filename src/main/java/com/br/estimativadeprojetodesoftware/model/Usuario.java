@@ -82,8 +82,11 @@ public class Usuario {
         return Collections.unmodifiableList(perfis);
     }
 
-    public String setLog() {
-        return log;
+    public void setLog(String log) {
+        if(log.isEmpty()){
+            throw new IllegalArgumentException("Erro: Opção de log vazia");
+        }
+        this.log = log;
     }
 
     public void adicionarProjeto(Projeto projeto) {

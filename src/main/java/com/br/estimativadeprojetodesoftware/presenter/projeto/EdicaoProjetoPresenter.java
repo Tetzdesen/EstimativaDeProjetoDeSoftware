@@ -50,7 +50,7 @@ public class EdicaoProjetoPresenter {
         view.setModal(true);
         view.setResizable(false);
         view.setLocationRelativeTo(null);
-
+        view.getBtnRemoverPerfil().setEnabled(false);
         configuraActionsListerns();
         carregarListaPerfis();
         carregarDadosProjeto();
@@ -134,6 +134,13 @@ public class EdicaoProjetoPresenter {
                 removerPerfil();
             } catch (Exception ex) {
                 exibirMensagem(ex.getMessage());
+            }
+        });
+
+        view.getJListPerfis().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                boolean itemSelecionado = view.getJListPerfis().getSelectedIndex() != -1;
+                view.getBtnRemoverPerfil().setEnabled(itemSelecionado);
             }
         });
 

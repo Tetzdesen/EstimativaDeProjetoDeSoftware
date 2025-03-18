@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.swing.ListModel;
 import com.br.estimativadeprojetodesoftware.command.Command;
+import com.br.estimativadeprojetodesoftware.model.RegistroOperacao;
+import com.br.estimativadeprojetodesoftware.service.LogService;
 
 /**
  *
@@ -29,6 +31,9 @@ public class RealizarEdicaoProjetoCommand implements Command {
 
     @Override
     public void execute() {
+
+        RegistroOperacao registro;
+
         String nomeProjeto = presenter.getView().getTxtNome().getText().trim();
 
         String tamanho = (String) presenter.getView().getCbmTamanhoApp().getSelectedItem();
@@ -36,10 +41,14 @@ public class RealizarEdicaoProjetoCommand implements Command {
         String nivel = (String) presenter.getView().getCbmNivelUI().getSelectedItem();
 
         if (nomeProjeto.isEmpty()) {
+            registro = new RegistroOperacao("Edição de Projeto", UsuarioLogadoSingleton.getInstancia().getUsuario().getNome(), "Nome é um campo obrigatório!");
+            LogService.getInstancia().escreverMensagem(registro.formatarLog());
             throw new IllegalArgumentException("Nome é um campo obrigatório!");
         }
 
         if (presenter.getView().getJListPerfis().getModel().getSize() == 0) {
+               registro = new RegistroOperacao("Edição de Projeto", UsuarioLogadoSingleton.getInstancia().getUsuario().getNome(), "Adicione no mínimo um perfil obrigatório!");
+            LogService.getInstancia().escreverMensagem(registro.formatarLog());
             throw new IllegalArgumentException("Adicione no mínimo um perfil obrigatório!");
         }
 

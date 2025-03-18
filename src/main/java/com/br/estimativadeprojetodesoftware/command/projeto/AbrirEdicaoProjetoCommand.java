@@ -5,11 +5,13 @@ import com.br.estimativadeprojetodesoftware.presenter.projeto.EdicaoProjetoPrese
 import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.view.projeto.EdicaoProjetoView;
 import com.br.estimativadeprojetodesoftware.command.Command;
+
 /**
  *
  * @author tetzner
  */
 public class AbrirEdicaoProjetoCommand implements Command {
+
     private final ProjetoService projetoService;
     private String nomeProjeto;
 
@@ -24,7 +26,7 @@ public class AbrirEdicaoProjetoCommand implements Command {
 
     @Override
     public void execute() {
-        
+
         String tituloJanela = "Edição de Projeto";
         WindowManager windowManager = WindowManager.getInstance();
 
@@ -35,7 +37,9 @@ public class AbrirEdicaoProjetoCommand implements Command {
             EdicaoProjetoView edicaoProjetoview = new EdicaoProjetoView();
 
             new EdicaoProjetoPresenter(projetoService, edicaoProjetoview, nomeProjeto);
-
+            
+            windowManager.registrarDialog(tituloJanela, edicaoProjetoview);
+            
             edicaoProjetoview.setTitle(tituloJanela);
             edicaoProjetoview.setSize(800, 400);
             edicaoProjetoview.setVisible(true);

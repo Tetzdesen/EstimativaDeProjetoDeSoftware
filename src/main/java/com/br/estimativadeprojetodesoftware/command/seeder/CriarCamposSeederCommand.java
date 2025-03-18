@@ -94,8 +94,8 @@ public class CriarCamposSeederCommand implements Command {
                 {"campo fixo", "Custo com garantia"},
                 {"campo fixo", "Fundo de reserva"},
                 {"campo fixo", "Outros custos"},
-                {"campo fixo", "Impostos (R$)"},
-                {"campo fixo", "Lucro desejado (R$)"}
+                {"campo fixo", "Percentual com impostos (%)"},
+                {"campo fixo", "Percentual de Lucro desejado (%)"}
             };
 
             for (String[] campo : campos) {
@@ -106,7 +106,7 @@ public class CriarCamposSeederCommand implements Command {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Erro ao inserir os campos");
         }
     }
 }

@@ -13,6 +13,7 @@ import com.br.estimativadeprojetodesoftware.state.perfil.VisualizacaoPerfilState
 import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
 
 public final class ManterPerfilPresenter {
+
     private final ManterPerfilView view;
     private final PerfilProjetoService repository;
     private ManterPerfilPresenterState estado;
@@ -57,7 +58,11 @@ public final class ManterPerfilPresenter {
     }
 
     public void AdicionarNovaFuncionalidade() {
-        new AdicionarNovaFuncionalidadePerfilCommand(this).execute();
+        try {
+            new AdicionarNovaFuncionalidadePerfilCommand(this).execute();
+        } catch(Exception e){
+            throw new RuntimeException("Erro ao adicionar campo : Campo vazio!");
+        }
     }
 
     public void removerCampo() {
@@ -71,7 +76,7 @@ public final class ManterPerfilPresenter {
                 .map(entry -> {
                     String nomeFuncionalidade = entry.getKey();
                     int valor = entry.getValue();
-                    return new Object[]{ nomeFuncionalidade, valor };
+                    return new Object[]{nomeFuncionalidade, valor};
                 })
                 .toArray(Object[][]::new);
 

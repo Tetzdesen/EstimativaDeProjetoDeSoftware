@@ -20,7 +20,7 @@ public abstract class ExportadorProjeto {
 
         String filePath = carregarCaminhoArquivo();
         if (filePath == null) {
-            return;
+            throw new IllegalArgumentException("Arquivo nulo");
         }
 
         try {
@@ -31,6 +31,7 @@ public abstract class ExportadorProjeto {
             }
         } catch (Exception e) {
             throw new RuntimeException("Erro ao exportar projeto: " + e.getMessage(), e);
+            
         }
     }
 
