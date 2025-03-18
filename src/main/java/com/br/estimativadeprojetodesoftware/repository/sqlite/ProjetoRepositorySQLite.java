@@ -13,6 +13,7 @@ import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,7 +40,8 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
             stmt.executeUpdate();
 
             for (PerfilProjeto perfil : projeto.getPerfis()) {
-                if (!existeAssociacaoProjetoPerfil(projeto.getId(), perfil.getId())) {  // Verifica se já existe a associação
+                if (!existeAssociacaoProjetoPerfil(projeto.getId(), perfil.getId())) { // Verifica se já existe a
+                                                                                       // associação
                     salvarPerfilProjeto(projeto, perfil);
                 }
             }
@@ -89,15 +91,15 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
 
     public Optional<String> buscarCriadorProjeto(String nomeProjeto) {
         String sql = """
-            SELECT usuario.nomeUsuario FROM usuario 
-                INNER JOIN usuario_has_projeto 
-                    ON usuario_has_projeto.usuario_idUsuario = usuario.idUsuario
-                INNER JOIN projeto
-                    ON projeto.idProjeto = usuario_has_projeto.projeto_idProjeto
-                WHERE usuario_has_projeto.isCompartilhado = 0 
-                    AND projeto.nomeProjeto = ?
-        
-        """;
+                    SELECT usuario.nomeUsuario FROM usuario
+                        INNER JOIN usuario_has_projeto
+                            ON usuario_has_projeto.usuario_idUsuario = usuario.idUsuario
+                        INNER JOIN projeto
+                            ON projeto.idProjeto = usuario_has_projeto.projeto_idProjeto
+                        WHERE usuario_has_projeto.isCompartilhado = 0
+                            AND projeto.nomeProjeto = ?
+
+                """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, nomeProjeto);
@@ -113,15 +115,25 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
     }
 
     private void salvarPerfilProjeto(Projeto projeto, PerfilProjeto perfil) {
-        String sql = "INSERT INTO projeto_has_perfil (projeto_idProjeto, perfil_idPerfil) VALUES (?, ?)";
+        String sql = "INSERT INTO projeto_has_perfil (projeto_idProjeto, perfil_idPerfil, campo_idCampo, dias) VALUES (?, ?, ?, ?)";
+
+        // perfil.getTamanhosApp().keySet()
+        PerfilProjetoService perfilService = new PerfilProjetoService();
+        Map<String, Double> camposPerfil = perfilService.buscarTodosCamposPorPerfil(perfil);
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, projeto.getId().toString());
-            stmt.setString(2, perfil.getId().toString());
-            stmt.executeUpdate();
+
+            for (Map.Entry<String, Double> entry : camposPerfil.entrySet()) {
+                stmt.setString(1, projeto.getId().toString());
+                stmt.setString(2, perfil.getId().toString());
+                stmt.setString(3, entry.getKey());
+                stmt.setDouble(4, entry.getValue());
+                stmt.execute();
+            }
+            ;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao salvar perfil-projeto", e);
+            throw new RuntimeException("Erro ao salvar perfil-projeto " + e.getMessage());
         }
     }
 
@@ -335,7 +347,8 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
 
     private Projeto mapProjetoFromResultSet(ResultSet rs) throws SQLException {
         UUID idProjeto = UUID.fromString(rs.getString("idProjeto"));
-        List<PerfilProjeto> perfis = new PerfilProjetoService().buscarPerfisPorProjeto(idProjeto);
+        //List<PerfilProjeto> perfis = new PerfilProjetoService().buscarPerfisPorProjeto(idProjeto);
+        List<PerfilProjeto> perfis = buscarPerfisComCampos(UUID.fromString(rs.getString("idProjeto")));
         List<Usuario> usuarios = new UsuarioService().buscarUsuariosPorProjeto(idProjeto);
         List<Campo> campos = campoService.listarTodosPorIdProjeto(idProjeto);
 
@@ -350,8 +363,80 @@ public class ProjetoRepositorySQLite implements IProjetoRepository {
                 buscarIsCompartilhadoPorId(idUsuario, idProjeto),
                 perfis,
                 usuarios,
-                campos
-        );
+                campos);
     }
+
+    private List<PerfilProjeto> buscarPerfisComCampos(UUID projetoId) {
+        List<PerfilProjeto> perfis = new ArrayList<>();
+        String sql = "SELECT DISTINCT perfil_idPerfil FROM projeto_has_perfil WHERE projeto_idProjeto = ?;";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, projetoId.toString());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String perfilIdStr = rs.getString("perfil_idPerfil");
+                UUID perfilId = UUID.fromString(perfilIdStr);
+                
+                Optional<PerfilProjeto> perfilOpt = new PerfilRepositorySQLite().buscarPorId(perfilId);
+                if (perfilOpt.isPresent()) {
+                    PerfilProjeto perfil = perfilOpt.get();
+                    // Carrega os campos associados ao perfil no contexto do projeto
+                    carregarCamposPerfil(projetoId, perfil);
+                    perfis.add(perfil);
+                } else {
+                    throw new RuntimeException("Perfil com id " + perfilIdStr + " não encontrado.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar perfis do projeto", e);
+        }
+        return perfis;
+    }
+    
+    private void carregarCamposPerfil(UUID projetoId, PerfilProjeto perfil) {
+        String sql = """
+                SELECT campo.tipoCampo, campo.nomeCampo, projeto_has_perfil.dias
+                FROM projeto_has_perfil
+                INNER JOIN campo
+                    ON campo.idCampo = projeto_has_perfil.campo_idCampo
+                WHERE projeto_has_perfil.projeto_idProjeto = ?
+                  AND projeto_has_perfil.perfil_idPerfil = ?
+                """;
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, projetoId.toString());
+            stmt.setString(2, perfil.getId().toString());
+            ResultSet rs = stmt.executeQuery();
+            
+            while (rs.next()) {
+                String tipoCampo = rs.getString("tipoCampo").toLowerCase();
+                String nomeCampo = rs.getString("nomeCampo");
+                double dias = rs.getDouble("dias");
+                
+                switch (tipoCampo) {
+                    case "funcionalidade":
+                        // Converte 'dias' para inteiro, pois o método espera int
+                        perfil.adicionarFuncionalidade(nomeCampo, (int) dias);
+                        break;
+                    case "tamanho":
+                        // Aqui se espera que nomeCampo seja um dos valores: "pequeno", "médio", "grande"
+                        perfil.adicionarTamanhoApp(nomeCampo, (int) dias);
+                        break;
+                    case "nivel":
+                        perfil.adicionarNivelUI(nomeCampo, dias);
+                        break;
+                    case "taxa diária":
+                        perfil.adicionarTaxaDiaria(nomeCampo, dias);
+                        break;
+                    default:
+                        // Caso o tipo não seja reconhecido, pode ser registrado ou tratado conforme a necessidade
+                        System.out.println("Tipo de campo desconhecido: " + tipoCampo);
+                        break;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao carregar campos do perfil", e);
+        }
+    }
+    
 
 }

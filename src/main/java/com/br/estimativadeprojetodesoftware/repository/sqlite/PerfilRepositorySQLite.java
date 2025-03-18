@@ -10,8 +10,10 @@ import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -172,18 +174,47 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
     public List<PerfilProjeto> buscarPerfisPorProjeto(UUID projetoId
     ) {
         List<PerfilProjeto> perfis = new ArrayList<>();
-        String sql = "SELECT perfil_idPerfil FROM projeto_has_perfil WHERE projeto_idProjeto = ?";
+        String sql = "SELECT DISTINCT perfil_idPerfil FROM projeto_has_perfil WHERE projeto_idProjeto = ?;";
+                 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, projetoId.toString());
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                perfis.add(buscarPorId(UUID.fromString(rs.getString("perfil_idPerfil"))).get());
+                Optional<PerfilProjeto> perfilOpt = buscarPorId(UUID.fromString(rs.getString("perfil_idPerfil")));
+                if (perfilOpt.isPresent()) {
+                    perfis.add(perfilOpt.get());
+                } else {
+                    throw new RuntimeException("Perfil com id " + rs.getString("perfil_idPerfil") + " não encontrado.");
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao buscar perfis do projeto", e);
         }
         return perfis;
     }
+
+    @Override
+    public Map<String, Double> buscarTodosCamposPorPerfil(PerfilProjeto perfil) {
+        Map<String, Double> campos = new HashMap<>();
+        String sql = """
+                SELECT idCampo, perfil_has_campo.diasPerfil FROM campo
+                    INNER JOIN perfil_has_campo
+                        ON perfil_has_campo.campo_idCampo = campo.idCampo
+                    WHERE perfil_has_campo.perfil_idPerfil = ?
+                """;
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, perfil.getId().toString());
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                campos.put(resultSet.getString("idCampo"), resultSet.getDouble("diasPerfil"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar todos os campos por perfil: " + e.getMessage());
+        }
+
+        return campos;
+    } 
 
     @Override
     public List<PerfilProjeto> buscarTodos() {

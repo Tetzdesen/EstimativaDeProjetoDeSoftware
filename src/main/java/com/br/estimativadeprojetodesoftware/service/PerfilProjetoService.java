@@ -9,6 +9,7 @@ import com.br.estimativadeprojetodesoftware.repository.IPerfilRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -58,6 +59,10 @@ public class PerfilProjetoService implements Subject {
     public List<PerfilProjeto> buscarTodosPerfisPorIdUsuario(UUID id
     ) {
         return perfilRepository.buscarTodosPerfisPorIdUsuario(id);
+    }
+
+    public Map<String, Double> buscarTodosCamposPorPerfil(PerfilProjeto perfil) {
+        return perfilRepository.buscarTodosCamposPorPerfil(perfil);
     }
     
     public int obterQuantidadePerfisPorUsuario(UUID idUsuario) {
