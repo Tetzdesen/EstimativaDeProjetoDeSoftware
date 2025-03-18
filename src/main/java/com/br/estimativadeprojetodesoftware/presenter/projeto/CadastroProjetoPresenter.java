@@ -38,6 +38,7 @@ public class CadastroProjetoPresenter {
     private void configuraView() {
         view.setModal(true);
         view.setResizable(false);
+        view.getBtnRemoverPerfil().setEnabled(false);
         configuraActionsListerns();
         carregarListaPerfis();
     }
@@ -72,6 +73,13 @@ public class CadastroProjetoPresenter {
                 removerPerfil();
             } catch (Exception ex) {
                 exibirMensagem(ex.getMessage());
+            }
+        });
+
+        view.getJListPerfis().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) { 
+                boolean itemSelecionado = view.getJListPerfis().getSelectedIndex() != -1;
+                view.getBtnRemoverPerfil().setEnabled(itemSelecionado);
             }
         });
 
@@ -162,7 +170,7 @@ public class CadastroProjetoPresenter {
             }
         }
 
-        return countBackend > 0; 
+        return countBackend > 0;
     }
 
     public CadastroProjetoView getView() {

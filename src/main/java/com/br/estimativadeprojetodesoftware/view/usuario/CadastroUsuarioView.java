@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.view.usuario;
 
+import com.br.estimativadeprojetodesoftware.service.IconService;
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.CompoundBorder;
@@ -112,12 +113,12 @@ public class CadastroUsuarioView extends javax.swing.JFrame {
         txtConfirmarSenha.setPreferredSize(new java.awt.Dimension(400, 30));
 
         btnExibirSenha.setBackground(new java.awt.Color(255, 255, 255));
-        btnExibirSenha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/olho-icon.png")));
+        btnExibirSenha.setIcon(IconService.getIcon("olho"));
         btnExibirSenha.setBorder(null);
         btnExibirSenha.setPreferredSize(new Dimension(30, 30));
 
         btnExibirConfirmarSenha.setBackground(new java.awt.Color(255, 255, 255));
-        btnExibirConfirmarSenha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/olho-icon.png")));
+        btnExibirConfirmarSenha.setIcon(IconService.getIcon("olho"));
         btnExibirConfirmarSenha.setBorder(null);
         btnExibirConfirmarSenha.setPreferredSize(new Dimension(30, 30));
 
@@ -185,7 +186,6 @@ public class CadastroUsuarioView extends javax.swing.JFrame {
         gbc.gridx = 2;
         painelFundo.add(btnExibirConfirmarSenha, gbc);
 
-        // Painel para os botões alinhados (Cadastrar e Cancelar)
         JPanel painelBotoes = new JPanel(new GridLayout(1, 2, 20, 0));
         painelBotoes.setBackground(new Color(255, 255, 255));
         painelBotoes.add(btnSalvar);

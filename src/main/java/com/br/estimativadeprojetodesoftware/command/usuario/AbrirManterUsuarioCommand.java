@@ -4,7 +4,6 @@ import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPr
 import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.WindowManager;
 import com.br.estimativadeprojetodesoftware.view.usuario.ManterUsuarioView;
-import javax.swing.JDesktopPane;
 import com.br.estimativadeprojetodesoftware.command.Command;
 
 /**

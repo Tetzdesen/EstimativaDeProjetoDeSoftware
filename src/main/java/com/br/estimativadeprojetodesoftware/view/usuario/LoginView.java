@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.view.usuario;
 
+import com.br.estimativadeprojetodesoftware.service.IconService;
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.CompoundBorder;
@@ -68,7 +69,7 @@ public class LoginView extends javax.swing.JFrame {
         txtSenha.setPreferredSize(new java.awt.Dimension(300, 30)); 
 
         btnExibirSenha.setBackground(new java.awt.Color(255, 255, 255));
-        btnExibirSenha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/olho-icon.png"))); 
+        btnExibirSenha.setIcon(IconService.getIcon("olho")); 
         btnExibirSenha.setBorder(null);
         btnExibirSenha.setPreferredSize(new Dimension(30, 30));
 

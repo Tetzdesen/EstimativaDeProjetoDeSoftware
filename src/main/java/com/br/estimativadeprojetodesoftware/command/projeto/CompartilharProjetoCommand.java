@@ -30,15 +30,23 @@ public class CompartilharProjetoCommand implements Command {
         Usuario usuarioCompartilhado = new UsuarioService().buscarPorEmail(email).get();
 
         Projeto projeto = new ProjetoService().buscarProjetoPorNome(nomeProjeto).get();
-        projeto.setCompartilhado(true);
-        projeto.adicionarUsuario(usuarioCompartilhado);
 
-        usuarioCompartilhado.adicionarProjeto(projeto);
+        try {
+            if (projeto.getStatus().equalsIgnoreCase("Estimado")) {
+                projeto.setCompartilhado(true);
+                projeto.adicionarUsuario(usuarioCompartilhado);
 
-        repository.salvar(projeto, usuarioCompartilhado);
+                usuarioCompartilhado.adicionarProjeto(projeto);
 
-        new MostrarMensagemProjetoCommand("Projeto compartilhado com sucesso.").execute();
-        RegistroOperacao registro = new RegistroOperacao("Compartilhamento de projeto", UsuarioLogadoSingleton.getInstancia().getUsuario().getNome());
-        LogService.getInstancia().escreverMensagem(registro.formatarLog());
+                repository.salvar(projeto, usuarioCompartilhado);
+
+                new MostrarMensagemProjetoCommand("Projeto compartilhado com sucesso.").execute();
+                RegistroOperacao registro = new RegistroOperacao("Compartilhamento de projeto", UsuarioLogadoSingleton.getInstancia().getUsuario().getNome());
+                LogService.getInstancia().escreverMensagem(registro.formatarLog());
+            }
+        } catch (Exception e){
+            throw new RuntimeException("Este Projeto já foi compartilhado com esse usuário!");
+        }
+
     }
 }
