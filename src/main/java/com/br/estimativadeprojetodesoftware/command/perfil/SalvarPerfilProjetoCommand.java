@@ -85,9 +85,6 @@ public class SalvarPerfilProjetoCommand implements Command {
             for (int i = 0; i < tabela.getRowCount(); i++) {
                 String funcionalidade = tabela.getValueAt(i, 0).toString();
                 int numeroDeDias = Integer.parseInt(tabela.getValueAt(i, 1).toString());
-                if (funcionalidade.isEmpty() && tabela.getValueAt(i, 1).toString().isEmpty()) {
-                    throw new RuntimeException("Campos de funcionalidades vazios");
-                }
                 perfil.adicionarFuncionalidade(funcionalidade, numeroDeDias);
             }
 
@@ -117,9 +114,6 @@ public class SalvarPerfilProjetoCommand implements Command {
             for (int i = 0; i < tabela.getRowCount(); i++) {
                 String funcionalidade = tabela.getValueAt(i, 0).toString();
                 int numeroDeDias = Integer.parseInt(tabela.getValueAt(i, 1).toString());
-                if (funcionalidade.isEmpty() && tabela.getValueAt(i, 1).toString().isEmpty()) {
-                    throw new RuntimeException("Campos de funcionalidades vazios");
-                }
                 perfil.adicionarFuncionalidade(funcionalidade, numeroDeDias);
             }
 

@@ -58,7 +58,7 @@ public class RealizarCadastroUsuarioCommand implements Command {
                         exibirMensagem("Cadastro realizado com sucesso!");
                     }
                 } catch (Exception ex) {
-                    throw new RuntimeException("Erro na validação de senha: " + ex.getMessage());
+                    throw new RuntimeException("Erro na validação de senha: \n" + ex.getMessage());
                 }
 
             } else {

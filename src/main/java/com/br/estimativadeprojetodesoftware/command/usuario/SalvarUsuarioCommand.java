@@ -31,7 +31,7 @@ public class SalvarUsuarioCommand implements Command {
         try {
             validadorService.validarSenha(senha);
         } catch (Exception ex) {
-            throw new RuntimeException("Erro ao validar a senha");
+            throw new RuntimeException("Erro ao validar a senha \n" + ex.getMessage());
         }
 
         Usuario usuario = usuarioPresenter.getUsuario();
