@@ -5,20 +5,20 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class PerfilSeeder implements ITipoSeeder {
+//public class PerfilSeeder implements ITipoSeeder {
 
-    @Override
-    public void seed(Connection connection) {
+   // @Override
+    //public void seed(Connection connection) {
         // insere perfis
-        String sqlCampo = """
+       /* String sqlCampo = """
                     INSERT INTO perfil(idPerfil, nomePerfil, perfilBackend, created_atPerfil, usuario_idUsuario) VALUES 
                         ('a061304a-9a66-4bb4-a6db-1d6b9582cdee', 'Android', 0, '2000-01-01 00:00:00', '0d1f767d-46d7-401b-922b-ff1a063ce661'),
                         ('a573af5b-b4cb-4677-bc19-2dd566d0b1e1', 'iOS', 0, '2000-01-01 00:00:00', '0d1f767d-46d7-401b-922b-ff1a063ce661'),
                         ('429845a9-92f8-421e-8836-d9f77e8a33cc', 'Web/Back End', 0, '2000-01-01 00:00:00', '0d1f767d-46d7-401b-922b-ff1a063ce661'),
                         
                     ;
-                """;
-
+                """;*/
+        /*
         String sqlPerfilCampo = """ 
             INSERT INTO perfil_has_campo(perfil_idPerfil, campo_idCampo, diasPerfil) VALUES 
                         ('a061304a-9a66-4bb4-a6db-1d6b9582cdee', 'b4a901a7-074b-4ad1-bf0a-7c076849f2db', 10),
@@ -247,8 +247,8 @@ public class PerfilSeeder implements ITipoSeeder {
                         ('429845a9-92f8-421e-8836-d9f77e8a33cc', '93606340-6b27-48f8-8109-07d657421834', '450') ,
                     ;
                 """;
-
-        try (PreparedStatement stmt = connection.prepareStatement(sqlCampo)) {
+*/
+      //  try (PreparedStatement stmt = connection.prepareStatement(sqlCampo)) {
             // Inserção dos campos
             /*
             @Override
@@ -343,20 +343,20 @@ public class PerfilSeeder implements ITipoSeeder {
              */
 //        };
 
-        for (String[] campo : campos) {
-            stmt.setString(1, UUID.randomUUID().toString());
-            stmt.setString(2, campo[0]);
-            stmt.setString(3, campo[1]);
-            stmt.execute();
-        }
+//        for (String[] campo : campos) {
+        //    stmt.setString(1, UUID.randomUUID().toString());
+         //   stmt.setString(2, campo[0]);
+         //   stmt.setString(3, campo[1]);
+         //   stmt.execute();
+       // }
 
-    }
-    catch (SQLException e
+   // }
+   // catch (SQLException e
 
     
-        ) {
-            e.printStackTrace();
-    }
+      //  ) {
+           // e.printStackTrace();
+   // }
 
-}
-}
+//}
+//}
