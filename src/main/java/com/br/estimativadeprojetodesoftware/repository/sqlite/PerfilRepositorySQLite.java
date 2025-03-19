@@ -70,15 +70,27 @@ public class PerfilRepositorySQLite implements IPerfilRepository {
                 }
             }
              */
-            List<Campo> camposParaSalvar = new ArrayList<>();
-            for (Campo campo : campos) {
-                if (perfil.getFuncionalidades().containsKey(campo.getNome())
-                        && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
-                    campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
-                    camposParaSalvar.add(campo);
+            // List<Campo> camposParaSalvar = new ArrayList<>();
+            // for (Campo campo : campos) {
+            //     if (perfil.getFuncionalidades().containsKey(campo.getNome())
+            //             && campo.getTipo().equalsIgnoreCase("funcionalidade")) {
+            //         campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
+            //         camposParaSalvar.add(campo);
+            //     } else if (campo.getTipo().equalsIgnoreCase("funcionalidade")) {
+
+            //     }
+            // }
+
+            for (Entry<String, Integer> entry : perfil.getFuncionalidades().entrySet()) {
+                Campo campo = campoService.buscarPorNome(entry.getKey());
+                if (campo == null) {
+                    campo = new Campo("funcionalidade", entry.getKey(), entry.getValue().doubleValue());
+                    campoService.salvar(campo);
                 }
+
+                campo.setDias(perfil.getFuncionalidades().get(campo.getNome()).doubleValue());
+                campoService.salvarPerfilCampo(perfil, campo);
             }
-            campoService.salvarPerfilCampos(perfil, camposParaSalvar);
 
             campos = campoService.listarTodosPorTipo("taxa diária");
             for (Campo campo : campos) {

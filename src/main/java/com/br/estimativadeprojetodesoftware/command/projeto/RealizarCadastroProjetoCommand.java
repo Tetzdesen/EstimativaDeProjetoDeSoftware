@@ -1,6 +1,8 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -81,6 +83,24 @@ public class RealizarCadastroProjetoCommand implements Command {
 
             projeto.adicionarPerfil(presenter.getPerfilService().buscarPorId(presenter.getPerfisSelecionados().get(item).getId()).get());
         }
+
+
+        for (PerfilProjeto perfil : projeto.getPerfis()) {
+        // Criar uma cópia das chaves antes de iterar
+        List<String> tamanhosParaRemover = new ArrayList<>(perfil.getTamanhosApp().keySet());
+        for (String key : tamanhosParaRemover) {
+            if (!tamanho.equalsIgnoreCase(key)) {
+                perfil.removerTamanhoApp(key);
+            }
+        }
+
+        List<String> niveisParaRemover = new ArrayList<>(perfil.getNiveisUI().keySet());
+        for (String key : niveisParaRemover) {
+            if (!nivel.equalsIgnoreCase(key)) {
+                perfil.removerNivelUI(key);
+            }
+        }
+    }
 
         String tiposConcatenados = projeto.getPerfis().stream()
                 .map(PerfilProjeto::getNome)

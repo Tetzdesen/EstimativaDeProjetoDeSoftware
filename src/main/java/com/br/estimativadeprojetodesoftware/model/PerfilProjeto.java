@@ -216,6 +216,21 @@ public class PerfilProjeto implements PerfilProjetoPrototype {
         return campos;
     }
     
+    public void removerTamanhoApp(String tamanho) {
+        try {
+        tamanhosApp.remove(tamanho.toLowerCase());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao remover tamanho do app: " + e.getMessage());
+        }
+    }
+
+    public void removerNivelUI(String nivel) {
+        try {
+            niveisUI.remove(nivel);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao remover nível de UI: " + e.getMessage());
+        }
+    }
 
     public void removerFuncionalidades() {
         funcionalidades.clear();
