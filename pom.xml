@@ -75,8 +75,8 @@
             <version>1.0.0</version>
         </dependency>
         
-        <!-- Módulo de log (estimativa-log/). Em desenvolvimento usa a versão
-             instalada com "mvn install"; na entrega a mesma coordenada vem do JitPack. -->
+        <!-- Módulo de log, publicado em https://github.com/Tetzdesen/estimativa-log
+             e baixado pelo JitPack. -->
         <dependency>
             <groupId>com.github.Tetzdesen</groupId>
             <artifactId>estimativa-log</artifactId>

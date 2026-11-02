@@ -29,23 +29,13 @@ Você escolhe as plataformas (Web/Back-end, iOS, Android), marca as funcionalida
 
 Precisa de **JDK 17+** e **Maven**. Não precisa instalar banco nenhum: SQLite e H2 rodam embutidos.
 
-O log fica num projeto Maven separado, na pasta `estimativa-log/`. Enquanto ele não estiver publicado no JitPack, instale-o antes:
-
-```bash
-cd estimativa-log
-mvn install
-cd ..
-```
-
-Depois:
-
 ```bash
 cp .env.example .env
 mvn clean package
 java -jar target/estimativa.jar
 ```
 
-O `mvn clean package` roda os testes e gera o `target/estimativa.jar`, com tudo dentro. Rode o jar na mesma pasta do `.env`.
+O `mvn clean package` baixa as dependências (o módulo de log vem do JitPack), roda os testes e gera o `target/estimativa.jar`, com tudo dentro. Rode o jar na mesma pasta do `.env`.
 
 Na primeira vez o sistema cria o banco, o perfil padrão e um usuário de teste:
 
@@ -104,6 +94,8 @@ O pacote base é `com.br.estimativadeprojetodesoftware`. A interface é Swing co
 | `view`, `view/componentes` | telas Swing e componentes reutilizáveis |
 | `templatemethod`, `adapter` | exportação em PDF/CSV e adaptadores |
 | `observer` | atualização entre janelas abertas |
+
+O log é um projeto Maven à parte, publicado em [Tetzdesen/estimativa-log](https://github.com/Tetzdesen/estimativa-log) e incluído pelo JitPack. A pasta `estimativa-log/` deste repositório tem o mesmo código.
 
 Os padrões pedidos no trabalho estão lá: Repository, State com Command nos CRUDs, Observer entre janelas e Adapter no log e no validador de senhas. Também usamos Abstract Factory, Strategy, Template Method, Prototype e Singleton.
 
