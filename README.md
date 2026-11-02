@@ -27,7 +27,7 @@ Você escolhe as plataformas (Web/Back-end, iOS, Android), marca as funcionalida
 
 ## Como rodar
 
-Precisa de **JDK 17+** e **Maven**. Não precisa instalar banco nenhum: SQLite e H2 rodam embutidos.
+Precisa de **JDK 25+** e **Maven**. Não precisa instalar banco nenhum: SQLite e H2 rodam embutidos.
 
 ```bash
 cp .env.example .env
@@ -46,17 +46,17 @@ Na primeira vez o sistema cria o banco, o perfil padrão e um usuário de teste:
 
 ### No Windows
 
-1. Instale o Java 17. Pelo PowerShell:
+1. Instale o Java 25. Pelo PowerShell:
 
    ```powershell
-   winget install EclipseAdoptium.Temurin.17.JDK
+   winget install EclipseAdoptium.Temurin.25.JDK
    ```
 
    (ou baixe o instalador em [adoptium.net](https://adoptium.net)).
 
 2. Instale o Maven: baixe o zip em [maven.apache.org](https://maven.apache.org/download.cgi), extraia (por exemplo em `C:\maven`) e coloque `C:\maven\bin` no `Path` das variáveis de ambiente.
 
-3. Feche e abra o terminal e confira se `java -version` e `mvn -version` respondem. Se o `mvn` reclamar do `JAVA_HOME`, crie essa variável apontando para a pasta do JDK (algo como `C:\Program Files\Eclipse Adoptium\jdk-17...`).
+3. Feche e abra o terminal e confira se `java -version` e `mvn -version` respondem. Se o `mvn` reclamar do `JAVA_HOME`, crie essa variável apontando para a pasta do JDK (algo como `C:\Program Files\Eclipse Adoptium\jdk-25...`).
 
 4. No PowerShell:
 

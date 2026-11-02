@@ -4,7 +4,7 @@ context: |
   Sistema desktop de estimativa de custo e prazo de aplicativos (Web/Back-end, iOS, Android),
   baseado em perfis do EstimateMyApp (Tabela 1). Trabalho Final de Projeto de Sistemas de Software, UFES.
   Escreva todos os artefatos em português do Brasil, mantendo SHALL/MUST nos requisitos.
-  Stack: Java 17, Maven, Java Swing com MDI (JDesktopPane + JInternalFrame).
+  Stack: Java 25, Maven, Java Swing com MDI (JDesktopPane + JInternalFrame).
   Arquitetura: MVP Passive View; a view não contém lógica nem acesso a dados.
   Padrões obrigatórios: Repository, State integrado a Command nos CRUDs, Observer entre janelas,
   Adapter no log e no validador de senhas (github.com/claytonfraga/validadorsenha via JitPack).
