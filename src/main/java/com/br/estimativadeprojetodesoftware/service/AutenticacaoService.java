@@ -14,24 +14,42 @@ public class AutenticacaoService {
 
     private final MetodoAutenticacao metodoAutenticacao;
     private final UsuarioService usuarioRepository;
+    private final Map<String, String> hashesPorEmail;
 
     public AutenticacaoService() {
         this.usuarioRepository = new UsuarioService();
         this.metodoAutenticacao = new AutenticadorSenha();
+        this.hashesPorEmail = usuarioRepository.buscarEmailESenhaDeUsuarios();
         carregarUsuariosNoAutenticador();
     }
 
     public ResultadoAutenticacao autenticar(String email, String senha) {
-        Credenciais credenciais = new Credenciais(email, senha);
+        Credenciais credenciais = new Credenciais(email, calcularSenhaComparavel(email, senha));
         return metodoAutenticacao.autenticar(credenciais);
     }
 
+    /**
+     * O autenticador compara os valores cadastrados, então a senha digitada
+     * precisa ser convertida no mesmo hash guardado para aquele usuário.
+     */
+    private String calcularSenhaComparavel(String email, String senha) {
+        String hashArmazenado = hashesPorEmail.get(email);
+
+        if (senha == null || !SenhaHashService.estaHasheada(hashArmazenado)) {
+            return senha;
+        }
+        return SenhaHashService.recalcularHash(senha, hashArmazenado);
+    }
+
     private void carregarUsuariosNoAutenticador() {
-        Map<String, String> usuarios = usuarioRepository.buscarEmailESenhaDeUsuarios();
         AutenticadorSenha autenticador = (AutenticadorSenha) metodoAutenticacao;
 
-        for (Map.Entry<String, String> usuario : usuarios.entrySet()) {
-            autenticador.cadastrarUsuario(usuario.getKey(), usuario.getValue());
+        for (Map.Entry<String, String> usuario : hashesPorEmail.entrySet()) {
+            // Usuários com senha fora do formato de hash não são cadastrados,
+            // de modo que nenhuma senha em texto puro consiga autenticar.
+            if (SenhaHashService.estaHasheada(usuario.getValue())) {
+                autenticador.cadastrarUsuario(usuario.getKey(), usuario.getValue());
+            }
         }
     }
 }

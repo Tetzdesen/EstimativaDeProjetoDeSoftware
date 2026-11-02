@@ -28,14 +28,15 @@ public final class RealizarAutenticacaoUsuarioCommand implements Command {
     @Override
     public void execute() {
         if (camposInvalidos(email, senha)) {
-            throw new IllegalArgumentException("Os campos de nome e senha não podem estar vazios");
+            throw new IllegalArgumentException("Informe e-mail e senha.");
         }
         ResultadoAutenticacao resultadoAutenticacao = autenticacaoService.autenticar(email, senha);
         if (resultadoAutenticacao.isAutenticado()) {
-            Usuario usuario = usuarioService.buscarPorEmail(email).get();
+            Usuario usuario = usuarioService.buscarPorEmail(email)
+                    .orElseThrow(() -> new IllegalArgumentException("E-mail ou senha inválidos."));
             UsuarioLogadoSingleton.getInstancia().setUsuario(usuario);
         } else {
-            throw new IllegalArgumentException("Falha ao realizar o login: " + resultadoAutenticacao.getMensagem());
+            throw new IllegalArgumentException("E-mail ou senha inválidos.");
         }
     }
 

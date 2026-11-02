@@ -38,5 +38,9 @@ target/
 # Folder db
 db
 
+# Variáveis de ambiente locais
+.env
+!.env.example
+
 # logs
 logs

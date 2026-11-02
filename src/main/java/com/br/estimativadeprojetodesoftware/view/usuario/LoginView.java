@@ -1,24 +1,83 @@
 package com.br.estimativadeprojetodesoftware.view.usuario;
 
 import com.br.estimativadeprojetodesoftware.service.IconService;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
+import com.br.estimativadeprojetodesoftware.view.componentes.Estilos;
+import com.br.estimativadeprojetodesoftware.view.componentes.Formulario;
+import com.br.estimativadeprojetodesoftware.view.componentes.PainelCartao;
+import java.awt.FlowLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 
-public class LoginView extends javax.swing.JFrame {
+/** Login por e-mail e senha. Passive View; Enter confirma (botão padrão). */
+public class LoginView extends JFrame {
 
-    private javax.swing.JButton btnEntrar;
-    private javax.swing.JButton btnExibirSenha;
-    private javax.swing.JLabel lblEmail;
-    private javax.swing.JLabel lblLogin;
-    private javax.swing.JLabel lblSenha;
-    private javax.swing.JTextField txtEmail;
-    private javax.swing.JPasswordField txtSenha;
+    private final JTextField txtEmail = Formulario.placeholder(new JTextField(22), "nome@exemplo.com");
+    private final JPasswordField txtSenha = new JPasswordField(22);
+    private final JButton btnEntrar = PainelCartao.botaoLargo(
+            Estilos.aplicar(new JButton("Entrar", IconService.getIconContraste("sair", 18)), Estilos.BOTAO_PRINCIPAL));
+    private final JButton btnCriarConta = PainelCartao.link("Criar conta");
+    private final JLabel lblErroGeral = Estilos.aplicar(new JLabel(" "), Estilos.ERRO_CAMPO);
+    private final Formulario formulario = new Formulario();
 
     public LoginView() {
-        initComponents();
+        super("Entrar");
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        Estilos.aplicar(txtSenha, "showRevealButton: true");
+        PainelCartao painel = new PainelCartao("Entrar", "Use o e-mail e a senha da sua conta.", 380);
+        formulario.adicionarCampo("E-mail", txtEmail);
+        formulario.adicionarCampo("Senha", txtSenha);
+        painel.adicionar(formulario);
+        lblErroGeral.setVisible(false);
+        painel.adicionar(lblErroGeral);
+        painel.adicionar(btnEntrar);
+        JPanel cadastro = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
+        cadastro.setOpaque(false);
+        cadastro.add(Estilos.aplicar(new JLabel("Não tem conta?"), Estilos.SUBTITULO));
+        cadastro.add(btnCriarConta);
+        painel.adicionar(cadastro);
+        setContentPane(painel);
+        setIconImage(IconService.getIcon("logo", 32).getImage());
+        setSize(560, 520);
+        setResizable(false);
+        getRootPane().setDefaultButton(btnEntrar);
+    }
+
+    public void mostrarErroCampo(JComponent campo, String mensagem) {
+        formulario.mostrarErro(campo, mensagem);
+        javax.swing.SwingUtilities.invokeLater(this::ajustarAltura);
+    }
+
+    /** Cresce a janela quando as mensagens de erro não cabem. */
+    private void ajustarAltura() {
+        int necessaria = getContentPane().getPreferredSize().height + getInsets().top + getInsets().bottom;
+        if (necessaria > getHeight()) {
+            setSize(getWidth(), necessaria);
+        }
+    }
+
+    public void limparErroCampo(JComponent campo) {
+        formulario.limparErro(campo);
+    }
+
+    /** Erro que não pertence a um campo (ex.: credenciais inválidas). */
+    public void mostrarErroGeral(String mensagem) {
+        lblErroGeral.setText(mensagem == null ? " " : mensagem);
+        lblErroGeral.setVisible(mensagem != null && !mensagem.isBlank());
+    }
+
+    public void limparErros() {
+        formulario.limparErros();
+        mostrarErroGeral(null);
+    }
+
+    public Formulario getFormulario() {
+        return formulario;
     }
 
     public JTextField getTxtEmail() {
@@ -33,111 +92,11 @@ public class LoginView extends javax.swing.JFrame {
         return btnEntrar;
     }
 
-    public JButton getBtnExibirSenha() {
-        return btnExibirSenha;
+    public JButton getBtnCriarConta() {
+        return btnCriarConta;
     }
 
-    private void initComponents() {
-        lblLogin = new javax.swing.JLabel();
-        lblSenha = new javax.swing.JLabel();
-        lblEmail = new javax.swing.JLabel();
-        txtEmail = new javax.swing.JTextField();
-        txtSenha = new javax.swing.JPasswordField();
-        btnExibirSenha = new javax.swing.JButton();
-        btnEntrar = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Login");
-        setResizable(false);
-
-        lblLogin.setFont(new java.awt.Font("Segoe UI", 1, 24)); 
-        lblLogin.setText("Login");
-        lblLogin.setForeground(Color.BLACK); 
-
-        lblSenha.setFont(new java.awt.Font("Segoe UI", 0, 14)); 
-        lblSenha.setText("Senha:");
-        lblSenha.setForeground(Color.BLACK); 
-
-        lblEmail.setFont(new java.awt.Font("Segoe UI", 0, 14)); 
-        lblEmail.setText("E-mail:");
-        lblEmail.setForeground(Color.BLACK); 
-
-        txtEmail.setFont(new java.awt.Font("Segoe UI", 0, 14));
-        txtEmail.setPreferredSize(new java.awt.Dimension(300, 30)); 
-
-        txtSenha.setFont(new java.awt.Font("Segoe UI", 0, 14)); 
-        txtSenha.setPreferredSize(new java.awt.Dimension(300, 30)); 
-
-        btnExibirSenha.setBackground(new java.awt.Color(255, 255, 255));
-        btnExibirSenha.setIcon(IconService.getIcon("olho")); 
-        btnExibirSenha.setBorder(null);
-        btnExibirSenha.setPreferredSize(new Dimension(30, 30));
-
-        btnEntrar.setFont(new java.awt.Font("Segoe UI", 0, 18)); 
-        btnEntrar.setText("Entrar");
-        btnEntrar.setBackground(new Color(255, 255, 255));
-        btnEntrar.setForeground(Color.BLACK);
-        btnEntrar.setFocusPainted(false);
-        btnEntrar.setPreferredSize(new Dimension(85, 45)); 
-        btnEntrar.setBorder(new CompoundBorder(
-            new LineBorder(Color.BLACK, 3, true),
-            new EmptyBorder(8, 8, 8, 8)
-        ));
-
-        addButtonHoverEffect(btnEntrar);
-
-        setLayout(new BorderLayout());
-
-        JPanel painelFundo = new JPanel(new GridBagLayout());
-        painelFundo.setBackground(new Color(255, 255, 255)); 
-        painelFundo.setBorder(new LineBorder(Color.BLACK, 2, true));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
-
-        gbc.gridwidth = 2; 
-        painelFundo.add(lblLogin, gbc);
-        gbc.gridwidth = 1;
-
-        gbc.gridy++;
-        painelFundo.add(lblEmail, gbc);
-        gbc.gridx = 1;
-        painelFundo.add(txtEmail, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        painelFundo.add(lblSenha, gbc);
-        gbc.gridx = 1;
-        painelFundo.add(txtSenha, gbc);
-
-        gbc.gridx = 2;
-        painelFundo.add(btnExibirSenha, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
-        painelFundo.add(btnEntrar, gbc); 
-
-        add(painelFundo, BorderLayout.CENTER);
-
-        setSize(400, 350); 
-        setLocationRelativeTo(null);
-        setVisible(true);
-    }
-
-    private void addButtonHoverEffect(JButton button) {
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(255, 255, 255));
-            }
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(255, 255, 255));
-            }
-        });
+    public JLabel getLblErroGeral() {
+        return lblErroGeral;
     }
 }

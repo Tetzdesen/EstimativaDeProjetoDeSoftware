@@ -1,13 +1,17 @@
 package com.br.estimativadeprojetodesoftware.service;
 
-import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
-import java.awt.Font;
-import java.util.HashMap;
-
-import javax.swing.*;
-import java.util.Map;
 import com.br.estimativadeprojetodesoftware.command.Command;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
+import com.br.estimativadeprojetodesoftware.view.componentes.Estilos;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JToolBar;
 
+/** Monta a barra de ferramentas da janela principal, em grupos, com ícones SVG. */
 public class BarraService {
 
     private final Map<String, Command> comandos;
@@ -20,55 +24,46 @@ public class BarraService {
     }
 
     public JToolBar criarBarraPrincipal() {
-        JToolBar toolBar = criarBarraBase();
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+        toolBar.setBorder(BorderFactory.createEmptyBorder(6, 10, 6, 10));
 
-        adicionarBotao(toolBar, "Dashboard", "principal", "Principal");
-        adicionarBotao(toolBar, "Novo Projeto", "projeto", "Novo projeto");
-        adicionarBotao(toolBar, "Usuário", "usuario", "Usuário");
+        adicionarBotao(toolBar, "Dashboard", "dashboard", "Dashboard", "Visão geral dos seus projetos");
+        adicionarBotao(toolBar, "Projetos", "projeto", "Projetos", "Lista de projetos próprios e compartilhados");
+        JButton novo = adicionarBotao(toolBar, "Novo projeto", "novo-projeto", "Novo projeto", "Criar projeto a partir de perfis (Ctrl+N)");
+        Estilos.aplicar(novo, Estilos.BOTAO_PRINCIPAL);
+        novo.setIcon(IconService.getIconContraste("novo-projeto", IconService.TAMANHO_PADRAO));
+        toolBar.addSeparator();
+        adicionarBotao(toolBar, "Perfis", "perfil", "Perfis", "Perfis de estimativa");
+        toolBar.addSeparator();
+        adicionarBotao(toolBar, "Configuração", "configuracao", "Configuração", "Tema e formato do log");
 
         toolBar.add(Box.createHorizontalGlue());
 
-        usuarioLabel = adicionarLabel(toolBar, UsuarioLogadoSingleton.getInstancia().getUsuario().getNome());
-
-        toolBar.add(Box.createHorizontalStrut(25));
-
-        adicionarBotao(toolBar, "Logout", "logout", "Logout");
-
+        usuarioLabel = Estilos.aplicar(new JLabel(nomeUsuario(), IconService.getIcon("usuario"), JLabel.LEADING), "font: bold");
+        usuarioLabel.setToolTipText("Usuário logado");
+        toolBar.add(usuarioLabel);
+        toolBar.add(Box.createHorizontalStrut(8));
+        adicionarBotao(toolBar, "Minha conta", "editar", "Usuário", "Dados da sua conta");
+        adicionarBotao(toolBar, "Sair", "sair", "Logout", "Sair do sistema");
         return toolBar;
     }
 
-    public JToolBar criarBarraUsuario() {
-        JToolBar toolBar = criarBarraBase();
-
-        adicionarBotao(toolBar, "Salvar", "salvar", "Salvar usuário");
-        adicionarBotao(toolBar, "Editar", "editar", "Editar usuário");
-        adicionarBotao(toolBar, "Excluir", "excluir", "Excluir usuário");
-
-        return toolBar;
-    }
-
-    private JToolBar criarBarraBase() {
-        JToolBar toolBar = new JToolBar();
-        toolBar.setFloatable(false);
-        return toolBar;
-    }
-
-    private JButton adicionarBotao(JToolBar toolBar, String texto, String iconeKey, String comandoChave) {
-        JButton botao = new JButton(texto);
-        botao.setIcon(IconService.getIcon(iconeKey));
+    private JButton adicionarBotao(JToolBar toolBar, String texto, String iconeKey, String comandoChave, String dica) {
+        JButton botao = new JButton(texto, IconService.getIcon(iconeKey));
+        botao.setToolTipText(dica);
         botao.addActionListener(e -> executarComando(comandoChave));
-
         botoes.put(comandoChave, botao);
+        if (toolBar.getComponentCount() > 0 && !(toolBar.getComponent(toolBar.getComponentCount() - 1) instanceof JToolBar.Separator)) {
+            toolBar.add(Box.createHorizontalStrut(4));
+        }
         toolBar.add(botao);
-
         return botao;
     }
 
-    private JLabel adicionarLabel(JToolBar toolBar, String texto) {
-        JLabel label = new JLabel(texto);
-        label.setFont(new Font("Arial", Font.BOLD, 12));
-        toolBar.add(label);
-        return label;
+    private static String nomeUsuario() {
+        var u = UsuarioLogadoSingleton.getInstancia().getUsuario();
+        return u == null ? "" : u.getNome();
     }
 
     private void executarComando(String comandoChave) {
@@ -81,7 +76,7 @@ public class BarraService {
 
     public void atualizarLabelUsuarioLogado() {
         if (usuarioLabel != null) {
-            usuarioLabel.setText(UsuarioLogadoSingleton.getInstancia().getUsuario().getNome());
+            usuarioLabel.setText(nomeUsuario());
         }
     }
 
@@ -96,5 +91,4 @@ public class BarraService {
     public Map<String, JButton> getTodosBotoes() {
         return botoes;
     }
-
 }

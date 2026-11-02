@@ -20,7 +20,6 @@ public class AbrirLoginUsuarioCommand implements Command {
     @Override
     public void execute() {        
         LoginView view = new LoginView();
-        view.setSize(546, 450);
         view.setLocationRelativeTo(null);
         new LoginPresenter(view, principalUsuarioPresenter);
     }

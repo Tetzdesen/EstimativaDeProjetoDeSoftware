@@ -11,11 +11,11 @@ public class EdicaoUsuarioState extends ManterUsuarioPresenterState {
 
     public EdicaoUsuarioState(ManterUsuarioPresenter usuarioPresenter) {
         super(usuarioPresenter);
-        usuarioPresenter.getView().getTxtNome().setEnabled(true);
-        usuarioPresenter.getView().getTxtSenhaAtual().setEnabled(true);
-        usuarioPresenter.getBarraService().getBotao("Salvar usuário").setEnabled(true);
-        usuarioPresenter.getBarraService().getBotao("Excluir usuário").setEnabled(false);
-        usuarioPresenter.getBarraService().getBotao("Editar usuário").setEnabled(false);
+        usuarioPresenter.getView().getTxtNome().setEditable(true);
+        usuarioPresenter.getView().getTxtSenhaAtual().setEditable(true);
+        usuarioPresenter.getView().getBtnSalvar().setEnabled(true);
+        usuarioPresenter.getView().getBtnExcluir().setEnabled(false);
+        usuarioPresenter.getView().getBtnEditar().setEnabled(false);
     }
 
     @Override

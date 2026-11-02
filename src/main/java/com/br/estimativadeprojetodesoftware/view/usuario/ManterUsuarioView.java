@@ -1,17 +1,119 @@
 package com.br.estimativadeprojetodesoftware.view.usuario;
 
+import com.br.estimativadeprojetodesoftware.service.IconService;
+import com.br.estimativadeprojetodesoftware.view.componentes.BarraAcoes;
+import com.br.estimativadeprojetodesoftware.view.componentes.Estilos;
+import com.br.estimativadeprojetodesoftware.view.componentes.Formulario;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
 
-/**
- *
- * @author tetzner
- */
-public class ManterUsuarioView extends javax.swing.JDialog {
+/** Dados da conta do usuário logado. Passive View; Esc fecha e Ctrl+S salva (se habilitado). */
+public class ManterUsuarioView extends JDialog {
+
+    private final JTextField txtNome = new JTextField(26);
+    private final JTextField txtEmail = new JTextField(26);
+    private final JPasswordField txtSenhaAtual = Estilos.aplicar(new JPasswordField(26), "showRevealButton: true");
+    private final JTextField txtDataCriacao = somenteLeitura();
+    private final JTextField txtTotalProjetos = somenteLeitura();
+    private final JTextField txtTotalPerfis = somenteLeitura();
+    private final BarraAcoes barra = new BarraAcoes();
+    private final JButton btnEditar = barra.adicionar("Editar", "editar");
+    private final JButton btnSalvar = barra.adicionarPrincipal("Salvar", "salvar");
+    private final JButton btnExcluir;
+    private final Formulario formulario = new Formulario();
 
     public ManterUsuarioView() {
-        initComponents();
+        setTitle("Minha conta");
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        barra.empurrarParaDireita();
+        btnExcluir = barra.adicionarPerigo("Excluir conta", "excluir");
+        Formulario.placeholder(txtSenhaAtual, "Deixe em branco para manter a atual");
+
+        JLabel titulo = Estilos.aplicar(new JLabel("Minha conta", IconService.getIcon("usuario", 26), JLabel.LEADING), Estilos.TITULO);
+        titulo.setIconTextGap(10);
+        JLabel subtitulo = Estilos.aplicar(new JLabel("Dados de acesso e resumo do seu uso do sistema."), Estilos.SUBTITULO);
+
+        formulario.adicionarSecao("Dados de acesso");
+        formulario.adicionarCampo("Nome", txtNome);
+        formulario.adicionarCampo("E-mail", txtEmail);
+        formulario.adicionarCampo("Nova senha", txtSenhaAtual);
+        formulario.adicionarSecao("Resumo");
+        formulario.adicionarCampo("Conta criada em", txtDataCriacao);
+        formulario.adicionarCampo("Meus projetos", txtTotalProjetos);
+        formulario.adicionarCampo("Meus perfis", txtTotalPerfis);
+
+        JPanel topo = new JPanel(new BorderLayout(0, 4));
+        topo.add(titulo, BorderLayout.NORTH);
+        topo.add(subtitulo, BorderLayout.CENTER);
+        topo.add(barra, BorderLayout.SOUTH);
+        barra.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+
+        JPanel raiz = new JPanel(new BorderLayout(0, 16));
+        raiz.setBorder(BorderFactory.createEmptyBorder(18, 20, 20, 20));
+        raiz.add(topo, BorderLayout.NORTH);
+        JPanel corpo = new JPanel(new BorderLayout());
+        corpo.add(formulario, BorderLayout.NORTH);
+        raiz.add(corpo, BorderLayout.CENTER);
+        setContentPane(raiz);
+        registrarAtalhos();
+        setSize(560, 520);
+        setResizable(false);
+    }
+
+    private static JTextField somenteLeitura() {
+        JTextField t = new JTextField(26);
+        t.setEditable(false);
+        t.setFocusable(false);
+        return t;
+    }
+
+    private void registrarAtalhos() {
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "fechar");
+        getRootPane().getActionMap().put("fechar", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK), "salvar");
+        getRootPane().getActionMap().put("salvar", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (btnSalvar.isEnabled()) {
+                    btnSalvar.doClick();
+                }
+            }
+        });
+    }
+
+    public void mostrarErroCampo(JComponent campo, String mensagem) {
+        formulario.mostrarErro(campo, mensagem);
+    }
+
+    public void limparErroCampo(JComponent campo) {
+        formulario.limparErro(campo);
+    }
+
+    public void limparErros() {
+        formulario.limparErros();
+    }
+
+    public Formulario getFormulario() {
+        return formulario;
     }
 
     public JTextField getTxtNome() {
@@ -38,146 +140,15 @@ public class ManterUsuarioView extends javax.swing.JDialog {
         return txtTotalPerfis;
     }
 
-    public JButton getBtnExibirSenha() {
-        return btnExibirSenha;
+    public JButton getBtnEditar() {
+        return btnEditar;
     }
-                    
-    private void initComponents() {
 
-        lblTotalPerfis = new javax.swing.JLabel();
-        txtNome = new javax.swing.JTextField();
-        lblSenhaAtual = new javax.swing.JLabel();
-        txtDataCriacao = new javax.swing.JTextField();
-        btnExibirSenha = new javax.swing.JButton();
-        txtEmail = new javax.swing.JTextField();
-        txtSenhaAtual = new javax.swing.JPasswordField();
-        txtTotalProjetos = new javax.swing.JTextField();
-        txtTotalPerfis = new javax.swing.JTextField();
-        lblNome = new javax.swing.JLabel();
-        lblDataCriacao = new javax.swing.JLabel();
-        lblEmail = new javax.swing.JLabel();
-        lblTotalProjetos = new javax.swing.JLabel();
+    public JButton getBtnSalvar() {
+        return btnSalvar;
+    }
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        lblTotalPerfis.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblTotalPerfis.setText("Total de Perfis: ");
-
-        txtNome.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtNome.setEnabled(false);
-
-        lblSenhaAtual.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblSenhaAtual.setText("Senha atual:");
-
-        txtDataCriacao.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtDataCriacao.setEnabled(false);
-
-        btnExibirSenha.setBackground(new java.awt.Color(242, 242, 242));
-        btnExibirSenha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/olho-icon.png"))); // NOI18N
-        btnExibirSenha.setBorder(null);
-
-        txtEmail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtEmail.setEnabled(false);
-
-        txtSenhaAtual.setEnabled(false);
-
-        txtTotalProjetos.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtTotalProjetos.setEnabled(false);
-
-        txtTotalPerfis.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtTotalPerfis.setEnabled(false);
-
-        lblNome.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblNome.setText("Nome:");
-
-        lblDataCriacao.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblDataCriacao.setText("Data de Criação:");
-
-        lblEmail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblEmail.setText("Email:");
-
-        lblTotalProjetos.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lblTotalProjetos.setText("Total de Projetos:");
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtTotalProjetos, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblTotalProjetos))
-                                .addGap(10, 10, 10)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblTotalPerfis)
-                                    .addComponent(txtTotalPerfis, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(txtSenhaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnExibirSenha))
-                    .addComponent(lblSenhaAtual)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblNome)
-                        .addGap(320, 320, 320)
-                        .addComponent(lblDataCriacao))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(40, 40, 40)
-                        .addComponent(txtDataCriacao, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblEmail)
-                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 540, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(97, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(61, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblNome)
-                    .addComponent(lblDataCriacao))
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtDataCriacao, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(9, 9, 9)
-                .addComponent(lblEmail)
-                .addGap(10, 10, 10)
-                .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblSenhaAtual)
-                .addGap(8, 8, 8)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnExibirSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSenhaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTotalProjetos)
-                    .addComponent(lblTotalPerfis))
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtTotalProjetos, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTotalPerfis, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(41, 41, 41))
-        );
-
-        pack();
-    }                   
-                
-    private javax.swing.JButton btnExibirSenha;
-    private javax.swing.JLabel lblDataCriacao;
-    private javax.swing.JLabel lblEmail;
-    private javax.swing.JLabel lblNome;
-    private javax.swing.JLabel lblSenhaAtual;
-    private javax.swing.JLabel lblTotalPerfis;
-    private javax.swing.JLabel lblTotalProjetos;
-    private javax.swing.JTextField txtDataCriacao;
-    private javax.swing.JTextField txtEmail;
-    private javax.swing.JTextField txtNome;
-    private javax.swing.JPasswordField txtSenhaAtual;
-    private javax.swing.JTextField txtTotalPerfis;
-    private javax.swing.JTextField txtTotalProjetos;            
+    public JButton getBtnExcluir() {
+        return btnExcluir;
+    }
 }

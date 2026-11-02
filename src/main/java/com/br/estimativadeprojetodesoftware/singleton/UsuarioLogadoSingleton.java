@@ -2,6 +2,7 @@ package com.br.estimativadeprojetodesoftware.singleton;
 
 import com.br.estimativadeprojetodesoftware.observer.Subject;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
+import com.br.estimativadeprojetodesoftware.observer.EventoDominio;
 import com.br.estimativadeprojetodesoftware.observer.Observer;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,9 @@ public class UsuarioLogadoSingleton implements Subject {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+        if (usuario != null) {
+            notifyObservers(new EventoDominio(EventoDominio.Tipo.ALTERACAO, EventoDominio.Entidade.SESSAO, usuario.getId()));
+        }
     }
 
     public boolean usuarioLogado() {
@@ -42,7 +46,7 @@ public class UsuarioLogadoSingleton implements Subject {
 
     public void logout() {
         this.usuario = null;
-        notifyObservers();
+        notifyObservers(new EventoDominio(EventoDominio.Tipo.EXCLUSAO, EventoDominio.Entidade.SESSAO, null));
     }
 
     @Override
@@ -56,9 +60,9 @@ public class UsuarioLogadoSingleton implements Subject {
     }
 
     @Override
-    public void notifyObservers() {
-        for (Observer observer : observers) {
-            observer.update();
+    public void notifyObservers(EventoDominio evento) {
+        for (Observer observer : new ArrayList<>(observers)) {
+            observer.update(evento);
         }
     }
 

@@ -1,15 +1,15 @@
 package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
-import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.AcionarBotaoEditarUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.AcionarBotaoExcluirUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.AcionarBotaoSalvarUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.observer.Observer;
-import com.br.estimativadeprojetodesoftware.service.BarraService;
+import com.br.estimativadeprojetodesoftware.presenter.helpers.ValidacaoVisual;
 import com.br.estimativadeprojetodesoftware.service.DataHoraService;
-import com.br.estimativadeprojetodesoftware.service.IconService;
-import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
+import com.br.estimativadeprojetodesoftware.observer.EventoDominio;
+import com.br.estimativadeprojetodesoftware.service.PerfilService;
 import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
@@ -34,21 +34,19 @@ public class ManterUsuarioPresenter implements Observer {
     private final ManterUsuarioView view;
     private Usuario usuario;
     private final UsuarioService usuarioService;
-    private final PerfilProjetoService perfilService;
+    private final PerfilService perfilService;
     private final ProjetoService projetoService;
     private ManterUsuarioPresenterState estado;
     private final Map<String, Command> comandos;
-    private final BarraService barraService;
 
     public ManterUsuarioPresenter(UsuarioService usuarioService, ManterUsuarioView view) {
         this.view = view;
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
         this.usuarioService = usuarioService;
-        this.perfilService = new PerfilProjetoService();
+        this.perfilService = new PerfilService();
         this.projetoService = new ProjetoService();
         this.usuarioService.addObserver(this);
         this.comandos = inicializarComandos();
-        barraService = new BarraService(comandos);
         configuraView();
         this.estado = new VisualizacaoUsuarioState(this);
     }
@@ -62,10 +60,28 @@ public class ManterUsuarioPresenter implements Observer {
     }
 
     public void salvar() {
+        view.limparErros();
+        boolean ok = true;
+        if (ValidacaoVisual.vazio(view.getTxtNome())) {
+            view.mostrarErroCampo(view.getTxtNome(), "Informe o nome.");
+            ok = false;
+        }
+        String senha = new String(view.getTxtSenhaAtual().getPassword());
+        if (!senha.isBlank()) {
+            try {
+                usuarioService.validarSenha(senha);
+            } catch (IllegalArgumentException e) {
+                view.mostrarErroCampo(view.getTxtSenhaAtual(), e.getMessage().replace("A senha não atende às regras:\n", ""));
+                ok = false;
+            }
+        }
+        if (!ok) {
+            return;
+        }
         try {
             estado.salvar();
         } catch (Exception ex) {
-            new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+            ExibirMensagemCommand.erro(ex.getMessage());
         }
     }
 
@@ -73,7 +89,7 @@ public class ManterUsuarioPresenter implements Observer {
         try {
             estado.excluir();
         } catch (Exception ex) {
-            new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+            ExibirMensagemCommand.erro(ex.getMessage());
         }
     }
 
@@ -81,30 +97,23 @@ public class ManterUsuarioPresenter implements Observer {
         try {
             estado.editar();
         } catch (Exception ex) {
-            new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
+            ExibirMensagemCommand.erro(ex.getMessage());
         }
     }
 
     private void configuraView() {
-        JPanel painelPrincipal = new JPanel(new BorderLayout());
-        painelPrincipal.add(barraService.criarBarraUsuario(), BorderLayout.NORTH);
-        painelPrincipal.add(view.getContentPane(), BorderLayout.CENTER);
-        view.setContentPane(painelPrincipal);
         view.setModal(true);
-        view.setResizable(false);
-        view.getBtnExibirSenha().addMouseListener(new MouseAdapter() {
+        view.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
-            public void mousePressed(MouseEvent e) {
-                view.getBtnExibirSenha().setIcon(IconService.getIcon("olho-exibido"));
-                view.getTxtSenhaAtual().setEchoChar('\0');
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                view.getBtnExibirSenha().setIcon(IconService.getIcon("olho"));
-                view.getTxtSenhaAtual().setEchoChar('*');
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                usuarioService.removeObserver(ManterUsuarioPresenter.this);
             }
         });
+        view.getBtnSalvar().addActionListener(e -> comandos.get("Salvar usuário").execute());
+        view.getBtnEditar().addActionListener(e -> comandos.get("Editar usuário").execute());
+        view.getBtnExcluir().addActionListener(e -> comandos.get("Excluir usuário").execute());
+        ValidacaoVisual.limparAoEditar(view.getTxtNome(), view::limparErroCampo);
+        ValidacaoVisual.limparAoEditar(view.getTxtSenhaAtual(), view::limparErroCampo);
         atualizarCampos();
     }
 
@@ -116,16 +125,13 @@ public class ManterUsuarioPresenter implements Observer {
         return dataHora.getDayOfMonth() + "/" + String.valueOf(dataHora.getMonthValue()) + "/" + dataHora.getYear();
     }
 
-    public BarraService getBarraService() {
-        return barraService;
-    }
 
     public int getQtdProjetos() {
-        return projetoService.obterQuantidadeProjetosPorUsuario(usuario.getId());
+        return projetoService.listarProprios(usuario).size();
     }
 
-    public int getQtdPerfis() {
-        return perfilService.obterQuantidadePerfisPorUsuario(usuario.getId());
+    public long getQtdPerfis() {
+        return perfilService.contarDoUsuario(usuario);
     }
 
     public UsuarioService getUsuarioService() {
@@ -156,14 +162,18 @@ public class ManterUsuarioPresenter implements Observer {
         view.getTxtNome().setText(usuario.getNome());
         view.getTxtDataCriacao().setText(DataHoraService.formatarData(usuario.getCreated_at().toLocalDate()));
         view.getTxtEmail().setText(usuario.getEmail());
-        view.getTxtSenhaAtual().setText(usuario.getSenha());
+        // A senha fica guardada como hash: o campo começa vazio e só é
+        // enviado quando o usuário digita uma senha nova.
+        view.getTxtSenhaAtual().setText("");
         view.getTxtTotalProjetos().setText(String.valueOf(getQtdProjetos()));
         view.getTxtTotalPerfis().setText(String.valueOf(getQtdPerfis()));
     }
 
     @Override
-    public void update() {
-        atualizarCampos();
+    public void update(EventoDominio evento) {
+        if (usuario != null && view.isDisplayable()) {
+            atualizarCampos();
+        }
     }
 
 }
