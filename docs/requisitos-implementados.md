@@ -44,7 +44,7 @@ Situação de cada caso de uso, regra de negócio (BR) e requisito não funciona
 | RNF04 | ✅ | `view/projeto/PrincipalProjetoView`, `presenter/helpers/Navegador` | Swing MDI (`JDesktopPane` + `JInternalFrame`), várias janelas abertas, rodapé com o usuário logado. |
 | RNF05 | ✅ | `presenter/*`, `view/*` | MVP Passive View: as views só expõem componentes; regras ficam em presenters e services. |
 | RNF06 | ✅ | `observer/*`, `service/ServicoObservavel`, presenters de lista e de edição | Observer: renomear um projeto atualiza a lista aberta e a árvore sem reabrir. |
-| RNF07 | ⚠️ | `estimativa-log/` (módulo separado), `service/LogService` | Adapter com CSV (separador `;`) e JSON (Gson) em projeto Maven separado, com o texto exato da spec. **Pendente:** publicar `estimativa-log/` num repositório público com a tag `1.0.0` no JitPack. Hoje o projeto usa a versão instalada localmente com `mvn install`. |
+| RNF07 | ✅ | `estimativa-log/` (publicado em github.com/Tetzdesen/estimativa-log), `service/LogService` | Adapter com CSV (separador `;`) e JSON (Gson) em projeto Maven separado, com o texto exato da spec. Publicado no GitHub com a tag `1.0.0` e baixado pelo JitPack (`com.github.Tetzdesen:estimativa-log:1.0.0`), sem passos manuais. |
 | RNF08 | ✅ | `view/configuracao/ConfiguracaoView`, `presenter/configuracao/ConfiguracaoPresenter`, tabela `configuracao` | Troca de formato em tempo de execução, mantida após reiniciar. |
 | RNF09 | ✅ | `adapter/senha/ValidadorSenhaAdapter` | Validador `com.github.claytonfraga:validadorsenha` (JitPack) atrás de um Adapter; mensagens do validador exibidas no cadastro. |
 
@@ -74,5 +74,5 @@ Criação, alteração, exclusão, compartilhamento e exportação de projeto ge
 ## Verificação
 
 - `mvn clean package`: 70 testes passando (inclui os casos de aceitação do dashboard, a persistência do tema, os ícones e os renderizadores das tabelas), entre eles o caso de aceitação da planilha (240,67 dias, R$ 109.966,67 de desenvolvimento, R$ 212.597,67 de preço final, 241 dias, 8,0 meses e R$ 26.501,09 de média mensal) e a persistência em SQLite e H2.
-- `estimativa-log/`: 8 testes passando, para os formatos CSV e JSON.
+- `estimativa-log/`: 8 testes passando, para os formatos CSV e JSON; build da tag `1.0.0` no JitPack com JDK 17.
 - Smoke test da interface rodado sobre o jar, com SQLite e com H2, nos temas claro e escuro. Ele cobriu cadastro, login, perfil novo, criação de projeto, cálculo, renomear com atualização da lista, compartilhamento em somente leitura, troca do formato de log e exportação em PDF e CSV.
