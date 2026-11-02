@@ -44,6 +44,34 @@ Na primeira vez o sistema cria o banco, o perfil padrão e um usuário de teste:
 
 > Se você já rodou uma versão antiga e aparecer o aviso de que o banco "foi criado por uma versão antiga", apague (ou renomeie) a pasta `db/` e abra de novo.
 
+### No Windows
+
+1. Instale o Java 17. Pelo PowerShell:
+
+   ```powershell
+   winget install EclipseAdoptium.Temurin.17.JDK
+   ```
+
+   (ou baixe o instalador em [adoptium.net](https://adoptium.net)).
+
+2. Instale o Maven: baixe o zip em [maven.apache.org](https://maven.apache.org/download.cgi), extraia (por exemplo em `C:\maven`) e coloque `C:\maven\bin` no `Path` das variáveis de ambiente.
+
+3. Feche e abra o terminal e confira se `java -version` e `mvn -version` respondem. Se o `mvn` reclamar do `JAVA_HOME`, crie essa variável apontando para a pasta do JDK (algo como `C:\Program Files\Eclipse Adoptium\jdk-17...`).
+
+4. No PowerShell:
+
+   ```powershell
+   git clone https://github.com/Tetzdesen/EstimativaDeProjetoDeSoftware.git
+   cd EstimativaDeProjetoDeSoftware
+   copy .env.example .env
+   mvn clean package
+   java -jar target\estimativa.jar
+   ```
+
+O sistema lê o `.env` da pasta de onde é aberto. Por isso, se você der dois cliques no `estimativa.jar` dentro de `target\`, ele não acha o `.env` e o login dá erro de configuração. Rode pelo terminal a partir da pasta do projeto, ou copie o `.env` para dentro de `target\` (aí o banco é criado em `target\db\`).
+
+Também dá para abrir a pasta no NetBeans ou no IntelliJ, que já vêm com Maven: rode o `clean package` pela IDE e execute a classe `Principal` com a pasta do projeto como diretório de trabalho.
+
 ### SQLite ou H2
 
 A troca é só no `.env`:
