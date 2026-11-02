@@ -1,22 +1,34 @@
 package com.br.estimativadeprojetodesoftware.strategy;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 /**
- *
- * @author tetzner
+ * Strategy com o que muda entre os bancos: preparo do armazenamento, ajustes
+ * da conexão e criação das tabelas.
  */
 public interface DatabaseInitializer {
 
     /**
-     * Prepara o armazenamento do banco antes da conexão ser aberta.
-     *
-     * @return true quando o banco acabou de ser criado e ainda precisa ter a
-     * estrutura configurada.
+     * Classe do driver JDBC. É carregada explicitamente porque, no jar com
+     * dependências, só um arquivo META-INF/services/java.sql.Driver sobrevive.
      */
-    boolean prepararArmazenamento(String url, String user, String senha);
+    String getDriver();
 
-    /**
-     * Cria as tabelas e executa os seeders. Só deve ser chamado depois que a
-     * conexão já estiver disponível.
-     */
-    void configurarBanco();
+    /** Prepara o armazenamento antes de abrir a conexão (ex.: criar a pasta do arquivo). */
+    void prepararArmazenamento(String url);
+
+    /** Ajustes de sessão logo após abrir a conexão. */
+    default void configurarConexao(Connection conexao) throws SQLException {
+    }
+
+    /** Cria as tabelas que ainda não existem. Pode rodar a cada início. */
+    default void criarTabelas(Connection conexao) throws SQLException {
+        try (Statement st = conexao.createStatement()) {
+            for (String ddl : EsquemaBanco.TABELAS) {
+                st.execute(ddl);
+            }
+        }
+    }
 }

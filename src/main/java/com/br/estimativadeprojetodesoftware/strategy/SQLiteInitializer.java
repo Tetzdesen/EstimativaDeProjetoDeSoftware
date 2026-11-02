@@ -1,51 +1,33 @@
 package com.br.estimativadeprojetodesoftware.strategy;
 
-import com.br.estimativadeprojetodesoftware.command.Command;
-import com.br.estimativadeprojetodesoftware.command.database.CriarTabelasSQLiteCommand;
-import com.br.estimativadeprojetodesoftware.command.seeder.CriarCamposSeederCommand;
-import com.br.estimativadeprojetodesoftware.command.seeder.CriarUsuarioSeederCommand;
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-/**
- *
- * @author tetzner
- */
 public class SQLiteInitializer implements DatabaseInitializer {
 
     @Override
-    public boolean prepararArmazenamento(String url, String user, String senha) {
-        String caminhoBanco = url.replace("jdbc:sqlite:", "");
-        return criarArquivoBDSQLite(caminhoBanco);
+    public String getDriver() {
+        return "org.sqlite.JDBC";
     }
 
     @Override
-    public void configurarBanco() {
-        new CriarTabelasSQLiteCommand().execute();
-        List<Command> comandosSeeder = Arrays.asList(new CriarUsuarioSeederCommand(), new CriarCamposSeederCommand());
-        comandosSeeder.forEach(seeder -> seeder.execute());
+    public void prepararArmazenamento(String url) {
+        String caminho = url.replace("jdbc:sqlite:", "");
+        if (caminho.isBlank() || caminho.startsWith(":memory:")) {
+            return;
+        }
+        File diretorio = new File(caminho).getAbsoluteFile().getParentFile();
+        if (diretorio != null && !diretorio.exists() && !diretorio.mkdirs()) {
+            throw new IllegalStateException("Não foi possível criar a pasta do banco: " + diretorio);
+        }
     }
 
-    private boolean criarArquivoBDSQLite(String caminho) {
-
-        File arquivo = new File(caminho);
-        File diretorio = arquivo.getParentFile(); 
-
-        if (diretorio != null && !diretorio.exists()) {
-            if (!diretorio.mkdirs()) {
-                throw new RuntimeException("Erro ao criar diretório: " + diretorio.getAbsolutePath());
-            }
+    @Override
+    public void configurarConexao(Connection conexao) throws SQLException {
+        try (Statement st = conexao.createStatement()) {
+            st.execute("PRAGMA foreign_keys = ON");
         }
-
-        if (!arquivo.exists()) {
-            try {
-                return arquivo.createNewFile();
-            } catch (Exception e) {
-                throw new RuntimeException("Erro ao criar arquivo SQLite: " + e.getMessage());
-            }
-        }
-        return false;
     }
-
 }

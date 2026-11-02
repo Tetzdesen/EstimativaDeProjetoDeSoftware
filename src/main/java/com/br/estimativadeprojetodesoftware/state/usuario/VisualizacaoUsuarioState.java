@@ -2,7 +2,7 @@ package com.br.estimativadeprojetodesoftware.state.usuario;
 
 import com.br.estimativadeprojetodesoftware.command.usuario.ExcluirUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
-import javax.swing.JOptionPane;
+import com.br.estimativadeprojetodesoftware.command.ConfirmarCommand;
 
 /**
  *
@@ -12,11 +12,11 @@ public class VisualizacaoUsuarioState extends ManterUsuarioPresenterState {
 
     public VisualizacaoUsuarioState(ManterUsuarioPresenter usuarioPresenter) {
         super(usuarioPresenter);
-        usuarioPresenter.getView().getTxtNome().setEnabled(false);
-        usuarioPresenter.getView().getTxtSenhaAtual().setEnabled(false);
-        usuarioPresenter.getBarraService().getBotao("Salvar usuário").setEnabled(false);
-        usuarioPresenter.getBarraService().getBotao("Excluir usuário").setEnabled(true);
-        usuarioPresenter.getBarraService().getBotao("Editar usuário").setEnabled(true);
+        usuarioPresenter.getView().getTxtNome().setEditable(false);
+        usuarioPresenter.getView().getTxtSenhaAtual().setEditable(false);
+        usuarioPresenter.getView().getBtnSalvar().setEnabled(false);
+        usuarioPresenter.getView().getBtnExcluir().setEnabled(true);
+        usuarioPresenter.getView().getBtnEditar().setEnabled(true);
     }
 
     @Override
@@ -26,14 +26,9 @@ public class VisualizacaoUsuarioState extends ManterUsuarioPresenterState {
 
     @Override
     public void excluir() {
-        int confirmacao = JOptionPane.showConfirmDialog(
-                null,
-                "Deseja realmente excluir o seu usuário \"" + usuarioPresenter.getUsuario().getNome() + "\"?",
-                "Confirmar Exclusão",
-                JOptionPane.YES_NO_OPTION
-        );
-
-        if (confirmacao == JOptionPane.YES_OPTION) {
+        if (ConfirmarCommand.perguntar("Excluir conta",
+                "Excluir a sua conta \"" + usuarioPresenter.getUsuario().getNome() + "\"?\nEsta ação não pode ser desfeita.",
+                "Excluir")) {
             new ExcluirUsuarioCommand(usuarioPresenter).execute();
         }
     }

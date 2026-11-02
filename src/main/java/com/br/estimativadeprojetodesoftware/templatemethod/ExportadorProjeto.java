@@ -1,45 +1,51 @@
 package com.br.estimativadeprojetodesoftware.templatemethod;
 
-import java.io.File;
-
+import com.br.estimativadeprojetodesoftware.model.ItemProjeto;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
-import com.br.estimativadeprojetodesoftware.service.ProjetoService;
+import com.br.estimativadeprojetodesoftware.model.ResultadoEstimativa;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 /**
- * Template Method que organiza o fluxo de exportação:
- * 1) Carrega o Projeto (ou recebe como parâmetro, se preferir)
- * 2) Pergunta ao usuário onde deseja salvar
- * 3) Gera o arquivo no formato desejado
+ * Template Method da exportação: valida, gera o arquivo no formato da subclasse
+ * e confere se o arquivo foi gravado. Novos formatos são novas subclasses
+ * registradas no {@link ExportadorFactory}, sem alterar as existentes.
  */
-
 public abstract class ExportadorProjeto {
-    protected Projeto projeto;
 
-    public final void exportar(String projetoNome) {
-        carregarProjeto(projetoNome);
-
-        String filePath = carregarCaminhoArquivo();
-        if (filePath == null) {
-            throw new IllegalArgumentException("Arquivo nulo");
+    public final Path exportar(Projeto projeto, ResultadoEstimativa resultado, Path destino) {
+        if (projeto == null || resultado == null || destino == null) {
+            throw new IllegalArgumentException("Projeto, resultado e arquivo de destino são obrigatórios.");
         }
-
+        Path arquivo = ajustarExtensao(destino);
         try {
-            gerarArquivo(filePath);
-            File arquivo = new File(filePath);
-            if (!arquivo.exists() || arquivo.length() <= 0) {
-                throw new RuntimeException("O arquivo não foi gerado corretamente.");
+            Path pai = arquivo.toAbsolutePath().getParent();
+            if (pai != null) {
+                Files.createDirectories(pai);
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao exportar projeto: " + e.getMessage(), e);
+            gerarArquivo(projeto, resultado, arquivo);
+            if (!Files.exists(arquivo) || Files.size(arquivo) == 0) {
+                throw new IllegalStateException("O arquivo não foi gerado corretamente.");
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Erro ao gravar " + arquivo + ": " + e.getMessage(), e);
         }
+        return arquivo;
     }
 
-    private void carregarProjeto(String projetoNome) {
-        this.projeto = new ProjetoService()
-                .buscarProjetoPorNome(projetoNome)
-                .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+    private Path ajustarExtensao(Path destino) {
+        String ext = "." + getFormato().getExtensao();
+        String nome = destino.getFileName().toString();
+        return nome.toLowerCase().endsWith(ext) ? destino : destino.resolveSibling(nome + ext);
     }
 
-    protected abstract String carregarCaminhoArquivo();
-    protected abstract void gerarArquivo(String filePath);
+    protected static List<ItemProjeto> selecionados(Projeto projeto) {
+        return projeto.getItens().stream().filter(ItemProjeto::isSelecionado).toList();
+    }
+
+    public abstract FormatoExportacao getFormato();
+
+    protected abstract void gerarArquivo(Projeto projeto, ResultadoEstimativa resultado, Path arquivo) throws IOException;
 }

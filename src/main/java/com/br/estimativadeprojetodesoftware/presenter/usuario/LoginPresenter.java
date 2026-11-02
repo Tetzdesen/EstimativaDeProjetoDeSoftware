@@ -1,71 +1,54 @@
 package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
 import com.br.estimativadeprojetodesoftware.command.AbrirPrincipalPresenterCommand;
-import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.usuario.AbrirCadastroUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.RealizarAutenticacaoUsuarioCommand;
+import com.br.estimativadeprojetodesoftware.presenter.helpers.ValidacaoVisual;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.FecharJanelaCommand;
-import com.br.estimativadeprojetodesoftware.service.IconService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.usuario.LoginView;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.SwingUtilities;
-import com.br.estimativadeprojetodesoftware.command.Command;
 
-/**
- *
- * @author tetzner
- */
+/** Login: valida os campos, autentica e abre a janela principal. */
 public class LoginPresenter {
 
     private final LoginView view;
     private final PrincipalUsuarioPresenter principalUsuarioPresenter;
-    private Command comandoDeLogin;
 
     public LoginPresenter(LoginView view, PrincipalUsuarioPresenter principalUsuarioPresenter) {
         this.principalUsuarioPresenter = principalUsuarioPresenter;
         this.view = view;
-        configuraView();
+        view.getBtnEntrar().addActionListener(e -> entrar());
+        view.getBtnCriarConta().addActionListener(e -> {
+            view.dispose();
+            new AbrirCadastroUsuarioCommand(principalUsuarioPresenter).execute();
+        });
+        ValidacaoVisual.limparAoEditar(view.getTxtEmail(), c -> { view.limparErroCampo(c); view.mostrarErroGeral(null); });
+        ValidacaoVisual.limparAoEditar(view.getTxtSenha(), c -> { view.limparErroCampo(c); view.mostrarErroGeral(null); });
+        SwingUtilities.invokeLater(() -> view.setVisible(true));
     }
 
-    private void configuraView() {
-        configuraListerns();
-        SwingUtilities.invokeLater(() -> {
-            view.setVisible(true);
-        });
-    }
-
-    private void configuraListerns() {
-        view.getBtnEntrar().addActionListener(e -> {
-            try {
-                efetuarLogin();
-            } catch (Exception ex) {
-                new MostrarMensagemProjetoCommand(ex.getMessage()).execute();
-            }
-        });
-
-        view.getBtnExibirSenha().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                view.getBtnExibirSenha().setIcon(IconService.getIcon("olho-exibido"));
-                view.getTxtSenha().setEchoChar('\0');
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                view.getBtnExibirSenha().setIcon(IconService.getIcon("olho"));
-                view.getTxtSenha().setEchoChar('*');
-            }
-        });
-    }
-
-    private void efetuarLogin() throws Exception {
-        String email = view.getTxtEmail().getText();
-        String senha = new String(view.getTxtSenha().getPassword());
-
-        this.comandoDeLogin = new RealizarAutenticacaoUsuarioCommand(email, senha);
-        comandoDeLogin.execute();
-
+    /** Valida o preenchimento, autentica e abre a janela principal; erros aparecem no formulário. */
+    public void entrar() {
+        view.limparErros();
+        boolean ok = true;
+        if (ValidacaoVisual.vazio(view.getTxtEmail())) {
+            view.mostrarErroCampo(view.getTxtEmail(), "Informe o e-mail.");
+            ok = false;
+        }
+        if (view.getTxtSenha().getPassword().length == 0) {
+            view.mostrarErroCampo(view.getTxtSenha(), "Informe a senha.");
+            ok = false;
+        }
+        if (!ok) {
+            return;
+        }
+        try {
+            new RealizarAutenticacaoUsuarioCommand(view.getTxtEmail().getText(), new String(view.getTxtSenha().getPassword())).execute();
+        } catch (RuntimeException ex) {
+            view.mostrarErroGeral(ex.getMessage());
+            return;
+        }
         if (UsuarioLogadoSingleton.getInstancia().getUsuario() != null) {
             principalUsuarioPresenter.getView().dispose();
             new FecharJanelaCommand(view).execute();

@@ -1,32 +1,21 @@
 package com.br.estimativadeprojetodesoftware.repository;
 
-import com.br.estimativadeprojetodesoftware.model.PerfilProjeto;
+import com.br.estimativadeprojetodesoftware.model.Perfil;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- *
- * @author tetzner
- */
 public interface IPerfilRepository {
 
-    void salvar(PerfilProjeto Perfil);
+    /** Insere ou substitui o perfil inteiro (funcionalidades, valores e taxas). */
+    void salvar(Perfil perfil);
 
-    void atualizar(PerfilProjeto Perfil);
+    boolean remover(UUID id);
 
-    void removerPorId(UUID id);
+    Optional<Perfil> buscarPorId(UUID id);
 
-    Optional<PerfilProjeto> buscarPorId(UUID id);
+    /** Perfis padrão e perfis do usuário. */
+    List<Perfil> buscarVisiveisPara(UUID usuarioId);
 
-    List<PerfilProjeto> buscarPerfisPorProjeto(UUID idProjeto);
-
-    Map<String, Double> buscarTodosCamposPorPerfil(PerfilProjeto perfil);
-
-    List<PerfilProjeto> buscarTodos();
-
-    List<PerfilProjeto> buscarTodosPerfisPorIdUsuario(UUID id);
-    
-    int obterQuantidadePerfisPorUsuario(UUID idUsuario);
+    boolean existePerfilPadrao();
 }

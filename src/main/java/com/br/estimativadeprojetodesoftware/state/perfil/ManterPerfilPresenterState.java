@@ -1,63 +1,58 @@
 package com.br.estimativadeprojetodesoftware.state.perfil;
 
-import java.awt.event.ActionListener;
-
 import com.br.estimativadeprojetodesoftware.presenter.perfil.ManterPerfilPresenter;
+import com.br.estimativadeprojetodesoftware.view.perfil.ManterPerfilView;
+import javax.swing.JButton;
 
+/** State da tela de perfil; cada ação disponível é executada por um Command. */
 public abstract class ManterPerfilPresenterState {
-    protected ManterPerfilPresenter presenter;
 
-    public ManterPerfilPresenterState(ManterPerfilPresenter presenter) {
+    protected final ManterPerfilPresenter presenter;
+
+    protected ManterPerfilPresenterState(ManterPerfilPresenter presenter) {
         this.presenter = presenter;
-        removeListeners();
+    }
+
+    public abstract void entrar();
+
+    public abstract String getNome();
+
+    public void editar() {
+        indisponivel("editar");
     }
 
     public void salvar() {
-        throw new RuntimeException("Não é possível utilizar a função salvar neste estado: " + toString());
-    }
-
-    public void excluir() {
-        throw new RuntimeException("Não é possível utilizar a função excluir neste estado: " + toString());
-    }
-
-    public void editar() {
-        throw new RuntimeException("Não é possível utilizar a função editar neste estado: " + toString());
+        indisponivel("salvar");
     }
 
     public void cancelar() {
-        throw new RuntimeException("Não é possível utilizar a função cancelar neste estado: " + toString());
+        indisponivel("cancelar");
     }
 
-    private void removeListeners() {
-        ActionListener listeners[] =  presenter.getView().getBtnSalvar().getActionListeners();
-        for(ActionListener listener: listeners) {
-            presenter.getView().getBtnSalvar().removeActionListener(listener);            
-        }
+    public void excluir() {
+        indisponivel("excluir");
+    }
 
-        listeners = presenter.getView().getBtnAdicionarCampo().getActionListeners();
-        for(ActionListener listener: listeners) {
-            presenter.getView().getBtnAdicionarCampo().removeActionListener(listener);            
-        }
+    public void adicionarFuncionalidade() {
+        indisponivel("adicionar funcionalidade");
+    }
 
-        listeners = presenter.getView().getBtnRemoverCampo().getActionListeners();
-        for(ActionListener listener: listeners) {
-            presenter.getView().getBtnRemoverCampo().removeActionListener(listener);            
-        }
+    public void removerFuncionalidade() {
+        indisponivel("remover funcionalidade");
+    }
 
-        listeners = presenter.getView().getBtnExcluir().getActionListeners();
-        for(ActionListener listener: listeners) {
-            presenter.getView().getBtnExcluir().removeActionListener(listener);            
-        }
+    private void indisponivel(String acao) {
+        throw new IllegalStateException("A ação \"" + acao + "\" não está disponível no modo " + getNome() + ".");
+    }
 
-        listeners = presenter.getView().getBtnEditar().getActionListeners();
-        for(ActionListener listener: listeners) {
-            presenter.getView().getBtnEditar().removeActionListener(listener);            
+    protected void habilitar(JButton... ativos) {
+        ManterPerfilView v = presenter.getView();
+        for (JButton b : new JButton[]{v.getBtnEditar(), v.getBtnSalvar(), v.getBtnCancelar(), v.getBtnExcluir(),
+            v.getBtnNovaFuncionalidade(), v.getBtnRemoverFuncionalidade()}) {
+            b.setEnabled(false);
         }
-
-        listeners = presenter.getView().getBtnCancelar().getActionListeners();
-        for(ActionListener listener: listeners) {
-            presenter.getView().getBtnCancelar().removeActionListener(listener);            
+        for (JButton b : ativos) {
+            b.setEnabled(true);
         }
-
     }
 }

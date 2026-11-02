@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.helpers;
 
-import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +56,7 @@ public class WindowManager {
                 frame.moveToFront();
                 frame.setSelected(true);
             } catch (Exception e) {
-                new MostrarMensagemProjetoCommand("Falha ao trazer janela para frente:\n" + e.getMessage());
+                ExibirMensagemCommand.erro("Falha ao trazer janela para frente:\n" + e.getMessage());
             }
         }, () -> dialogosAbertos.getOrDefault(titulo, null).toFront());
     }

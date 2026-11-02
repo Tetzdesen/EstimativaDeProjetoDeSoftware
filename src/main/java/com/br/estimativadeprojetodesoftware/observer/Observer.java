@@ -1,5 +1,7 @@
 package com.br.estimativadeprojetodesoftware.observer;
 
+/** Observer: janelas abertas que reagem a mudanças de dados. */
 public interface Observer {
-    void update();
+
+    void update(EventoDominio evento);
 }

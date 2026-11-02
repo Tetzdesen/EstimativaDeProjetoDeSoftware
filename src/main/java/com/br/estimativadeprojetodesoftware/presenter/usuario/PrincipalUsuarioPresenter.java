@@ -3,7 +3,6 @@ package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
 import com.br.estimativadeprojetodesoftware.command.usuario.AbrirCadastroUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.AbrirLoginUsuarioCommand;
-import com.br.estimativadeprojetodesoftware.presenter.window_command.SetLookAndFeelCommand;
 import com.br.estimativadeprojetodesoftware.view.usuario.PrincipalUsuarioView;
 import javax.swing.SwingUtilities;
 
@@ -28,7 +27,6 @@ public class PrincipalUsuarioPresenter {
     }
 
     private void configuraListeners() {
-        new SetLookAndFeelCommand().execute();
         view.getBtnAutenticarPorSenha().addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {
                 new AbrirLoginUsuarioCommand(this).execute();

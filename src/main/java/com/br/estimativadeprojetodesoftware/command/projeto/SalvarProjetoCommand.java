@@ -1,25 +1,25 @@
 package com.br.estimativadeprojetodesoftware.command.projeto;
 
-import com.br.estimativadeprojetodesoftware.model.Projeto;
-import com.br.estimativadeprojetodesoftware.service.ProjetoService;
 import com.br.estimativadeprojetodesoftware.command.Command;
+import com.br.estimativadeprojetodesoftware.presenter.projeto.ManterProjetoPresenter;
+import com.br.estimativadeprojetodesoftware.state.projeto.VisualizacaoProjetoState;
 
-/**
- *
- * @author tetzner
- */
+/** Persiste a alteração do projeto (registrada no log pelo service). */
 public class SalvarProjetoCommand implements Command {
 
-    private final ProjetoService projetoService;
-    private final Projeto projeto;
+    private final ManterProjetoPresenter presenter;
 
-    public SalvarProjetoCommand(ProjetoService projetoService, Projeto projeto) {
-        this.projetoService = projetoService;
-        this.projeto = projeto;
+    public SalvarProjetoCommand(ManterProjetoPresenter presenter) {
+        this.presenter = presenter;
     }
 
     @Override
     public void execute() {
-        projetoService.salvar(projeto);
+        if (!presenter.aplicarCamposNoProjeto()) {
+            return;
+        }
+        presenter.getProjetoService().salvar(presenter.getProjeto(), presenter.getUsuario());
+        presenter.setEstado(new VisualizacaoProjetoState(presenter));
+        presenter.sucesso("Projeto salvo.");
     }
 }

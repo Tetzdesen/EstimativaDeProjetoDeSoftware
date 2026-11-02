@@ -1,93 +1,101 @@
 package com.br.estimativadeprojetodesoftware.singleton;
 
+import com.br.estimativadeprojetodesoftware.repository.RepositorioException;
+import com.br.estimativadeprojetodesoftware.repository.jdbc.JdbcPerfilRepository;
+import com.br.estimativadeprojetodesoftware.repository.jdbc.JdbcUsuarioRepository;
+import com.br.estimativadeprojetodesoftware.seeder.PerfilPadraoSeeder;
+import com.br.estimativadeprojetodesoftware.seeder.UsuarioSeeder;
 import com.br.estimativadeprojetodesoftware.service.DotenvService;
 import com.br.estimativadeprojetodesoftware.strategy.DatabaseInitializer;
+import com.br.estimativadeprojetodesoftware.strategy.H2Initializer;
 import com.br.estimativadeprojetodesoftware.strategy.SQLiteInitializer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 
+/**
+ * Conexão única com o banco escolhido em TIPO_BANCO (SQLite ou H2). A cada
+ * início cria as tabelas que faltam e roda os seeders, que não duplicam dados.
+ */
 public class ConexaoSingleton {
 
-    private static ConexaoSingleton instancia = null;
-
-    private Connection conexao;
-    private String url;
-    private String user;
-    private String senha;
-    private String driver;
-    private String tipo;
-
-    private DatabaseInitializer initializer;
-    private boolean bancoRecemCriado;
-
-    private final Map<String, DatabaseInitializer> inicializadores = Map.of(
-            "SQLite", new SQLiteInitializer()
+    private static final Map<String, DatabaseInitializer> INICIALIZADORES = Map.of(
+            "sqlite", new SQLiteInitializer(),
+            "h2", new H2Initializer()
     );
 
+    private static ConexaoSingleton instancia;
+
+    private final Connection conexao;
+    private final String tipo;
+
     private ConexaoSingleton() {
-        this.url = DotenvService.getEnv("DB_URL");
-        this.user = DotenvService.getEnv("DB_USER");
-        this.senha = DotenvService.getEnv("DB_PASSWORD");
-        this.driver = DotenvService.getEnv("DB_DRIVER");
-
-        this.tipo = DotenvService.getEnv("TIPO_BANCO");
-
-        if (this.tipo == null) {
-            throw new RuntimeException("Variável TIPO_BANCO não definida no .env");
+        this.tipo = DotenvService.getValor("TIPO_BANCO");
+        String url = DotenvService.getValor("DB_URL");
+        if (tipo == null || url == null) {
+            throw new IllegalStateException("Defina TIPO_BANCO e DB_URL no arquivo .env (veja o .env.example)");
         }
+        DatabaseInitializer initializer = inicializadorPara(tipo);
+        this.conexao = abrir(initializer, url, DotenvService.getValor("DB_USER"), DotenvService.getValor("DB_PASSWORD"));
+    }
 
-        this.initializer = inicializadores.entrySet().stream()
-                .filter(entry -> tipo.toLowerCase().contains(entry.getKey().toLowerCase()))
-                .map(Map.Entry::getValue)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Banco de dados não suportado: " + tipo));
+    public static DatabaseInitializer inicializadorPara(String tipo) {
+        DatabaseInitializer initializer = INICIALIZADORES.get(tipo.trim().toLowerCase());
+        if (initializer == null) {
+            throw new IllegalStateException("Banco de dados não suportado: " + tipo + " (use SQLite ou H2)");
+        }
+        return initializer;
+    }
 
-        this.bancoRecemCriado = initializer.prepararArmazenamento(url, user, senha);
-
+    /**
+     * Abre a conexão, cria as tabelas e roda os seeders. Usado pelo singleton
+     * e pelos testes de integração.
+     */
+    public static Connection abrir(DatabaseInitializer initializer, String url, String usuario, String senha) {
         try {
-            this.conexao = DriverManager.getConnection(url, user, senha);
-
-            try (var stmt = this.conexao.createStatement()) {
-                stmt.execute("PRAGMA foreign_keys = ON;");
-            }
-         
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao conectar com o banco de dados: " + e.getMessage());
+            Class.forName(initializer.getDriver());
+        } catch (ClassNotFoundException e) {
+            throw new RepositorioException("Driver JDBC não encontrado: " + initializer.getDriver(), e);
         }
+        try {
+            initializer.prepararArmazenamento(url);
+            Connection conexao = DriverManager.getConnection(url, usuario == null ? "" : usuario, senha == null ? "" : senha);
+            initializer.configurarConexao(conexao);
+            initializer.criarTabelas(conexao);
+            verificarEsquema(conexao, url);
+            new UsuarioSeeder(new JdbcUsuarioRepository(conexao)).executar();
+            new PerfilPadraoSeeder(new JdbcPerfilRepository(conexao)).executar();
+            return conexao;
+        } catch (SQLException e) {
+            throw new RepositorioException("Erro ao conectar com o banco de dados: " + e.getMessage(), e);
+        }
+    }
 
+    /** Recusa bancos criados pela versão antiga do sistema, com instrução clara. */
+    private static void verificarEsquema(Connection conexao, String url) {
+        try (var st = conexao.createStatement()) {
+            st.executeQuery("SELECT id, nome, email, senha, criado_em FROM usuario WHERE 1 = 0").close();
+            st.executeQuery("SELECT id, dono_id, web_backend, pct_impostos FROM projeto WHERE 1 = 0").close();
+        } catch (SQLException e) {
+            throw new RepositorioException("O banco " + url + " foi criado por uma versão antiga do sistema e tem outro esquema. "
+                    + "Apague a pasta do banco (ex.: db/) e inicie o sistema de novo para recriá-lo.", e);
+        }
     }
 
     public static synchronized ConexaoSingleton getInstancia() {
         if (instancia == null) {
-            ConexaoSingleton novaInstancia = new ConexaoSingleton();
-
-            // A instância é publicada antes de configurar o banco porque os
-            // comandos de criação de tabelas e os seeders voltam a chamar
-            // getInstancia() para obter a conexão.
-            instancia = novaInstancia;
-
-            try {
-                novaInstancia.configurarBancoSeNecessario();
-            } catch (RuntimeException e) {
-                instancia = null;
-                novaInstancia.closeConnection();
-                throw e;
-            }
+            instancia = new ConexaoSingleton();
         }
         return instancia;
     }
 
-    private void configurarBancoSeNecessario() {
-        if (bancoRecemCriado) {
-            bancoRecemCriado = false;
-            initializer.configurarBanco();
-        }
+    public Connection getConexao() {
+        return conexao;
     }
 
-    public Connection getConexao() {
-        return this.conexao;
+    public String getTipo() {
+        return tipo;
     }
 
     public void closeConnection() {
@@ -96,7 +104,7 @@ public class ConexaoSingleton {
                 conexao.close();
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error ao fechar conexão com o banco de dados: " + e.getMessage());
+            throw new RepositorioException("Erro ao fechar a conexão com o banco de dados: " + e.getMessage(), e);
         }
     }
 }

@@ -1,53 +1,27 @@
 package com.br.estimativadeprojetodesoftware.model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Usuario {
 
-    private UUID id;
+    private final UUID id;
     private String nome;
     private String email;
     private String senha;
-    private LocalDateTime created_at;
-    private String log;
-    private List<Projeto> projetos;
-    private List<PerfilProjeto> perfis;
+    private final LocalDateTime created_at;
 
     public Usuario(String nome, String email, String senha) {
-        this.id = UUID.randomUUID();
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.created_at = LocalDateTime.now();
-        this.log = "";
-        this.projetos = new ArrayList<>();
-        this.perfis = new ArrayList<>();
+        this(UUID.randomUUID(), nome, email, senha, LocalDateTime.now());
     }
 
-    public Usuario(UUID id, String nome, String email, String senha, LocalDateTime created_at, String log, List<Projeto> projetos, List<PerfilProjeto> perfis) {
-        this.id = id;
+    public Usuario(UUID id, String nome, String email, String senha, LocalDateTime created_at) {
+        this.id = Objects.requireNonNull(id);
         this.nome = nome;
         this.email = email;
         this.senha = senha;
-        this.created_at = created_at;
-        this.log = log;
-        this.projetos = projetos;
-        this.perfis = perfis;
-    }
-
-    public Usuario(UUID id, String nome, String email, String senha, LocalDateTime created_at, String log) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.created_at = created_at;
-        this.log = log;
-        this.projetos = new ArrayList<>();
-        this.perfis = new ArrayList<>();
+        this.created_at = created_at == null ? LocalDateTime.now() : created_at;
     }
 
     public UUID getId() {
@@ -70,56 +44,19 @@ public class Usuario {
         return created_at;
     }
 
-    public String getLog() {
-        return log;
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Usuario outro && outro.id.equals(id);
     }
 
-    public List<Projeto> getProjetos() {
-        return Collections.unmodifiableList(projetos);
-    }
-
-    public List<PerfilProjeto> getPerfis() {
-        return Collections.unmodifiableList(perfis);
-    }
-
-    public void setLog(String log) {
-        if(log.isEmpty()){
-            throw new IllegalArgumentException("Erro: Opção de log vazia");
-        }
-        this.log = log;
-    }
-
-    public void adicionarProjeto(Projeto projeto) {
-        if (projeto == null) {
-            throw new IllegalArgumentException("Erro: Projeto não pode ser nulo.");
-        }
-        projetos.add(projeto);
-    }
-
-    public void adicionarPerfil(PerfilProjeto perfil) {
-        if (perfil == null) {
-            throw new IllegalArgumentException("Erro: Perfil não pode ser nulo.");
-        }
-        perfis.add(perfil);
-    }
-
-    public void removerProjeto(Projeto projeto) {
-        if (projeto == null) {
-            throw new IllegalArgumentException("Erro: Projeto não pode ser nulo.");
-        }
-        projetos.remove(projeto);
-    }
-
-    public void removerPerfil(PerfilProjeto perfil) {
-        if (perfil == null) {
-            throw new IllegalArgumentException("Erro: Perfil não pode ser nulo.");
-        }
-        perfis.remove(perfil);
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
     @Override
     public String toString() {
-        return "Usuario{" + "id=" + id + ", nome=" + nome + ", email=" + email + ", senha=****, created_at=" + created_at + ", log=" + log + ", projetos=" + projetos + ", perfis=" + perfis + '}';
+        return "Usuario{" + "id=" + id + ", nome=" + nome + ", email=" + email + ", senha=****, created_at=" + created_at + '}';
     }
 
 }

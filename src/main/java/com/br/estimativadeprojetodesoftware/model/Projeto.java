@@ -1,71 +1,170 @@
 package com.br.estimativadeprojetodesoftware.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
+/**
+ * Projeto de estimativa. Contém cópias independentes das funcionalidades dos
+ * perfis de origem, as plataformas marcadas, taxas, custos adicionais,
+ * impostos e lucro.
+ */
 public class Projeto {
+
+    public static final BigDecimal IMPOSTOS_PADRAO = new BigDecimal("0.42");
+    public static final BigDecimal LUCRO_PADRAO = new BigDecimal("0.30");
 
     private final UUID id;
     private String nome;
-    private String criador;
-    private String tipo;
-    private LocalDateTime created_at;
-    private String status;
-    private boolean compartilhado;
-    private List<PerfilProjeto> perfis;
-    private List<Usuario> usuarios;
-    private List<Campo> campos;
+    private final UUID donoId;
+    private String donoNome;
+    private final Set<Plataforma> plataformas;
+    private final List<ItemProjeto> itens;
+    private TaxaDiaria taxas;
+    private final List<CustoAdicional> custosAdicionais;
+    private BigDecimal percentualImpostos;
+    private BigDecimal percentualLucro;
+    private boolean calculado;
+    private final LocalDateTime criadoEm;
+    private LocalDateTime atualizadoEm;
 
-    public Projeto(String nome, String criador) {
-        this(nome, criador, null);
+    public Projeto(UUID id, String nome, UUID donoId, TaxaDiaria taxas, BigDecimal percentualImpostos,
+            BigDecimal percentualLucro, boolean calculado, LocalDateTime criadoEm, LocalDateTime atualizadoEm) {
+        this.id = Objects.requireNonNull(id);
+        setNome(nome);
+        this.donoId = Objects.requireNonNull(donoId, "O projeto precisa de um dono");
+        this.plataformas = EnumSet.noneOf(Plataforma.class);
+        this.itens = new ArrayList<>();
+        this.taxas = taxas == null ? new TaxaDiaria() : taxas;
+        this.custosAdicionais = new ArrayList<>();
+        setPercentualImpostos(percentualImpostos == null ? IMPOSTOS_PADRAO : percentualImpostos);
+        setPercentualLucro(percentualLucro == null ? LUCRO_PADRAO : percentualLucro);
+        this.calculado = calculado;
+        this.criadoEm = criadoEm == null ? LocalDateTime.now() : criadoEm;
+        this.atualizadoEm = atualizadoEm;
     }
 
-    public Projeto(UUID id, String nome, String status, String criador) {
-        this.id = id;
-        this.nome = nome;
-        this.status = status;
-        this.criador = criador;
-        this.perfis = new ArrayList<>();
-        this.usuarios = new ArrayList<>();
-        this.campos = new ArrayList<>();
+    /**
+     * Cria um projeto a partir de um ou mais perfis usando o Prototype
+     * ({@link Perfil#copiarParaProjeto()}). Funcionalidades repetidas
+     * (mesma categoria e nome) entram uma única vez; as taxas vêm do primeiro perfil.
+     */
+    public static Projeto aPartirDePerfis(String nome, UUID donoId, List<Perfil> perfis) {
+        if (perfis == null || perfis.isEmpty()) {
+            throw new IllegalArgumentException("Selecione ao menos um perfil para criar o projeto");
+        }
+        Projeto projeto = new Projeto(UUID.randomUUID(), nome, donoId, perfis.get(0).getTaxas().copiar(),
+                IMPOSTOS_PADRAO, LUCRO_PADRAO, false, LocalDateTime.now(), null);
+        int ordem = 0;
+        for (Perfil perfil : perfis) {
+            for (ItemProjeto item : perfil.copiarParaProjeto()) {
+                boolean repetido = projeto.itens.stream()
+                        .anyMatch(i -> i.getFuncionalidade().mesmaChave(item.getFuncionalidade()));
+                if (!repetido) {
+                    item.getFuncionalidade().setOrdem(++ordem);
+                    projeto.itens.add(item);
+                }
+            }
+        }
+        projeto.plataformas.addAll(EnumSet.allOf(Plataforma.class));
+        CustoAdicional.padroes().forEach(projeto.custosAdicionais::add);
+        return projeto;
     }
 
-    public Projeto(String nome, String criador, String tipo) {
-        this.id = UUID.randomUUID();
-        this.nome = Objects.requireNonNull(nome, "Nome não pode ser nulo");
-        this.criador = Objects.requireNonNull(criador, "Criador não pode ser nulo");
-        this.tipo = tipo;
-        this.created_at = LocalDateTime.now();
-        this.status = "Não estimado";
-        this.perfis = new ArrayList<>();
-        this.usuarios = new ArrayList<>();
-        this.campos = new ArrayList<>();
+    // ---------- plataformas ----------
+
+    public Set<Plataforma> getPlataformas() {
+        return Collections.unmodifiableSet(EnumSet.copyOf(plataformas));
     }
 
-    public Projeto(String nome, String criador, String tipo, List<Campo> campos) {
-        this.id = UUID.randomUUID();
-        this.nome = Objects.requireNonNull(nome, "Nome não pode ser nulo");
-        this.criador = Objects.requireNonNull(criador, "Criador não pode ser nulo");
-        this.tipo = tipo;
-        this.created_at = LocalDateTime.now();
-        this.status = "Não estimado";
-        this.perfis = new ArrayList<>();
-        this.usuarios = new ArrayList<>();
-        this.campos = new ArrayList<>();
+    public void setPlataformaMarcada(Plataforma plataforma, boolean marcada) {
+        if (marcada) {
+            plataformas.add(plataforma);
+        } else {
+            plataformas.remove(plataforma);
+        }
     }
 
-    public Projeto(UUID id, String nome, String criador, String tipo, LocalDateTime created_at, String status, boolean compartilhado, List<PerfilProjeto> perfis, List<Usuario> usuarios, List<Campo> campos) {
-        this.id = id;
-        this.nome = nome;
-        this.criador = criador;
-        this.tipo = tipo;
-        this.created_at = created_at;
-        this.status = status;
-        this.compartilhado = compartilhado;
-        this.perfis = perfis;
-        this.usuarios = usuarios;
-        this.campos = campos;
+    public boolean isPlataformaMarcada(Plataforma plataforma) {
+        return plataformas.contains(plataforma);
     }
+
+    // ---------- itens ----------
+
+    public List<ItemProjeto> getItens() {
+        List<ItemProjeto> ordenados = new ArrayList<>(itens);
+        ordenados.sort(Comparator.comparingInt(i -> i.getFuncionalidade().getOrdem()));
+        return Collections.unmodifiableList(ordenados);
+    }
+
+    public void adicionarItem(ItemProjeto item) {
+        itens.add(Objects.requireNonNull(item));
+    }
+
+    public Optional<ItemProjeto> buscarItem(UUID idFuncionalidade) {
+        return itens.stream().filter(i -> i.getFuncionalidade().getId().equals(idFuncionalidade)).findFirst();
+    }
+
+    public Optional<ItemProjeto> buscarItem(String categoria, String nome) {
+        return itens.stream()
+                .filter(i -> i.getFuncionalidade().getCategoria().equalsIgnoreCase(categoria)
+                && i.getFuncionalidade().getNome().equalsIgnoreCase(nome))
+                .findFirst();
+    }
+
+    /**
+     * Marca ou desmarca um item. Em categorias de escolha única, marcar um
+     * item desmarca os demais da categoria. Itens não aplicáveis em todas as
+     * plataformas não podem ser selecionados.
+     */
+    public void selecionar(UUID idFuncionalidade, boolean selecionado) {
+        ItemProjeto item = buscarItem(idFuncionalidade)
+                .orElseThrow(() -> new IllegalArgumentException("Funcionalidade não encontrada no projeto"));
+        Funcionalidade f = item.getFuncionalidade();
+        if (selecionado && f.getTipoSelecao() != TipoSelecao.LIVRE) {
+            boolean aplicavelEmAlguma = EnumSet.allOf(Plataforma.class).stream().anyMatch(f::isAplicavel);
+            if (!aplicavelEmAlguma) {
+                throw new IllegalArgumentException("\"" + f.getNome() + "\" não é aplicável e não pode ser selecionada");
+            }
+        }
+        if (selecionado && f.getTipoSelecao() == TipoSelecao.UNICA) {
+            for (ItemProjeto outro : itens) {
+                if (outro != item && outro.getFuncionalidade().getCategoria().equalsIgnoreCase(f.getCategoria())) {
+                    outro.setSelecionado(false);
+                }
+            }
+        }
+        item.setSelecionado(selecionado);
+    }
+
+    // ---------- custos ----------
+
+    public List<CustoAdicional> getCustosAdicionais() {
+        return Collections.unmodifiableList(custosAdicionais);
+    }
+
+    public void adicionarCustoAdicional(CustoAdicional custo) {
+        custosAdicionais.add(Objects.requireNonNull(custo));
+    }
+
+    public void removerCustoAdicional(UUID idCusto) {
+        custosAdicionais.removeIf(c -> c.getId().equals(idCusto));
+    }
+
+    public void substituirCustosAdicionais(List<CustoAdicional> novos) {
+        custosAdicionais.clear();
+        novos.forEach(this::adicionarCustoAdicional);
+    }
+
+    // ---------- demais atributos ----------
 
     public UUID getId() {
         return id;
@@ -75,96 +174,84 @@ public class Projeto {
         return nome;
     }
 
-    public String getCriador() {
-        return criador;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public LocalDateTime getCreated_at() {
-        return created_at;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public boolean isCompartilhado() {
-        return compartilhado;
-    }
-
-    public List<PerfilProjeto> getPerfis() {
-        return perfis;
-    }
-
-    public List<Usuario> getUsuarios() {
-        return Collections.unmodifiableList(usuarios);
-    }
-
-    public List<Campo> getCampos() {
-        return campos;
-    }
-
-    public void setNome(String nome) {
-        if (nome.isEmpty()) {
-            throw new IllegalArgumentException("Nome vazio");
+    public final void setNome(String nome) {
+        if (nome == null || nome.isBlank()) {
+            throw new IllegalArgumentException("O nome do projeto não pode ser vazio");
         }
-        this.nome = nome;
+        this.nome = nome.trim();
     }
 
-    public void setTipo(String tipo) {
-        if (tipo.isEmpty()) {
-            throw new IllegalArgumentException("Tipo vazio");
+    public UUID getDonoId() {
+        return donoId;
+    }
+
+    public boolean isDono(UUID usuarioId) {
+        return donoId.equals(usuarioId);
+    }
+
+    public String getDonoNome() {
+        return donoNome;
+    }
+
+    public void setDonoNome(String donoNome) {
+        this.donoNome = donoNome;
+    }
+
+    public TaxaDiaria getTaxas() {
+        return taxas;
+    }
+
+    public void setTaxas(TaxaDiaria taxas) {
+        this.taxas = Objects.requireNonNull(taxas);
+    }
+
+    /** Percentual de impostos como fração (0,42 = 42%). */
+    public BigDecimal getPercentualImpostos() {
+        return percentualImpostos;
+    }
+
+    public final void setPercentualImpostos(BigDecimal percentual) {
+        this.percentualImpostos = validarPercentual(percentual, "impostos");
+    }
+
+    /** Percentual de lucro como fração (0,30 = 30%). */
+    public BigDecimal getPercentualLucro() {
+        return percentualLucro;
+    }
+
+    public final void setPercentualLucro(BigDecimal percentual) {
+        this.percentualLucro = validarPercentual(percentual, "lucro");
+    }
+
+    private static BigDecimal validarPercentual(BigDecimal valor, String campo) {
+        if (valor == null || valor.signum() < 0) {
+            throw new IllegalArgumentException("O percentual de " + campo + " deve ser zero ou positivo");
         }
-        this.tipo = tipo;
+        return valor;
     }
 
-    public void setStatus(String status) {
-        if (status.isEmpty()) {
-            throw new IllegalArgumentException("Status vazio");
-        }
-        this.status = status;
+    public boolean isCalculado() {
+        return calculado;
     }
 
-    public void setCompartilhado(boolean compartilhado) {
-        this.compartilhado = compartilhado;
+    public void setCalculado(boolean calculado) {
+        this.calculado = calculado;
     }
 
-    public void adicionarPerfil(PerfilProjeto perfil) {
-        perfis.add(Objects.requireNonNull(perfil, "Perfil não pode ser nulo."));
+    public LocalDateTime getCriadoEm() {
+        return criadoEm;
     }
 
-    public void adicionarUsuario(Usuario usuario) {
-        usuarios.add(Objects.requireNonNull(usuario, "Usuário não pode ser nulo."));
+    public LocalDateTime getAtualizadoEm() {
+        return atualizadoEm;
     }
 
-    public void adicionarCampo(Campo campo) {
-        for (Campo c : campos) {
-            if (c.getTipo().equals(campo.getTipo()) && c.getNome().equals(campo.getNome())) {
-                c.setDias(campo.getDias());
-                return;
-            }
-        }
-        campos.add(Objects.requireNonNull(campo, "Campo não pode ser nulo."));
-    }
-
-    public void removerPerfil(PerfilProjeto perfil) {
-        perfis.remove(Objects.requireNonNull(perfil, "Perfil não pode ser nulo."));
-    }
-
-    public void removerUsuario(Usuario usuario) {
-        usuarios.remove(Objects.requireNonNull(usuario, "Usuário não pode ser nulo."));
-    }
-
-    public void removerCampo(Campo campo) {
-        campos.remove(Objects.requireNonNull(campo, "Campo não pode ser nulo."));
+    public void setAtualizadoEm(LocalDateTime atualizadoEm) {
+        this.atualizadoEm = atualizadoEm;
     }
 
     @Override
     public String toString() {
-        return "Projeto{" + "id=" + id + ", nome=" + nome + ", criador=" + criador + ", tipo=" + tipo + ", created_at=" + created_at + ", status=" + status + ", compartilhado=" + compartilhado + ", perfis=" + perfis + ", usuarios=" + usuarios + ", campos=" + campos + '}';
+        return nome;
     }
-
 }

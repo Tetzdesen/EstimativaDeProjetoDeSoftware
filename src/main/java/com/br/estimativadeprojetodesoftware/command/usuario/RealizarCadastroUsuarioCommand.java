@@ -1,82 +1,37 @@
 package com.br.estimativadeprojetodesoftware.command.usuario;
 
-import com.br.estimativadeprojetodesoftware.builder.AndroidBuilder;
-import com.br.estimativadeprojetodesoftware.builder.Diretor;
-import com.br.estimativadeprojetodesoftware.builder.IosBuilder;
-import com.br.estimativadeprojetodesoftware.builder.WebBackEndBuilder;
-import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
-import com.br.estimativadeprojetodesoftware.model.Usuario;
-import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
-import com.br.estimativadeprojetodesoftware.service.SenhaHashService;
-import com.br.estimativadeprojetodesoftware.service.UsuarioService;
-import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
 import com.br.estimativadeprojetodesoftware.command.Command;
+import com.br.estimativadeprojetodesoftware.model.Usuario;
+import com.br.estimativadeprojetodesoftware.service.UsuarioService;
 
-/**
- *
- * @author tetzner
- */
+/** Cria a conta pelo UsuarioService (que valida e grava a senha como hash). */
 public class RealizarCadastroUsuarioCommand implements Command {
 
     private final UsuarioService usuarioService;
-    private final ValidadorSenhaService validadorDeSenha;
     private final String nome;
     private final String email;
     private final String senha;
     private final String senhaConfirmada;
+    private Usuario criado;
 
     public RealizarCadastroUsuarioCommand(String nome, String email, String senha, String senhaConfirmada) {
+        this(new UsuarioService(), nome, email, senha, senhaConfirmada);
+    }
+
+    public RealizarCadastroUsuarioCommand(UsuarioService usuarioService, String nome, String email, String senha, String senhaConfirmada) {
+        this.usuarioService = usuarioService;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.senhaConfirmada = senhaConfirmada;
-        this.usuarioService = new UsuarioService();
-        this.validadorDeSenha = new ValidadorSenhaService();
     }
 
     @Override
     public void execute() {
-        Usuario usuario = usuarioService.buscarPorEmail(email).orElse(null);
-
-        if (usuario == null) {
-
-            if (camposInvalidos(email, nome, senha, senhaConfirmada)) {
-                throw new IllegalArgumentException("Os campos não podem estar vazios");
-            }
-
-            if (senha.equals(senhaConfirmada)) {
-
-                try {
-                    if (validadorDeSenha.validarSenha(senha)) {
-                        usuario = new Usuario(nome, email, SenhaHashService.gerarHash(senha));
-                        usuarioService.salvar(usuario);
-                        
-                        PerfilProjetoService repositoryPerfil = new PerfilProjetoService();
-                        repositoryPerfil.salvar(Diretor.build(new AndroidBuilder("Android", usuario)));
-                        repositoryPerfil.salvar(Diretor.build(new IosBuilder("iOS", usuario)));
-                        repositoryPerfil.salvar(Diretor.build(new WebBackEndBuilder("Web Back-End", usuario)));
-                        
-                        exibirMensagem("Cadastro realizado com sucesso!");
-                    }
-                } catch (Exception ex) {
-                    throw new RuntimeException("Erro na validação de senha: \n" + ex.getMessage());
-                }
-
-            } else {
-                throw new IllegalArgumentException("Senhas não conferem");
-            }
-        } else {
-            throw new IllegalArgumentException("Usuário já cadastrado no sistema, por favor cadastrar outro usuário");
-        }
+        criado = usuarioService.cadastrar(nome, email, senha, senhaConfirmada);
     }
 
-    private boolean camposInvalidos(String email, String nome, String senha, String senhaConfirmada) {
-        return email == null || email.trim().isEmpty() || senha == null || senha.trim().isEmpty() || nome == null
-                || nome.trim().isEmpty() || senhaConfirmada == null || senhaConfirmada.isEmpty();
+    public Usuario getCriado() {
+        return criado;
     }
-
-    private void exibirMensagem(String mensagem) {
-        new MostrarMensagemProjetoCommand(mensagem).execute();
-    }
-
 }

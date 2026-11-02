@@ -1,10 +1,9 @@
 package com.br.estimativadeprojetodesoftware.command.usuario;
 
-import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.presenter.usuario.ManterUsuarioPresenter;
 import com.br.estimativadeprojetodesoftware.service.SenhaHashService;
-import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.command.Command;
 
@@ -15,11 +14,9 @@ import com.br.estimativadeprojetodesoftware.command.Command;
 public class SalvarUsuarioCommand implements Command {
 
     private final ManterUsuarioPresenter usuarioPresenter;
-    private final ValidadorSenhaService validadorService;
 
     public SalvarUsuarioCommand(ManterUsuarioPresenter usuarioPresenter) {
         this.usuarioPresenter = usuarioPresenter;
-        this.validadorService = new ValidadorSenhaService();
     }
 
     @Override
@@ -36,21 +33,16 @@ public class SalvarUsuarioCommand implements Command {
         String senhaPersistida = usuario.getSenha();
 
         if (!senhaDigitada.trim().isEmpty()) {
-            try {
-                validadorService.validarSenha(senhaDigitada);
-            } catch (Exception ex) {
-                throw new RuntimeException("Erro ao validar a senha \n" + ex.getMessage());
-            }
+            usuarioPresenter.getUsuarioService().validarSenha(senhaDigitada);
             senhaPersistida = SenhaHashService.gerarHash(senhaDigitada);
         }
 
-        Usuario usuarioNovo = new Usuario(usuario.getId(), nome, email, senhaPersistida, usuario.getCreated_at(), usuario.getLog(), usuario.getProjetos(), usuario.getPerfis());
-
-        UsuarioLogadoSingleton.getInstancia().setUsuario(usuarioNovo);
-        usuarioPresenter.setUsuario(usuarioNovo);
+        Usuario usuarioNovo = new Usuario(usuario.getId(), nome, email, senhaPersistida, usuario.getCreated_at());
 
         usuarioPresenter.getUsuarioService().atualizar(usuarioNovo);
-        new MostrarMensagemProjetoCommand("Usuário salvo com sucesso").execute();
+        UsuarioLogadoSingleton.getInstancia().setUsuario(usuarioNovo);
+        usuarioPresenter.setUsuario(usuarioNovo);
+        ExibirMensagemCommand.sucesso("Usuário salvo com sucesso");
     }
 
 }

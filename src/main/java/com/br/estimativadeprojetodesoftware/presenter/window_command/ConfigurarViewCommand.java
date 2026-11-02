@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.window_command;
 
-import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.PrincipalProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.service.BarraService;
 
@@ -22,11 +22,11 @@ public class ConfigurarViewCommand implements Command {
         presenter.getView().setMainComponents(barraDeBotoes);
         presenter.setCriarBarraService(barraService);
         SwingUtilities.invokeLater(() -> {
-            Command comandoPrincipal = presenter.getComandos().get("Principal");
+            Command comandoPrincipal = presenter.getComandos().get("Dashboard");
             if (comandoPrincipal != null) {
                 comandoPrincipal.execute();
             } else {
-                new MostrarMensagemProjetoCommand("Comando 'Principal' não encontrado.").execute();
+                ExibirMensagemCommand.erro("Comando do dashboard não encontrado.");
             }
         });
     }
