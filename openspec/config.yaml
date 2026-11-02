@@ -1,0 +1,36 @@
+schema: spec-driven
+
+context: |
+  Sistema desktop de estimativa de custo e prazo de aplicativos (Web/Back-end, iOS, Android),
+  baseado em perfis do EstimateMyApp (Tabela 1). Trabalho Final de Projeto de Sistemas de Software, UFES.
+  Escreva todos os artefatos em português do Brasil, mantendo SHALL/MUST nos requisitos.
+  Stack: Java 17, Maven, Java Swing com MDI (JDesktopPane + JInternalFrame).
+  Arquitetura: MVP Passive View; a view não contém lógica nem acesso a dados.
+  Padrões obrigatórios: Repository, State integrado a Command nos CRUDs, Observer entre janelas,
+  Adapter no log e no validador de senhas (github.com/claytonfraga/validadorsenha via JitPack).
+  Persistência: JDBC puro com SQLite e H2 escolhidos por arquivo de configuração, com seeder.
+  Proibido: Hibernate, JPA ou qualquer framework de persistência; Docker para o banco.
+  O log é um projeto Maven separado, publicado no GitHub e incluído via JitPack (CSV com ";" e JSON).
+  O cálculo segue a planilha da Tabela 1 por decisão do professor, inclusive o Nível de UI
+  (soma dos dias-base marcados x soma dos percentuais marcados / 3).
+  Dias e valores em BigDecimal, arredondamento só na exibição.
+  Perfil padrão do seeder: openspec/reference/perfil-padrao.csv ("NA" = não aplicável, diferente de 0).
+  Software que não compila ou não executa recebe nota zero.
+
+rules:
+  proposal:
+    - Citar os códigos do enunciado atendidos (BRxx, RNFxx, caso de uso)
+    - Dizer o que fica fora do escopo
+  design:
+    - Indicar qual padrão de projeto obrigatório cada classe nova implementa
+  tasks:
+    - Incluir tarefa de teste com os casos de aceitação das specs quando houver cálculo
+    - Tarefas de no máximo 2 horas
+
+operations:
+  apply:
+    guidance:
+      - Seguir de uma tarefa para a próxima sem pedir confirmação; pausar só em erro que não consiga resolver ou em ambiguidade real
+      - Rodar "mvn -q compile" após cada tarefa que mexe em código e corrigir erros antes de marcar a tarefa como concluída
+      - Rodar "mvn -q test" ao fim de cada grupo de tarefas
+      - Não marcar tarefa como concluída se o comportamento da spec estiver só parcialmente implementado
