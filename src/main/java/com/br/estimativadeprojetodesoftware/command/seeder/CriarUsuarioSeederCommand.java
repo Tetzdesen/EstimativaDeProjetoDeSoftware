@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.command.seeder;
 
 import com.br.estimativadeprojetodesoftware.command.Command;
+import com.br.estimativadeprojetodesoftware.service.SenhaHashService;
 import com.br.estimativadeprojetodesoftware.singleton.ConexaoSingleton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,7 +25,7 @@ public class CriarUsuarioSeederCommand implements Command {
             stmt.setString(1, "533ee667-86a2-47c7-8f99-b8fb18f19fd8");
             stmt.setString(2, "kaua");
             stmt.setString(3, "kaua@email.com");
-            stmt.setString(4, "A@#bb");
+            stmt.setString(4, SenhaHashService.gerarHash("A@#bb"));
             stmt.setString(5, "JSON");
             stmt.executeUpdate();
 

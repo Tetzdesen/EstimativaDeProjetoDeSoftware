@@ -19,6 +19,9 @@ public class ConexaoSingleton {
     private String driver;
     private String tipo;
 
+    private DatabaseInitializer initializer;
+    private boolean bancoRecemCriado;
+
     private final Map<String, DatabaseInitializer> inicializadores = Map.of(
             "SQLite", new SQLiteInitializer()
     );
@@ -31,13 +34,17 @@ public class ConexaoSingleton {
 
         this.tipo = DotenvService.getEnv("TIPO_BANCO");
 
-        DatabaseInitializer initializer = inicializadores.entrySet().stream()
+        if (this.tipo == null) {
+            throw new RuntimeException("Variável TIPO_BANCO não definida no .env");
+        }
+
+        this.initializer = inicializadores.entrySet().stream()
                 .filter(entry -> tipo.toLowerCase().contains(entry.getKey().toLowerCase()))
                 .map(Map.Entry::getValue)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Banco de dados não suportado"));
+                .orElseThrow(() -> new RuntimeException("Banco de dados não suportado: " + tipo));
 
-        initializer.inicializarBanco(url, user, senha);
+        this.bancoRecemCriado = initializer.prepararArmazenamento(url, user, senha);
 
         try {
             this.conexao = DriverManager.getConnection(url, user, senha);
@@ -54,9 +61,29 @@ public class ConexaoSingleton {
 
     public static synchronized ConexaoSingleton getInstancia() {
         if (instancia == null) {
-            instancia = new ConexaoSingleton();
+            ConexaoSingleton novaInstancia = new ConexaoSingleton();
+
+            // A instância é publicada antes de configurar o banco porque os
+            // comandos de criação de tabelas e os seeders voltam a chamar
+            // getInstancia() para obter a conexão.
+            instancia = novaInstancia;
+
+            try {
+                novaInstancia.configurarBancoSeNecessario();
+            } catch (RuntimeException e) {
+                instancia = null;
+                novaInstancia.closeConnection();
+                throw e;
+            }
         }
         return instancia;
+    }
+
+    private void configurarBancoSeNecessario() {
+        if (bancoRecemCriado) {
+            bancoRecemCriado = false;
+            initializer.configurarBanco();
+        }
     }
 
     public Connection getConexao() {

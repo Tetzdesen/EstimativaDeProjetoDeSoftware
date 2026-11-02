@@ -21,7 +21,7 @@ public class CriarTabelasSQLiteCommand implements Command {
                          idUsuario TEXT NOT NULL PRIMARY KEY,
                          nomeUsuario VARCHAR(75) NOT NULL,
                          email VARCHAR(50) NOT NULL UNIQUE,
-                         senha VARCHAR(75) NOT NULL,
+                         senha VARCHAR(255) NOT NULL,
                          created_atUsuario DEFAULT CURRENT_TIMESTAMP NOT NULL,
                          updated_atUsuario DATETIME,
                          log VARCHAR(255) NOT NULL

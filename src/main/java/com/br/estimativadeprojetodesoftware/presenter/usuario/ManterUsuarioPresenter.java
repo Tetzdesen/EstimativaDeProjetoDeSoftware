@@ -156,7 +156,9 @@ public class ManterUsuarioPresenter implements Observer {
         view.getTxtNome().setText(usuario.getNome());
         view.getTxtDataCriacao().setText(DataHoraService.formatarData(usuario.getCreated_at().toLocalDate()));
         view.getTxtEmail().setText(usuario.getEmail());
-        view.getTxtSenhaAtual().setText(usuario.getSenha());
+        // A senha fica guardada como hash: o campo começa vazio e só é
+        // enviado quando o usuário digita uma senha nova.
+        view.getTxtSenhaAtual().setText("");
         view.getTxtTotalProjetos().setText(String.valueOf(getQtdProjetos()));
         view.getTxtTotalPerfis().setText(String.valueOf(getQtdPerfis()));
     }

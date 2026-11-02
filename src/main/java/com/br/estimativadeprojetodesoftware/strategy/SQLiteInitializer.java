@@ -15,14 +15,16 @@ import java.util.List;
 public class SQLiteInitializer implements DatabaseInitializer {
 
     @Override
-    public void inicializarBanco(String url, String user, String senha) {
-
+    public boolean prepararArmazenamento(String url, String user, String senha) {
         String caminhoBanco = url.replace("jdbc:sqlite:", "");
-        boolean arquivoCriado = criarArquivoBDSQLite(caminhoBanco);
+        return criarArquivoBDSQLite(caminhoBanco);
+    }
 
-        if (arquivoCriado) {
-            configurarBancoSQLite();
-        }
+    @Override
+    public void configurarBanco() {
+        new CriarTabelasSQLiteCommand().execute();
+        List<Command> comandosSeeder = Arrays.asList(new CriarUsuarioSeederCommand(), new CriarCamposSeederCommand());
+        comandosSeeder.forEach(seeder -> seeder.execute());
     }
 
     private boolean criarArquivoBDSQLite(String caminho) {
@@ -44,12 +46,6 @@ public class SQLiteInitializer implements DatabaseInitializer {
             }
         }
         return false;
-    }
-
-    private void configurarBancoSQLite() {
-        new CriarTabelasSQLiteCommand().execute();
-        List<Command> comandosSeeder = Arrays.asList(new CriarUsuarioSeederCommand(), new CriarCamposSeederCommand());
-        comandosSeeder.forEach(seeder -> seeder.execute());
     }
 
 }

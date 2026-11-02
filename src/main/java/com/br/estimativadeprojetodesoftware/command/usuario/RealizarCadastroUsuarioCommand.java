@@ -7,6 +7,7 @@ import com.br.estimativadeprojetodesoftware.builder.WebBackEndBuilder;
 import com.br.estimativadeprojetodesoftware.command.projeto.MostrarMensagemProjetoCommand;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.service.PerfilProjetoService;
+import com.br.estimativadeprojetodesoftware.service.SenhaHashService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioService;
 import com.br.estimativadeprojetodesoftware.service.ValidadorSenhaService;
 import com.br.estimativadeprojetodesoftware.command.Command;
@@ -47,7 +48,7 @@ public class RealizarCadastroUsuarioCommand implements Command {
 
                 try {
                     if (validadorDeSenha.validarSenha(senha)) {
-                        usuario = new Usuario(nome, email, senha);
+                        usuario = new Usuario(nome, email, SenhaHashService.gerarHash(senha));
                         usuarioService.salvar(usuario);
                         
                         PerfilProjetoService repositoryPerfil = new PerfilProjetoService();
