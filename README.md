@@ -127,7 +127,7 @@ O log é um projeto Maven à parte, publicado em [Tetzdesen/estimativa-log](http
 
 Os padrões pedidos no trabalho estão lá: Repository, State com Command nos CRUDs, Observer entre janelas e Adapter no log e no validador de senhas. Também usamos Abstract Factory, Strategy, Template Method, Prototype e Singleton.
 
-As especificações ficam em `openspec/specs/`. O que foi atendido de cada requisito, e onde está no código, está em [`docs/requisitos-implementados.md`](docs/requisitos-implementados.md).
+O que foi atendido de cada requisito, e onde está no código, está em [`docs/requisitos-implementados.md`](docs/requisitos-implementados.md).
 
 ## Testes
 
