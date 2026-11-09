@@ -2,6 +2,7 @@ package com.br.estimativadeprojetodesoftware.presenter.tabela;
 
 import com.br.estimativadeprojetodesoftware.model.CustoAdicional;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Consumer;
 import javax.swing.table.AbstractTableModel;
@@ -12,6 +13,8 @@ public class CustosTableModel extends AbstractTableModel {
     private final Projeto projeto;
     private final Consumer<String> aoErro;
     private boolean editavel;
+    private Runnable aoAlterar = () -> {
+    };
 
     public CustosTableModel(Projeto projeto, Consumer<String> aoErro) {
         this.projeto = projeto;
@@ -24,6 +27,11 @@ public class CustosTableModel extends AbstractTableModel {
 
     public CustoAdicional getLinha(int row) {
         return custos().get(row);
+    }
+
+    /** Avisado quando o usuário muda um valor; eventos programáticos da tabela não contam. */
+    public void setAoAlterar(Runnable aoAlterar) {
+        this.aoAlterar = aoAlterar;
     }
 
     public void setEditavel(boolean editavel) {
@@ -64,6 +72,8 @@ public class CustosTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object valor, int row, int col) {
         CustoAdicional c = custos().get(row);
+        String descricaoAntes = c.getDescricao();
+        BigDecimal valorAntes = c.getValor();
         try {
             if (col == 0) {
                 c.setDescricao(String.valueOf(valor));
@@ -74,5 +84,8 @@ public class CustosTableModel extends AbstractTableModel {
             aoErro.accept(e.getMessage());
         }
         fireTableRowsUpdated(row, row);
+        if (!descricaoAntes.equals(c.getDescricao()) || valorAntes.compareTo(c.getValor()) != 0) {
+            aoAlterar.run();
+        }
     }
 }

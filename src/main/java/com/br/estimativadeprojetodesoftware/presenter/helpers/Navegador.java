@@ -17,7 +17,8 @@ import javax.swing.JInternalFrame;
 
 /**
  * Abre as janelas internas do MDI. Cada janela tem uma chave; se já estiver
- * aberta, ela é trazida para a frente em vez de abrir outra.
+ * aberta, ela é trazida para a frente em vez de abrir outra. Toda janela
+ * aberta ou trazida para a frente fica maximizada.
  */
 public final class Navegador {
 
@@ -47,35 +48,19 @@ public final class Navegador {
         }
         JInternalFrame frame = criador.get();
         frame.putClientProperty(CHAVE, chave);
-        posicionar(frame);
         desktop.add(frame);
         frame.setVisible(true);
         focar(frame);
     }
 
-    /**
-     * Em cascata quando a janela cabe na área MDI; quando não cabe, ocupa a
-     * área inteira em vez de ser espremida.
-     */
-    private static void posicionar(JInternalFrame frame) {
-        int largura = desktop.getWidth();
-        int altura = desktop.getHeight();
-        if (largura <= 0 || altura <= 0) {
-            return;
-        }
-        int deslocamento = 16 + 24 * (desktop.getAllFrames().length % 6);
-        boolean cabe = frame.getWidth() + deslocamento + 8 <= largura && frame.getHeight() + deslocamento + 8 <= altura;
-        if (cabe) {
-            frame.setLocation(deslocamento, deslocamento);
-        } else {
-            frame.setBounds(0, 0, largura, altura);
-        }
-    }
-
+    /** Traz a janela para a frente, restaurando-a se minimizada, e a maximiza na área MDI. */
     private static void focar(JInternalFrame f) {
         try {
             if (f.isIcon()) {
                 f.setIcon(false);
+            }
+            if (f.isMaximizable() && !f.isMaximum()) {
+                f.setMaximum(true);
             }
             f.moveToFront();
             f.setSelected(true);

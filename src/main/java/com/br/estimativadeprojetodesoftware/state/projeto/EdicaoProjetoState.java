@@ -1,6 +1,6 @@
 package com.br.estimativadeprojetodesoftware.state.projeto;
 
-import com.br.estimativadeprojetodesoftware.command.projeto.CalcularProjetoCommand;
+import com.br.estimativadeprojetodesoftware.command.projeto.AtualizarEstimativaCommand;
 import com.br.estimativadeprojetodesoftware.command.projeto.CancelarEdicaoProjetoCommand;
 import com.br.estimativadeprojetodesoftware.command.projeto.SalvarProjetoCommand;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.ManterProjetoPresenter;
@@ -17,10 +17,13 @@ public class EdicaoProjetoState extends ManterProjetoPresenterState {
     @Override
     public void entrar() {
         ProjetoView v = presenter.getView();
-        habilitar(v.getBtnSalvar(), v.getBtnCancelar(), v.getBtnCalcular());
+        habilitar(v.getBtnSalvar(), v.getBtnCancelar());
         v.getPainelPerfis().setVisible(false);
+        v.getPainelEstimativa().setVisible(true);
+        v.getPainelSecoes().setVisible(true);
         presenter.setEditavel(true);
-        v.exibirSituacao("Editando", Selo.Tipo.DESTAQUE, "Marque as funcionalidades e as plataformas e clique em Calcular ou Salvar (Ctrl+S).");
+        v.exibirSituacao("Editando", Selo.Tipo.DESTAQUE, "A estimativa é atualizada a cada alteração. Clique em Salvar (Ctrl+S) para guardar.");
+        atualizarEstimativa();
     }
 
     @Override
@@ -39,7 +42,7 @@ public class EdicaoProjetoState extends ManterProjetoPresenterState {
     }
 
     @Override
-    public void calcular() {
-        new CalcularProjetoCommand(presenter).execute();
+    public void atualizarEstimativa() {
+        new AtualizarEstimativaCommand(presenter).execute();
     }
 }

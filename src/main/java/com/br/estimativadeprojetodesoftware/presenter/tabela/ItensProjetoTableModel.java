@@ -6,6 +6,7 @@ import com.br.estimativadeprojetodesoftware.model.Plataforma;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.TipoSelecao;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import javax.swing.table.AbstractTableModel;
 
@@ -16,6 +17,10 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ItensProjetoTableModel extends AbstractTableModel {
 
+    public static final int COLUNA_SELECIONAR = 0;
+    public static final int COLUNA_CATEGORIA = 1;
+    public static final int COLUNA_NOME = 2;
+
     private static final String[] COLUNAS = {"Selecionar", "Categoria", "Funcionalidade", "Seleção",
         "Web/Back-end", "iOS", "Android"};
     private static final Plataforma[] PLATAFORMAS = {Plataforma.WEB_BACKEND, Plataforma.IOS, Plataforma.ANDROID};
@@ -24,11 +29,30 @@ public class ItensProjetoTableModel extends AbstractTableModel {
     private final Consumer<String> aoErro;
     private List<ItemProjeto> itens;
     private boolean editavel;
+    private Runnable aoAlterar = () -> {
+    };
 
     public ItensProjetoTableModel(Projeto projeto, Consumer<String> aoErro) {
         this.projeto = projeto;
         this.aoErro = aoErro;
         this.itens = projeto.getItens();
+    }
+
+    /** Avisado quando o usuário muda um valor; eventos programáticos da tabela não contam. */
+    public void setAoAlterar(Runnable aoAlterar) {
+        this.aoAlterar = aoAlterar;
+    }
+
+    public boolean isSelecionado(int linha) {
+        return itens.get(linha).isSelecionado();
+    }
+
+    public TipoSelecao getTipoSelecao(int linha) {
+        return itens.get(linha).getFuncionalidade().getTipoSelecao();
+    }
+
+    public int contarSelecionados() {
+        return (int) itens.stream().filter(ItemProjeto::isSelecionado).count();
     }
 
     public void setEditavel(boolean editavel) {
@@ -84,6 +108,7 @@ public class ItensProjetoTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object valor, int row, int col) {
         Funcionalidade f = itens.get(row).getFuncionalidade();
+        Object antes = getValueAt(row, col);
         try {
             if (col == 0) {
                 projeto.selecionar(f.getId(), Boolean.TRUE.equals(valor));
@@ -94,6 +119,9 @@ public class ItensProjetoTableModel extends AbstractTableModel {
             aoErro.accept(e.getMessage());
         }
         fireTableDataChanged();
+        if (!Objects.equals(antes, getValueAt(row, col))) {
+            aoAlterar.run();
+        }
     }
 
     private static String descricaoSelecao(TipoSelecao tipo) {

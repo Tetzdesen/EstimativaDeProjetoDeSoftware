@@ -24,6 +24,12 @@ public class CartaoIndicador extends JPanel {
         add(lblDetalhe, BorderLayout.SOUTH);
     }
 
+    /** Dá ao cartão o destaque de indicador principal da tela. */
+    public void destacar() {
+        Estilos.aplicar(this, Estilos.CARTAO_DESTAQUE);
+        Estilos.aplicar(lblValor, Estilos.VALOR_DESTAQUE);
+    }
+
     public void setValor(String valor) {
         lblValor.setText(valor);
     }

@@ -10,6 +10,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.IntPredicate;
 import java.util.regex.Pattern;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -36,6 +37,7 @@ public class TabelaPadrao extends JTable {
 
     private final Map<Integer, Formato> formatos = new HashMap<>();
     private final Map<Integer, java.util.function.Function<Object, Selo.Tipo>> selos = new HashMap<>();
+    private IntPredicate linhaDestacada = linha -> false;
 
     public TabelaPadrao() {
         super();
@@ -65,6 +67,11 @@ public class TabelaPadrao extends JTable {
     /** Coluna exibida como selo: texto em negrito na cor do tipo devolvido para cada valor. */
     public void setColunaSelo(int colunaModelo, java.util.function.Function<Object, Selo.Tipo> tipoPorValor) {
         selos.put(colunaModelo, tipoPorValor);
+    }
+
+    /** Linhas em negrito, conforme o índice da linha no modelo (independe de filtro). */
+    public void setDestaqueLinha(IntPredicate linhaDestacada) {
+        this.linhaDestacada = linhaDestacada;
     }
 
     public Formato getFormatoColuna(int colunaModelo) {
@@ -118,7 +125,8 @@ public class TabelaPadrao extends JTable {
             setForeground(null);
             JLabel c = (JLabel) super.getTableCellRendererComponent(tabela, texto, selecionado, foco, linha, coluna);
             c.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 8, 0, 8));
-            Font fonte = tabela.getFont();
+            Font fonte = linhaDestacada.test(tabela.convertRowIndexToModel(linha))
+                    ? tabela.getFont().deriveFont(Font.BOLD) : tabela.getFont();
             var selo = selos.get(tabela.convertColumnIndexToModel(coluna));
             if (selo != null && valor != null) {
                 c.setFont(fonte.deriveFont(Font.BOLD));
@@ -130,7 +138,7 @@ public class TabelaPadrao extends JTable {
                 return c;
             }
             if (NA.equals(texto)) {
-                c.setFont(fonte.deriveFont(Font.ITALIC));
+                c.setFont(fonte.deriveFont(fonte.getStyle() | Font.ITALIC));
                 c.setHorizontalAlignment(SwingConstants.RIGHT);
                 Color na = UIManager.getColor("Estimativa.na");
                 if (!selecionado && na != null) {

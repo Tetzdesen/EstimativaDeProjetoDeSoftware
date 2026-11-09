@@ -13,7 +13,7 @@ Situação de cada caso de uso, regra de negócio (BR) e requisito não funciona
 | Manter Perfis de Projeto de Estimativa | ✅ | `presenter/perfil/ListaPerfisPresenter`, `presenter/perfil/ManterPerfilPresenter`, `state/perfil/*`, `command/perfil/*`, `service/PerfilService`. |
 | Criar Projeto de Estimativa | ✅ | `state/projeto/InclusaoProjetoState`, `command/projeto/CriarProjetoCommand`, `service/ProjetoService.criar`, `model/Projeto.aPartirDePerfis` + `model/Perfil.copiarParaProjeto` (Prototype). |
 | Manter Projetos de Estimativa | ✅ | `presenter/projeto/ManterProjetoPresenter`, `presenter/projeto/ListaProjetosPresenter`, `state/projeto/*`, `command/projeto/*`, `service/ProjetoService`. |
-| Elaborar Estimativa | ✅ | `service/CalculoEstimativaService`, `model/ResultadoEstimativa`, aba "Resultado" de `view/projeto/ProjetoView`. |
+| Elaborar Estimativa | ✅ | `service/CalculoEstimativaService`, `model/ResultadoEstimativa`, tela de projeto em seções escolhidas numa barra lateral (`view/projeto/ProjetoView`, `view/projeto/SecaoProjeto`, `presenter/tabela/NavegacaoProjetoModel`, com contadores de selecionadas por categoria), seção "Tamanho e UI" com botões de opção (`view/componentes/RenderizadorOpcao`), barra de resumo no rodapé (`view/componentes/BarraResumo`) e seção "Detalhamento"; recálculo a cada alteração em `command/projeto/AtualizarEstimativaCommand`; busca e "Somente selecionadas" (`presenter/tabela/FiltroFuncionalidades`). |
 | Compartilhar Projeto de Estimativa | ✅ | `presenter/projeto/CompartilharProjetoPresenter`, `service/CompartilhamentoService`, `state/projeto/SomenteLeituraProjetoState`. |
 | Exportar Projeto de Estimativa | ✅ | `service/ExportacaoService`, `templatemethod/ExportadorProjeto`, `ExportarPDFTemplate`, `ExportarCSVTemplate`, `ExportadorFactory`, `adapter/exportarprojeto/PDFExportAdapter`. |
 
@@ -21,7 +21,7 @@ Situação de cada caso de uso, regra de negócio (BR) e requisito não funciona
 
 | Código | Situação | Onde está | Observações |
 |---|---|---|---|
-| BR01 | ✅ | `seeder/PerfilPadraoSeeder`, `src/main/resources/seed/perfil-padrao.csv` | Perfil padrão do EstimateMyApp carregado na primeira execução, em SQLite ou H2, sem duplicar. |
+| BR01 | ✅ | `seeder/PerfilPadraoSeeder`, `src/main/resources/seed/perfil-padrao.csv` | Perfil padrão do EstimateMyApp carregado na primeira execução, em SQLite, H2 ou PostgreSQL, sem duplicar. |
 | BR02 | ✅ | `service/CalculoEstimativaService` | Plataformas marcadas de forma independente; exige ao menos uma. |
 | BR03 | ✅ | `model/Projeto.selecionar`, `CalculoEstimativaService` | Tamanho e Nível de UI de escolha única; demais categorias múltiplas; dias digitados em Desenvolvimento Específico; Gerente opcional. |
 | BR04 | ✅ | `service/PerfilService.excluir` | CRUD de perfis com nova funcionalidade e alteração de prazos; perfil padrão protegido contra exclusão, com o motivo informado. |
@@ -39,7 +39,7 @@ Situação de cada caso de uso, regra de negócio (BR) e requisito não funciona
 | Código | Situação | Onde está | Observações |
 |---|---|---|---|
 | RNF01 | ⚠️ | `state/projeto/*`, `state/perfil/*`, `command/projeto/*`, `command/perfil/*` | State integrado a Command: cada estado habilita só as ações válidas e executa cada ação por um Command. Os estados (Visualização, Inclusão, Edição e Somente leitura) seguem o padrão visto em aula, mas ainda não foram comparados com o diagrama do Whimsical. |
-| RNF02 | ✅ | `singleton/ConexaoSingleton`, `strategy/SQLiteInitializer`, `strategy/H2Initializer`, `abstractfactory/FabricaRepositoryH2` | SQLite ou H2 trocando só `TIPO_BANCO` e `DB_URL` no `.env`; sem Docker nem instalação adicional. |
+| RNF02 | ✅ | `singleton/ConexaoSingleton`, `singleton/ConexaoReconectavel`, `strategy/SQLiteInitializer`, `strategy/H2Initializer`, `strategy/PostgresInitializer`, `abstractfactory/FabricaRepositoryH2`, `abstractfactory/FabricaRepositoryPostgres`, `migracao/MigradorBanco` | SQLite, H2 ou PostgreSQL (Supabase) trocando só `TIPO_BANCO`, `DB_URL` e credenciais no `.env`; sem Docker. PostgreSQL só com SSL verificado, reconexão automática e migração de dados entre bancos (`docs/supabase/configurar.sql` para preparar o Supabase). |
 | RNF03 | ✅ | `repository/*`, `repository/jdbc/*`, `abstractfactory/*` | Repository com JDBC puro (sem Hibernate/JPA); falhas viram `RepositorioException` com mensagem clara exibida sem fechar o sistema. |
 | RNF04 | ✅ | `view/projeto/PrincipalProjetoView`, `presenter/helpers/Navegador` | Swing MDI (`JDesktopPane` + `JInternalFrame`), várias janelas abertas, rodapé com o usuário logado. |
 | RNF05 | ✅ | `presenter/*`, `view/*` | MVP Passive View: as views só expõem componentes; regras ficam em presenters e services. |
@@ -59,7 +59,7 @@ Situação de cada caso de uso, regra de negócio (BR) e requisito não funciona
 | Item | Situação | Onde está | Observações |
 |---|---|---|---|
 | Tema claro e escuro | ✅ | `view/tema/TemaClaro`, `TemaEscuro` (+ `.properties`), `command/AplicarTemaCommand`, `service/PreferenciasService`, `presenter/configuracao/ConfiguracaoPresenter` | FlatLaf 3.5.4 com paleta própria. A troca na tela de Configuração vale na hora em todas as janelas (gráficos remontados via Observer, evento `TEMA`) e fica salva na tabela `configuracao` (`interface.tema`). |
-| Padrão visual consistente | ✅ | `view/componentes/*` (`JanelaInterna`, `BarraAcoes`, `Formulario`, `TabelaPadrao`, `CartaoIndicador`, `Selo`, `PainelCartao`), `service/IconService`, `src/main/resources/icones/*.svg` | Ícones SVG próprios que acompanham a cor do tema. Tabelas com linhas alternadas, números à direita, reais em "R$ 1.234,56" e "NA" em itálico, distinto de zero. Resultado da estimativa em cartões e tabelas. |
+| Padrão visual consistente | ✅ | `view/componentes/*` (`JanelaInterna`, `BarraAcoes`, `Formulario`, `TabelaPadrao`, `CartaoIndicador`, `BarraResumo`, `Selo`, `PainelCartao`), `service/IconService`, `src/main/resources/icones/*.svg` | Ícones SVG próprios que acompanham a cor do tema. Tabelas com linhas alternadas, números à direita, reais em "R$ 1.234,56" e "NA" em itálico, distinto de zero. Resultado da estimativa em tabelas e na barra de resumo da tela de projeto; cartões no dashboard. |
 | Mensagens padronizadas | ✅ | `command/ExibirMensagemCommand`, `ConfirmarCommand`, `PerguntarCommand`, `view/componentes/Notificacao`, `Dialogos` | Sucesso como aviso que some sozinho; aviso e erro em diálogo. Exclusões e saída do sistema pedem confirmação com botões "Excluir"/"Sair" e "Cancelar" (Esc cancela). |
 | Retorno visual em formulários | ✅ | Presenters de login, cadastro, usuário, perfil e projeto; `presenter/helpers/ValidacaoVisual` | Campo destacado com a mensagem do problema, que some ao corrigir. |
 | Atalhos de teclado | ✅ | `JanelaInterna`, `ManterUsuarioView`, `PrincipalProjetoPresenter` | Enter, Esc, Ctrl+S (respeita o estado da tela) e Ctrl+N. |

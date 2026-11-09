@@ -19,8 +19,8 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 /**
- * Criação e manutenção de projetos (BR03, BR08). Só o dono altera, exclui e
- * calcula; destinatários de compartilhamento só leem. Criação, alteração e
+ * Criação e manutenção de projetos (BR03, BR08). Só o dono altera e exclui;
+ * destinatários de compartilhamento só leem. Criação, alteração e
  * exclusão são registradas no log, com sucesso ou falha.
  */
 public class ProjetoService extends ServicoObservavel {
@@ -94,13 +94,23 @@ public class ProjetoService extends ServicoObservavel {
         publicar(Tipo.EXCLUSAO, Entidade.PROJETO, id);
     }
 
-    /** Calcula, marca o projeto como calculado e persiste. */
-    public ResultadoEstimativa calcular(Projeto projeto, Usuario usuario) {
-        verificarDono(projeto, usuario, "calcular");
-        ResultadoEstimativa resultado = calculo.calcular(projeto);
-        projeto.setCalculado(true);
+    /**
+     * Persiste a alteração e define o estado calculado: o projeto fica calculado
+     * se o estado atual permitir calcular (ao menos uma plataforma marcada).
+     */
+    public void salvarComEstimativa(Projeto projeto, Usuario usuario) {
+        verificarDono(projeto, usuario, "alterar");
+        projeto.setCalculado(permiteCalcular(projeto));
         salvar(projeto, usuario);
-        return resultado;
+    }
+
+    private boolean permiteCalcular(Projeto projeto) {
+        try {
+            calculo.validar(projeto);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     /** Resultado do estado atual do projeto, sem persistir (usado na exibição e na exportação). */

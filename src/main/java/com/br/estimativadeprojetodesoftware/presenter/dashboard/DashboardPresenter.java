@@ -36,7 +36,7 @@ import org.jfree.data.general.DefaultPieDataset;
 public class DashboardPresenter implements Observer {
 
     static final String MENSAGEM_VAZIA = "Nenhum projeto calculado ainda. Crie um projeto em \"Novo Projeto\", "
-            + "marque as funcionalidades e clique em Calcular.";
+            + "marque as funcionalidades e clique em Salvar.";
 
     private final DashboardView view;
     private final DashboardService service;
