@@ -19,8 +19,13 @@ public class ExcluirProjetoCommand implements Command {
         if (!ConfirmarCommand.perguntar("Excluir projeto", "Excluir o projeto \"" + nome + "\"?\nEsta ação não pode ser desfeita.", "Excluir")) {
             return;
         }
-        presenter.getProjetoService().excluir(presenter.getProjeto().getId(), presenter.getUsuario());
-        presenter.fechar();
-        presenter.sucesso("Projeto \"" + nome + "\" excluído.");
+        var id = presenter.getProjeto().getId();
+        presenter.noBanco("Excluindo…", () -> {
+            presenter.getProjetoService().excluir(id, presenter.getUsuario());
+            return null;
+        }, ok -> {
+            presenter.fechar();
+            presenter.sucesso("Projeto \"" + nome + "\" excluído.");
+        });
     }
 }

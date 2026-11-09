@@ -27,6 +27,7 @@ public class NavegacaoProjetoModel extends AbstractListModel<ItemComContador> {
     private final List<String> configuracao;
     private final List<Entrada> entradas = new ArrayList<>();
     private final List<ItemComContador> exibicao = new ArrayList<>();
+    private java.util.function.BooleanSupplier plataformasMarcadas = () -> false;
 
     public NavegacaoProjetoModel(ItensProjetoTableModel itens) {
         this.itens = itens;
@@ -71,6 +72,12 @@ public class NavegacaoProjetoModel extends AbstractListModel<ItemComContador> {
         return (String) itens.getValueAt(linha, ItensProjetoTableModel.COLUNA_CATEGORIA);
     }
 
+    /** Informa se há plataforma marcada na tela (a seção Plataformas aparece como preenchida). */
+    public void setPlataformasMarcadas(java.util.function.BooleanSupplier plataformasMarcadas) {
+        this.plataformasMarcadas = plataformasMarcadas;
+        recontar();
+    }
+
     public List<String> getCategoriasDeConfiguracao() {
         return configuracao;
     }
@@ -87,11 +94,31 @@ public class NavegacaoProjetoModel extends AbstractListModel<ItemComContador> {
             if (e.categoria() != null) {
                 exibicao.add(new ItemComContador(e.categoria(), selecionadas(e.categoria()), true));
             } else if (e.secao() == SecaoProjeto.FUNCIONALIDADES) {
-                exibicao.add(new ItemComContador(e.secao().getTitulo(), selecionadas(null), false));
+                int total = selecionadas(null);
+                exibicao.add(new ItemComContador(e.secao().getTitulo(), total, false, total > 0));
             } else {
-                exibicao.add(new ItemComContador(e.secao().getTitulo(), null, false));
+                exibicao.add(new ItemComContador(e.secao().getTitulo(), null, false, preenchida(e.secao())));
             }
         }
+    }
+
+    /**
+     * Plataformas: alguma marcada. Tamanho e UI: alguma opção de escolha única
+     * marcada (no perfil padrão, um tamanho do app ou um nível de UI).
+     */
+    private boolean preenchida(SecaoProjeto secao) {
+        return switch (secao) {
+            case PLATAFORMAS -> plataformasMarcadas.getAsBoolean();
+            case TAMANHO_E_UI -> {
+                for (int linha = 0; linha < itens.getRowCount(); linha++) {
+                    if (itens.isSelecionado(linha) && itens.getTipoSelecao(linha) == TipoSelecao.UNICA) {
+                        yield true;
+                    }
+                }
+                yield false;
+            }
+            default -> false;
+        };
     }
 
     /** Selecionadas na categoria, ou em todas as que não são de configuração ({@code null}). */
@@ -121,6 +148,11 @@ public class NavegacaoProjetoModel extends AbstractListModel<ItemComContador> {
     public int indiceDe(SecaoProjeto secao, String categoria) {
         int indice = entradas.indexOf(new Entrada(secao, categoria));
         return indice >= 0 ? indice : entradas.indexOf(new Entrada(secao, null));
+    }
+
+    /** Se a seção aparece como preenchida na barra lateral. */
+    public boolean isPreenchida(SecaoProjeto secao) {
+        return exibicao.get(indiceDe(secao, null)).concluido();
     }
 
     /** Quantidade exibida para a categoria ({@code null} para a entrada Funcionalidades). */

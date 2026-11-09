@@ -22,7 +22,7 @@ class IconServiceTest {
 
     @Test
     void listaCobreTodosOsArquivosSvg() throws Exception {
-        try (Stream<Path> arquivos = Files.list(Path.of("src/main/resources/icones"))) {
+        try (Stream<Path> arquivos = Files.list(Path.of(System.getProperty("basedir", ".")).resolve("src/main/resources/icones"))) {
             assertEquals(IconService.CHAVES.size(), arquivos.filter(p -> p.toString().endsWith(".svg")).count());
         }
     }

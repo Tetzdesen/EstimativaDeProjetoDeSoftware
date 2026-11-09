@@ -44,9 +44,7 @@ public class JdbcPerfilRepository implements IPerfilRepository {
                 st.setString(5, dataHora(perfil.getCriadoEm()));
                 st.executeUpdate();
             }
-            for (Funcionalidade f : perfil.getFuncionalidades()) {
-                itens.inserirFuncionalidade(perfil.getId(), f, null);
-            }
+            itens.inserirFuncionalidades(perfil.getId(), perfil.getFuncionalidades(), null);
             itens.inserirTaxas(perfil.getId(), perfil.getTaxas());
             return null;
         });

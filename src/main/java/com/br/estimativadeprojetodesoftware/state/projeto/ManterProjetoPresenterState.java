@@ -3,7 +3,6 @@ package com.br.estimativadeprojetodesoftware.state.projeto;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.ManterProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.templatemethod.FormatoExportacao;
 import com.br.estimativadeprojetodesoftware.view.projeto.ProjetoView;
-import javax.swing.JButton;
 
 /**
  * State da tela de projeto. Cada estado habilita só as ações válidas e
@@ -23,16 +22,20 @@ public abstract class ManterProjetoPresenterState {
 
     public abstract String getNome();
 
-    public void editar() {
-        indisponivel("editar");
-    }
-
     public void salvar() {
         indisponivel("salvar");
     }
 
-    public void cancelar() {
-        indisponivel("cancelar");
+    /** Descarta o que não foi salvo (na inclusão, desiste do novo projeto). */
+    public void descartar() {
+        indisponivel("descartar alterações");
+    }
+
+    /**
+     * Chamado quando a tela passa a ter (ou deixa de ter) alterações não
+     * salvas. Só a edição reage.
+     */
+    public void atualizarAcoesDeGravacao(boolean alterado) {
     }
 
     public void excluir() {
@@ -59,14 +62,14 @@ public abstract class ManterProjetoPresenterState {
     }
 
     /** Habilita exatamente os botões informados e desabilita os demais. */
-    protected void habilitar(JButton... ativos) {
+    protected void habilitar(javax.swing.AbstractButton... ativos) {
         ProjetoView v = presenter.getView();
-        JButton[] todos = {v.getBtnEditar(), v.getBtnSalvar(), v.getBtnCancelar(), v.getBtnExcluir(),
+        javax.swing.AbstractButton[] todos = {v.getBtnSalvar(), v.getBtnDescartar(), v.getBtnExcluir(),
             v.getBtnCompartilhar(), v.getBtnExportarPdf(), v.getBtnExportarCsv()};
-        for (JButton b : todos) {
+        for (javax.swing.AbstractButton b : todos) {
             b.setEnabled(false);
         }
-        for (JButton b : ativos) {
+        for (javax.swing.AbstractButton b : ativos) {
             b.setEnabled(true);
         }
     }

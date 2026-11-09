@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.view.projeto;
 
 import com.br.estimativadeprojetodesoftware.service.IconService;
+import com.br.estimativadeprojetodesoftware.view.componentes.BarraAcoes;
 import com.br.estimativadeprojetodesoftware.view.componentes.BarraResumo;
 import com.br.estimativadeprojetodesoftware.view.componentes.Estilos;
 import com.br.estimativadeprojetodesoftware.view.componentes.Formulario;
@@ -27,6 +28,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -36,19 +38,20 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
 /**
- * Tela do projeto de estimativa (inclusão, edição, visualização e somente
+ * Tela do projeto de estimativa (inclusão, edição e somente
  * leitura). Passive View: só componentes e métodos de exibição chamados pelo
  * presenter; os estados decidem o que fica habilitado.
  */
 public class ProjetoView extends JanelaInterna {
 
-    private final JButton btnEditar;
     private final JButton btnSalvar;
-    private final JButton btnCancelar;
-    private final JButton btnCompartilhar;
-    private final JButton btnExportarPdf;
-    private final JButton btnExportarCsv;
-    private final JButton btnExcluir;
+    private final JButton btnDescartar;
+    private final JMenuItem btnCompartilhar = BarraAcoes.item("Compartilhar…", "compartilhar");
+    private final JMenuItem btnExportarPdf = BarraAcoes.item("Relatório em PDF…", "exportar-pdf");
+    private final JMenuItem btnExportarCsv = BarraAcoes.item("Planilha em CSV…", "exportar-csv");
+    private final JMenuItem btnExcluir = BarraAcoes.item("Excluir projeto…", "excluir");
+    private final JButton btnExportar;
+    private final JButton btnMaisOpcoes;
     private final JButton btnFechar;
 
     private final Selo selo = new Selo();
@@ -60,6 +63,11 @@ public class ProjetoView extends JanelaInterna {
             return true; // nome longo é cortado e a quantidade continua visível
         }
     };
+    private final JLabel lblSemPlataforma = Estilos.aplicar(
+            new JLabel("Marque ao menos uma plataforma na seção Plataformas para ver e editar os dias de cada funcionalidade."),
+            Estilos.AVISO_ESTIMATIVA);
+    /** Colunas de plataforma da tabela de funcionalidades, pelo índice no model (4, 5 e 6). */
+    private final java.util.Map<Integer, javax.swing.table.TableColumn> colunasPlataforma = new java.util.TreeMap<>();
     private final JLabel lblContadorSelecionadas = Estilos.aplicar(new JLabel(" "), Estilos.SUBTITULO);
     private final JTextField txtNome = Formulario.placeholder(new JTextField(28), "Nome do projeto");
     private final JToggleButton chkWeb = plataforma("Web/Back-end");
@@ -95,17 +103,14 @@ public class ProjetoView extends JanelaInterna {
 
     public ProjetoView() {
         super("Projeto", " ", "projeto");
-        btnEditar = getBarra().adicionar("Editar", "editar");
         btnSalvar = getBarra().adicionarPrincipal("Salvar", "salvar");
-        btnCancelar = getBarra().adicionar("Cancelar", "cancelar");
+        btnDescartar = getBarra().adicionar("Descartar alterações", "cancelar");
         getBarra().separador();
-        btnCompartilhar = getBarra().adicionar("Compartilhar", "compartilhar");
-        btnExportarPdf = getBarra().adicionar("PDF", "exportar-pdf");
-        btnExportarCsv = getBarra().adicionar("CSV", "exportar-csv");
-        btnExportarPdf.setToolTipText("Exportar relatório em PDF");
-        btnExportarCsv.setToolTipText("Exportar relatório em CSV");
-        getBarra().separador();
-        btnExcluir = getBarra().adicionarPerigo("Excluir", "excluir");
+        btnExportar = getBarra().adicionarMenu("Exportar", "exportar-pdf", btnExportarPdf, btnExportarCsv);
+        btnExportar.setToolTipText("Exportar o relatório do projeto salvo");
+        Estilos.aplicar(btnExcluir, Estilos.BOTAO_PERIGO);
+        btnMaisOpcoes = getBarra().adicionarMenu("Mais", null, btnCompartilhar, btnExcluir);
+        btnMaisOpcoes.setToolTipText("Compartilhar ou excluir o projeto");
         getBarra().empurrarParaDireita();
         btnFechar = getBarra().adicionar("Fechar", "fechar");
         setBotaoSalvar(btnSalvar);
@@ -214,9 +219,14 @@ public class ProjetoView extends JanelaInterna {
         barra.setOpaque(false);
         barra.add(filtros, BorderLayout.WEST);
         barra.add(lblContadorSelecionadas, BorderLayout.EAST);
+        lblSemPlataforma.setVisible(false);
+        JPanel topo = new JPanel(new BorderLayout(0, 6));
+        topo.setOpaque(false);
+        topo.add(barra, BorderLayout.NORTH);
+        topo.add(lblSemPlataforma, BorderLayout.SOUTH);
         JPanel p = new JPanel(new BorderLayout(0, 8));
         p.setOpaque(false);
-        p.add(barra, BorderLayout.NORTH);
+        p.add(topo, BorderLayout.NORTH);
         p.add(new JScrollPane(tabelaItens), BorderLayout.CENTER);
         return comTitulo(SecaoProjeto.FUNCIONALIDADES, null, p);
     }
@@ -322,6 +332,74 @@ public class ProjetoView extends JanelaInterna {
     /** Texto abaixo dos indicadores; null ou vazio esconde o aviso. */
     public void exibirAvisoEstimativa(String mensagem) {
         barraResumo.exibirAviso(mensagem);
+    }
+
+    /**
+     * Deixa na tabela de funcionalidades só a marcação, o nome e as colunas de
+     * plataforma (sem Categoria e Seleção), com cabeçalhos do tamanho do texto.
+     * Chamar depois de definir o model.
+     */
+    public void configurarTabelaFuncionalidades() {
+        javax.swing.table.TableColumnModel colunas = tabelaItens.getColumnModel();
+        if (colunas.getColumnCount() < 7) {
+            return;
+        }
+        colunasPlataforma.clear();
+        for (int indiceModel = 4; indiceModel <= 6; indiceModel++) {
+            colunasPlataforma.put(indiceModel, colunas.getColumn(indiceModel));
+        }
+        tabelaItens.removeColumn(colunas.getColumn(3)); // Seleção
+        tabelaItens.removeColumn(colunas.getColumn(1)); // Categoria (a barra lateral já mostra)
+        colunas.getColumn(0).setHeaderValue("Incluir");
+        ajustarLarguraPeloCabecalho(colunas.getColumn(0), 0);
+        colunas.getColumn(0).setMaxWidth(colunas.getColumn(0).getMinWidth() + 16);
+        ajustarLarguraPeloCabecalho(colunas.getColumn(1), 0);
+        colunas.getColumn(1).setPreferredWidth(360);
+        for (javax.swing.table.TableColumn c : colunasPlataforma.values()) {
+            ajustarLarguraPeloCabecalho(c, 20);
+            c.setPreferredWidth(Math.max(c.getMinWidth(), 110));
+        }
+    }
+
+    /** Largura mínima suficiente para o texto do cabeçalho não ser cortado. */
+    private void ajustarLarguraPeloCabecalho(javax.swing.table.TableColumn coluna, int folga) {
+        java.awt.FontMetrics fm = tabelaItens.getTableHeader().getFontMetrics(tabelaItens.getTableHeader().getFont());
+        coluna.setMinWidth(fm.stringWidth(String.valueOf(coluna.getHeaderValue())) + 28 + folga);
+    }
+
+    /** Mostra só as colunas das plataformas marcadas, na ordem Web/Back-end, iOS, Android. */
+    public void mostrarColunasPlataformas(boolean web, boolean ios, boolean android) {
+        boolean[] visiveis = {web, ios, android};
+        javax.swing.table.TableColumnModel colunas = tabelaItens.getColumnModel();
+        int posicao = 2; // depois de Incluir e Funcionalidade
+        int i = 0;
+        for (javax.swing.table.TableColumn coluna : colunasPlataforma.values()) {
+            boolean presente = indiceDa(colunas, coluna) >= 0;
+            if (visiveis[i] && !presente) {
+                tabelaItens.addColumn(coluna);
+                colunas.moveColumn(colunas.getColumnCount() - 1, posicao);
+            } else if (!visiveis[i] && presente) {
+                tabelaItens.removeColumn(coluna);
+            }
+            if (visiveis[i]) {
+                posicao++;
+            }
+            i++;
+        }
+        lblSemPlataforma.setVisible(!web && !ios && !android);
+    }
+
+    private static int indiceDa(javax.swing.table.TableColumnModel colunas, javax.swing.table.TableColumn coluna) {
+        for (int i = 0; i < colunas.getColumnCount(); i++) {
+            if (colunas.getColumn(i) == coluna) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public JLabel getLblSemPlataforma() {
+        return lblSemPlataforma;
     }
 
     /** Mostra a seção na área principal; a barra lateral é escolhida pelo presenter. */
@@ -473,31 +551,37 @@ public class ProjetoView extends JanelaInterna {
         return lblContadorSelecionadas;
     }
 
-    public JButton getBtnEditar() {
-        return btnEditar;
-    }
-
     public JButton getBtnSalvar() {
         return btnSalvar;
     }
 
-    public JButton getBtnCancelar() {
-        return btnCancelar;
+    /** "Descartar alterações" na edição; "Cancelar" na inclusão. */
+    public JButton getBtnDescartar() {
+        return btnDescartar;
     }
 
-    public JButton getBtnExcluir() {
+    /** Botões que abrem os menus Exportar e Mais (para mostrar ou testar). */
+    public JButton getBtnExportar() {
+        return btnExportar;
+    }
+
+    public JButton getBtnMaisOpcoes() {
+        return btnMaisOpcoes;
+    }
+
+    public JMenuItem getBtnExcluir() {
         return btnExcluir;
     }
 
-    public JButton getBtnCompartilhar() {
+    public JMenuItem getBtnCompartilhar() {
         return btnCompartilhar;
     }
 
-    public JButton getBtnExportarPdf() {
+    public JMenuItem getBtnExportarPdf() {
         return btnExportarPdf;
     }
 
-    public JButton getBtnExportarCsv() {
+    public JMenuItem getBtnExportarCsv() {
         return btnExportarCsv;
     }
 

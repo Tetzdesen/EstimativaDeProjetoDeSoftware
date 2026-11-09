@@ -15,7 +15,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 /** Login por e-mail e senha. Passive View; Enter confirma (botão padrão). */
-public class LoginView extends JFrame {
+public class LoginView extends JFrame implements com.br.estimativadeprojetodesoftware.view.componentes.Ocupavel {
 
     private final JTextField txtEmail = Formulario.placeholder(new JTextField(22), "nome@exemplo.com");
     private final JPasswordField txtSenha = new JPasswordField(22);
@@ -74,6 +74,33 @@ public class LoginView extends JFrame {
     public void limparErros() {
         formulario.limparErros();
         mostrarErroGeral(null);
+    }
+
+    private boolean ocupado;
+    private String textoEntrar;
+
+    /** Enquanto autentica: campos e botões desabilitados e o botão mostra o andamento. */
+    @Override
+    public void setOcupado(boolean ocupado, String mensagem) {
+        if (ocupado && !this.ocupado) {
+            textoEntrar = btnEntrar.getText();
+        }
+        this.ocupado = ocupado;
+        btnEntrar.setText(ocupado && mensagem != null ? mensagem : textoEntrar);
+        for (javax.swing.JComponent c : new javax.swing.JComponent[]{txtEmail, txtSenha, btnEntrar, btnCriarConta}) {
+            c.setEnabled(!ocupado);
+        }
+        setCursor(ocupado ? java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR) : null);
+    }
+
+    @Override
+    public boolean isOcupado() {
+        return ocupado;
+    }
+
+    @Override
+    public boolean isFechada() {
+        return !isDisplayable();
     }
 
     public Formulario getFormulario() {

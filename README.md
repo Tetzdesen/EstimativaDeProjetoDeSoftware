@@ -1,29 +1,53 @@
 # Estimativa de Projeto de Software
 
-Trabalho final da disciplina de Projeto de Sistemas de Software (UFES). A ideia é ajudar quem desenvolve apps a responder a pergunta clássica do cliente: *quanto custa e quanto tempo leva?*
+Sistema desktop que responde a pergunta que todo cliente faz para quem desenvolve apps: **quanto custa e quanto tempo leva?** Você marca as plataformas e as funcionalidades do aplicativo, e o prazo, o custo e o preço final aparecem na hora, a cada alteração.
 
-Você escolhe as plataformas (Web/Back-end, iOS, Android), marca as funcionalidades que o app vai ter e o sistema calcula os dias de trabalho, o custo de desenvolvimento e o preço final, já com custos adicionais, impostos e lucro. Os valores de base vêm dos perfis do [EstimateMyApp](https://www.estimatemyapp.com/), e o cálculo segue a planilha que o professor passou (Tabela 1), inclusive no jeito de contar o nível de UI.
+![A estimativa sendo recalculada ao vivo enquanto funcionalidades são marcadas](docs/imagens/recalculo-ao-vivo.gif)
 
-![Dashboard](docs/imagens/02-dashboard.png)
+Trabalho final de Projeto de Sistemas de Software (UFES), feito em Java 25 com Swing, JDBC puro e os padrões de projeto pedidos na disciplina. Os valores de base vêm dos perfis do [EstimateMyApp](https://www.estimatemyapp.com/), e o cálculo segue a planilha do professor (Tabela 1).
+
+## Destaques
+
+- **Estimativa ao vivo:** cada marcação recalcula prazo, custo de desenvolvimento, preço final e média mensal em memória, em cerca de 10 ms. O banco só é gravado quando você clica em Salvar.
+- **Tela que não trava:** todo acesso ao banco roda fora da thread da interface, numa fila de uma thread só, e Salvar grava em lotes. Contra o banco no Supabase, Salvar caiu de **5,9 s para 0,39 s** (de 152 para 12 idas ao banco).
+- **Três bancos, o mesmo código:** SQLite, H2 ou PostgreSQL (Supabase), escolhidos no `.env`, com JDBC puro e sem framework de persistência.
+- **Banco remoto protegido:** SSL com verificação do certificado, esquema fora da API pública do Supabase, RLS em todas as tabelas e um usuário de banco só para o sistema.
+- **194 testes automatizados**, com 69% de cobertura de linhas medida pelo JaCoCo a cada build.
+
+## Telas
+
+| Funcionalidades | Tamanho e UI |
+|---|---|
+| ![Seção Funcionalidades da tela de projeto](docs/imagens/projeto-funcionalidades-claro.png) | ![Seção Tamanho e UI, com botões de opção](docs/imagens/projeto-tamanho-e-ui-claro.png) |
+
+| Detalhamento (tema escuro) | Dashboard (tema escuro) |
+|---|---|
+| ![Detalhamento por plataforma, por categoria e resumo financeiro](docs/imagens/projeto-detalhamento-escuro.png) | ![Dashboard com indicadores e gráficos](docs/imagens/dashboard-escuro.png) |
+
+| Relatório em PDF | Login |
+|---|---|
+| ![Primeira página do relatório em PDF](docs/imagens/relatorio-pdf.png) | ![Tela de login](docs/imagens/login-claro.png) |
 
 ## O que dá para fazer
 
 - Criar conta e entrar com e-mail e senha (a senha passa pelo validador do professor).
 - Manter **perfis de estimativa**: a lista de funcionalidades com os dias de cada plataforma. O perfil padrão já vem carregado e não pode ser excluído; dá para copiar e montar o seu.
 - Criar **projetos** a partir de um ou mais perfis. O projeto é uma cópia, então mexer nele não altera o perfil nem os outros projetos.
-- Marcar plataformas e funcionalidades, ajustar taxas diárias, custos adicionais, impostos e lucro, e ver a **estimativa** mudar a cada alteração. A tela do projeto mostra uma seção por vez, escolhida numa barra lateral: Plataformas, Tamanho e UI (tamanho do app, nível de UI e gerente de projeto, escolhidos por botões de opção), Funcionalidades (com cada categoria e quantas estão marcadas nela, mais busca por nome e filtro "Somente selecionadas"), Taxas diárias, Custos e preço, e Detalhamento. Prazo, custo de desenvolvimento, preço final e média mensal ficam numa barra fixa no rodapé, e o projeto só é gravado ao clicar em Salvar.
-- **Compartilhar** um projeto com outro usuário, que só consegue visualizar.
-- **Exportar** o relatório em PDF ou CSV.
+- Montar a estimativa numa tela com uma seção por vez, escolhida numa barra lateral que marca o que já foi preenchido: **Plataformas**, **Tamanho e UI** (tamanho do app, nível de UI e gerente de projeto), **Funcionalidades** (por categoria, com busca e filtro "Somente selecionadas"), **Taxas diárias**, **Custos e preço** e **Detalhamento**. O resumo fica fixo no rodapé, com a variação causada pela última alteração.
+- **Compartilhar** um projeto com outro usuário, que só consegue consultar.
+- **Exportar** o relatório em PDF (com cabeçalho, resumo do preço e do prazo, tabelas e numeração de páginas) ou em CSV.
 - Acompanhar tudo no **dashboard**.
 - Escolher o formato do **log** (CSV ou JSON) e o **tema** (claro ou escuro).
 
-| Resultado da estimativa | Funcionalidades (tema escuro) |
-|---|---|
-| ![Resultado](docs/imagens/03-resultado.png) | ![Funcionalidades](docs/imagens/04-funcionalidades-escuro.png) |
+## Decisões técnicas
 
-| Projetos, com os compartilhados | Login |
-|---|---|
-| ![Projetos](docs/imagens/05-projetos-escuro.png) | ![Login](docs/imagens/01-login.png) |
+- **MVP Passive View:** as views só montam componentes; toda decisão fica nos presenters, que são testados sem abrir janela.
+- **State com Command nos CRUDs:** a tela de projeto tem os estados Inclusão, Edição e Somente leitura, e cada ação é um Command. O dono abre o projeto já em edição, em vez de passar por uma tela de visualização e clicar em Editar como no diagrama visto em aula. Salvar e Descartar alterações só ficam habilitados quando há algo a salvar.
+- **Recálculo sem persistência:** as alterações recalculam a estimativa em memória, com um atraso de 250 ms que junta digitações seguidas. Só Salvar grava, gera um único registro no log e avisa as outras janelas (Observer).
+- **Fila única de banco:** o sistema usa uma só conexão JDBC, então as operações de banco rodam numa fila de uma thread (`FilaBanco`), e o resultado volta para a thread do Swing. Enquanto isso, a janela mostra o progresso e bloqueia os cliques, sem congelar.
+- **Gravação em lote:** funcionalidades e valores de um projeto vão em dois lotes, então o número de idas ao banco não depende de quantas funcionalidades o perfil tem. Um teste garante o limite de 15 idas.
+- **Bancos intercambiáveis:** Strategy (`DatabaseInitializer`) e Abstract Factory (`FabricaRepository`) escolhem o banco pelo `.env`, e o esquema usa só tipos aceitos pelos três.
+- **Valores exatos:** dias e dinheiro em `BigDecimal`, arredondados só na exibição.
 
 ## Como rodar
 
@@ -101,7 +125,7 @@ O `.env` não vai para o git; nunca coloque senhas no `.env.example`.
 3. No *SQL Editor*, rode `docs/supabase/configurar.sql`, trocando `TROCAR_PELA_SENHA_DO_APP` por uma senha forte só no editor (não salve o arquivo com ela). O script cria o esquema `estimativa`, fora da API pública, e o papel `estimativa_app`, que só enxerga esse esquema.
 4. Preencha o `.env` como acima; o host do pooler aparece no painel em *Connect → Session pooler*. Na primeira execução o sistema cria as tabelas (com RLS ativado) e roda os seeders.
 
-A conexão é recusada se a `DB_URL` não tiver `sslmode=verify-full` e `sslrootcert`. Se a conexão cair depois de muito tempo parado, o sistema reabre na próxima operação.
+A conexão é recusada se a `DB_URL` não tiver `sslmode=verify-full` e `sslrootcert`. Acrescentar `&reWriteBatchedInserts=true` à URL faz o driver juntar os `INSERT` de cada lote num só comando, o que deixa Salvar ainda mais rápido. Se a conexão cair depois de muito tempo parado, o sistema reabre na próxima operação.
 
 #### Migrar os dados de um banco para outro
 
@@ -151,8 +175,9 @@ O pacote base é `com.br.estimativadeprojetodesoftware`. A interface é Swing co
 | `model` | perfil, projeto, funcionalidades, taxas, resultado |
 | `service` | regras de negócio e cálculo |
 | `repository`, `repository/jdbc` | acesso ao banco com JDBC puro (sem JPA/Hibernate) |
-| `abstractfactory`, `strategy` | escolha do banco (SQLite ou H2) pelo `.env` |
-| `presenter`, `state`, `command` | telas, estados de cada tela e ações |
+| `abstractfactory`, `strategy` | escolha do banco (SQLite, H2 ou PostgreSQL) pelo `.env` |
+| `presenter`, `state`, `command` | telas, estados de cada tela e ações; `presenter/helpers/FilaBanco` tira o banco da thread do Swing |
+| `migracao` | cópia de todos os dados de um banco para outro |
 | `view`, `view/componentes` | telas Swing e componentes reutilizáveis |
 | `templatemethod`, `adapter` | exportação em PDF/CSV e adaptadores |
 | `observer` | atualização entre janelas abertas |
@@ -166,10 +191,23 @@ O que foi atendido de cada requisito, e onde está no código, está em [`docs/r
 ## Testes
 
 ```bash
-mvn test
+mvn verify
 ```
 
-São 70 testes, cobrindo o cálculo (com o caso da planilha), a persistência em SQLite e H2, os serviços, a exportação, o log e partes da interface.
+São 194 testes: o cálculo (com o caso da planilha), a persistência em SQLite e H2, a gravação em lote, a migração entre bancos, a fila de banco, a exportação, o log e os presenters de todas as telas, inclusive login, cadastro, perfis, configuração e dashboard. Os testes rodam numa pasta sem `.env`, então nunca acessam o banco configurado.
+
+O `mvn verify` também gera o relatório de cobertura em `target/site/jacoco/index.html` e falha se a cobertura de linhas ficar abaixo de 65%. Hoje ela está em 69%.
+
+### Imagens do README
+
+As capturas e o GIF são gerados com as telas reais e dados de demonstração num H2 em memória:
+
+```bash
+mvn -q test-compile dependency:build-classpath -Dmdep.outputFile=target/cp.txt
+java -cp "target/classes:target/test-classes:$(cat target/cp.txt)" \
+  com.br.estimativadeprojetodesoftware.presenter.projeto.GeradorVitrine docs/imagens target/vitrine/quadros
+python3 scripts/montar-gif.py target/vitrine/quadros docs/imagens/recalculo-ao-vivo.gif
+```
 
 ## Equipe
 

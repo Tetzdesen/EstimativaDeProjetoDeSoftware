@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.perfil;
 
+import com.br.estimativadeprojetodesoftware.presenter.helpers.FilaBanco;
 import com.br.estimativadeprojetodesoftware.command.ConfirmarCommand;
 import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
@@ -54,8 +55,13 @@ public class ListaPerfisPresenter implements Observer {
     }
 
     private void carregar() {
+        FilaBanco.executar(view, "Carregando…", () -> service.listarVisiveis(usuario), this::exibir,
+                e -> ExibirMensagemCommand.erro(e.getMessage()));
+    }
+
+    private void exibir(java.util.List<Perfil> perfis) {
         linhas.clear();
-        linhas.addAll(service.listarVisiveis(usuario));
+        linhas.addAll(perfis);
         DefaultTableModel modelo = new DefaultTableModel(new Object[]{"Perfil", "Tipo", "Funcionalidades"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -100,7 +106,11 @@ public class ListaPerfisPresenter implements Observer {
         try {
             Perfil p = selecionado();
             if (ConfirmarCommand.perguntar("Excluir perfil", "Excluir o perfil \"" + p.getNome() + "\"?", "Excluir")) {
-                service.excluir(p.getId(), usuario);
+                FilaBanco.executar(view, "Excluindo…", () -> {
+                    service.excluir(p.getId(), usuario);
+                    return null;
+                }, ok -> {
+                }, e -> ExibirMensagemCommand.erro(e.getMessage()));
             }
         } catch (RuntimeException ex) {
             ExibirMensagemCommand.erro(ex.getMessage());

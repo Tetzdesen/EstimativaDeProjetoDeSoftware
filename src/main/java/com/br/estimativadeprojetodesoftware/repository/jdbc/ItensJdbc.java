@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -43,35 +44,49 @@ final class ItensJdbc {
         }
     }
 
-    /** Insere a funcionalidade; {@code selecionado} só é usado em projetos. */
-    void inserirFuncionalidade(UUID donoId, Funcionalidade f, Boolean selecionado) throws SQLException {
-        boolean projeto = selecionado != null;
+    /**
+     * Insere as funcionalidades e os valores por plataforma em dois lotes, um
+     * para cada tabela, qualquer que seja a quantidade de funcionalidades.
+     *
+     * @param selecionados seleção de cada funcionalidade, na mesma ordem; {@code null} para perfis
+     */
+    void inserirFuncionalidades(UUID donoId, List<Funcionalidade> funcionalidades, List<Boolean> selecionados) throws SQLException {
+        boolean projeto = selecionados != null;
         String sql = "INSERT INTO " + prefixo + "_funcionalidade (id, " + prefixo + "_id, categoria, nome, tipo_selecao, tipo_valor, ordem"
                 + (projeto ? ", selecionado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)" : ") VALUES (?, ?, ?, ?, ?, ?, ?)");
-        try (PreparedStatement st = conexao.prepareStatement(sql)) {
-            st.setString(1, f.getId().toString());
-            st.setString(2, donoId.toString());
-            st.setString(3, f.getCategoria());
-            st.setString(4, f.getNome());
-            st.setString(5, f.getTipoSelecao().name());
-            st.setString(6, f.getTipoValor().name());
-            st.setInt(7, f.getOrdem());
-            if (projeto) {
-                st.setBoolean(8, selecionado);
-            }
-            st.executeUpdate();
-        }
-        try (PreparedStatement st = conexao.prepareStatement(
-                "INSERT INTO " + prefixo + "_valor (funcionalidade_id, plataforma, valor) VALUES (?, ?, ?)")) {
-            for (Plataforma p : Plataforma.values()) {
-                if (f.isAplicavel(p)) {
-                    st.setString(1, f.getId().toString());
-                    st.setString(2, p.name());
-                    st.setString(3, decimal(f.getValor(p).orElseThrow()));
-                    st.addBatch();
+        try (PreparedStatement fun = conexao.prepareStatement(sql);
+                PreparedStatement val = conexao.prepareStatement(
+                        "INSERT INTO " + prefixo + "_valor (funcionalidade_id, plataforma, valor) VALUES (?, ?, ?)")) {
+            boolean temValores = false;
+            for (int i = 0; i < funcionalidades.size(); i++) {
+                Funcionalidade f = funcionalidades.get(i);
+                fun.setString(1, f.getId().toString());
+                fun.setString(2, donoId.toString());
+                fun.setString(3, f.getCategoria());
+                fun.setString(4, f.getNome());
+                fun.setString(5, f.getTipoSelecao().name());
+                fun.setString(6, f.getTipoValor().name());
+                fun.setInt(7, f.getOrdem());
+                if (projeto) {
+                    fun.setBoolean(8, selecionados.get(i));
+                }
+                fun.addBatch();
+                for (Plataforma p : Plataforma.values()) {
+                    if (f.isAplicavel(p)) {
+                        val.setString(1, f.getId().toString());
+                        val.setString(2, p.name());
+                        val.setString(3, decimal(f.getValor(p).orElseThrow()));
+                        val.addBatch();
+                        temValores = true;
+                    }
                 }
             }
-            st.executeBatch();
+            if (!funcionalidades.isEmpty()) {
+                fun.executeBatch();
+            }
+            if (temValores) {
+                val.executeBatch();
+            }
         }
     }
 

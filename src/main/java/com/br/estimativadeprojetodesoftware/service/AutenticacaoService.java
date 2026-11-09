@@ -17,7 +17,11 @@ public class AutenticacaoService {
     private final Map<String, String> hashesPorEmail;
 
     public AutenticacaoService() {
-        this.usuarioRepository = new UsuarioService();
+        this(new UsuarioService());
+    }
+
+    public AutenticacaoService(UsuarioService usuarios) {
+        this.usuarioRepository = usuarios;
         this.metodoAutenticacao = new AutenticadorSenha();
         this.hashesPorEmail = usuarioRepository.buscarEmailESenhaDeUsuarios();
         carregarUsuariosNoAutenticador();

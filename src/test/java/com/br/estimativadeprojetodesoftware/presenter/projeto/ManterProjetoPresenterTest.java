@@ -14,6 +14,7 @@ import com.br.estimativadeprojetodesoftware.presenter.tabela.NavegacaoProjetoMod
 import com.br.estimativadeprojetodesoftware.observer.Observer;
 import com.br.estimativadeprojetodesoftware.observer.Subject;
 import com.br.estimativadeprojetodesoftware.repository.IProjetoRepository;
+import com.br.estimativadeprojetodesoftware.repository.RepositorioException;
 import com.br.estimativadeprojetodesoftware.repository.jdbc.JdbcCompartilhamentoRepository;
 import com.br.estimativadeprojetodesoftware.repository.jdbc.JdbcPerfilRepository;
 import com.br.estimativadeprojetodesoftware.repository.jdbc.JdbcProjetoRepository;
@@ -58,7 +59,9 @@ import org.junit.jupiter.api.io.TempDir;
 class ManterProjetoPresenterTest {
 
     private static final int COLUNA_SELECIONAR = 0;
-    private static final int COLUNA_WEB = 4;
+    /** Índices na tabela como o usuário vê: Incluir, Funcionalidade e as plataformas marcadas. */
+    private static final int COLUNA_NOME = 1;
+    private static final int COLUNA_WEB = 2;
 
     @TempDir
     Path dir;
@@ -70,6 +73,7 @@ class ManterProjetoPresenterTest {
     private List<String> perguntasDeConfirmacao;
     private boolean respostaConfirmacao;
     private AtomicInteger gravacoes;
+    private boolean falharGravacao;
     private ProjetoService projetos;
     private PerfilService perfis;
     private CompartilhamentoService compartilhamentos;
@@ -149,6 +153,9 @@ class ManterProjetoPresenterTest {
         return (IProjetoRepository) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[]{IProjetoRepository.class},
                 (proxy, metodo, args) -> {
                     if (metodo.getName().equals("salvar")) {
+                        if (falharGravacao) {
+                            throw new RepositorioException("Erro ao salvar o projeto: conexão perdida", null);
+                        }
                         gravacoes.incrementAndGet();
                     }
                     try {
@@ -187,7 +194,6 @@ class ManterProjetoPresenterTest {
     private Projeto criarEAbrirEmEdicao() {
         Projeto p = projetos.criar("Loja", List.of(padrao.getId()), ana);
         abrir(p.getId(), ana);
-        view.getBtnEditar().doClick();
         return p;
     }
 
@@ -197,7 +203,7 @@ class ManterProjetoPresenterTest {
 
     private Celula celula(String nome) {
         for (int i = 0; i < tabelaItens().getRowCount(); i++) {
-            if (nome.equals(tabelaItens().getValueAt(i, 2))) {
+            if (nome.equals(tabelaItens().getValueAt(i, COLUNA_NOME))) {
                 return new Celula(tabelaItens(), i, COLUNA_WEB);
             }
         }
@@ -231,12 +237,17 @@ class ManterProjetoPresenterTest {
     }
 
     private int linhaDe(String nome) {
-        return linhaDe(tabelaItens(), 2, nome);
+        return linhaDe(tabelaItens(), COLUNA_NOME, nome);
+    }
+
+    /** Categoria da linha (a coluna não aparece mais na tabela; vem do model). */
+    private Object categoriaDaLinha(int linhaVisivel) {
+        return tabelaItens().getModel().getValueAt(tabelaItens().convertRowIndexToModel(linhaVisivel), 1);
     }
 
     private int linhaDe(String categoria, String nome) {
         for (int i = 0; i < tabelaItens().getRowCount(); i++) {
-            if (categoria.equals(tabelaItens().getValueAt(i, 1)) && nome.equals(tabelaItens().getValueAt(i, 2))) {
+            if (categoria.equals(categoriaDaLinha(i)) && nome.equals(tabelaItens().getValueAt(i, COLUNA_NOME))) {
                 return i;
             }
         }
@@ -475,14 +486,60 @@ class ManterProjetoPresenterTest {
     }
 
     @Test
-    @DisplayName("Temporizador que termina depois de cancelar a edição não faz nada")
+    @DisplayName("Temporizador que termina depois de fechar a janela não faz nada")
     void disparoAtrasadoForaDaEdicao() throws Exception {
         naThreadDoSwing(() -> {
             criarEAbrirEmEdicao();
+            String salvo = preco();
             marcarFuncionalidade("Pequeno");
-            view.getBtnCancelar().doClick();
+            view.getBtnFechar().doClick(); // confirma o descarte
+            assertTrue(view.isClosed());
             recalcular();
-            assertEquals("—", preco());
+            assertEquals(salvo, preco());
+            assertTrue(mensagensDeErro.isEmpty());
+        });
+    }
+
+    @Test
+    @DisplayName("Descartar alterações volta à estimativa salva e continua em edição")
+    void descartarVoltaAoSalvo() throws Exception {
+        naThreadDoSwing(() -> {
+            criarEAbrirEmEdicao();
+            assertFalse(view.getBtnSalvar().isEnabled(), "sem alteração, nada a salvar");
+            assertFalse(view.getBtnDescartar().isEnabled());
+            String salvo = preco();
+            marcarFuncionalidade("Pequeno");
+            recalcular();
+            assertTrue(view.getBtnSalvar().isEnabled());
+            assertTrue(view.getBtnDescartar().isEnabled());
+
+            view.getBtnDescartar().doClick();
+
+            assertEquals(salvo, preco());
+            assertEquals(Boolean.FALSE, selecao("Pequeno"));
+            assertTrue(presenter.getEstado() instanceof com.br.estimativadeprojetodesoftware.state.projeto.EdicaoProjetoState);
+            assertTrue(tabelaItens().isCellEditable(0, COLUNA_SELECIONAR), "continua editável");
+            assertFalse(view.getBtnSalvar().isEnabled());
+            assertTrue(perguntasDeConfirmacao.isEmpty(), "descartar não pergunta");
+        });
+    }
+
+    @Test
+    @DisplayName("Salvar grava, continua em edição e desabilita Salvar até a próxima alteração")
+    void salvarContinuaEmEdicao() throws Exception {
+        naThreadDoSwing(() -> {
+            criarEAbrirEmEdicao();
+            int antes = gravacoes.get();
+            marcarFuncionalidade("Pequeno");
+            view.getBtnSalvar().doClick();
+            assertEquals(antes + 1, gravacoes.get());
+            assertTrue(presenter.getEstado() instanceof com.br.estimativadeprojetodesoftware.state.projeto.EdicaoProjetoState);
+            assertFalse(view.getBtnSalvar().isEnabled());
+            assertFalse(view.getBtnDescartar().isEnabled());
+            assertTrue(tabelaItens().isCellEditable(0, COLUNA_SELECIONAR));
+
+            view.getRootPane().getActionMap().get("salvar").actionPerformed(null); // Ctrl+S sem alteração
+            assertEquals(antes + 1, gravacoes.get(), "Ctrl+S sem alteração não grava");
         });
     }
 
@@ -645,13 +702,12 @@ class ManterProjetoPresenterTest {
             String salvo = preco();
             int antes = gravacoes.get();
 
-            view.getBtnEditar().doClick();
             marcarFuncionalidade("Grande");
             view.getTxtLucro().setText("90");
             recalcular();
             assertNotEquals(salvo, preco());
 
-            view.getBtnCancelar().doClick();
+            view.getBtnDescartar().doClick();
 
             assertEquals(salvo, preco());
             assertEquals(antes, gravacoes.get());
@@ -701,16 +757,20 @@ class ManterProjetoPresenterTest {
     }
 
     @Test
-    @DisplayName("Projeto não calculado em visualização: indicadores indisponíveis e orientação")
+    @DisplayName("Projeto não calculado: indicadores indisponíveis e orientação para o dono e para o destinatário")
     void naoCalculadoEmVisualizacao() throws Exception {
         naThreadDoSwing(() -> {
             Projeto p = projetos.criar("Novo", List.of(padrao.getId()), ana);
             abrir(p.getId(), ana);
 
             assertTrue(view.getPainelEstimativa().isVisible());
+            assertFalse(view.getLblAvisoEstimativa().getText().contains("Editar"));
+            assertTrue(tabelaItens().isCellEditable(0, COLUNA_SELECIONAR), "o dono já pode marcar");
+
+            compartilhamentos.compartilhar(p.getId(), beto.getId(), ana);
+            abrir(p.getId(), beto);
             assertEquals("—", preco());
-            assertEquals("—", prazo());
-            assertTrue(view.getLblAvisoEstimativa().getText().contains("Editar"));
+            assertTrue(view.getLblAvisoEstimativa().getText().contains("dono ainda não completou"));
         });
     }
 
@@ -728,7 +788,8 @@ class ManterProjetoPresenterTest {
 
             assertEquals(salvo, preco());
             assertFalse(view.getChkWeb().isEnabled());
-            assertFalse(view.getBtnEditar().isEnabled());
+            assertFalse(view.getBtnSalvar().isEnabled());
+            assertFalse(view.getBtnDescartar().isEnabled());
             assertFalse(tabelaItens().isCellEditable(0, COLUNA_SELECIONAR));
             assertFalse(view.getTxtLucro().isEditable());
 
@@ -770,12 +831,11 @@ class ManterProjetoPresenterTest {
             criarEAbrirEmEdicao();
             marcarFuncionalidade("Pequeno");
             view.getBtnSalvar().doClick();
-            view.getBtnEditar().doClick();
             marcarFuncionalidade("Grande");
             recalcular();
             assertTrue(view.getIndicadorPreco().getLblDetalhe().getText().startsWith("+ R$"));
 
-            view.getBtnCancelar().doClick();
+            view.getBtnDescartar().doClick();
             assertFalse(view.getIndicadorPreco().getLblDetalhe().getText().contains("R$"));
         });
     }
@@ -788,13 +848,13 @@ class ManterProjetoPresenterTest {
         naThreadDoSwing(() -> {
             criarEAbrirEmEdicao();
             int total = tabelaItens().getRowCount();
-            String primeira = String.valueOf(tabelaItens().getValueAt(0, 2));
+            String primeira = String.valueOf(tabelaItens().getValueAt(0, COLUNA_NOME));
             marcarFuncionalidade("Cadastro por E-mail e Senha");
 
             view.getTxtBuscaFuncionalidades().setText("CADASTRO");
             assertTrue(tabelaItens().getRowCount() > 0 && tabelaItens().getRowCount() < total);
             for (int i = 0; i < tabelaItens().getRowCount(); i++) {
-                assertTrue(String.valueOf(tabelaItens().getValueAt(i, 2)).toLowerCase().contains("cadastro"));
+                assertTrue(String.valueOf(tabelaItens().getValueAt(i, COLUNA_NOME)).toLowerCase().contains("cadastro"));
             }
 
             view.getTxtBuscaFuncionalidades().setText("segurança");
@@ -802,7 +862,7 @@ class ManterProjetoPresenterTest {
 
             view.getTxtBuscaFuncionalidades().setText("");
             assertEquals(total, tabelaItens().getRowCount());
-            assertEquals(primeira, tabelaItens().getValueAt(0, 2));
+            assertEquals(primeira, tabelaItens().getValueAt(0, COLUNA_NOME));
             assertEquals(Boolean.TRUE, tabelaItens().getValueAt(linhaDe("Cadastro por E-mail e Senha"), COLUNA_SELECIONAR));
         });
     }
@@ -853,9 +913,226 @@ class ManterProjetoPresenterTest {
             view.getTxtBuscaFuncionalidades().setText("twitter");
             assertEquals(1, tabelaItens().getRowCount());
 
-            view.getBtnCancelar().doClick();
+            view.getBtnDescartar().doClick();
 
             assertEquals(1, tabelaItens().getRowCount());
+        });
+    }
+
+    // ---------- banco fora da tela ----------
+
+    @Test
+    @DisplayName("Falha ao salvar: erro exibido, continua em edição com as alterações e a janela não fica ocupada")
+    void falhaAoSalvar() throws Exception {
+        naThreadDoSwing(() -> {
+            criarEAbrirEmEdicao();
+            marcarFuncionalidade("Pequeno");
+            recalcular();
+            String preco = preco();
+            falharGravacao = true;
+
+            view.getBtnSalvar().doClick();
+
+            assertEquals(1, mensagensDeErro.size());
+            assertTrue(mensagensDeErro.get(0).contains("conexão perdida"));
+            assertFalse(view.isOcupado());
+            assertTrue(view.getBtnSalvar().isEnabled(), "continua podendo salvar");
+            assertEquals(Boolean.TRUE, selecao("Pequeno"));
+            assertEquals(preco, preco());
+            respostaConfirmacao = false;
+            view.getBtnFechar().doClick();
+            assertEquals(1, perguntasDeConfirmacao.size(), "a alteração continua não salva");
+        });
+    }
+
+    @Test
+    @DisplayName("Projeto inexistente: erro exibido e a janela fecha")
+    void abrirProjetoInexistente() throws Exception {
+        naThreadDoSwing(() -> abrir(UUID.randomUUID(), ana));
+        assertEquals(1, mensagensDeErro.size());
+        assertTrue(mensagensDeErro.get(0).contains("não encontrado"));
+        SwingUtilities.invokeAndWait(() -> {
+        });
+        assertTrue(view.isClosed() || !view.isDisplayable());
+        assertFalse(view.isOcupado());
+    }
+
+    @Test
+    @DisplayName("Enquanto ocupada, Ctrl+S e Esc não agem")
+    void atalhosBloqueadosEnquantoOcupada() throws Exception {
+        naThreadDoSwing(() -> {
+            criarEAbrirEmEdicao();
+            marcarFuncionalidade("Pequeno");
+            int antes = gravacoes.get();
+            view.setOcupado(true, "Salvando…");
+            var salvar = view.getRootPane().getActionMap().get("salvar");
+            var fechar = view.getRootPane().getActionMap().get("fechar");
+            salvar.actionPerformed(null);
+            fechar.actionPerformed(null);
+            assertEquals(antes, gravacoes.get());
+            assertTrue(perguntasDeConfirmacao.isEmpty());
+            assertFalse(view.isClosed());
+            assertTrue(view.getGlassPane().isVisible(), "cliques bloqueados");
+            view.setOcupado(false, null);
+            assertFalse(view.getGlassPane().isVisible());
+        });
+    }
+
+    // ---------- tabela enxuta ----------
+
+    private List<String> cabecalhos() {
+        List<String> nomes = new ArrayList<>();
+        for (int i = 0; i < tabelaItens().getColumnCount(); i++) {
+            nomes.add(String.valueOf(tabelaItens().getColumnModel().getColumn(i).getHeaderValue()));
+        }
+        return nomes;
+    }
+
+    private void deixarPlataformas(boolean web, boolean ios, boolean android) {
+        if (view.getChkWeb().isSelected() != web) {
+            view.getChkWeb().doClick();
+        }
+        if (view.getChkIos().isSelected() != ios) {
+            view.getChkIos().doClick();
+        }
+        if (view.getChkAndroid().isSelected() != android) {
+            view.getChkAndroid().doClick();
+        }
+    }
+
+    @Test
+    @DisplayName("Tabela de funcionalidades: só marcação, nome e as plataformas marcadas")
+    void tabelaSoComPlataformasMarcadas() throws Exception {
+        naThreadDoSwing(() -> {
+            criarEAbrirEmEdicao();
+            deixarPlataformas(true, false, true);
+
+            assertEquals(List.of("Incluir", "Funcionalidade", "Web/Back-end", "Android"), cabecalhos());
+            assertFalse(view.getLblSemPlataforma().isVisible());
+
+            deixarPlataformas(true, true, true);
+            assertEquals(List.of("Incluir", "Funcionalidade", "Web/Back-end", "iOS", "Android"), cabecalhos());
+            int linha = linhaDe("Cadastro pelo Facebook");
+            assertEquals("2", String.valueOf(tabelaItens().getValueAt(linha, 3)), "a coluna iOS volta com os valores");
+        });
+    }
+
+    @Test
+    @DisplayName("Sem plataforma marcada: só marcação e nome, com orientação")
+    void tabelaSemPlataforma() throws Exception {
+        naThreadDoSwing(() -> {
+            criarEAbrirEmEdicao();
+            deixarPlataformas(false, false, false);
+            assertEquals(List.of("Incluir", "Funcionalidade"), cabecalhos());
+            assertTrue(view.getLblSemPlataforma().isVisible());
+        });
+    }
+
+    @Test
+    @DisplayName("Cabeçalhos não ficam cortados e a busca ainda acha pela categoria")
+    void cabecalhosInteirosEBuscaPorCategoria() throws Exception {
+        naThreadDoSwing(() -> {
+            criarEAbrirEmEdicao();
+            deixarPlataformas(true, true, true);
+            var header = tabelaItens().getTableHeader();
+            var fm = header.getFontMetrics(header.getFont());
+            for (int i = 0; i < tabelaItens().getColumnCount(); i++) {
+                var coluna = tabelaItens().getColumnModel().getColumn(i);
+                assertTrue(coluna.getMinWidth() >= fm.stringWidth(String.valueOf(coluna.getHeaderValue())),
+                        "cabeçalho cortado: " + coluna.getHeaderValue());
+            }
+            view.getTxtBuscaFuncionalidades().setText("segurança");
+            assertEquals(3, tabelaItens().getRowCount());
+        });
+    }
+
+    // ---------- ações agrupadas ----------
+
+    private List<String> botoesDaBarra() {
+        List<String> textos = new ArrayList<>();
+        for (java.awt.Component c : view.getBarra().getComponents()) {
+            if (c instanceof javax.swing.JButton b) {
+                textos.add(b.getText());
+            }
+        }
+        return textos;
+    }
+
+    @Test
+    @DisplayName("Barra com Salvar, Descartar e Fechar como botões; exportar, compartilhar e excluir em menus")
+    void acoesAgrupadas() throws Exception {
+        naThreadDoSwing(() -> {
+            criarEAbrirEmEdicao();
+            assertEquals(List.of("Salvar", "Descartar alterações", "Exportar  ▾", "Mais  ▾", "Fechar"), botoesDaBarra());
+            marcarFuncionalidade("Pequeno");
+            view.getBtnSalvar().doClick();
+
+            assertTrue(presenter.getProjeto().isCalculado());
+            assertTrue(view.getBtnExportarPdf().isEnabled(), "PDF no menu Exportar");
+            assertTrue(view.getBtnExportarCsv().isEnabled(), "CSV no menu Exportar");
+            assertTrue(view.getBtnCompartilhar().isEnabled());
+            assertTrue(view.getBtnExcluir().isEnabled());
+
+            marcarFuncionalidade("Grande");
+            assertFalse(view.getBtnExportarPdf().isEnabled(), "exporta o projeto salvo, não o que está na tela");
+        });
+    }
+
+    @Test
+    @DisplayName("Destinatário: compartilhar e excluir desabilitados nos menus, sem salvar nem descartar")
+    void acoesDoDestinatario() throws Exception {
+        naThreadDoSwing(() -> {
+            Projeto p = criarEAbrirEmEdicao();
+            compartilhamentos.compartilhar(p.getId(), beto.getId(), ana);
+            abrir(p.getId(), beto);
+            assertFalse(view.getBtnCompartilhar().isEnabled());
+            assertFalse(view.getBtnExcluir().isEnabled());
+            assertFalse(view.getBtnSalvar().isEnabled());
+            assertFalse(view.getBtnDescartar().isEnabled());
+            assertFalse(view.getBtnExportarPdf().isEnabled());
+        });
+    }
+
+    // ---------- seções preenchidas ----------
+
+    @Test
+    @DisplayName("Projeto recém-criado abre em Plataformas; Tamanho e UI e Funcionalidades ainda sem marca")
+    void projetoRecemCriado() throws Exception {
+        naThreadDoSwing(() -> {
+            view = new ProjetoView();
+            presenter = new ManterProjetoPresenter(view, projetos, perfis, exportacao, ana);
+            presenter.iniciarInclusao();
+            view.getTxtNome().setText("Aplicativo novo");
+            view.getBtnSalvar().doClick();
+
+            assertTrue(mensagensDeErro.isEmpty(), mensagensDeErro.toString());
+            assertTrue(presenter.getEstado() instanceof com.br.estimativadeprojetodesoftware.state.projeto.EdicaoProjetoState);
+            assertEquals(SecaoProjeto.PLATAFORMAS, view.getSecaoVisivel());
+            assertEquals("Plataformas", view.getListaSecoes().getSelectedValue().rotulo());
+            NavegacaoProjetoModel nav = (NavegacaoProjetoModel) view.getListaSecoes().getModel();
+            assertTrue(nav.isPreenchida(SecaoProjeto.PLATAFORMAS), "o projeto nasce com as três plataformas");
+            assertFalse(nav.isPreenchida(SecaoProjeto.TAMANHO_E_UI));
+            assertFalse(nav.isPreenchida(SecaoProjeto.FUNCIONALIDADES));
+        });
+    }
+
+    @Test
+    @DisplayName("Marcar Android e Médio deixa Plataformas e Tamanho e UI preenchidas, e Funcionalidades não")
+    void secoesPreenchidas() throws Exception {
+        naThreadDoSwing(() -> {
+            criarEAbrirEmEdicao();
+            deixarPlataformas(false, false, false);
+            NavegacaoProjetoModel nav = (NavegacaoProjetoModel) view.getListaSecoes().getModel();
+            assertFalse(nav.isPreenchida(SecaoProjeto.PLATAFORMAS));
+
+            view.getChkAndroid().doClick();
+            marcarFuncionalidade("Médio");
+
+            assertTrue(nav.isPreenchida(SecaoProjeto.PLATAFORMAS));
+            assertTrue(nav.isPreenchida(SecaoProjeto.TAMANHO_E_UI));
+            assertFalse(nav.isPreenchida(SecaoProjeto.FUNCIONALIDADES));
+            marcarFuncionalidade("Cadastro pelo Google");
+            assertTrue(nav.isPreenchida(SecaoProjeto.FUNCIONALIDADES));
         });
     }
 
@@ -882,7 +1159,7 @@ class ManterProjetoPresenterTest {
     private void assertSoDaCategoria(String categoria) {
         assertTrue(tabelaItens().getRowCount() > 0);
         for (int i = 0; i < tabelaItens().getRowCount(); i++) {
-            assertEquals(categoria, tabelaItens().getValueAt(i, 1));
+            assertEquals(categoria, categoriaDaLinha(i));
         }
     }
 
@@ -948,7 +1225,7 @@ class ManterProjetoPresenterTest {
             criarEAbrirEmEdicao();
             List<String> configuracao = List.of("Tamanho do App", "Nível de UI", "Gerente de Projeto");
             for (int i = 0; i < tabelaItens().getRowCount(); i++) {
-                assertFalse(configuracao.contains(tabelaItens().getValueAt(i, 1)));
+                assertFalse(configuracao.contains(categoriaDaLinha(i)));
             }
             view.getTxtBuscaFuncionalidades().setText("grande");
             assertEquals(0, tabelaItens().getRowCount(), "nem pela busca");
@@ -1074,17 +1351,17 @@ class ManterProjetoPresenterTest {
         naThreadDoSwing(() -> {
             criarEAbrirEmEdicao();
             int total = tabelaItens().getRowCount();
-            String primeira = String.valueOf(tabelaItens().getValueAt(0, 2));
+            String primeira = String.valueOf(tabelaItens().getValueAt(0, COLUNA_NOME));
             marcarFuncionalidade("Cadastro pelo Twitter");
 
             escolherCategoria("Usuários e Contas");
             assertSoDaCategoria("Usuários e Contas");
             assertEquals(10, tabelaItens().getRowCount());
-            assertEquals("Cadastro por E-mail e Senha", tabelaItens().getValueAt(0, 2), "ordem da planilha");
+            assertEquals("Cadastro por E-mail e Senha", tabelaItens().getValueAt(0, COLUNA_NOME), "ordem da planilha");
 
             escolherCategoria(null);
             assertEquals(total, tabelaItens().getRowCount());
-            assertEquals(primeira, tabelaItens().getValueAt(0, 2));
+            assertEquals(primeira, tabelaItens().getValueAt(0, COLUNA_NOME));
             assertEquals(Boolean.TRUE, selecao("Cadastro pelo Twitter"));
         });
     }
@@ -1190,13 +1467,12 @@ class ManterProjetoPresenterTest {
         naThreadDoSwing(() -> {
             criarEAbrirEmEdicao();
             escolherCategoria("Segurança");
-            view.getBtnCancelar().doClick();
+            view.getBtnDescartar().doClick();
             assertEquals("Segurança", entradaEscolhida());
             assertSoDaCategoria("Segurança");
 
-            view.getBtnEditar().doClick();
             presenter.escolherSecao(SecaoProjeto.TAXAS);
-            view.getBtnCancelar().doClick();
+            view.getBtnDescartar().doClick();
             assertEquals(SecaoProjeto.TAXAS, view.getSecaoVisivel());
         });
     }
@@ -1296,7 +1572,7 @@ class ManterProjetoPresenterTest {
         naThreadDoSwing(() -> {
             criarEAbrirEmEdicao();
             marcarFuncionalidade("Pequeno");
-            view.getBtnCancelar().doClick();
+            view.getBtnDescartar().doClick();
             assertTrue(perguntasDeConfirmacao.isEmpty());
             view.getBtnFechar().doClick();
             assertTrue(perguntasDeConfirmacao.isEmpty());

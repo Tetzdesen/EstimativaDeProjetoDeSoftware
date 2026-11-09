@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.dashboard;
 
+import com.br.estimativadeprojetodesoftware.presenter.helpers.FilaBanco;
 import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
 import com.br.estimativadeprojetodesoftware.model.Plataforma;
 import com.br.estimativadeprojetodesoftware.model.ResultadoEstimativa;
@@ -71,13 +72,11 @@ public class DashboardPresenter implements Observer {
         if (usuario == null) {
             return;
         }
-        ResumoDashboard r;
-        try {
-            r = service.resumir(usuario);
-        } catch (RuntimeException e) {
-            ExibirMensagemCommand.erro("Não foi possível carregar o dashboard: " + e.getMessage());
-            return;
-        }
+        FilaBanco.executar(view, "Carregando…", () -> service.resumir(usuario), r -> exibir(usuario, r),
+                e -> ExibirMensagemCommand.erro("Não foi possível carregar o dashboard: " + e.getMessage()));
+    }
+
+    private void exibir(Usuario usuario, ResumoDashboard r) {
         view.setTitle("Dashboard de " + usuario.getNome());
         view.exibirIndicadores(String.valueOf(r.getProjetosProprios()), String.valueOf(r.getProjetosCompartilhados()),
                 String.valueOf(r.getProjetosCalculados()), String.valueOf(r.getDiasTotalExibicao()),
@@ -186,7 +185,7 @@ public class DashboardPresenter implements Observer {
         if (evento.sobre(EventoDominio.Entidade.PROJETO) || evento.sobre(EventoDominio.Entidade.COMPARTILHAMENTO)
                 || evento.sobre(EventoDominio.Entidade.SESSAO) || evento.sobre(EventoDominio.Entidade.TEMA)) {
             SwingUtilities.invokeLater(() -> {
-                if (view.isDisplayable()) {
+                if (!view.isClosed()) {
                     atualizar();
                 }
             });

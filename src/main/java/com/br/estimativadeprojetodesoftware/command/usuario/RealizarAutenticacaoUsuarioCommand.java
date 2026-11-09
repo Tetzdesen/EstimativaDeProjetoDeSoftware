@@ -19,10 +19,14 @@ public final class RealizarAutenticacaoUsuarioCommand implements Command {
     private final String senha;
 
     public RealizarAutenticacaoUsuarioCommand(String email, String senha) {
+        this(new UsuarioService(), email, senha);
+    }
+
+    public RealizarAutenticacaoUsuarioCommand(UsuarioService usuarios, String email, String senha) {
         this.email = email;
         this.senha = senha;
-        usuarioService = new UsuarioService();
-        autenticacaoService = new AutenticacaoService();
+        usuarioService = usuarios;
+        autenticacaoService = new AutenticacaoService(usuarios);
     }
 
     @Override

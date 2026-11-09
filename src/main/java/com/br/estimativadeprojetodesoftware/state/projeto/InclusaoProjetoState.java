@@ -14,7 +14,8 @@ public class InclusaoProjetoState extends ManterProjetoPresenterState {
 
     @Override
     public void entrar() {
-        habilitar(presenter.getView().getBtnSalvar(), presenter.getView().getBtnCancelar());
+        habilitar(presenter.getView().getBtnSalvar(), presenter.getView().getBtnDescartar());
+        presenter.getView().getBtnDescartar().setText("Cancelar");
         presenter.getView().getPainelPerfis().setVisible(true);
         presenter.getView().getPainelEstimativa().setVisible(false);
         presenter.getView().getPainelSecoes().setVisible(false);
@@ -33,7 +34,7 @@ public class InclusaoProjetoState extends ManterProjetoPresenterState {
     }
 
     @Override
-    public void cancelar() {
+    public void descartar() {
         new FecharProjetoCommand(presenter).execute();
     }
 }

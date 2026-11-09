@@ -86,21 +86,82 @@ class ExportacaoTest {
         }
     }
 
+    /** Texto de cada página do PDF, na ordem. */
+    private static java.util.List<String> paginas(Path arquivo) throws Exception {
+        java.util.List<String> textos = new java.util.ArrayList<>();
+        try (PDDocument doc = PDDocument.load(arquivo.toFile())) {
+            PDFTextStripper stripper = new PDFTextStripper();
+            for (int p = 1; p <= doc.getNumberOfPages(); p++) {
+                stripper.setStartPage(p);
+                stripper.setEndPage(p);
+                textos.add(stripper.getText(doc));
+            }
+        }
+        return textos;
+    }
+
     @Test
     void pdfTemOsValoresDoCasoDeAceitacao() throws Exception {
         projeto.setCalculado(true);
         Path arquivo = service.exportar(projeto, FormatoExportacao.PDF, dir.resolve("relatorio.pdf"), dono);
         assertEquals("OK exportação em PDF | Protótipo Tabela 1 | Ana", log.ultimo());
-        String texto;
-        try (PDDocument doc = PDDocument.load(arquivo.toFile())) {
-            texto = new PDFTextStripper().getText(doc);
-        }
-        for (String esperado : new String[]{"Protótipo Tabela 1", "Funcionalidades selecionadas", "Cadastro pelo Facebook",
-            "Web/Back-end: 129,33 dias", "R$ 59.033,33", "Android: 111,33 dias", "R$ 50.933,33", "Resumo por categoria",
-            "Custos adicionais", "Fundo de reserva: R$ 2.000,00", "Impostos (42,00%): R$ 48.370,00",
-            "Lucro (30,00%): R$ 49.061,00", "Preço final ao cliente: R$ 212.597,67", "Prazo: 241 dias (8,0 meses)",
-            "Média mensal: R$ 26.501,09"}) {
+        String texto = String.join("\n", paginas(arquivo));
+        for (String esperado : new String[]{"Protótipo Tabela 1", "Dono: Ana", "Emitido em", "Funcionalidades selecionadas",
+            "Cadastro pelo Facebook", "Resumo por categoria", "Fundo de reserva R$ 2.000,00", "Impostos (42,00%) R$ 48.370,00",
+            "Lucro (30,00%) R$ 49.061,00", "Preço final ao cliente R$ 212.597,67", "Média mensal"}) {
             assertTrue(texto.contains(esperado), "PDF deveria conter: " + esperado + "\n" + texto);
         }
+    }
+
+    @Test
+    void pdfMostraOResumoNaPrimeiraPagina() throws Exception {
+        projeto.setCalculado(true);
+        String primeira = paginas(service.exportar(projeto, FormatoExportacao.PDF, dir.resolve("r.pdf"), dono)).get(0);
+        for (String esperado : new String[]{"Preço final ao cliente", "R$ 212.597,67", "241 dias", "8,0 meses",
+            "R$ 109.966,67", "R$ 26.501,09"}) {
+            assertTrue(primeira.contains(esperado), "primeira página deveria conter: " + esperado + "\n" + primeira);
+        }
+    }
+
+    @Test
+    void pdfTemTabelaPorPlataformaEmColunas() throws Exception {
+        projeto.setCalculado(true);
+        String texto = String.join("\n", paginas(service.exportar(projeto, FormatoExportacao.PDF, dir.resolve("r.pdf"), dono)));
+        assertTrue(texto.contains("Plataforma Tamanho UI Funcionalidades Gerência Dias Custo"), texto);
+        assertTrue(texto.contains("Web/Back-end 50,00 23,33 46,00 10,00 129,33 R$ 59.033,33"), texto);
+        assertTrue(texto.contains("Android 50,00 23,33 28,00 10,00 111,33 R$ 50.933,33"), texto);
+        assertTrue(texto.contains("Usuários e Contas Cadastro pelo Facebook 2,00 2,00"), "dias por plataforma em colunas");
+        assertTrue(texto.contains("Proteção contra DoS 5,00 NA"), "NA onde a funcionalidade não se aplica");
+    }
+
+    @Test
+    void pdfLongoNumeraAsPaginasERepeteOCabecalhoDaTabela() throws Exception {
+        projeto.getItens().forEach(i -> {
+            try {
+                projeto.selecionar(i.getFuncionalidade().getId(), true);
+            } catch (IllegalArgumentException naoAplicavel) {
+                // itens que não valem em todas as plataformas ficam como estão
+            }
+        });
+        projeto.setCalculado(true);
+        java.util.List<String> paginas = paginas(service.exportar(projeto, FormatoExportacao.PDF, dir.resolve("longo.pdf"), dono));
+
+        assertTrue(paginas.size() >= 3, "o relatório com todas as funcionalidades ocupa várias páginas");
+        for (int i = 0; i < paginas.size(); i++) {
+            assertTrue(paginas.get(i).contains("Página " + (i + 1) + " de " + paginas.size()), "rodapé da página " + (i + 1));
+        }
+        String ultima = paginas.get(paginas.size() - 1);
+        assertTrue(ultima.contains("Categoria Funcionalidade Web/Back-end Android"),
+                "a tabela que continua repete o cabeçalho das colunas\n" + ultima);
+        assertFalse(ultima.contains("Funcionalidades selecionadas (dias por plataforma)"), "o título não se repete, só o cabeçalho");
+    }
+
+    @Test
+    void pdfSemDonoNaoMostraRotuloVazio() throws Exception {
+        projeto.setDonoNome(null);
+        projeto.setCalculado(true);
+        String primeira = paginas(service.exportar(projeto, FormatoExportacao.PDF, dir.resolve("r.pdf"), dono)).get(0);
+        assertFalse(primeira.contains("Dono:"), primeira);
+        assertTrue(primeira.contains("Plataformas: Web/Back-end, Android"));
     }
 }

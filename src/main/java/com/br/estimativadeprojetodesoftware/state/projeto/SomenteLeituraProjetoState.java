@@ -5,7 +5,7 @@ import com.br.estimativadeprojetodesoftware.view.componentes.Selo;
 
 /**
  * Destinatário de um projeto compartilhado: só visualiza a versão atual.
- * Editar, excluir, compartilhar e exportar ficam indisponíveis.
+ * Alterar, salvar, excluir, compartilhar e exportar ficam indisponíveis.
  */
 public class SomenteLeituraProjetoState extends ManterProjetoPresenterState {
 
