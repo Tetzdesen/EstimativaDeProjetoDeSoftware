@@ -8,22 +8,28 @@ import com.br.estimativadeprojetodesoftware.seeder.UsuarioSeeder;
 import com.br.estimativadeprojetodesoftware.service.DotenvService;
 import com.br.estimativadeprojetodesoftware.strategy.DatabaseInitializer;
 import com.br.estimativadeprojetodesoftware.strategy.H2Initializer;
+import com.br.estimativadeprojetodesoftware.strategy.PostgresInitializer;
 import com.br.estimativadeprojetodesoftware.strategy.SQLiteInitializer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.Map;
 
 /**
- * Conexão única com o banco escolhido em TIPO_BANCO (SQLite ou H2). A cada
+ * Conexão única com o banco escolhido em TIPO_BANCO (SQLite, H2 ou Postgres). A cada
  * início cria as tabelas que faltam e roda os seeders, que não duplicam dados.
  */
 public class ConexaoSingleton {
 
     private static final Map<String, DatabaseInitializer> INICIALIZADORES = Map.of(
             "sqlite", new SQLiteInitializer(),
-            "h2", new H2Initializer()
+            "h2", new H2Initializer(),
+            "postgres", new PostgresInitializer()
     );
+
+    /** Tempo mínimo entre duas verificações de que a conexão continua válida. */
+    private static final Duration INTERVALO_VERIFICACAO = Duration.ofSeconds(60);
 
     private static ConexaoSingleton instancia;
 
@@ -37,13 +43,25 @@ public class ConexaoSingleton {
             throw new IllegalStateException("Defina TIPO_BANCO e DB_URL no arquivo .env (veja o .env.example)");
         }
         DatabaseInitializer initializer = inicializadorPara(tipo);
-        this.conexao = abrir(initializer, url, DotenvService.getValor("DB_USER"), DotenvService.getValor("DB_PASSWORD"));
+        String usuario = DotenvService.getValor("DB_USER");
+        String senha = DotenvService.getValor("DB_PASSWORD");
+        Connection inicial = abrir(initializer, url, usuario, senha);
+        // a primeira conexão já vem com tabelas e seeders; as reaberturas só conectam
+        Connection[] primeira = {inicial};
+        this.conexao = ConexaoReconectavel.criar(() -> {
+            if (primeira[0] != null) {
+                Connection c = primeira[0];
+                primeira[0] = null;
+                return c;
+            }
+            return conectar(initializer, url, usuario, senha);
+        }, INTERVALO_VERIFICACAO);
     }
 
     public static DatabaseInitializer inicializadorPara(String tipo) {
         DatabaseInitializer initializer = INICIALIZADORES.get(tipo.trim().toLowerCase());
         if (initializer == null) {
-            throw new IllegalStateException("Banco de dados não suportado: " + tipo + " (use SQLite ou H2)");
+            throw new IllegalStateException("Banco de dados não suportado: " + tipo + " (use SQLite, H2 ou Postgres)");
         }
         return initializer;
     }
@@ -53,6 +71,20 @@ public class ConexaoSingleton {
      * e pelos testes de integração.
      */
     public static Connection abrir(DatabaseInitializer initializer, String url, String usuario, String senha) {
+        Connection conexao = conectar(initializer, url, usuario, senha);
+        try {
+            initializer.criarTabelas(conexao);
+            verificarEsquema(conexao, url);
+            new UsuarioSeeder(new JdbcUsuarioRepository(conexao)).executar();
+            new PerfilPadraoSeeder(new JdbcPerfilRepository(conexao)).executar();
+            return conexao;
+        } catch (SQLException e) {
+            throw new RepositorioException("Erro ao preparar o banco de dados: " + e.getMessage(), e);
+        }
+    }
+
+    /** Só abre e configura a conexão, sem criar tabelas nem rodar seeders. */
+    public static Connection conectar(DatabaseInitializer initializer, String url, String usuario, String senha) {
         try {
             Class.forName(initializer.getDriver());
         } catch (ClassNotFoundException e) {
@@ -62,10 +94,6 @@ public class ConexaoSingleton {
             initializer.prepararArmazenamento(url);
             Connection conexao = DriverManager.getConnection(url, usuario == null ? "" : usuario, senha == null ? "" : senha);
             initializer.configurarConexao(conexao);
-            initializer.criarTabelas(conexao);
-            verificarEsquema(conexao, url);
-            new UsuarioSeeder(new JdbcUsuarioRepository(conexao)).executar();
-            new PerfilPadraoSeeder(new JdbcPerfilRepository(conexao)).executar();
             return conexao;
         } catch (SQLException e) {
             throw new RepositorioException("Erro ao conectar com o banco de dados: " + e.getMessage(), e);

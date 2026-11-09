@@ -11,7 +11,7 @@ Você escolhe as plataformas (Web/Back-end, iOS, Android), marca as funcionalida
 - Criar conta e entrar com e-mail e senha (a senha passa pelo validador do professor).
 - Manter **perfis de estimativa**: a lista de funcionalidades com os dias de cada plataforma. O perfil padrão já vem carregado e não pode ser excluído; dá para copiar e montar o seu.
 - Criar **projetos** a partir de um ou mais perfis. O projeto é uma cópia, então mexer nele não altera o perfil nem os outros projetos.
-- Marcar plataformas e funcionalidades, ajustar taxas diárias, custos adicionais, impostos e lucro, e **calcular** a estimativa.
+- Marcar plataformas e funcionalidades, ajustar taxas diárias, custos adicionais, impostos e lucro, e ver a **estimativa** mudar a cada alteração. A tela do projeto mostra uma seção por vez, escolhida numa barra lateral: Plataformas, Tamanho e UI (tamanho do app, nível de UI e gerente de projeto, escolhidos por botões de opção), Funcionalidades (com cada categoria e quantas estão marcadas nela, mais busca por nome e filtro "Somente selecionadas"), Taxas diárias, Custos e preço, e Detalhamento. Prazo, custo de desenvolvimento, preço final e média mensal ficam numa barra fixa no rodapé, e o projeto só é gravado ao clicar em Salvar.
 - **Compartilhar** um projeto com outro usuário, que só consegue visualizar.
 - **Exportar** o relatório em PDF ou CSV.
 - Acompanhar tudo no **dashboard**.
@@ -72,7 +72,7 @@ O sistema lê o `.env` da pasta de onde é aberto. Por isso, se você der dois c
 
 Também dá para abrir a pasta no NetBeans ou no IntelliJ, que já vêm com Maven: rode o `clean package` pela IDE e execute a classe `Principal` com a pasta do projeto como diretório de trabalho.
 
-### SQLite ou H2
+### SQLite, H2 ou PostgreSQL (Supabase)
 
 A troca é só no `.env`:
 
@@ -84,7 +84,41 @@ DB_URL = jdbc:sqlite:db/database.db
 # H2
 TIPO_BANCO = "H2"
 DB_URL = jdbc:h2:./db/estimativa
+
+# PostgreSQL no Supabase (pooler de sessão, SSL com verificação do certificado)
+TIPO_BANCO = "Postgres"
+DB_URL = jdbc:postgresql://<host do pooler de sessão>:5432/postgres?currentSchema=estimativa&sslmode=verify-full&sslrootcert=db/certs/prod-ca-2021.crt
+DB_USER = estimativa_app.<referência-do-projeto>
+DB_PASSWORD = <senha do papel estimativa_app>
 ```
+
+O `.env` não vai para o git; nunca coloque senhas no `.env.example`.
+
+#### Preparar um projeto no Supabase
+
+1. Crie o projeto com a Data API desligada (o sistema só usa JDBC) e uma senha forte para o `postgres`.
+2. Em *Database → Settings*, ligue *Enforce SSL on incoming connections* e baixe o certificado (*SSL Certificate*) para `db/certs/prod-ca-2021.crt`.
+3. No *SQL Editor*, rode `docs/supabase/configurar.sql`, trocando `TROCAR_PELA_SENHA_DO_APP` por uma senha forte só no editor (não salve o arquivo com ela). O script cria o esquema `estimativa`, fora da API pública, e o papel `estimativa_app`, que só enxerga esse esquema.
+4. Preencha o `.env` como acima; o host do pooler aparece no painel em *Connect → Session pooler*. Na primeira execução o sistema cria as tabelas (com RLS ativado) e roda os seeders.
+
+A conexão é recusada se a `DB_URL` não tiver `sslmode=verify-full` e `sslrootcert`. Se a conexão cair depois de muito tempo parado, o sistema reabre na próxima operação.
+
+#### Migrar os dados de um banco para outro
+
+O `MigradorBanco` copia tudo (usuários, perfis, projetos, compartilhamentos e configuração) de um banco para outro vazio, numa única transação. Origem e destino são arquivos no formato do `.env`, para a senha não aparecer na linha de comando:
+
+```bash
+mvn clean package
+java -cp target/estimativa.jar com.br.estimativadeprojetodesoftware.migracao.MigradorBanco origem.env destino.env
+```
+
+Ele recusa um destino que já tenha usuários ou perfis e, no fim, mostra a contagem de cada tabela na origem e no destino. Rode-o antes de abrir o sistema no destino, senão os seeders criam o administrador e o perfil padrão e o destino deixa de estar vazio.
+
+#### Cuidados com o banco no Supabase
+
+- Projetos gratuitos pausam depois de uma semana sem uso; reative pelo painel do Supabase se a conexão falhar.
+- O administrador criado pelo seeder tem senha conhecida; num banco compartilhado, troque essa senha pelo sistema.
+- Quem tiver IP fixo pode limitar o acesso em *Database → Network Restrictions*.
 
 ### Atalhos
 
