@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.usuario;
 
+import com.br.estimativadeprojetodesoftware.presenter.helpers.FilaBanco;
 import com.br.estimativadeprojetodesoftware.command.AbrirPrincipalPresenterCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.AbrirCadastroUsuarioCommand;
 import com.br.estimativadeprojetodesoftware.command.usuario.RealizarAutenticacaoUsuarioCommand;
@@ -14,9 +15,22 @@ public class LoginPresenter {
 
     private final LoginView view;
     private final PrincipalUsuarioPresenter principalUsuarioPresenter;
+    private final java.util.function.Supplier<com.br.estimativadeprojetodesoftware.service.UsuarioService> usuarios;
+    private final Runnable aoAutenticar;
 
     public LoginPresenter(LoginView view, PrincipalUsuarioPresenter principalUsuarioPresenter) {
+        this(view, principalUsuarioPresenter, com.br.estimativadeprojetodesoftware.service.UsuarioService::new, null);
+    }
+
+    /**
+     * @param usuarios cria o serviço de usuários (na fila do banco, fora da thread do Swing)
+     * @param aoAutenticar o que fazer depois do login; {@code null} abre a janela principal
+     */
+    public LoginPresenter(LoginView view, PrincipalUsuarioPresenter principalUsuarioPresenter,
+            java.util.function.Supplier<com.br.estimativadeprojetodesoftware.service.UsuarioService> usuarios, Runnable aoAutenticar) {
         this.principalUsuarioPresenter = principalUsuarioPresenter;
+        this.usuarios = usuarios;
+        this.aoAutenticar = aoAutenticar != null ? aoAutenticar : this::abrirJanelaPrincipal;
         this.view = view;
         view.getBtnEntrar().addActionListener(e -> entrar());
         view.getBtnCriarConta().addActionListener(e -> {
@@ -43,17 +57,22 @@ public class LoginPresenter {
         if (!ok) {
             return;
         }
-        try {
-            new RealizarAutenticacaoUsuarioCommand(view.getTxtEmail().getText(), new String(view.getTxtSenha().getPassword())).execute();
-        } catch (RuntimeException ex) {
-            view.mostrarErroGeral(ex.getMessage());
-            return;
-        }
-        if (UsuarioLogadoSingleton.getInstancia().getUsuario() != null) {
-            principalUsuarioPresenter.getView().dispose();
-            new FecharJanelaCommand(view).execute();
-            new AbrirPrincipalPresenterCommand().execute();
-        }
+        String email = view.getTxtEmail().getText();
+        String senha = new String(view.getTxtSenha().getPassword());
+        FilaBanco.executar(view, "Entrando…", () -> {
+            new RealizarAutenticacaoUsuarioCommand(usuarios.get(), email, senha).execute();
+            return null;
+        }, autenticado -> {
+            if (UsuarioLogadoSingleton.getInstancia().getUsuario() != null) {
+                aoAutenticar.run();
+            }
+        }, ex -> view.mostrarErroGeral(ex.getMessage()));
+    }
+
+    private void abrirJanelaPrincipal() {
+        principalUsuarioPresenter.getView().dispose();
+        new FecharJanelaCommand(view).execute();
+        new AbrirPrincipalPresenterCommand().execute();
     }
 
     public LoginView getView() {

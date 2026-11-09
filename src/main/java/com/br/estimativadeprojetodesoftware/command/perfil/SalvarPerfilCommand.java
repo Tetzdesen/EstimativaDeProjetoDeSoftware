@@ -19,12 +19,17 @@ public class SalvarPerfilCommand implements Command {
         if (!presenter.aplicarCampos()) {
             return;
         }
-        if (presenter.getEstado() instanceof InclusaoPerfilState) {
-            presenter.getService().incluir(presenter.getPerfil(), presenter.getUsuario());
-        } else {
-            presenter.getService().salvar(presenter.getPerfil(), presenter.getUsuario());
-        }
-        presenter.setEstado(new VisualizacaoPerfilState(presenter));
-        presenter.sucesso("Perfil \"" + presenter.getPerfil().getNome() + "\" salvo.");
+        boolean inclusao = presenter.getEstado() instanceof InclusaoPerfilState;
+        presenter.noBanco("Salvando…", () -> {
+            if (inclusao) {
+                presenter.getService().incluir(presenter.getPerfil(), presenter.getUsuario());
+            } else {
+                presenter.getService().salvar(presenter.getPerfil(), presenter.getUsuario());
+            }
+            return null;
+        }, ok -> {
+            presenter.setEstado(new VisualizacaoPerfilState(presenter));
+            presenter.sucesso("Perfil \"" + presenter.getPerfil().getNome() + "\" salvo.");
+        });
     }
 }

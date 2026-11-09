@@ -1,5 +1,7 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
+import com.br.estimativadeprojetodesoftware.presenter.helpers.FilaBanco;
+import java.util.List;
 import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.command.ConfirmarCommand;
 import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
@@ -104,8 +106,21 @@ public final class PrincipalProjetoPresenter implements Observer {
         new RealizarLogoutUsuarioCommand().execute();
     }
 
+    private record ProjetosDaArvore(List<Projeto> proprios, List<Projeto> compartilhados) {
+    }
+
+    /** Busca os projetos fora da thread do Swing e monta a árvore quando chegarem. */
     private void montarArvore() {
         Usuario usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
+        FilaBanco.executar(null, null,
+                () -> new ProjetosDaArvore(projetoService.listarProprios(usuario), projetoService.listarCompartilhadosComigo(usuario)),
+                this::montarArvore, e -> ExibirMensagemCommand.erro("Não foi possível carregar os projetos: " + e.getMessage()));
+    }
+
+    private void montarArvore(ProjetosDaArvore projetos) {
+        if (!view.isDisplayable()) {
+            return;
+        }
         NoArvoreComposite raiz = arvoreService.criarNo("Principal", "dashboard", protegido(Navegador::abrirDashboard));
         NoArvoreComposite noPerfis = arvoreService.criarNo("Perfis de estimativa", "perfil", protegido(Navegador::abrirListaPerfis));
         NoArvoreComposite noProjetos = arvoreService.criarNo("Meus projetos", "projeto", protegido(Navegador::abrirListaProjetos));
@@ -122,11 +137,11 @@ public final class PrincipalProjetoPresenter implements Observer {
             return menu;
         });
 
-        for (Projeto p : projetoService.listarProprios(usuario)) {
+        for (Projeto p : projetos.proprios()) {
             noProjetos.adicionarFilho(arvoreService.criarNo(p.getNome(), "projeto",
                     protegido(() -> Navegador.abrirProjeto(p.getId()))));
         }
-        for (Projeto p : projetoService.listarCompartilhadosComigo(usuario)) {
+        for (Projeto p : projetos.compartilhados()) {
             noCompartilhados.adicionarFilho(arvoreService.criarNo(p.getNome() + " (Compartilhado por " + p.getDonoNome() + ")",
                     "compartilhar", protegido(() -> Navegador.abrirProjeto(p.getId()))));
         }

@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
+import com.br.estimativadeprojetodesoftware.presenter.helpers.FilaBanco;
 import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
 import com.br.estimativadeprojetodesoftware.model.Usuario;
@@ -28,27 +29,35 @@ public class CompartilharProjetoPresenter {
         carregar();
     }
 
+    private record Listas(List<Usuario> candidatos, List<Usuario> destinatarios) {
+    }
+
     private void carregar() {
-        candidatos = service.candidatos(projeto.getId(), usuario);
-        view.getListaCandidatos().setListData(candidatos.stream().map(u -> u.getNome() + " <" + u.getEmail() + ">").toArray(String[]::new));
-        view.getListaDestinatarios().setListData(service.destinatarios(projeto.getId()).stream()
-                .map(u -> u.getNome() + " <" + u.getEmail() + ">").toArray(String[]::new));
-        view.getBtnCompartilhar().setEnabled(!candidatos.isEmpty());
+        FilaBanco.executar(view, "Carregando…",
+                () -> new Listas(service.candidatos(projeto.getId(), usuario), service.destinatarios(projeto.getId())),
+                listas -> {
+                    candidatos = listas.candidatos();
+                    view.getListaCandidatos().setListData(candidatos.stream().map(u -> u.getNome() + " <" + u.getEmail() + ">").toArray(String[]::new));
+                    view.getListaDestinatarios().setListData(listas.destinatarios().stream()
+                            .map(u -> u.getNome() + " <" + u.getEmail() + ">").toArray(String[]::new));
+                    view.getBtnCompartilhar().setEnabled(!candidatos.isEmpty());
+                }, e -> ExibirMensagemCommand.erro(e.getMessage()));
     }
 
     private void compartilhar() {
         int i = view.getListaCandidatos().getSelectedIndex();
-        try {
-            if (i < 0) {
-                throw new IllegalArgumentException("Selecione o usuário que vai receber o projeto.");
-            }
-            Usuario destinatario = candidatos.get(i);
+        if (i < 0) {
+            ExibirMensagemCommand.erro("Selecione o usuário que vai receber o projeto.");
+            return;
+        }
+        Usuario destinatario = candidatos.get(i);
+        FilaBanco.executar(view, "Compartilhando…", () -> {
             service.compartilhar(projeto.getId(), destinatario.getId(), usuario);
+            return null;
+        }, ok -> {
             ExibirMensagemCommand.sucesso("Projeto compartilhado com " + destinatario.getNome() + " (somente leitura).");
             carregar();
-        } catch (RuntimeException ex) {
-            ExibirMensagemCommand.erro(ex.getMessage());
-        }
+        }, e -> ExibirMensagemCommand.erro(e.getMessage()));
     }
 
     public CompartilharProjetoView getView() {

@@ -20,7 +20,6 @@ public class CancelarPerfilCommand implements Command {
             presenter.fechar();
             return;
         }
-        presenter.recarregar();
-        presenter.setEstado(new VisualizacaoPerfilState(presenter));
+        presenter.recarregar(() -> presenter.setEstado(new VisualizacaoPerfilState(presenter)));
     }
 }

@@ -21,6 +21,7 @@ import com.br.estimativadeprojetodesoftware.observer.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.RecalculoAgendado;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.ValidacaoVisual;
 import com.br.estimativadeprojetodesoftware.presenter.tabela.CustosTableModel;
+import com.br.estimativadeprojetodesoftware.presenter.helpers.FilaBanco;
 import com.br.estimativadeprojetodesoftware.presenter.tabela.NavegacaoProjetoModel;
 import com.br.estimativadeprojetodesoftware.presenter.tabela.FiltroFuncionalidades;
 import com.br.estimativadeprojetodesoftware.presenter.tabela.FormatoValor;
@@ -34,7 +35,6 @@ import com.br.estimativadeprojetodesoftware.state.projeto.EdicaoProjetoState;
 import com.br.estimativadeprojetodesoftware.state.projeto.InclusaoProjetoState;
 import com.br.estimativadeprojetodesoftware.state.projeto.ManterProjetoPresenterState;
 import com.br.estimativadeprojetodesoftware.state.projeto.SomenteLeituraProjetoState;
-import com.br.estimativadeprojetodesoftware.state.projeto.VisualizacaoProjetoState;
 import com.br.estimativadeprojetodesoftware.templatemethod.FormatoExportacao;
 import com.br.estimativadeprojetodesoftware.model.TipoSelecao;
 import com.br.estimativadeprojetodesoftware.view.componentes.TabelaPadrao;
@@ -81,7 +81,7 @@ public class ManterProjetoPresenter implements Observer {
     private boolean alterado;
     private BigDecimal ultimoPreco;
     private final RecalculoAgendado recalculo =
-            new RecalculoAgendado(ATRASO_RECALCULO_MS, () -> executar(() -> estado.atualizarEstimativa()));
+            new RecalculoAgendado(ATRASO_RECALCULO_MS, this::aoDispararRecalculo);
 
     private ManterProjetoPresenter() {
         this(new ProjetoView(), new ProjetoService(), new PerfilService(), new ExportacaoService(),
@@ -131,31 +131,46 @@ public class ManterProjetoPresenter implements Observer {
 
     void iniciarInclusao() {
         view.setTituloCabecalho("Novo projeto");
-        perfisDisponiveis = perfilService.listarVisiveis(usuario);
-        view.getListaPerfis().setListData(perfisDisponiveis.stream().map(Perfil::toString).toArray(String[]::new));
-        if (!perfisDisponiveis.isEmpty()) {
-            view.getListaPerfis().setSelectedIndex(0);
-        }
         setEditavel(false);
         view.getTxtNome().setEditable(true);
         setEstado(new InclusaoProjetoState(this));
+        noBanco("Carregando perfis…", () -> perfilService.listarVisiveis(usuario), perfis -> {
+            perfisDisponiveis = perfis;
+            view.getListaPerfis().setListData(perfisDisponiveis.stream().map(Perfil::toString).toArray(String[]::new));
+            if (!perfisDisponiveis.isEmpty()) {
+                view.getListaPerfis().setSelectedIndex(0);
+            }
+        });
     }
 
     void abrirProjeto(UUID id) {
-        setProjeto(projetoService.buscarParaVisualizacao(id, usuario));
-        setEstado(estadoInicial());
-        mostrarResultadoAtual();
+        view.setTituloCabecalho("Abrindo projeto…");
+        FilaBanco.executar(view, "Abrindo…", () -> projetoService.buscarParaVisualizacao(id, usuario), p -> {
+            setProjeto(p);
+            mostrarResultadoAtual();
+            setEstado(estadoInicial()); // em edição, recalcula ao vivo por cima do resultado salvo
+        }, e -> {
+            erro(e.getMessage());
+            SwingUtilities.invokeLater(this::fechar); // depois de a janela entrar na área de trabalho
+        });
+    }
+
+    /**
+     * Acesso ao banco fora da thread do Swing, com a janela marcada como
+     * ocupada; erros aparecem na mensagem padrão.
+     */
+    public <T> void noBanco(String mensagem, java.util.concurrent.Callable<T> trabalho, java.util.function.Consumer<T> aoConcluir) {
+        FilaBanco.executar(view, mensagem, trabalho, aoConcluir, e -> erro(e.getMessage()));
     }
 
     private ManterProjetoPresenterState estadoInicial() {
         return projetoService.podeEditar(projeto, usuario)
-                ? new VisualizacaoProjetoState(this) : new SomenteLeituraProjetoState(this);
+                ? new EdicaoProjetoState(this) : new SomenteLeituraProjetoState(this);
     }
 
     private void configurarAcoes() {
-        view.getBtnEditar().addActionListener(e -> executar(() -> estado.editar()));
         view.getBtnSalvar().addActionListener(e -> executar(() -> estado.salvar()));
-        view.getBtnCancelar().addActionListener(e -> executar(() -> estado.cancelar()));
+        view.getBtnDescartar().addActionListener(e -> executar(() -> estado.descartar()));
         view.getBtnExcluir().addActionListener(e -> executar(() -> estado.excluir()));
         view.getBtnCompartilhar().addActionListener(e -> executar(() -> estado.compartilhar()));
         view.getBtnExportarPdf().addActionListener(e -> executar(() -> estado.exportar(FormatoExportacao.PDF)));
@@ -166,23 +181,42 @@ public class ManterProjetoPresenter implements Observer {
     }
 
     private void configurarDeteccaoDeAlteracoes() {
-        view.getChkWeb().addActionListener(e -> aoAlterar());
-        view.getChkIos().addActionListener(e -> aoAlterar());
-        view.getChkAndroid().addActionListener(e -> aoAlterar());
+        for (var plataforma : new javax.swing.AbstractButton[]{view.getChkWeb(), view.getChkIos(), view.getChkAndroid()}) {
+            plataforma.addActionListener(e -> {
+                atualizarColunasPlataformas();
+                aoAlterar();
+            });
+        }
         ValidacaoVisual.aoEditar(view.getTxtImpostos(), this::aoAlterar);
         ValidacaoVisual.aoEditar(view.getTxtLucro(), this::aoAlterar);
         // o nome não muda a estimativa, mas é uma alteração a salvar
         ValidacaoVisual.aoEditar(view.getTxtNome(), () -> {
             if (editavel && !carregando) {
-                alterado = true;
+                setAlterado(true);
             }
         });
+    }
+
+    /** A tabela de funcionalidades mostra só as plataformas marcadas na tela. */
+    private void atualizarColunasPlataformas() {
+        view.mostrarColunasPlataformas(view.getChkWeb().isSelected(), view.getChkIos().isSelected(),
+                view.getChkAndroid().isSelected());
+        if (modeloNavegacao != null) {
+            modeloNavegacao.recontar();
+        }
+    }
+
+    /** Disparo do temporizador; depois de a janela fechar não faz nada. */
+    private void aoDispararRecalculo() {
+        if (!view.isClosed()) {
+            executar(() -> estado.atualizarEstimativa());
+        }
     }
 
     /** Toda alteração feita pelo usuário na edição passa por aqui. */
     private void aoAlterar() {
         if (editavel && !carregando) {
-            alterado = true;
+            setAlterado(true);
             recalculo.agendar();
         }
     }
@@ -298,7 +332,7 @@ public class ManterProjetoPresenter implements Observer {
     public void setProjeto(Projeto projeto) {
         this.projeto = projeto;
         recalculo.cancelar();
-        alterado = false;
+        setAlterado(false);
         ultimoPreco = null;
         view.setTituloCabecalho(projeto.getNome());
         modeloItens = new ItensProjetoTableModel(projeto, this::erro);
@@ -309,21 +343,18 @@ public class ManterProjetoPresenter implements Observer {
         modeloCustos.setAoAlterar(this::aoAlterar);
         modeloItens.addTableModelListener(e -> atualizarContadorSelecionadas());
         view.getTabelaItens().setRowSorter(null);
-        // ao recarregar (Salvar, Cancelar) mantém a entrada escolhida; ao abrir, Funcionalidades
+        // ao recarregar (Salvar, Descartar alterações) mantém a entrada escolhida; ao abrir, Funcionalidades
         int indiceAnterior = view.getListaSecoes().getSelectedIndex();
         SecaoProjeto secaoAnterior = modeloNavegacao == null || indiceAnterior < 0
                 ? SecaoProjeto.FUNCIONALIDADES : modeloNavegacao.getSecao(indiceAnterior);
         String categoriaAnterior = categoriaEscolhida();
         modeloNavegacao = new NavegacaoProjetoModel(modeloItens);
+        modeloNavegacao.setPlataformasMarcadas(() -> view.getChkWeb().isSelected() || view.getChkIos().isSelected()
+                || view.getChkAndroid().isSelected());
         view.getTabelaItens().setModel(modeloItens);
         view.getTabelaTaxas().setModel(modeloTaxas);
         view.getTabelaCustos().setModel(modeloCustos);
-        if (view.getTabelaItens().getColumnModel().getColumnCount() > 2) {
-            view.getTabelaItens().getColumnModel().getColumn(0).setMaxWidth(90);
-            view.getTabelaItens().getColumnModel().getColumn(1).setPreferredWidth(230);
-            view.getTabelaItens().getColumnModel().getColumn(2).setPreferredWidth(300);
-            view.getTabelaItens().getColumnModel().getColumn(3).setPreferredWidth(110);
-        }
+        view.configurarTabelaFuncionalidades();
         view.getTabelaItens().setRowSorter(ordenadorNaOrdemDaPlanilha());
         montarTabelasConfiguracao();
         view.getListaSecoes().setModel(modeloNavegacao);
@@ -343,6 +374,7 @@ public class ManterProjetoPresenter implements Observer {
         view.getTxtImpostos().setText(FormatoValor.percentual(projeto.getPercentualImpostos()));
         view.getTxtLucro().setText(FormatoValor.percentual(projeto.getPercentualLucro()));
         carregando = false;
+        atualizarColunasPlataformas();
     }
 
     /**
@@ -466,9 +498,14 @@ public class ManterProjetoPresenter implements Observer {
         }
     }
 
-    public void recarregar() {
-        setProjeto(projetoService.buscarParaVisualizacao(projeto.getId(), usuario));
-        mostrarResultadoAtual();
+    /** Relê o projeto salvo e, depois de exibi-lo, executa {@code depois}. */
+    public void recarregar(Runnable depois) {
+        UUID id = projeto.getId();
+        noBanco("Recarregando…", () -> projetoService.buscarParaVisualizacao(id, usuario), p -> {
+            setProjeto(p);
+            mostrarResultadoAtual();
+            depois.run();
+        });
     }
 
     public List<UUID> idsPerfisSelecionados() {
@@ -507,7 +544,9 @@ public class ManterProjetoPresenter implements Observer {
     public void mostrarResultadoAtual() {
         if (!projeto.isCalculado()) {
             exibirEstimativaIndisponivel("A estimativa ainda não foi calculada."
-                    + (projetoService.podeEditar(projeto, usuario) ? "<br>Clique em Editar e marque as funcionalidades: a estimativa é atualizada a cada alteração." : ""));
+                    + (projetoService.podeEditar(projeto, usuario)
+                    ? "<br>Marque uma plataforma e as funcionalidades: a estimativa aparece na hora."
+                    : "<br>O dono ainda não completou a estimativa."));
             return;
         }
         try {
@@ -621,8 +660,22 @@ public class ManterProjetoPresenter implements Observer {
         recalculo.cancelar();
     }
 
+    /** Liga ou desliga a marca de alteração não salva, avisando o estado quando ela muda. */
+    private void setAlterado(boolean valor) {
+        if (alterado != valor) {
+            alterado = valor;
+            if (estado != null && projeto != null) {
+                estado.atualizarAcoesDeGravacao(valor);
+            }
+        }
+    }
+
+    public boolean isAlterado() {
+        return alterado;
+    }
+
     public void marcarSemAlteracoes() {
-        alterado = false;
+        setAlterado(false);
     }
 
     /** Roda já o recálculo que estaria esperando o temporizador (testes). */
@@ -642,13 +695,14 @@ public class ManterProjetoPresenter implements Observer {
                 }
                 return;
             }
-            if (!(estado instanceof EdicaoProjetoState) && view.isDisplayable()) {
-                try {
-                    recarregar();
+            // com alterações não salvas, quem decide é o usuário (Salvar ou Descartar)
+            if (!alterado && !(estado instanceof InclusaoProjetoState) && view.isDisplayable()) {
+                UUID id = projeto.getId();
+                FilaBanco.executar(view, "Atualizando…", () -> projetoService.buscarParaVisualizacao(id, usuario), p -> {
+                    setProjeto(p);
+                    mostrarResultadoAtual();
                     setEstado(estadoInicial());
-                } catch (RuntimeException e) {
-                    fechar();
-                }
+                }, e -> fechar());
             }
         });
     }

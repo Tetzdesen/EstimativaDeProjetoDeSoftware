@@ -19,10 +19,13 @@ public class CriarProjetoCommand implements Command {
         if (!presenter.validarInclusao()) {
             return;
         }
-        Projeto projeto = presenter.getProjetoService().criar(presenter.getView().getTxtNome().getText(),
-                presenter.idsPerfisSelecionados(), presenter.getUsuario());
+        String nome = presenter.getView().getTxtNome().getText();
+        var perfis = presenter.idsPerfisSelecionados();
+        presenter.noBanco("Criando projeto…", () -> presenter.getProjetoService().criar(nome, perfis, presenter.getUsuario()), projeto -> {
         presenter.setProjeto(projeto);
         presenter.setEstado(new EdicaoProjetoState(presenter));
+        presenter.escolherSecao(com.br.estimativadeprojetodesoftware.view.projeto.SecaoProjeto.PLATAFORMAS); // primeiro passo
         presenter.sucesso("Projeto \"" + projeto.getNome() + "\" criado. Marque as funcionalidades: a estimativa é atualizada a cada alteração.");
+        });
     }
 }

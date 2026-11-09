@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.perfil;
 
+import com.br.estimativadeprojetodesoftware.presenter.helpers.FilaBanco;
 import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
 import com.br.estimativadeprojetodesoftware.model.Funcionalidade;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
@@ -36,9 +37,14 @@ public class ManterPerfilPresenter implements Observer {
     private TaxasTableModel modeloTaxas;
 
     private ManterPerfilPresenter() {
+        this(new PerfilService(), UsuarioLogadoSingleton.getInstancia().getUsuario());
+    }
+
+    /** Dependências explícitas: usado diretamente nos testes. */
+    ManterPerfilPresenter(PerfilService service, Usuario usuario) {
         this.view = new ManterPerfilView();
-        this.service = new PerfilService();
-        this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
+        this.service = service;
+        this.usuario = usuario;
         view.getBtnEditar().addActionListener(e -> executar(() -> estado.editar()));
         view.getBtnSalvar().addActionListener(e -> executar(() -> estado.salvar()));
         view.getBtnCancelar().addActionListener(e -> executar(() -> estado.cancelar()));
@@ -57,15 +63,28 @@ public class ManterPerfilPresenter implements Observer {
     }
 
     public static ManterPerfilPresenter paraPerfil(UUID id) {
-        ManterPerfilPresenter p = new ManterPerfilPresenter();
-        p.setPerfil(p.service.buscarPorId(id).orElseThrow(() -> new IllegalArgumentException("Perfil não encontrado.")));
-        p.setEstado(new VisualizacaoPerfilState(p));
+        return abrir(new ManterPerfilPresenter(), id);
+    }
+
+    static ManterPerfilPresenter abrir(ManterPerfilPresenter p, UUID id) {
+        FilaBanco.executar(p.view, "Abrindo…",
+                () -> p.service.buscarPorId(id).orElseThrow(() -> new IllegalArgumentException("Perfil não encontrado.")),
+                perfil -> {
+                    p.setPerfil(perfil);
+                    p.setEstado(new VisualizacaoPerfilState(p));
+                }, e -> {
+                    p.erro(e.getMessage());
+                    javax.swing.SwingUtilities.invokeLater(p::fechar);
+                });
         return p;
     }
 
     /** Novo perfil personalizado como cópia (Prototype) do perfil base. */
     public static ManterPerfilPresenter novo(Perfil base) {
-        ManterPerfilPresenter p = new ManterPerfilPresenter();
+        return copiar(new ManterPerfilPresenter(), base);
+    }
+
+    static ManterPerfilPresenter copiar(ManterPerfilPresenter p, Perfil base) {
         p.setPerfil(base.clonar("Cópia de " + base.getNome(), p.usuario.getId()));
         p.setEstado(new InclusaoPerfilState(p));
         return p;
@@ -136,8 +155,19 @@ public class ManterPerfilPresenter implements Observer {
         return linha < 0 ? null : modeloFuncionalidades.getLinha(linha);
     }
 
-    public void recarregar() {
-        setPerfil(service.buscarPorId(perfil.getId()).orElseThrow(() -> new IllegalArgumentException("Perfil não encontrado.")));
+    /** Relê o perfil salvo e, depois de exibi-lo, executa {@code depois}. */
+    public void recarregar(Runnable depois) {
+        java.util.UUID id = perfil.getId();
+        noBanco("Recarregando…", () -> service.buscarPorId(id).orElseThrow(() -> new IllegalArgumentException("Perfil não encontrado.")),
+                p -> {
+                    setPerfil(p);
+                    depois.run();
+                });
+    }
+
+    /** Acesso ao banco fora da thread do Swing, com a janela marcada como ocupada. */
+    public <T> void noBanco(String mensagem, java.util.concurrent.Callable<T> trabalho, java.util.function.Consumer<T> aoConcluir) {
+        FilaBanco.executar(view, mensagem, trabalho, aoConcluir, e -> erro(e.getMessage()));
     }
 
     public boolean podeAlterar() {
@@ -169,8 +199,7 @@ public class ManterPerfilPresenter implements Observer {
             if (evento.tipo() == EventoDominio.Tipo.EXCLUSAO) {
                 fechar();
             } else if (!(estado instanceof EdicaoPerfilState)) {
-                recarregar();
-                setEstado(new VisualizacaoPerfilState(this));
+                recarregar(() -> setEstado(new VisualizacaoPerfilState(this)));
             }
         });
     }

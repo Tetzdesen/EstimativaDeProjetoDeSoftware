@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
@@ -38,6 +40,26 @@ public class BarraAcoes extends JPanel {
     /** Botão de ação destrutiva (ex.: Excluir), com texto na cor de erro. */
     public JButton adicionarPerigo(String texto, String icone) {
         return Estilos.aplicar(adicionar(texto, icone), Estilos.BOTAO_PERIGO);
+    }
+
+    /**
+     * Botão que abre um menu com as ações informadas (ex.: Exportar → PDF, CSV).
+     * Cada item continua sendo habilitado e acionado pelo seu próprio estado.
+     */
+    public JButton adicionarMenu(String texto, String icone, JMenuItem... itens) {
+        JButton b = adicionar(texto + "  ▾", icone);
+        JPopupMenu menu = new JPopupMenu();
+        for (JMenuItem item : itens) {
+            menu.add(item);
+        }
+        b.addActionListener(e -> menu.show(b, 0, b.getHeight()));
+        b.putClientProperty("menu", menu);
+        return b;
+    }
+
+    /** Item de menu com ícone, no mesmo padrão dos botões da barra. */
+    public static JMenuItem item(String texto, String icone) {
+        return new JMenuItem(texto, icone == null ? null : IconService.getIcon(icone));
     }
 
     public void separador() {

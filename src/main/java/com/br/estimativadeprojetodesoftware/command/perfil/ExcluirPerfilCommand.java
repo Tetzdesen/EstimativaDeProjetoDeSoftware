@@ -19,8 +19,13 @@ public class ExcluirPerfilCommand implements Command {
         if (!ConfirmarCommand.perguntar("Excluir perfil", "Excluir o perfil \"" + nome + "\"?", "Excluir")) {
             return;
         }
-        presenter.getService().excluir(presenter.getPerfil().getId(), presenter.getUsuario());
-        presenter.fechar();
-        presenter.sucesso("Perfil \"" + nome + "\" excluído.");
+        var id = presenter.getPerfil().getId();
+        presenter.noBanco("Excluindo…", () -> {
+            presenter.getService().excluir(id, presenter.getUsuario());
+            return null;
+        }, ok -> {
+            presenter.fechar();
+            presenter.sucesso("Perfil \"" + nome + "\" excluído.");
+        });
     }
 }

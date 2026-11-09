@@ -4,7 +4,6 @@ import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.ManterProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.templatemethod.FormatoExportacao;
 import java.io.File;
-import java.nio.file.Path;
 
 /** Exporta o projeto calculado no formato escolhido. */
 public class ExportarProjetoCommand implements Command {
@@ -25,7 +24,8 @@ public class ExportarProjetoCommand implements Command {
         if (arquivo == null) {
             return;
         }
-        Path gerado = presenter.getExportacaoService().exportar(presenter.getProjeto(), formato, arquivo.toPath(), presenter.getUsuario());
-        presenter.sucesso("Relatório gerado em:\n" + gerado.toAbsolutePath());
+        presenter.noBanco("Exportando…",
+                () -> presenter.getExportacaoService().exportar(presenter.getProjeto(), formato, arquivo.toPath(), presenter.getUsuario()),
+                gerado -> presenter.sucesso("Relatório gerado em:\n" + gerado.toAbsolutePath()));
     }
 }

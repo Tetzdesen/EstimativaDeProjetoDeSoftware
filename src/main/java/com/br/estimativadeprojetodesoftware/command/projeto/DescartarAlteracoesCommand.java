@@ -4,16 +4,17 @@ import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.ManterProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.state.projeto.EdicaoProjetoState;
 
-public class EditarProjetoCommand implements Command {
+/** Volta ao projeto salvo, sem gravar nada, e continua em edição. */
+public class DescartarAlteracoesCommand implements Command {
 
     private final ManterProjetoPresenter presenter;
 
-    public EditarProjetoCommand(ManterProjetoPresenter presenter) {
+    public DescartarAlteracoesCommand(ManterProjetoPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
     public void execute() {
-        presenter.setEstado(new EdicaoProjetoState(presenter));
+        presenter.recarregar(() -> presenter.setEstado(new EdicaoProjetoState(presenter)));
     }
 }

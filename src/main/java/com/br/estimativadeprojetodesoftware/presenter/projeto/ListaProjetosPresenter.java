@@ -1,5 +1,6 @@
 package com.br.estimativadeprojetodesoftware.presenter.projeto;
 
+import com.br.estimativadeprojetodesoftware.presenter.helpers.FilaBanco;
 import com.br.estimativadeprojetodesoftware.command.ConfirmarCommand;
 import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
 import com.br.estimativadeprojetodesoftware.model.Projeto;
@@ -59,9 +60,16 @@ public class ListaProjetosPresenter implements Observer {
     }
 
     private void carregar() {
+        FilaBanco.executar(view, "Carregando…", () -> {
+            List<Projeto> todos = new java.util.ArrayList<>(service.listarProprios(usuario));
+            todos.addAll(service.listarCompartilhadosComigo(usuario));
+            return todos;
+        }, this::exibir, e -> ExibirMensagemCommand.erro(e.getMessage()));
+    }
+
+    private void exibir(List<Projeto> projetos) {
         linhas.clear();
-        linhas.addAll(service.listarProprios(usuario));
-        linhas.addAll(service.listarCompartilhadosComigo(usuario));
+        linhas.addAll(projetos);
         DefaultTableModel modelo = new DefaultTableModel(new Object[]{"Projeto", "Origem", "Estimativa"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -106,11 +114,11 @@ public class ListaProjetosPresenter implements Observer {
         if (!ConfirmarCommand.perguntar("Excluir projeto", "Excluir o projeto \"" + p.getNome() + "\"?\nEsta ação não pode ser desfeita.", "Excluir")) {
             return;
         }
-        try {
+        FilaBanco.executar(view, "Excluindo…", () -> {
             service.excluir(p.getId(), usuario);
-        } catch (RuntimeException ex) {
-            ExibirMensagemCommand.erro(ex.getMessage());
-        }
+            return null;
+        }, ok -> {
+        }, e -> ExibirMensagemCommand.erro(e.getMessage()));
     }
 
     @Override

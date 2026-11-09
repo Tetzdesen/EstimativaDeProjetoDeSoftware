@@ -66,9 +66,9 @@ public class JdbcProjetoRepository implements IProjetoRepository {
             }
             itens.apagar(projeto.getId());
             apagarCustos(projeto.getId());
-            for (ItemProjeto item : projeto.getItens()) {
-                itens.inserirFuncionalidade(projeto.getId(), item.getFuncionalidade(), item.isSelecionado());
-            }
+            itens.inserirFuncionalidades(projeto.getId(),
+                    projeto.getItens().stream().map(ItemProjeto::getFuncionalidade).toList(),
+                    projeto.getItens().stream().map(ItemProjeto::isSelecionado).toList());
             itens.inserirTaxas(projeto.getId(), projeto.getTaxas());
             try (PreparedStatement st = conexao.prepareStatement(
                     "INSERT INTO projeto_custo_adicional (id, projeto_id, descricao, valor, ordem) VALUES (?, ?, ?, ?, ?)")) {
@@ -81,7 +81,9 @@ public class JdbcProjetoRepository implements IProjetoRepository {
                     st.setInt(5, ++ordem);
                     st.addBatch();
                 }
-                st.executeBatch();
+                if (!projeto.getCustosAdicionais().isEmpty()) {
+                    st.executeBatch();
+                }
             }
             return null;
         });

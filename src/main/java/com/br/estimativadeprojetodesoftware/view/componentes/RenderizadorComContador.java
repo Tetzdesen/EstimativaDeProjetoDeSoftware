@@ -46,6 +46,9 @@ public class RenderizadorComContador implements ListCellRenderer<ItemComContador
         Integer quantidade = item == null ? null : item.quantidade();
         lblQuantidade.setFont(fonte.deriveFont(quantidade != null && quantidade > 0 ? Font.BOLD : Font.PLAIN));
         lblRotulo.setText(item == null ? "" : item.rotulo());
+        lblRotulo.setIcon(item != null && item.concluido() ? com.br.estimativadeprojetodesoftware.service.IconService.getIcon("sucesso", 14) : null);
+        lblRotulo.setIconTextGap(6);
+        lblRotulo.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         lblQuantidade.setText(quantidade == null ? "" : String.valueOf(quantidade));
         painel.setToolTipText(item == null ? null : item.rotulo());
         if (temSubitens) {
