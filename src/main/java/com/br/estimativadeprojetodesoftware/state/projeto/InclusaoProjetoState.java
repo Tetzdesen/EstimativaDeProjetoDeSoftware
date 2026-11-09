@@ -16,6 +16,8 @@ public class InclusaoProjetoState extends ManterProjetoPresenterState {
     public void entrar() {
         habilitar(presenter.getView().getBtnSalvar(), presenter.getView().getBtnCancelar());
         presenter.getView().getPainelPerfis().setVisible(true);
+        presenter.getView().getPainelEstimativa().setVisible(false);
+        presenter.getView().getPainelSecoes().setVisible(false);
         presenter.getView().getTxtNome().setEditable(true);
         presenter.getView().exibirSituacao("Novo", Selo.Tipo.DESTAQUE, "Informe o nome, escolha um ou mais perfis e clique em Salvar.");
     }

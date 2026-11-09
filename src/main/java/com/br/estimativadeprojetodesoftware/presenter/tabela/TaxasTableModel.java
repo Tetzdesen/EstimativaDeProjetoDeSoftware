@@ -3,6 +3,7 @@ package com.br.estimativadeprojetodesoftware.presenter.tabela;
 import com.br.estimativadeprojetodesoftware.model.Papel;
 import com.br.estimativadeprojetodesoftware.model.Plataforma;
 import com.br.estimativadeprojetodesoftware.model.TaxaDiaria;
+import java.math.BigDecimal;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.swing.table.AbstractTableModel;
@@ -15,10 +16,17 @@ public class TaxasTableModel extends AbstractTableModel {
     private final Supplier<TaxaDiaria> taxas;
     private final Consumer<String> aoErro;
     private boolean editavel;
+    private Runnable aoAlterar = () -> {
+    };
 
     public TaxasTableModel(Supplier<TaxaDiaria> taxas, Consumer<String> aoErro) {
         this.taxas = taxas;
         this.aoErro = aoErro;
+    }
+
+    /** Avisado quando o usuário muda um valor; eventos programáticos da tabela não contam. */
+    public void setAoAlterar(Runnable aoAlterar) {
+        this.aoAlterar = aoAlterar;
     }
 
     public void setEditavel(boolean editavel) {
@@ -54,11 +62,17 @@ public class TaxasTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object valor, int row, int col) {
+        Plataforma plataforma = PLATAFORMAS[col - 1];
+        Papel papel = Papel.values()[row];
+        BigDecimal antes = taxas.get().get(plataforma, papel);
         try {
-            taxas.get().set(PLATAFORMAS[col - 1], Papel.values()[row], FormatoValor.decimal(String.valueOf(valor)));
+            taxas.get().set(plataforma, papel, FormatoValor.decimal(String.valueOf(valor)));
         } catch (IllegalArgumentException e) {
             aoErro.accept(e.getMessage());
         }
         fireTableCellUpdated(row, col);
+        if (antes.compareTo(taxas.get().get(plataforma, papel)) != 0) {
+            aoAlterar.run();
+        }
     }
 }

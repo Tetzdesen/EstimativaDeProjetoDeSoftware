@@ -23,6 +23,6 @@ public class CriarProjetoCommand implements Command {
                 presenter.idsPerfisSelecionados(), presenter.getUsuario());
         presenter.setProjeto(projeto);
         presenter.setEstado(new EdicaoProjetoState(presenter));
-        presenter.sucesso("Projeto \"" + projeto.getNome() + "\" criado. Marque as funcionalidades e calcule a estimativa.");
+        presenter.sucesso("Projeto \"" + projeto.getNome() + "\" criado. Marque as funcionalidades: a estimativa é atualizada a cada alteração.");
     }
 }

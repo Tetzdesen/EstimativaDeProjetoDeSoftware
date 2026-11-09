@@ -4,7 +4,7 @@ import com.br.estimativadeprojetodesoftware.command.Command;
 import com.br.estimativadeprojetodesoftware.presenter.projeto.ManterProjetoPresenter;
 import com.br.estimativadeprojetodesoftware.state.projeto.VisualizacaoProjetoState;
 
-/** Persiste a alteração do projeto (registrada no log pelo service). */
+/** Persiste a alteração e define o estado calculado (registrado no log pelo service). */
 public class SalvarProjetoCommand implements Command {
 
     private final ManterProjetoPresenter presenter;
@@ -18,8 +18,11 @@ public class SalvarProjetoCommand implements Command {
         if (!presenter.aplicarCamposNoProjeto()) {
             return;
         }
-        presenter.getProjetoService().salvar(presenter.getProjeto(), presenter.getUsuario());
+        presenter.cancelarRecalculoPendente();
+        presenter.getProjetoService().salvarComEstimativa(presenter.getProjeto(), presenter.getUsuario());
+        presenter.marcarSemAlteracoes();
         presenter.setEstado(new VisualizacaoProjetoState(presenter));
+        presenter.mostrarResultadoAtual();
         presenter.sucesso("Projeto salvo.");
     }
 }

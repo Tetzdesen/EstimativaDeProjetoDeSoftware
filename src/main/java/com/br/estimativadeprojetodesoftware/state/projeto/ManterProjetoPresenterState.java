@@ -39,8 +39,11 @@ public abstract class ManterProjetoPresenterState {
         indisponivel("excluir");
     }
 
-    public void calcular() {
-        indisponivel("calcular");
+    /**
+     * Recalcula a estimativa exibida. Fora da edição não faz nada: é disparado
+     * por um temporizador, que pode terminar depois de o estado ter mudado.
+     */
+    public void atualizarEstimativa() {
     }
 
     public void compartilhar() {
@@ -58,7 +61,7 @@ public abstract class ManterProjetoPresenterState {
     /** Habilita exatamente os botões informados e desabilita os demais. */
     protected void habilitar(JButton... ativos) {
         ProjetoView v = presenter.getView();
-        JButton[] todos = {v.getBtnEditar(), v.getBtnSalvar(), v.getBtnCancelar(), v.getBtnExcluir(), v.getBtnCalcular(),
+        JButton[] todos = {v.getBtnEditar(), v.getBtnSalvar(), v.getBtnCancelar(), v.getBtnExcluir(),
             v.getBtnCompartilhar(), v.getBtnExportarPdf(), v.getBtnExportarCsv()};
         for (JButton b : todos) {
             b.setEnabled(false);

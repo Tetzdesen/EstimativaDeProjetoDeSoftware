@@ -224,12 +224,42 @@ class ServicosTest {
     }
 
     @Test
-    @DisplayName("Calcular marca o projeto como calculado e persiste")
-    void calcularMarcaCalculado() {
+    @DisplayName("Salvar com plataforma marca como calculado, persiste e gera um único registro no log")
+    void salvarComEstimativaMarcaCalculado() {
         Projeto p = projetos.criar("Calc", List.of(padrao.getId()), ana);
         assertFalse(p.isCalculado());
-        projetos.calcular(p, ana);
+        int registrosAntes = log.registros.size();
+
+        projetos.salvarComEstimativa(p, ana);
+
         assertTrue(projetos.buscarParaVisualizacao(p.getId(), ana).isCalculado());
+        assertEquals(registrosAntes + 1, log.registros.size());
+        assertTrue(log.ultimo().startsWith("OK "));
+    }
+
+    @Test
+    @DisplayName("Salvar sem plataforma persiste como não calculado")
+    void salvarComEstimativaSemPlataforma() {
+        Projeto p = projetos.criar("Sem plataforma", List.of(padrao.getId()), ana);
+        projetos.salvarComEstimativa(p, ana);
+        assertTrue(projetos.buscarParaVisualizacao(p.getId(), ana).isCalculado());
+
+        for (Plataforma plataforma : Plataforma.values()) {
+            p.setPlataformaMarcada(plataforma, false);
+        }
+        projetos.salvarComEstimativa(p, ana);
+
+        Projeto lido = projetos.buscarParaVisualizacao(p.getId(), ana);
+        assertFalse(lido.isCalculado());
+        assertTrue(lido.getPlataformas().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Só o dono salva a estimativa")
+    void salvarComEstimativaSoDono() {
+        Projeto p = projetos.criar("Dono", List.of(padrao.getId()), ana);
+        assertThrows(IllegalStateException.class, () -> projetos.salvarComEstimativa(p, beto));
+        assertFalse(p.isCalculado());
     }
 
     // ---------- 9.1 compartilhamento ----------
@@ -248,7 +278,7 @@ class ServicosTest {
         assertFalse(projetos.podeEditar(deBeto.get(0), beto));
 
         p.setNome("Comp v2");
-        projetos.calcular(p, ana);
+        projetos.salvarComEstimativa(p, ana);
         Projeto vistoPorBeto = projetos.buscarParaVisualizacao(p.getId(), beto);
         assertEquals("Comp v2", vistoPorBeto.getNome());
         assertTrue(vistoPorBeto.isCalculado());

@@ -5,6 +5,7 @@ import static com.br.estimativadeprojetodesoftware.model.ResultadoEstimativa.for
 import static com.br.estimativadeprojetodesoftware.model.ResultadoEstimativa.formatarPercentual;
 import static com.br.estimativadeprojetodesoftware.model.ResultadoEstimativa.formatarReais;
 
+import com.br.estimativadeprojetodesoftware.command.ConfirmarCommand;
 import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
 import com.br.estimativadeprojetodesoftware.command.PerguntarCommand;
 import com.br.estimativadeprojetodesoftware.model.CustoAdicional;
@@ -17,7 +18,11 @@ import com.br.estimativadeprojetodesoftware.model.ResultadoEstimativa.ResumoCate
 import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.observer.EventoDominio;
 import com.br.estimativadeprojetodesoftware.observer.Observer;
+import com.br.estimativadeprojetodesoftware.presenter.helpers.RecalculoAgendado;
+import com.br.estimativadeprojetodesoftware.presenter.helpers.ValidacaoVisual;
 import com.br.estimativadeprojetodesoftware.presenter.tabela.CustosTableModel;
+import com.br.estimativadeprojetodesoftware.presenter.tabela.NavegacaoProjetoModel;
+import com.br.estimativadeprojetodesoftware.presenter.tabela.FiltroFuncionalidades;
 import com.br.estimativadeprojetodesoftware.presenter.tabela.FormatoValor;
 import com.br.estimativadeprojetodesoftware.presenter.tabela.ItensProjetoTableModel;
 import com.br.estimativadeprojetodesoftware.presenter.tabela.TaxasTableModel;
@@ -31,9 +36,14 @@ import com.br.estimativadeprojetodesoftware.state.projeto.ManterProjetoPresenter
 import com.br.estimativadeprojetodesoftware.state.projeto.SomenteLeituraProjetoState;
 import com.br.estimativadeprojetodesoftware.state.projeto.VisualizacaoProjetoState;
 import com.br.estimativadeprojetodesoftware.templatemethod.FormatoExportacao;
+import com.br.estimativadeprojetodesoftware.model.TipoSelecao;
+import com.br.estimativadeprojetodesoftware.view.componentes.TabelaPadrao;
 import com.br.estimativadeprojetodesoftware.view.projeto.ProjetoView;
+import com.br.estimativadeprojetodesoftware.view.projeto.SecaoProjeto;
 import java.math.BigDecimal;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +56,12 @@ import javax.swing.event.InternalFrameEvent;
  * Presenter da tela de projeto (MVP Passive View). O comportamento de cada
  * modo fica no State atual; cada ação é um Command. Observa mudanças de
  * projeto para mostrar sempre a versão atual (inclusive ao destinatário de um
- * compartilhamento).
+ * compartilhamento). Em edição, cada alteração agenda um recálculo da
+ * estimativa, feito só em memória até o usuário salvar.
  */
 public class ManterProjetoPresenter implements Observer {
+
+    private static final int ATRASO_RECALCULO_MS = 250;
 
     private final ProjetoView view;
     private final ProjetoService projetoService;
@@ -59,24 +72,46 @@ public class ManterProjetoPresenter implements Observer {
     private List<Perfil> perfisDisponiveis = List.of();
     private ManterProjetoPresenterState estado;
     private ItensProjetoTableModel modeloItens;
+    private NavegacaoProjetoModel modeloNavegacao;
+    private List<TabelaPadrao> tabelasConfiguracao = List.of();
     private TaxasTableModel modeloTaxas;
     private CustosTableModel modeloCustos;
     private boolean editavel;
+    private boolean carregando;
+    private boolean alterado;
+    private BigDecimal ultimoPreco;
+    private final RecalculoAgendado recalculo =
+            new RecalculoAgendado(ATRASO_RECALCULO_MS, () -> executar(() -> estado.atualizarEstimativa()));
 
     private ManterProjetoPresenter() {
-        this.view = new ProjetoView();
-        this.projetoService = new ProjetoService();
-        this.perfilService = new PerfilService();
-        this.exportacaoService = new ExportacaoService();
-        this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
+        this(new ProjetoView(), new ProjetoService(), new PerfilService(), new ExportacaoService(),
+                UsuarioLogadoSingleton.getInstancia().getUsuario());
+    }
+
+    /** Dependências explícitas: usado diretamente nos testes. */
+    ManterProjetoPresenter(ProjetoView view, ProjetoService projetoService, PerfilService perfilService,
+            ExportacaoService exportacaoService, Usuario usuario) {
+        this.view = view;
+        this.projetoService = projetoService;
+        this.perfilService = perfilService;
+        this.exportacaoService = exportacaoService;
+        this.usuario = usuario;
         configurarAcoes();
-        com.br.estimativadeprojetodesoftware.presenter.helpers.ValidacaoVisual.limparAoEditar(view.getTxtNome(), view::limparErroCampo);
-        com.br.estimativadeprojetodesoftware.presenter.helpers.ValidacaoVisual.limparAoEditar(view.getTxtImpostos(), view::limparErroCampo);
-        com.br.estimativadeprojetodesoftware.presenter.helpers.ValidacaoVisual.limparAoEditar(view.getTxtLucro(), view::limparErroCampo);
+        ValidacaoVisual.limparAoEditar(view.getTxtNome(), view::limparErroCampo);
+        ValidacaoVisual.limparAoEditar(view.getTxtImpostos(), view::limparErroCampo);
+        ValidacaoVisual.limparAoEditar(view.getTxtLucro(), view::limparErroCampo);
+        configurarDeteccaoDeAlteracoes();
+        configurarFiltroFuncionalidades();
         projetoService.addObserver(this);
         view.addInternalFrameListener(new InternalFrameAdapter() {
             @Override
+            public void internalFrameClosing(InternalFrameEvent e) {
+                executar(ManterProjetoPresenter.this::solicitarFechamento);
+            }
+
+            @Override
             public void internalFrameClosed(InternalFrameEvent e) {
+                recalculo.cancelar();
                 projetoService.removeObserver(ManterProjetoPresenter.this);
             }
         });
@@ -84,24 +119,32 @@ public class ManterProjetoPresenter implements Observer {
 
     public static ManterProjetoPresenter novo() {
         ManterProjetoPresenter p = new ManterProjetoPresenter();
-        p.view.setTituloCabecalho("Novo projeto");
-        p.perfisDisponiveis = p.perfilService.listarVisiveis(p.usuario);
-        p.view.getListaPerfis().setListData(p.perfisDisponiveis.stream().map(Perfil::toString).toArray(String[]::new));
-        if (!p.perfisDisponiveis.isEmpty()) {
-            p.view.getListaPerfis().setSelectedIndex(0);
-        }
-        p.setEditavel(false);
-        p.view.getTxtNome().setEditable(true);
-        p.setEstado(new InclusaoProjetoState(p));
+        p.iniciarInclusao();
         return p;
     }
 
     public static ManterProjetoPresenter paraProjeto(UUID id) {
         ManterProjetoPresenter p = new ManterProjetoPresenter();
-        p.setProjeto(p.projetoService.buscarParaVisualizacao(id, p.usuario));
-        p.setEstado(p.estadoInicial());
-        p.mostrarResultadoAtual();
+        p.abrirProjeto(id);
         return p;
+    }
+
+    void iniciarInclusao() {
+        view.setTituloCabecalho("Novo projeto");
+        perfisDisponiveis = perfilService.listarVisiveis(usuario);
+        view.getListaPerfis().setListData(perfisDisponiveis.stream().map(Perfil::toString).toArray(String[]::new));
+        if (!perfisDisponiveis.isEmpty()) {
+            view.getListaPerfis().setSelectedIndex(0);
+        }
+        setEditavel(false);
+        view.getTxtNome().setEditable(true);
+        setEstado(new InclusaoProjetoState(this));
+    }
+
+    void abrirProjeto(UUID id) {
+        setProjeto(projetoService.buscarParaVisualizacao(id, usuario));
+        setEstado(estadoInicial());
+        mostrarResultadoAtual();
     }
 
     private ManterProjetoPresenterState estadoInicial() {
@@ -114,13 +157,122 @@ public class ManterProjetoPresenter implements Observer {
         view.getBtnSalvar().addActionListener(e -> executar(() -> estado.salvar()));
         view.getBtnCancelar().addActionListener(e -> executar(() -> estado.cancelar()));
         view.getBtnExcluir().addActionListener(e -> executar(() -> estado.excluir()));
-        view.getBtnCalcular().addActionListener(e -> executar(() -> estado.calcular()));
         view.getBtnCompartilhar().addActionListener(e -> executar(() -> estado.compartilhar()));
         view.getBtnExportarPdf().addActionListener(e -> executar(() -> estado.exportar(FormatoExportacao.PDF)));
         view.getBtnExportarCsv().addActionListener(e -> executar(() -> estado.exportar(FormatoExportacao.CSV)));
-        view.getBtnFechar().addActionListener(e -> fechar());
+        view.getBtnFechar().addActionListener(e -> executar(this::solicitarFechamento));
         view.getBtnAdicionarCusto().addActionListener(e -> executar(this::adicionarCusto));
         view.getBtnRemoverCusto().addActionListener(e -> executar(this::removerCusto));
+    }
+
+    private void configurarDeteccaoDeAlteracoes() {
+        view.getChkWeb().addActionListener(e -> aoAlterar());
+        view.getChkIos().addActionListener(e -> aoAlterar());
+        view.getChkAndroid().addActionListener(e -> aoAlterar());
+        ValidacaoVisual.aoEditar(view.getTxtImpostos(), this::aoAlterar);
+        ValidacaoVisual.aoEditar(view.getTxtLucro(), this::aoAlterar);
+        // o nome não muda a estimativa, mas é uma alteração a salvar
+        ValidacaoVisual.aoEditar(view.getTxtNome(), () -> {
+            if (editavel && !carregando) {
+                alterado = true;
+            }
+        });
+    }
+
+    /** Toda alteração feita pelo usuário na edição passa por aqui. */
+    private void aoAlterar() {
+        if (editavel && !carregando) {
+            alterado = true;
+            recalculo.agendar();
+        }
+    }
+
+    private void configurarFiltroFuncionalidades() {
+        ValidacaoVisual.aoEditar(view.getTxtBuscaFuncionalidades(), this::aplicarFiltroFuncionalidades);
+        view.getBtnSomenteSelecionadas().addActionListener(e -> aplicarFiltroFuncionalidades());
+        view.getListaSecoes().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                aoEscolherEntrada();
+            }
+        });
+        view.getTabelaItens().setDestaqueLinha(linha -> modeloItens != null && modeloItens.isSelecionado(linha));
+    }
+
+    /** Seção (e, em Funcionalidades, a categoria) escolhida na barra lateral. */
+    private void aoEscolherEntrada() {
+        int indice = view.getListaSecoes().getSelectedIndex();
+        if (modeloNavegacao == null || indice < 0) {
+            return;
+        }
+        view.mostrarSecao(modeloNavegacao.getSecao(indice));
+        aplicarFiltroFuncionalidades();
+    }
+
+    /** Escolhe uma seção na barra lateral, o que também a mostra. */
+    public void escolherSecao(SecaoProjeto secao) {
+        if (modeloNavegacao != null) {
+            view.getListaSecoes().setSelectedIndex(modeloNavegacao.indiceDe(secao, null));
+        }
+    }
+
+    private void aplicarFiltroFuncionalidades() {
+        if (modeloNavegacao != null && view.getTabelaItens().getRowSorter() instanceof TableRowSorter<?> sorter) {
+            @SuppressWarnings("unchecked")
+            TableRowSorter<TableModel> ordenador = (TableRowSorter<TableModel>) sorter;
+            ordenador.setRowFilter(new FiltroFuncionalidades(view.getTxtBuscaFuncionalidades().getText(),
+                    view.getBtnSomenteSelecionadas().isSelected(), categoriaEscolhida(),
+                    modeloNavegacao.getCategoriasDeConfiguracao()));
+        }
+    }
+
+    private String categoriaEscolhida() {
+        return modeloNavegacao == null ? null : modeloNavegacao.getCategoria(view.getListaSecoes().getSelectedIndex());
+    }
+
+    private void atualizarContadorSelecionadas() {
+        modeloNavegacao.recontar();
+        int funcionalidades = 0;
+        for (int linha = 0; linha < modeloItens.getRowCount(); linha++) {
+            if (!modeloNavegacao.getCategoriasDeConfiguracao().contains(modeloItens.getValueAt(linha, 1))) {
+                funcionalidades++;
+            }
+        }
+        view.exibirContadorSelecionadas(modeloNavegacao.getSelecionadas(null) + " de " + funcionalidades + " selecionadas");
+    }
+
+    /**
+     * Uma tabela por categoria de configuração (Tamanho do App, Nível de UI,
+     * Gerente de Projeto), todas sobre o mesmo model da tabela de funcionalidades.
+     */
+    private void montarTabelasConfiguracao() {
+        List<String> categorias = modeloNavegacao.getCategoriasDeConfiguracao();
+        tabelasConfiguracao = view.prepararBlocosConfiguracao(categorias);
+        for (int i = 0; i < categorias.size(); i++) {
+            TabelaPadrao tabela = tabelasConfiguracao.get(i);
+            tabela.setModel(modeloItens);
+            TableRowSorter<TableModel> ordenador = ordenadorNaOrdemDaPlanilha();
+            ordenador.setRowFilter(new FiltroFuncionalidades("", false, categorias.get(i)));
+            tabela.setRowSorter(ordenador);
+            tabela.setDestaqueLinha(linha -> modeloItens.isSelecionado(linha));
+            view.ajustarTabelaConfiguracao(tabela, tipoDaCategoria(categorias.get(i)) == TipoSelecao.UNICA);
+        }
+    }
+
+    private TipoSelecao tipoDaCategoria(String categoria) {
+        for (int linha = 0; linha < modeloItens.getRowCount(); linha++) {
+            if (categoria.equals(modeloItens.getValueAt(linha, 1))) {
+                return modeloItens.getTipoSelecao(linha);
+            }
+        }
+        return TipoSelecao.MULTIPLA;
+    }
+
+    private TableRowSorter<TableModel> ordenadorNaOrdemDaPlanilha() {
+        TableRowSorter<TableModel> ordenador = new TableRowSorter<>(modeloItens);
+        for (int coluna = 0; coluna < modeloItens.getColumnCount(); coluna++) {
+            ordenador.setSortable(coluna, false); // mantém a ordem da planilha
+        }
+        return ordenador;
     }
 
     /** Executa uma ação mostrando a mensagem de erro, sem fechar a janela. */
@@ -145,10 +297,24 @@ public class ManterProjetoPresenter implements Observer {
 
     public void setProjeto(Projeto projeto) {
         this.projeto = projeto;
+        recalculo.cancelar();
+        alterado = false;
+        ultimoPreco = null;
         view.setTituloCabecalho(projeto.getNome());
         modeloItens = new ItensProjetoTableModel(projeto, this::erro);
         modeloTaxas = new TaxasTableModel(projeto::getTaxas, this::erro);
         modeloCustos = new CustosTableModel(projeto, this::erro);
+        modeloItens.setAoAlterar(this::aoAlterar);
+        modeloTaxas.setAoAlterar(this::aoAlterar);
+        modeloCustos.setAoAlterar(this::aoAlterar);
+        modeloItens.addTableModelListener(e -> atualizarContadorSelecionadas());
+        view.getTabelaItens().setRowSorter(null);
+        // ao recarregar (Salvar, Cancelar) mantém a entrada escolhida; ao abrir, Funcionalidades
+        int indiceAnterior = view.getListaSecoes().getSelectedIndex();
+        SecaoProjeto secaoAnterior = modeloNavegacao == null || indiceAnterior < 0
+                ? SecaoProjeto.FUNCIONALIDADES : modeloNavegacao.getSecao(indiceAnterior);
+        String categoriaAnterior = categoriaEscolhida();
+        modeloNavegacao = new NavegacaoProjetoModel(modeloItens);
         view.getTabelaItens().setModel(modeloItens);
         view.getTabelaTaxas().setModel(modeloTaxas);
         view.getTabelaCustos().setModel(modeloCustos);
@@ -158,17 +324,61 @@ public class ManterProjetoPresenter implements Observer {
             view.getTabelaItens().getColumnModel().getColumn(2).setPreferredWidth(300);
             view.getTabelaItens().getColumnModel().getColumn(3).setPreferredWidth(110);
         }
+        view.getTabelaItens().setRowSorter(ordenadorNaOrdemDaPlanilha());
+        montarTabelasConfiguracao();
+        view.getListaSecoes().setModel(modeloNavegacao);
+        view.getListaSecoes().setSelectedIndex(modeloNavegacao.indiceDe(secaoAnterior, categoriaAnterior));
+        aplicarFiltroFuncionalidades();
+        atualizarContadorSelecionadas();
         exibirCampos();
         setEditavel(editavel);
     }
 
     private void exibirCampos() {
+        carregando = true;
         view.getTxtNome().setText(projeto.getNome());
         view.getChkWeb().setSelected(projeto.isPlataformaMarcada(Plataforma.WEB_BACKEND));
         view.getChkIos().setSelected(projeto.isPlataformaMarcada(Plataforma.IOS));
         view.getChkAndroid().setSelected(projeto.isPlataformaMarcada(Plataforma.ANDROID));
         view.getTxtImpostos().setText(FormatoValor.percentual(projeto.getPercentualImpostos()));
         view.getTxtLucro().setText(FormatoValor.percentual(projeto.getPercentualLucro()));
+        carregando = false;
+    }
+
+    /**
+     * Copia para o projeto só o que afeta a estimativa, sem exigir nome, encerrar
+     * a edição de células ou trocar de aba. Devolve false se algum percentual
+     * não puder ser usado.
+     */
+    public boolean aplicarCamposDeEstimativa() {
+        projeto.setPlataformaMarcada(Plataforma.WEB_BACKEND, view.getChkWeb().isSelected());
+        projeto.setPlataformaMarcada(Plataforma.IOS, view.getChkIos().isSelected());
+        projeto.setPlataformaMarcada(Plataforma.ANDROID, view.getChkAndroid().isSelected());
+        BigDecimal impostos = lerPercentualDigitado(view.getTxtImpostos(), "impostos");
+        BigDecimal lucro = lerPercentualDigitado(view.getTxtLucro(), "lucro");
+        if (impostos == null || lucro == null) {
+            return false;
+        }
+        projeto.setPercentualImpostos(impostos);
+        projeto.setPercentualLucro(lucro);
+        return true;
+    }
+
+    /** Percentual durante a digitação: campo vazio não é erro, só ainda não tem valor. */
+    private BigDecimal lerPercentualDigitado(javax.swing.JTextField campo, String nome) {
+        if (campo.getText().isBlank()) {
+            return null;
+        }
+        try {
+            return FormatoValor.percentual(campo.getText());
+        } catch (IllegalArgumentException e) {
+            view.mostrarErroPercentual(campo, mensagemPercentual(nome));
+            return null;
+        }
+    }
+
+    private static String mensagemPercentual(String nome) {
+        return "Informe o percentual de " + nome + " como número, ex.: 42 ou 42,5.";
     }
 
     /**
@@ -208,7 +418,8 @@ public class ManterProjetoPresenter implements Observer {
             }
             return FormatoValor.percentual(campo.getText());
         } catch (IllegalArgumentException e) {
-            view.mostrarErroCampo(campo, "Informe o percentual de " + nome + " como número, ex.: 42 ou 42,5.");
+            escolherSecao(SecaoProjeto.CUSTOS);
+            view.mostrarErroCampo(campo, mensagemPercentual(nome));
             return null;
         }
     }
@@ -229,7 +440,9 @@ public class ManterProjetoPresenter implements Observer {
     }
 
     private void pararEdicaoDasTabelas() {
-        for (var tabela : new javax.swing.JTable[]{view.getTabelaItens(), view.getTabelaTaxas(), view.getTabelaCustos()}) {
+        List<javax.swing.JTable> tabelas = new ArrayList<>(List.of(view.getTabelaItens(), view.getTabelaTaxas(), view.getTabelaCustos()));
+        tabelas.addAll(tabelasConfiguracao);
+        for (var tabela : tabelas) {
             if (tabela.isEditing()) {
                 tabela.getCellEditor().stopCellEditing();
             }
@@ -277,6 +490,7 @@ public class ManterProjetoPresenter implements Observer {
         }
         projeto.adicionarCustoAdicional(new CustoAdicional(descricao, FormatoValor.decimal(valor)));
         modeloCustos.recarregar();
+        aoAlterar();
     }
 
     private void removerCusto() {
@@ -286,29 +500,57 @@ public class ManterProjetoPresenter implements Observer {
         }
         projeto.removerCustoAdicional(modeloCustos.getLinha(linha).getId());
         modeloCustos.recarregar();
+        aoAlterar();
     }
 
     /** Mostra o resultado do estado atual quando o projeto já foi calculado. */
     public void mostrarResultadoAtual() {
         if (!projeto.isCalculado()) {
-            view.exibirResultadoVazio("A estimativa ainda não foi calculada."
-                    + (projetoService.podeEditar(projeto, usuario) ? "<br>Clique em Editar, marque as funcionalidades e clique em Calcular." : ""));
+            exibirEstimativaIndisponivel("A estimativa ainda não foi calculada."
+                    + (projetoService.podeEditar(projeto, usuario) ? "<br>Clique em Editar e marque as funcionalidades: a estimativa é atualizada a cada alteração." : ""));
             return;
         }
         try {
             mostrarResultado(projetoService.resultado(projeto));
         } catch (IllegalArgumentException e) {
-            view.exibirResultadoVazio(e.getMessage());
+            exibirEstimativaIndisponivel(e.getMessage());
         }
+    }
+
+    public void exibirEstimativaIndisponivel(String mensagem) {
+        ultimoPreco = null;
+        view.exibirResultadoVazio(mensagem);
+    }
+
+    /** A estimativa na tela não reflete os campos, porque um percentual está vazio ou inválido. */
+    public void marcarEstimativaDesatualizada() {
+        view.exibirAvisoEstimativa(ultimoPreco == null
+                ? "Informe impostos e lucro para ver a estimativa."
+                : "Estimativa desatualizada: informe impostos e lucro para atualizá-la.");
+    }
+
+    /** "+ R$ 450,00 na última alteração"; null se não houver diferença em reais. */
+    private String textoVariacaoPreco(BigDecimal precoAtual) {
+        if (ultimoPreco == null) {
+            return null;
+        }
+        BigDecimal diferenca = ResultadoEstimativa.arredondarReais(precoAtual)
+                .subtract(ResultadoEstimativa.arredondarReais(ultimoPreco));
+        if (diferenca.signum() == 0) {
+            return null;
+        }
+        return (diferenca.signum() > 0 ? "+ " : "- ") + formatarReais(diferenca.abs()) + " na última alteração";
     }
 
     /** Preenche os cartões e as tabelas do resultado. */
     public void mostrarResultado(ResultadoEstimativa r) {
-        view.exibirCartoesResultado(r.getDiasTotalExibicao() + " dias", formatarMeses(r.getMeses()) + " meses",
+        String variacao = textoVariacaoPreco(r.getPrecoFinal());
+        ultimoPreco = r.getPrecoFinal();
+        String detalhePreco = variacao != null ? variacao
+                : "impostos " + formatarPercentual(r.getPercentualImpostos()) + " · lucro " + formatarPercentual(r.getPercentualLucro());
+        view.exibirResumo(r.getDiasTotalExibicao() + " dias", formatarMeses(r.getMeses()) + " meses",
                 formatarReais(r.getCustoDesenvolvimento()), formatarDias(r.getDiasTotal()) + " dias de trabalho",
-                formatarReais(r.getPrecoFinal()), "impostos " + formatarPercentual(r.getPercentualImpostos())
-                + " · lucro " + formatarPercentual(r.getPercentualLucro()),
-                formatarReais(r.getMediaMensal()));
+                formatarReais(r.getPrecoFinal()), detalhePreco, formatarReais(r.getMediaMensal()));
 
         DefaultTableModel plataformas = somenteLeitura("Plataforma", "Tamanho", "UI", "Funcionalidades", "Gerência", "Dias", "Custo");
         for (DetalhePlataforma d : r.getPorPlataforma().values()) {
@@ -357,9 +599,35 @@ public class ManterProjetoPresenter implements Observer {
         ExibirMensagemCommand.sucesso(texto);
     }
 
+    /** Fechar, X e Esc: pergunta antes de descartar alterações não salvas. */
+    public void solicitarFechamento() {
+        if (editavel) {
+            pararEdicaoDasTabelas();
+        }
+        if (alterado && !ConfirmarCommand.perguntar("Alterações não salvas",
+                "Descartar as alterações do projeto \"" + projeto.getNome() + "\"?", "Descartar")) {
+            return;
+        }
+        fechar();
+    }
+
     public void fechar() {
+        recalculo.cancelar();
         projetoService.removeObserver(this);
         view.dispose();
+    }
+
+    public void cancelarRecalculoPendente() {
+        recalculo.cancelar();
+    }
+
+    public void marcarSemAlteracoes() {
+        alterado = false;
+    }
+
+    /** Roda já o recálculo que estaria esperando o temporizador (testes). */
+    void executarRecalculoPendente() {
+        recalculo.executarAgora();
     }
 
     @Override

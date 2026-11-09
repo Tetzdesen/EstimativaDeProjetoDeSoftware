@@ -7,9 +7,12 @@ import com.br.estimativadeprojetodesoftware.view.tema.TemaClaro;
 import java.awt.Font;
 import java.math.BigDecimal;
 import javax.swing.JLabel;
+import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -60,5 +63,32 @@ class TabelaPadraoTest {
         assertEquals(SwingConstants.LEADING, celula(0, 0).getHorizontalAlignment());
         assertEquals("42%", TabelaPadrao.formatar(new BigDecimal("0.42"), TabelaPadrao.Formato.PERCENTUAL));
         assertEquals("23,33", TabelaPadrao.formatar(new BigDecimal("23.3333"), TabelaPadrao.Formato.NUMERO));
+    }
+
+    @Test
+    void destaqueUsaALinhaDoModeloMesmoComFiltro() {
+        DefaultTableModel m = new DefaultTableModel(new Object[][]{{"Primeira"}, {"Segunda"}, {"Terceira"}}, new Object[]{"Nome"});
+        TabelaPadrao filtrada = new TabelaPadrao(m);
+        TableRowSorter<TableModel> ordenador = new TableRowSorter<>(m);
+        ordenador.setRowFilter(RowFilter.regexFilter("Segunda|Terceira"));
+        filtrada.setRowSorter(ordenador);
+        filtrada.setDestaqueLinha(linhaDoModelo -> linhaDoModelo == 2);
+
+        JLabel segunda = (JLabel) filtrada.prepareRenderer(filtrada.getCellRenderer(0, 0), 0, 0);
+        assertEquals("Segunda", segunda.getText());
+        assertFalse(segunda.getFont().isBold());
+        JLabel terceira = (JLabel) filtrada.prepareRenderer(filtrada.getCellRenderer(1, 0), 1, 0);
+        assertEquals("Terceira", terceira.getText());
+        assertTrue(terceira.getFont().isBold());
+    }
+
+    @Test
+    void naEmLinhaDestacadaContinuaItalico() {
+        DefaultTableModel m = new DefaultTableModel(new Object[][]{{"NA"}}, new Object[]{"iOS"});
+        TabelaPadrao destacada = new TabelaPadrao(m);
+        destacada.setDestaqueLinha(linha -> true);
+        JLabel na = (JLabel) destacada.prepareRenderer(destacada.getCellRenderer(0, 0), 0, 0);
+        assertTrue(na.getFont().isItalic());
+        assertTrue(na.getFont().isBold());
     }
 }
