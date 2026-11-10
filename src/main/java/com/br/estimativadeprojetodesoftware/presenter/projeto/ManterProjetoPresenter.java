@@ -22,6 +22,7 @@ import com.br.estimativadeprojetodesoftware.presenter.helpers.RecalculoAgendado;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.ValidacaoVisual;
 import com.br.estimativadeprojetodesoftware.presenter.tabela.CustosTableModel;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.FilaBanco;
+import com.br.estimativadeprojetodesoftware.presenter.helpers.Navegador;
 import com.br.estimativadeprojetodesoftware.presenter.tabela.NavegacaoProjetoModel;
 import com.br.estimativadeprojetodesoftware.presenter.tabela.FiltroFuncionalidades;
 import com.br.estimativadeprojetodesoftware.presenter.tabela.FormatoValor;
@@ -256,6 +257,15 @@ public class ManterProjetoPresenter implements Observer {
             ordenador.setRowFilter(new FiltroFuncionalidades(view.getTxtBuscaFuncionalidades().getText(),
                     view.getBtnSomenteSelecionadas().isSelected(), categoriaEscolhida(),
                     modeloNavegacao.getCategoriasDeConfiguracao()));
+            String busca = view.getTxtBuscaFuncionalidades().getText().strip();
+            boolean vazio = view.getTabelaItens().getRowCount() == 0;
+            if (vazio && !busca.isEmpty()) {
+                view.exibirSemResultado("Nenhuma funcionalidade encontrada para \"" + busca + "\". Esc limpa a busca.");
+            } else if (vazio && view.getBtnSomenteSelecionadas().isSelected()) {
+                view.exibirSemResultado("Nenhuma funcionalidade selecionada nesta categoria.");
+            } else {
+                view.exibirSemResultado(null);
+            }
         }
     }
 
@@ -331,6 +341,7 @@ public class ManterProjetoPresenter implements Observer {
 
     public void setProjeto(Projeto projeto) {
         this.projeto = projeto;
+        Navegador.renomear(view, Navegador.chaveProjeto(projeto.getId()));
         recalculo.cancelar();
         setAlterado(false);
         ultimoPreco = null;
@@ -617,8 +628,16 @@ public class ManterProjetoPresenter implements Observer {
         financeiro.addRow(new Object[]{"Preço final ao cliente", r.getPrecoFinal()});
         view.getTabelaFinanceiro().setModel(financeiro);
         view.getTabelaPlataformas().getColumnModel().getColumn(0).setPreferredWidth(140);
-        view.getTabelaCategorias().getColumnModel().getColumn(0).setPreferredWidth(260);
-        view.getTabelaFinanceiro().getColumnModel().getColumn(0).setPreferredWidth(240);
+        // valores em reais nunca cortados ("R$ 12.15..."): a coluna de texto é que cede espaço
+        larguras(view.getTabelaCategorias(), new int[]{220, 60, 130}, new int[]{120, 50, 115});
+        larguras(view.getTabelaFinanceiro(), new int[]{240, 130}, new int[]{140, 115});
+    }
+
+    private static void larguras(javax.swing.JTable tabela, int[] preferidas, int[] minimas) {
+        for (int i = 0; i < preferidas.length; i++) {
+            tabela.getColumnModel().getColumn(i).setMinWidth(minimas[i]);
+            tabela.getColumnModel().getColumn(i).setPreferredWidth(preferidas[i]);
+        }
     }
 
     private static DefaultTableModel somenteLeitura(String... colunas) {
@@ -645,6 +664,11 @@ public class ManterProjetoPresenter implements Observer {
         }
         if (alterado && !ConfirmarCommand.perguntar("Alterações não salvas",
                 "Descartar as alterações do projeto \"" + projeto.getNome() + "\"?", "Descartar")) {
+            return;
+        }
+        // projeto novo ainda não criado: só pergunta se já tem nome digitado
+        if (projeto == null && !view.getTxtNome().getText().isBlank() && !ConfirmarCommand.perguntar("Projeto não criado",
+                "Desistir do projeto \"" + view.getTxtNome().getText().strip() + "\"? Ele ainda não foi salvo.", "Desistir")) {
             return;
         }
         fechar();

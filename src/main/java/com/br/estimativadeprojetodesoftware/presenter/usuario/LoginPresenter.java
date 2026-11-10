@@ -66,7 +66,14 @@ public class LoginPresenter {
             if (UsuarioLogadoSingleton.getInstancia().getUsuario() != null) {
                 aoAutenticar.run();
             }
-        }, ex -> view.mostrarErroGeral(ex.getMessage()));
+        }, ex -> {
+            view.mostrarErroGeral(ex.getMessage());
+            // os campos ficaram desabilitados durante a tentativa e perderam o foco: volta para a senha
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                view.getTxtSenha().selectAll();
+                view.getTxtSenha().requestFocusInWindow();
+            });
+        });
     }
 
     private void abrirJanelaPrincipal() {

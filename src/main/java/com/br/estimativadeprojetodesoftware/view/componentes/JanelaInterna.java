@@ -89,6 +89,11 @@ public class JanelaInterna extends JInternalFrame implements Ocupavel {
         raiz.getActionMap().put("fechar", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // com um menu aberto (ex.: Exportar ▾), Esc só fecha o menu
+                if (javax.swing.MenuSelectionManager.defaultManager().getSelectedPath().length > 0) {
+                    javax.swing.MenuSelectionManager.defaultManager().clearSelectedPath();
+                    return;
+                }
                 if (!ocupado) {
                     doDefaultCloseAction();
                 }

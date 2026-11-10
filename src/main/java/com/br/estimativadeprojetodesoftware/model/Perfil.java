@@ -121,6 +121,7 @@ public class Perfil {
 
     @Override
     public String toString() {
-        return padrao ? nome + " (padrão)" : nome;
+        // o perfil semeado já se chama "Perfil padrão (...)": não repete a palavra
+        return padrao && !nome.toLowerCase().contains("padrão") ? nome + " (padrão)" : nome;
     }
 }

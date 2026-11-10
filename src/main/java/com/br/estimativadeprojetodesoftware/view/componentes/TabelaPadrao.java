@@ -59,6 +59,50 @@ public class TabelaPadrao extends JTable {
         setDefaultRenderer(BigDecimal.class, new Renderizador());
     }
 
+    /**
+     * Ação de abrir a linha selecionada: duplo clique ou Enter (que, numa
+     * tabela, normalmente só desceria para a próxima linha).
+     */
+    public void aoAcionarLinha(Runnable acao) {
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2 && javax.swing.SwingUtilities.isLeftMouseButton(e) && rowAtPoint(e.getPoint()) >= 0) {
+                    acao.run();
+                }
+            }
+        });
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ENTER, 0), "acionarLinha");
+        getActionMap().put("acionarLinha", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (getSelectedRow() >= 0) {
+                    acao.run();
+                }
+            }
+        });
+    }
+
+    /**
+     * Acompanha a largura da área visível enquanto as colunas cabem nela; numa
+     * janela estreita demais, rola na horizontal em vez de esconder colunas.
+     */
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        if (getAutoResizeMode() == AUTO_RESIZE_OFF) {
+            return false;
+        }
+        java.awt.Container pai = javax.swing.SwingUtilities.getUnwrappedParent(this);
+        if (!(pai instanceof javax.swing.JViewport area)) {
+            return true;
+        }
+        int minimo = 0;
+        for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
+            minimo += getColumnModel().getColumn(i).getMinWidth();
+        }
+        return area.getWidth() >= minimo;
+    }
+
     /** Formato fixo de uma coluna do modelo (sem ele, o formato é deduzido do texto). */
     public void setFormatoColuna(int colunaModelo, Formato formato) {
         formatos.put(colunaModelo, formato);
@@ -94,6 +138,9 @@ public class TabelaPadrao extends JTable {
     public static String formatar(Object valor, Formato formato) {
         if (valor == null) {
             return "";
+        }
+        if (valor instanceof com.br.estimativadeprojetodesoftware.model.Descritivel d) {
+            return d.getDescricao();
         }
         if (valor instanceof Number n && !(valor instanceof Integer || valor instanceof Long)) {
             BigDecimal v = n instanceof BigDecimal b ? b : new BigDecimal(n.toString());

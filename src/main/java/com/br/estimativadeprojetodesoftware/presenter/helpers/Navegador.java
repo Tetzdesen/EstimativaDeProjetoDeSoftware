@@ -47,7 +47,9 @@ public final class Navegador {
             }
         }
         JInternalFrame frame = criador.get();
-        frame.putClientProperty(CHAVE, chave);
+        if (frame.getClientProperty(CHAVE) == null) { // o presenter pode já ter dado a chave do registro
+            frame.putClientProperty(CHAVE, chave);
+        }
         desktop.add(frame);
         frame.setVisible(true);
         focar(frame);
@@ -69,6 +71,23 @@ public final class Navegador {
         }
     }
 
+    public static String chaveProjeto(UUID id) {
+        return "projeto-" + id;
+    }
+
+    public static String chavePerfil(UUID id) {
+        return "perfil-" + id;
+    }
+
+    /**
+     * Troca a chave de uma janela já aberta. Usado quando um projeto ou perfil
+     * novo é salvo: a janela passa a ser a desse registro, e abri-lo de novo
+     * (pela árvore ou pela lista) traz essa janela em vez de abrir outra.
+     */
+    public static void renomear(JInternalFrame frame, String novaChave) {
+        frame.putClientProperty(CHAVE, novaChave);
+    }
+
     public static void fecharTodas() {
         if (desktop != null) {
             for (JInternalFrame f : desktop.getAllFrames()) {
@@ -86,7 +105,7 @@ public final class Navegador {
     }
 
     public static void abrirPerfil(UUID id) {
-        abrir("perfil-" + id, () -> ManterPerfilPresenter.paraPerfil(id).getView());
+        abrir(chavePerfil(id), () -> ManterPerfilPresenter.paraPerfil(id).getView());
     }
 
     public static void abrirNovoPerfil(Perfil base) {
@@ -102,7 +121,7 @@ public final class Navegador {
     }
 
     public static void abrirProjeto(UUID id) {
-        abrir("projeto-" + id, () -> ManterProjetoPresenter.paraProjeto(id).getView());
+        abrir(chaveProjeto(id), () -> ManterProjetoPresenter.paraProjeto(id).getView());
     }
 
     public static void abrirCompartilhamento(Projeto projeto) {

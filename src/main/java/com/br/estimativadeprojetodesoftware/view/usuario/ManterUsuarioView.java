@@ -40,6 +40,8 @@ public class ManterUsuarioView extends JDialog {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         barra.empurrarParaDireita();
         btnExcluir = barra.adicionarPerigo("Excluir conta", "excluir");
+        barra.separador();
+        barra.adicionar("Fechar", "fechar").addActionListener(e -> dispose());
         Formulario.placeholder(txtSenhaAtual, "Deixe em branco para manter a atual");
 
         JLabel titulo = Estilos.aplicar(new JLabel("Minha conta", IconService.getIcon("usuario", 26), JLabel.LEADING), Estilos.TITULO);
@@ -77,6 +79,9 @@ public class ManterUsuarioView extends JDialog {
         JTextField t = new JTextField(26);
         t.setEditable(false);
         t.setFocusable(false);
+        // resumo é só leitura: sem a borda de campo, para não parecer editável
+        t.setBorder(BorderFactory.createEmptyBorder(3, 6, 3, 6));
+        t.setOpaque(false);
         return t;
     }
 

@@ -18,7 +18,7 @@ public class ListaProjetosView extends JanelaInterna {
     private final JButton btnFechar;
 
     public ListaProjetosView() {
-        super("Projetos", "Seus projetos e os compartilhados com você. Clique duas vezes para abrir.", "projeto");
+        super("Projetos", "Seus projetos e os compartilhados com você, com prazo e preço. Clique duas vezes (ou Enter) para abrir.", "projeto");
         btnNovo = getBarra().adicionarPrincipal("Novo projeto", "novo-projeto");
         btnAbrir = getBarra().adicionar("Abrir", "abrir");
         btnExcluir = getBarra().adicionarPerigo("Excluir", "excluir");
@@ -26,12 +26,11 @@ public class ListaProjetosView extends JanelaInterna {
         btnFechar = getBarra().adicionar("Fechar", "fechar");
         tabela.permitirOrdenacao();
         tabela.setColunaSelo(1, v -> v.toString().startsWith("Compartilhado") ? Selo.Tipo.AVISO : Selo.Tipo.DESTAQUE);
-        tabela.setColunaSelo(2, v -> v.toString().startsWith("Calculada") ? Selo.Tipo.SUCESSO : Selo.Tipo.NEUTRO);
         getConteudo().add(new JScrollPane(tabela), BorderLayout.CENTER);
         setSize(820, 460);
     }
 
-    public JTable getTabela() {
+    public TabelaPadrao getTabela() {
         return tabela;
     }
 

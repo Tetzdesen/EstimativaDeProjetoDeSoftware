@@ -46,6 +46,15 @@ public class LoginView extends JFrame implements com.br.estimativadeprojetodesof
         setSize(560, 520);
         setResizable(false);
         getRootPane().setDefaultButton(btnEntrar);
+        // Esc fecha (no cadastro, o mesmo que Cancelar), como nas outras janelas
+        getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), "fechar");
+        getRootPane().getActionMap().put("fechar", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                dispose();
+            }
+        });
     }
 
     public void mostrarErroCampo(JComponent campo, String mensagem) {

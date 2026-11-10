@@ -8,11 +8,15 @@ import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.observer.EventoDominio;
 import com.br.estimativadeprojetodesoftware.observer.Observer;
 import com.br.estimativadeprojetodesoftware.presenter.helpers.Navegador;
+import com.br.estimativadeprojetodesoftware.model.ResultadoEstimativa;
+import com.br.estimativadeprojetodesoftware.service.CalculoEstimativaService;
 import com.br.estimativadeprojetodesoftware.service.ProjetoService;
+import com.br.estimativadeprojetodesoftware.view.componentes.TabelaPadrao;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.projeto.ListaProjetosView;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -29,6 +33,7 @@ public class ListaProjetosPresenter implements Observer {
 
     private final ListaProjetosView view;
     private final ProjetoService service;
+    private final CalculoEstimativaService calculo = new CalculoEstimativaService();
     private final Usuario usuario;
     private final List<Projeto> linhas = new ArrayList<>();
 
@@ -40,14 +45,7 @@ public class ListaProjetosPresenter implements Observer {
         view.getBtnAbrir().addActionListener(e -> abrirSelecionado());
         view.getBtnExcluir().addActionListener(e -> excluirSelecionado());
         view.getBtnFechar().addActionListener(e -> view.dispose());
-        view.getTabela().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    abrirSelecionado();
-                }
-            }
-        });
+        view.getTabela().aoAcionarLinha(this::abrirSelecionado);
         view.getTabela().getSelectionModel().addListSelectionListener(e -> atualizarBotoes());
         service.addObserver(this);
         view.addInternalFrameListener(new InternalFrameAdapter() {
@@ -63,14 +61,28 @@ public class ListaProjetosPresenter implements Observer {
         FilaBanco.executar(view, "Carregando…", () -> {
             List<Projeto> todos = new java.util.ArrayList<>(service.listarProprios(usuario));
             todos.addAll(service.listarCompartilhadosComigo(usuario));
-            return todos;
+            // prazo e preço de cada projeto calculado, para comparar sem abrir um por um
+            Map<UUID, ResultadoEstimativa> resultados = new HashMap<>();
+            for (Projeto p : todos) {
+                if (p.isCalculado()) {
+                    try {
+                        resultados.put(p.getId(), calculo.calcular(p));
+                    } catch (IllegalArgumentException semResultado) {
+                        // projeto com dados incompletos: fica sem prazo e preço na lista
+                    }
+                }
+            }
+            return new Carga(todos, resultados);
         }, this::exibir, e -> ExibirMensagemCommand.erro(e.getMessage()));
     }
 
-    private void exibir(List<Projeto> projetos) {
+    private record Carga(List<Projeto> projetos, Map<UUID, ResultadoEstimativa> resultados) {
+    }
+
+    private void exibir(Carga carga) {
         linhas.clear();
-        linhas.addAll(projetos);
-        DefaultTableModel modelo = new DefaultTableModel(new Object[]{"Projeto", "Origem", "Estimativa"}, 0) {
+        linhas.addAll(carga.projetos());
+        DefaultTableModel modelo = new DefaultTableModel(new Object[]{"Projeto", "Origem", "Prazo (dias)", "Preço final"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -78,9 +90,13 @@ public class ListaProjetosPresenter implements Observer {
         };
         for (Projeto p : linhas) {
             String origem = p.isDono(usuario.getId()) ? "Meu projeto" : "Compartilhado por " + p.getDonoNome();
-            modelo.addRow(new Object[]{p.getNome(), origem, p.isCalculado() ? "Calculada" : "Não calculada"});
+            ResultadoEstimativa r = carga.resultados().get(p.getId());
+            modelo.addRow(new Object[]{p.getNome(), origem, r == null ? "—" : r.getDiasTotal(),
+                r == null ? "Não calculado" : r.getPrecoFinal()});
         }
         view.getTabela().setModel(modelo);
+        view.getTabela().setFormatoColuna(2, TabelaPadrao.Formato.NUMERO);
+        view.getTabela().setFormatoColuna(3, TabelaPadrao.Formato.REAIS);
         atualizarBotoes();
     }
 

@@ -1,12 +1,23 @@
 package com.br.estimativadeprojetodesoftware.model;
 
-public enum TipoSelecao {
+public enum TipoSelecao implements Descritivel {
     /** Escolha única dentro da categoria (Tamanho do App, Nível de UI). */
-    UNICA,
+    UNICA("Única"),
     /** Múltipla escolha. */
-    MULTIPLA,
+    MULTIPLA("Múltipla"),
     /** Dias digitados pelo usuário (Desenvolvimento Específico do Aplicativo). */
-    LIVRE,
+    LIVRE("Livre"),
     /** Item opcional (Gerente de Projeto). */
-    OPCIONAL
+    OPCIONAL("Opcional");
+
+    private final String descricao;
+
+    TipoSelecao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    @Override
+    public String getDescricao() {
+        return descricao;
+    }
 }

@@ -25,6 +25,7 @@ public class CompartilharProjetoPresenter {
         this.usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
         view.setTituloCabecalho("Compartilhar \"" + projeto.getNome() + "\"");
         view.getBtnCompartilhar().addActionListener(e -> compartilhar());
+        view.getListaCandidatos().addListSelectionListener(e -> atualizarBotao());
         view.getBtnFechar().addActionListener(e -> view.dispose());
         carregar();
     }
@@ -40,8 +41,13 @@ public class CompartilharProjetoPresenter {
                     view.getListaCandidatos().setListData(candidatos.stream().map(u -> u.getNome() + " <" + u.getEmail() + ">").toArray(String[]::new));
                     view.getListaDestinatarios().setListData(listas.destinatarios().stream()
                             .map(u -> u.getNome() + " <" + u.getEmail() + ">").toArray(String[]::new));
-                    view.getBtnCompartilhar().setEnabled(!candidatos.isEmpty());
+                    atualizarBotao();
                 }, e -> ExibirMensagemCommand.erro(e.getMessage()));
+    }
+
+    /** Só dá para compartilhar depois de escolher alguém na lista. */
+    private void atualizarBotao() {
+        view.getBtnCompartilhar().setEnabled(view.getListaCandidatos().getSelectedIndex() >= 0);
     }
 
     private void compartilhar() {
