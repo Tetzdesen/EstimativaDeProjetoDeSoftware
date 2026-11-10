@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.br</groupId>
     <artifactId>EstimativaDeProjetoDeSoftware</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <properties>
         <!-- preenchido pelo JaCoCo; vazio quando o build roda sem ele -->
@@ -76,6 +76,23 @@
             <groupId>com.github.claytonfraga</groupId>
             <artifactId>validadorsenha</artifactId>
             <version>c949bd44ba</version>
+            <exclusions>
+                <!-- o validador declara como dependências normais ferramentas de teste e de build
+                     (zerocode, plugin do JaCoCo, Doxia...), que deixavam o jar dezenas de MB maior,
+                     traziam bibliotecas antigas com falhas conhecidas e criavam target/logs ao lado
+                     do jar. Ele só usa a API do log4j 1.x, fornecida abaixo pelo reload4j. -->
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <!-- substituto mantido do log4j 1.x (mesmos pacotes org.apache.log4j), com as correções de segurança -->
+            <groupId>ch.qos.reload4j</groupId>
+            <artifactId>reload4j</artifactId>
+            <version>1.2.25</version>
         </dependency>
         
         <dependency>
