@@ -11,6 +11,7 @@ Trabalho final de Projeto de Sistemas de Software (UFES), feito em Java 25 com S
 - **Estimativa ao vivo:** cada marcação recalcula prazo, custo de desenvolvimento, preço final e média mensal em memória, em cerca de 10 ms. O banco só é gravado quando você clica em Salvar.
 - **Tela que não trava:** todo acesso ao banco roda fora da thread da interface, numa fila de uma thread só, e Salvar grava em lotes. Contra o banco no Supabase, Salvar caiu de **5,9 s para 0,39 s** (de 152 para 12 idas ao banco).
 - **Três bancos, o mesmo código:** SQLite, H2 ou PostgreSQL (Supabase), escolhidos no `.env`, com JDBC puro e sem framework de persistência.
+- **Vários usuários no mesmo banco:** cada um tem seus projetos, seus perfis e o seu tema (claro ou escuro), que volta quando ele entra. Um projeto pode ser compartilhado com outro usuário, que só consulta.
 - **Banco remoto protegido:** SSL com verificação do certificado, esquema fora da API pública do Supabase, RLS em todas as tabelas e um usuário de banco só para o sistema.
 - **211 testes automatizados**, com 70% de cobertura de linhas medida pelo JaCoCo a cada build.
 - **Teste final de usabilidade:** todas as telas foram percorridas no app de verdade, com mouse e teclado, em 1366×768 e 1024×600, nos dois temas. O que apareceu foi corrigido (veja [Usabilidade](#usabilidade)).
@@ -47,6 +48,7 @@ Trabalho final de Projeto de Sistemas de Software (UFES), feito em Java 25 com S
 - **Recálculo sem persistência:** as alterações recalculam a estimativa em memória, com um atraso de 250 ms que junta digitações seguidas. Só Salvar grava, gera um único registro no log e avisa as outras janelas (Observer).
 - **Fila única de banco:** o sistema usa uma só conexão JDBC, então as operações de banco rodam numa fila de uma thread (`FilaBanco`), e o resultado volta para a thread do Swing. Enquanto isso, a janela mostra o progresso e bloqueia os cliques, sem congelar.
 - **Gravação em lote:** funcionalidades e valores de um projeto vão em dois lotes, então o número de idas ao banco não depende de quantas funcionalidades o perfil tem. Um teste garante o limite de 15 idas.
+- **Preferências por usuário:** o tema fica na tabela `configuracao` com a chave `interface.tema.<id do usuário>`, sem mudar o esquema, e é lido junto com a autenticação para a janela principal já abrir com ele. A chave `interface.tema` guarda o último tema usado, que vale para as telas de entrada e para quem ainda não escolheu. O formato do log continua valendo para todos.
 - **Bancos intercambiáveis:** Strategy (`DatabaseInitializer`) e Abstract Factory (`FabricaRepository`) escolhem o banco pelo `.env`, e o esquema usa só tipos aceitos pelos três.
 - **Valores exatos:** dias e dinheiro em `BigDecimal`, arredondados só na exibição.
 
@@ -177,6 +179,7 @@ Antes da entrega, o sistema passou por um teste de ponta a ponta com as telas re
 | "Compartilhar com o selecionado" ativo sem ninguém selecionado | Só ativa depois de escolher o usuário |
 | "Minha conta" sem botão de fechar e com o resumo em campos que pareciam editáveis | Botão Fechar e resumo sem borda de campo |
 | Lista de projetos sem prazo e preço | Colunas "Prazo (dias)" e "Preço final" |
+| O tema era um só para todos: quem escolhia o escuro trocava o tema de todo mundo | Cada usuário tem o seu tema, aplicado no login |
 | Em 1024×600, o indicador "Média mensal" ficava escondido no rodapé | Numa janela estreita, o detalhe de cada indicador desce para baixo do valor e os quatro cabem |
 
 ## Como o cálculo funciona
