@@ -13,7 +13,7 @@ Trabalho final de Projeto de Sistemas de Software (UFES), feito em Java 25 com S
 - **Três bancos, o mesmo código:** SQLite, H2 ou PostgreSQL (Supabase), escolhidos no `.env`, com JDBC puro e sem framework de persistência.
 - **Vários usuários no mesmo banco:** cada um tem seus projetos, seus perfis e o seu tema (claro ou escuro), que volta quando ele entra. Um projeto pode ser compartilhado com outro usuário, que só consulta.
 - **Banco remoto protegido:** SSL com verificação do certificado, esquema fora da API pública do Supabase, RLS em todas as tabelas e um usuário de banco só para o sistema.
-- **211 testes automatizados**, com 70% de cobertura de linhas medida pelo JaCoCo a cada build.
+- **213 testes automatizados**, com 70% de cobertura de linhas medida pelo JaCoCo a cada build.
 - **Teste final de usabilidade:** todas as telas foram percorridas no app de verdade, com mouse e teclado, em 1366×768 e 1024×600, nos dois temas. O que apareceu foi corrigido (veja [Usabilidade](#usabilidade)).
 
 ## Telas
@@ -54,6 +54,18 @@ Trabalho final de Projeto de Sistemas de Software (UFES), feito em Java 25 com S
 
 ## Como rodar
 
+### Baixar pronto
+
+Baixe o `estimativa.jar` na [página de releases](https://github.com/Tetzdesen/EstimativaDeProjetoDeSoftware/releases/latest) e rode com o **Java 25** ou mais novo:
+
+```bash
+java -jar estimativa.jar
+```
+
+Sem `.env` ao lado, o sistema usa SQLite e guarda o banco e o log na pasta `.estimativa-de-projeto` dentro da sua pasta de usuário. Entre com o usuário de teste abaixo ou crie uma conta.
+
+### Compilar
+
 Precisa de **JDK 25+** e **Maven**. Não precisa instalar banco nenhum: SQLite e H2 rodam embutidos.
 
 ```bash
@@ -62,7 +74,7 @@ mvn clean package
 java -jar target/estimativa.jar
 ```
 
-O `mvn clean package` baixa as dependências (o módulo de log vem do JitPack), roda os testes e gera o `target/estimativa.jar`, com tudo dentro. Rode o jar na mesma pasta do `.env`.
+O `mvn clean package` baixa as dependências (o módulo de log vem do JitPack), roda os testes e gera o `target/estimativa.jar`, com tudo dentro. Rode o jar na mesma pasta do `.env`; sem ele, valem os padrões descritos em [Baixar pronto](#baixar-pronto).
 
 Na primeira vez o sistema cria o banco, o perfil padrão e um usuário de teste:
 
@@ -95,7 +107,7 @@ Na primeira vez o sistema cria o banco, o perfil padrão e um usuário de teste:
    java -jar target\estimativa.jar
    ```
 
-O sistema lê o `.env` da pasta de onde é aberto. Por isso, se você der dois cliques no `estimativa.jar` dentro de `target\`, ele não acha o `.env` e o login dá erro de configuração. Rode pelo terminal a partir da pasta do projeto, ou copie o `.env` para dentro de `target\` (aí o banco é criado em `target\db\`).
+O sistema lê o `.env` da pasta de onde é aberto. Se você der dois cliques no `estimativa.jar` dentro de `target\`, ele não acha o `.env` e usa os padrões (SQLite na pasta `.estimativa-de-projeto` do seu usuário), ou seja, outro banco. Para usar o banco do `.env`, rode pelo terminal a partir da pasta do projeto ou copie o `.env` para dentro de `target\`.
 
 Também dá para abrir a pasta no NetBeans ou no IntelliJ, que já vêm com Maven: rode o `clean package` pela IDE e execute a classe `Principal` com a pasta do projeto como diretório de trabalho.
 
@@ -223,7 +235,7 @@ O que foi atendido de cada requisito, e onde está no código, está em [`docs/r
 mvn verify
 ```
 
-São 211 testes: o cálculo (com o caso da planilha), a persistência em SQLite e H2, a gravação em lote, a migração entre bancos, a fila de banco, a exportação, o log e os presenters de todas as telas, inclusive login, cadastro, perfis, configuração e dashboard. Os testes rodam numa pasta sem `.env`, então nunca acessam o banco configurado.
+São 213 testes: o cálculo (com o caso da planilha), a persistência em SQLite e H2, a gravação em lote, a migração entre bancos, a fila de banco, a exportação, o log e os presenters de todas as telas, inclusive login, cadastro, perfis, configuração e dashboard. Os testes rodam numa pasta sem `.env`, então nunca acessam o banco configurado.
 
 O `mvn verify` também gera o relatório de cobertura em `target/site/jacoco/index.html` e falha se a cobertura de linhas ficar abaixo de 65%. Hoje ela está em 70%.
 
@@ -238,6 +250,14 @@ java -cp "target/classes:target/test-classes:$(cat target/cp.txt)" \
 python3 scripts/montar-gif.py target/vitrine/quadros docs/imagens/recalculo-ao-vivo.gif
 ```
 
-## Equipe
+## Autoria
 
-- Gabriel Tetzner Menegueti
+Desenvolvido por **Gabriel Tetzner Menegueti**.
+
+O projeto começou como trabalho em grupo da disciplina de Projeto de Sistemas de Software (UFES). Depois eu assumi o projeto sozinho e o finalizei: reestruturei a arquitetura (MVP Passive View, State com Command), implementei a estimativa recalculada ao vivo, o suporte a SQLite, H2 e PostgreSQL/Supabase, a fila de banco fora da thread da interface, a interface, os relatórios em PDF e CSV e os testes. Hoje cerca de 98% do código é meu.
+
+Agradeço a Kauã Souza, Flávio Monteiro e Hiago Lopes, que participaram da primeira versão; as contribuições deles estão no histórico de commits.
+
+## Licença
+
+[MIT](LICENSE).
