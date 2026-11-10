@@ -9,8 +9,19 @@ import javax.swing.Scrollable;
 /** Painel para JScrollPane que acompanha a largura da janela e rola só na vertical. */
 public class PainelRolavel extends JPanel implements Scrollable {
 
+    private boolean preencherAltura;
+
     public PainelRolavel(LayoutManager layout) {
         super(layout);
+    }
+
+    /**
+     * Com a janela mais alta que o conteúdo, estica o painel até o fim da área
+     * visível (o componente do centro do BorderLayout ganha a sobra); com a
+     * janela mais baixa, rola normalmente.
+     */
+    public void setPreencherAltura(boolean preencherAltura) {
+        this.preencherAltura = preencherAltura;
     }
 
     @Override
@@ -35,6 +46,7 @@ public class PainelRolavel extends JPanel implements Scrollable {
 
     @Override
     public boolean getScrollableTracksViewportHeight() {
-        return false;
+        return preencherAltura && getParent() instanceof javax.swing.JViewport area
+                && area.getHeight() > getPreferredSize().height;
     }
 }

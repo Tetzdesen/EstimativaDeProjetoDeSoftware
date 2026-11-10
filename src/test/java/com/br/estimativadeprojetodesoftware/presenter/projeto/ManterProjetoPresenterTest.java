@@ -1093,6 +1093,45 @@ class ManterProjetoPresenterTest {
         });
     }
 
+    // ---------- teste final de usabilidade ----------
+
+    @Test
+    @DisplayName("Fechar um projeto novo com nome digitado pergunta antes; sem nome, fecha direto")
+    void fecharProjetoNovoComNomePergunta() throws Exception {
+        naThreadDoSwing(() -> {
+            view = new ProjetoView();
+            presenter = new ManterProjetoPresenter(view, projetos, perfis, exportacao, ana);
+            presenter.iniciarInclusao();
+            respostaConfirmacao = false;
+            view.getTxtNome().setText("Rascunho");
+            presenter.solicitarFechamento();
+            assertEquals(1, perguntasDeConfirmacao.size());
+            assertTrue(perguntasDeConfirmacao.get(0).contains("Rascunho"));
+            assertFalse(view.isClosed(), "recusar mantém a janela aberta");
+
+            view.getTxtNome().setText("");
+            presenter.solicitarFechamento();
+            assertEquals(1, perguntasDeConfirmacao.size(), "sem nome não há o que perder");
+            assertTrue(view.isClosed());
+        });
+    }
+
+    @Test
+    @DisplayName("Busca sem resultado avisa abaixo do campo; limpar a busca tira o aviso")
+    void buscaSemResultadoAvisa() throws Exception {
+        naThreadDoSwing(() -> {
+            criarEAbrirEmEdicao();
+            presenter.escolherSecao(SecaoProjeto.FUNCIONALIDADES);
+            view.getTxtBuscaFuncionalidades().setText("xyzabc");
+            assertEquals(0, view.getTabelaItens().getRowCount());
+            assertTrue(view.getLblSemResultado().isVisible());
+            assertTrue(view.getLblSemResultado().getText().contains("xyzabc"));
+
+            view.getTxtBuscaFuncionalidades().setText("");
+            assertFalse(view.getLblSemResultado().isVisible());
+        });
+    }
+
     // ---------- seções preenchidas ----------
 
     @Test

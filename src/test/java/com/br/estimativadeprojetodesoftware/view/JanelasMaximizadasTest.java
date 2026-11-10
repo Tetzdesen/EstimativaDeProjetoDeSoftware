@@ -92,4 +92,32 @@ class JanelasMaximizadasTest {
             assertEquals(new Rectangle(0, 0, 1000, 600), f.getBounds());
         }
     }
+
+    @Test
+    void janelaDeProjetoNovoSalvoNaoDuplicaAoAbrirPelaArvore() {
+        // o projeto novo abre com uma chave provisória; ao ser criado, a janela passa a ser a do projeto
+        Navegador.abrir("projeto-novo-1", () -> janela("Novo projeto"));
+        JInternalFrame f = desktop.getAllFrames()[0];
+        java.util.UUID id = java.util.UUID.randomUUID();
+        Navegador.renomear(f, Navegador.chaveProjeto(id));
+
+        Navegador.abrir(Navegador.chaveProjeto(id), () -> janela("Projeto"));
+
+        assertEquals(1, desktop.getAllFrames().length);
+        assertSame(f, desktop.getAllFrames()[0]);
+    }
+
+    @Test
+    void chaveDadaPeloPresenterNaoEhSobrescrita() {
+        java.util.UUID id = java.util.UUID.randomUUID();
+        Navegador.abrir("perfil-novo-1", () -> {
+            JInternalFrame f = janela("Cópia");
+            Navegador.renomear(f, Navegador.chavePerfil(id));
+            return f;
+        });
+
+        Navegador.abrir(Navegador.chavePerfil(id), () -> janela("Perfil"));
+
+        assertEquals(1, desktop.getAllFrames().length);
+    }
 }

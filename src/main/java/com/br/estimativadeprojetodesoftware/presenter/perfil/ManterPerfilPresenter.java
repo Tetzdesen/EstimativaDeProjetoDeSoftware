@@ -1,6 +1,7 @@
 package com.br.estimativadeprojetodesoftware.presenter.perfil;
 
 import com.br.estimativadeprojetodesoftware.presenter.helpers.FilaBanco;
+import com.br.estimativadeprojetodesoftware.presenter.helpers.Navegador;
 import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
 import com.br.estimativadeprojetodesoftware.model.Funcionalidade;
 import com.br.estimativadeprojetodesoftware.model.Perfil;
@@ -109,6 +110,7 @@ public class ManterPerfilPresenter implements Observer {
 
     private void setPerfil(Perfil perfil) {
         this.perfil = perfil;
+        Navegador.renomear(view, Navegador.chavePerfil(perfil.getId()));
         view.setTituloCabecalho(perfil.getNome());
         view.getTxtNome().setText(perfil.getNome());
         modeloFuncionalidades = new FuncionalidadesPerfilTableModel(perfil, this::erro);
@@ -116,11 +118,25 @@ public class ManterPerfilPresenter implements Observer {
         view.getTabelaFuncionalidades().setModel(modeloFuncionalidades);
         view.getTabelaTaxas().setModel(modeloTaxas);
         view.getTabelaFuncionalidades().getColumnModel().getColumn(2)
-                .setCellEditor(new DefaultCellEditor(new JComboBox<>(TipoSelecao.values())));
+                .setCellEditor(new DefaultCellEditor(comboDescritivo(TipoSelecao.values())));
         view.getTabelaFuncionalidades().getColumnModel().getColumn(3)
-                .setCellEditor(new DefaultCellEditor(new JComboBox<>(TipoValor.values())));
+                .setCellEditor(new DefaultCellEditor(comboDescritivo(TipoValor.values())));
         view.getTabelaFuncionalidades().getColumnModel().getColumn(1).setPreferredWidth(280);
         view.getTabelaFuncionalidades().getColumnModel().getColumn(0).setPreferredWidth(220);
+    }
+
+    /** Caixa de escolha que mostra a descrição do valor ("Múltipla") em vez do nome interno ("MULTIPLA"). */
+    private static <T extends com.br.estimativadeprojetodesoftware.model.Descritivel> JComboBox<T> comboDescritivo(T[] valores) {
+        JComboBox<T> combo = new JComboBox<>(valores);
+        combo.setRenderer(new javax.swing.DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> lista, Object valor, int indice,
+                    boolean selecionado, boolean foco) {
+                Object texto = valor instanceof com.br.estimativadeprojetodesoftware.model.Descritivel d ? d.getDescricao() : valor;
+                return super.getListCellRendererComponent(lista, texto, indice, selecionado, foco);
+            }
+        });
+        return combo;
     }
 
     public void setEditavel(boolean editavel) {

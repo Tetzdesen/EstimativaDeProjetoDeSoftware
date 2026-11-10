@@ -24,7 +24,7 @@ public class ConfiguracaoView extends JanelaInterna {
     private final JButton btnFechar;
 
     public ConfiguracaoView() {
-        super("Configuração", "As mudanças valem na hora e continuam valendo depois de reiniciar.", "configuracao");
+        super("Configuração", "Escolha o tema e o formato do log e clique em Salvar. As escolhas continuam valendo depois de reiniciar.", "configuracao");
         btnSalvar = getBarra().adicionarPrincipal("Salvar", "salvar");
         getBarra().empurrarParaDireita();
         btnFechar = getBarra().adicionar("Fechar", "fechar");

@@ -14,7 +14,9 @@ public class VisualizacaoPerfilState extends ManterPerfilPresenterState {
     @Override
     public void entrar() {
         ManterPerfilView v = presenter.getView();
-        if (presenter.podeAlterar()) {
+        if (presenter.podeAlterar() && presenter.getPerfil().isPadrao()) {
+            habilitar(v.getBtnEditar()); // o padrão pode ser editado, mas não excluído
+        } else if (presenter.podeAlterar()) {
             habilitar(v.getBtnEditar(), v.getBtnExcluir());
         } else {
             habilitar();

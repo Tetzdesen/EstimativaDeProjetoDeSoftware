@@ -31,7 +31,7 @@ public class ListaPerfisView extends JanelaInterna {
         setSize(780, 440);
     }
 
-    public JTable getTabela() {
+    public TabelaPadrao getTabela() {
         return tabela;
     }
 

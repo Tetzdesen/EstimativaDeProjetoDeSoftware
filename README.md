@@ -12,7 +12,8 @@ Trabalho final de Projeto de Sistemas de Software (UFES), feito em Java 25 com S
 - **Tela que não trava:** todo acesso ao banco roda fora da thread da interface, numa fila de uma thread só, e Salvar grava em lotes. Contra o banco no Supabase, Salvar caiu de **5,9 s para 0,39 s** (de 152 para 12 idas ao banco).
 - **Três bancos, o mesmo código:** SQLite, H2 ou PostgreSQL (Supabase), escolhidos no `.env`, com JDBC puro e sem framework de persistência.
 - **Banco remoto protegido:** SSL com verificação do certificado, esquema fora da API pública do Supabase, RLS em todas as tabelas e um usuário de banco só para o sistema.
-- **194 testes automatizados**, com 69% de cobertura de linhas medida pelo JaCoCo a cada build.
+- **206 testes automatizados**, com 70% de cobertura de linhas medida pelo JaCoCo a cada build.
+- **Teste final de usabilidade:** todas as telas foram percorridas no app de verdade, com mouse e teclado, em 1366×768 e 1024×600, nos dois temas. O que apareceu foi corrigido (veja [Usabilidade](#usabilidade)).
 
 ## Telas
 
@@ -32,7 +33,7 @@ Trabalho final de Projeto de Sistemas de Software (UFES), feito em Java 25 com S
 
 - Criar conta e entrar com e-mail e senha (a senha passa pelo validador do professor).
 - Manter **perfis de estimativa**: a lista de funcionalidades com os dias de cada plataforma. O perfil padrão já vem carregado e não pode ser excluído; dá para copiar e montar o seu.
-- Criar **projetos** a partir de um ou mais perfis. O projeto é uma cópia, então mexer nele não altera o perfil nem os outros projetos.
+- Criar **projetos** a partir de um ou mais perfis. O projeto é uma cópia, então mexer nele não altera o perfil nem os outros projetos. A lista de projetos mostra o prazo e o preço final de cada um, para comparar sem abrir.
 - Montar a estimativa numa tela com uma seção por vez, escolhida numa barra lateral que marca o que já foi preenchido: **Plataformas**, **Tamanho e UI** (tamanho do app, nível de UI e gerente de projeto), **Funcionalidades** (por categoria, com busca e filtro "Somente selecionadas"), **Taxas diárias**, **Custos e preço** e **Detalhamento**. O resumo fica fixo no rodapé, com a variação causada pela última alteração.
 - **Compartilhar** um projeto com outro usuário, que só consegue consultar.
 - **Exportar** o relatório em PDF (com cabeçalho, resumo do preço e do prazo, tabelas e numeração de páginas) ou em CSV.
@@ -148,10 +149,34 @@ Ele recusa um destino que já tenha usuários ou perfis e, no fim, mostra a cont
 
 | Tecla | O que faz |
 |---|---|
-| Enter | confirma o login e os diálogos |
-| Esc | fecha a janela ou cancela o diálogo |
+| Enter | confirma o login e os diálogos; nas listas de projetos e perfis, abre o selecionado |
+| Esc | fecha a janela ou cancela o diálogo; com um menu aberto, fecha só o menu; na busca de funcionalidades, limpa a busca |
 | Ctrl+S | salva a tela que está em edição |
 | Ctrl+N | novo projeto |
+
+## Usabilidade
+
+Antes da entrega, o sistema passou por um teste de ponta a ponta com as telas reais: criar conta, entrar, criar e editar um projeto, exportar, compartilhar, abrir como o outro usuário (somente leitura), perfis, configuração e tema escuro, em 1366×768 e 1024×600. Além de olhar cada tela, um roteiro conferiu texto cortado, contraste, botões só com ícone sem dica e campos sem rótulo. O que foi encontrado e corrigido:
+
+| Problema | Correção |
+|---|---|
+| Esc com o menu "Exportar ▾" ou "Mais ▾" aberto fechava a janela do projeto | Esc fecha só o menu |
+| Projeto novo com nome digitado era descartado sem aviso ao fechar | Pede confirmação antes de desistir |
+| Depois de criar um projeto, abri-lo pela árvore abria uma segunda janela do mesmo projeto | A janela passa a ser a do projeto criado; não duplica |
+| No Detalhamento, valores em reais cortados ("R$ 12.15...") e tabelas baixas | Colunas de valor com largura mínima e tabelas ocupando a altura da janela |
+| Tabela de funcionalidades escondia a coluna Android em janelas estreitas | Rola na horizontal quando as colunas não cabem |
+| Perfil mostrava valores internos ("UNICA", "MULTIPLA", "PERCENTUAL") | Mostra "Única", "Múltipla", "Percentual" |
+| "Excluir" ativo no perfil padrão, que não pode ser excluído | Botão desabilitado, com a explicação na dica |
+| Mensagens de senha sem acento e com ";" ("Senha nao deve possuir uma sequencia...") | O Adapter do validador corrige a escrita |
+| "Exportar ▾" e "Mais ▾" ativos num projeto ainda não salvo | Ficam ativos só quando alguma ação do menu está disponível |
+| Busca sem resultado deixava a tabela vazia sem explicação | Aviso com o termo buscado, botão de limpar e Esc para limpar |
+| Enter não abria o projeto ou perfil selecionado na lista | Enter abre, como o duplo clique |
+| Depois de errar a senha, o foco sumia | O foco volta para a senha, com o texto selecionado |
+| Esc não fechava as janelas de login e cadastro | Fecha (no cadastro, o mesmo que Cancelar) |
+| Configuração dizia "as mudanças valem na hora", mas era preciso clicar em Salvar | Texto corrigido |
+| "Compartilhar com o selecionado" ativo sem ninguém selecionado | Só ativa depois de escolher o usuário |
+| "Minha conta" sem botão de fechar e com o resumo em campos que pareciam editáveis | Botão Fechar e resumo sem borda de campo |
+| Lista de projetos sem prazo e preço | Colunas "Prazo (dias)" e "Preço final" |
 
 ## Como o cálculo funciona
 
@@ -194,9 +219,9 @@ O que foi atendido de cada requisito, e onde está no código, está em [`docs/r
 mvn verify
 ```
 
-São 194 testes: o cálculo (com o caso da planilha), a persistência em SQLite e H2, a gravação em lote, a migração entre bancos, a fila de banco, a exportação, o log e os presenters de todas as telas, inclusive login, cadastro, perfis, configuração e dashboard. Os testes rodam numa pasta sem `.env`, então nunca acessam o banco configurado.
+São 206 testes: o cálculo (com o caso da planilha), a persistência em SQLite e H2, a gravação em lote, a migração entre bancos, a fila de banco, a exportação, o log e os presenters de todas as telas, inclusive login, cadastro, perfis, configuração e dashboard. Os testes rodam numa pasta sem `.env`, então nunca acessam o banco configurado.
 
-O `mvn verify` também gera o relatório de cobertura em `target/site/jacoco/index.html` e falha se a cobertura de linhas ficar abaixo de 65%. Hoje ela está em 69%.
+O `mvn verify` também gera o relatório de cobertura em `target/site/jacoco/index.html` e falha se a cobertura de linhas ficar abaixo de 65%. Hoje ela está em 70%.
 
 ### Imagens do README
 

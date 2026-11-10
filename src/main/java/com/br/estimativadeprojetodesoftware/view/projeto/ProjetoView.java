@@ -23,6 +23,7 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -66,6 +67,7 @@ public class ProjetoView extends JanelaInterna {
     private final JLabel lblSemPlataforma = Estilos.aplicar(
             new JLabel("Marque ao menos uma plataforma na seção Plataformas para ver e editar os dias de cada funcionalidade."),
             Estilos.AVISO_ESTIMATIVA);
+    private final JLabel lblSemResultado = Estilos.aplicar(new JLabel(" "), Estilos.SUBTITULO);
     /** Colunas de plataforma da tabela de funcionalidades, pelo índice no model (4, 5 e 6). */
     private final java.util.Map<Integer, javax.swing.table.TableColumn> colunasPlataforma = new java.util.TreeMap<>();
     private final JLabel lblContadorSelecionadas = Estilos.aplicar(new JLabel(" "), Estilos.SUBTITULO);
@@ -139,9 +141,12 @@ public class ProjetoView extends JanelaInterna {
         adicionarSecao(SecaoProjeto.PLATAFORMAS, montarPlataformas());
         adicionarSecao(SecaoProjeto.TAMANHO_E_UI, montarTamanhoEUi());
         adicionarSecao(SecaoProjeto.FUNCIONALIDADES, montarFuncionalidades());
-        adicionarSecao(SecaoProjeto.TAXAS, comTitulo(SecaoProjeto.TAXAS, null, new JScrollPane(tabelaTaxas)));
+        adicionarSecao(SecaoProjeto.TAXAS, comTitulo(SecaoProjeto.TAXAS,
+                "Valor de um dia de trabalho de cada papel, por plataforma. Para alterar, clique duas vezes no valor.",
+                new JScrollPane(tabelaTaxas)));
         adicionarSecao(SecaoProjeto.CUSTOS, montarCustos());
-        adicionarSecao(SecaoProjeto.DETALHAMENTO, comTitulo(SecaoProjeto.DETALHAMENTO, null, montarResultado()));
+        adicionarSecao(SecaoProjeto.DETALHAMENTO, comTitulo(SecaoProjeto.DETALHAMENTO,
+                "De onde vêm o prazo e o preço: dias por plataforma e por categoria, custos, impostos e lucro.", montarResultado()));
 
         listaSecoes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listaSecoes.setCellRenderer(new RenderizadorComContador());
@@ -211,24 +216,71 @@ public class ProjetoView extends JanelaInterna {
     }
 
     private JPanel montarFuncionalidades() {
-        JPanel filtros = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
-        filtros.setOpaque(false);
-        filtros.add(txtBuscaFuncionalidades);
-        filtros.add(btnSomenteSelecionadas);
-        JPanel barra = new JPanel(new BorderLayout(12, 0));
+        // em linha: a busca encolhe numa janela estreita, sem cobrir o contador
+        JPanel barra = new JPanel();
+        barra.setLayout(new BoxLayout(barra, BoxLayout.X_AXIS));
         barra.setOpaque(false);
-        barra.add(filtros, BorderLayout.WEST);
-        barra.add(lblContadorSelecionadas, BorderLayout.EAST);
+        Dimension busca = txtBuscaFuncionalidades.getPreferredSize();
+        txtBuscaFuncionalidades.setMaximumSize(busca);
+        txtBuscaFuncionalidades.setMinimumSize(new Dimension(120, busca.height));
+        btnSomenteSelecionadas.setMaximumSize(btnSomenteSelecionadas.getPreferredSize());
+        barra.add(Box.createHorizontalStrut(8));
+        barra.add(txtBuscaFuncionalidades);
+        barra.add(Box.createHorizontalStrut(8));
+        barra.add(btnSomenteSelecionadas);
+        barra.add(Box.createHorizontalGlue());
+        barra.add(Box.createHorizontalStrut(12));
+        barra.add(lblContadorSelecionadas);
         lblSemPlataforma.setVisible(false);
+        lblSemResultado.setVisible(false);
+        configurarBusca();
+        JPanel avisos = new JPanel(new BorderLayout(0, 4));
+        avisos.setOpaque(false);
+        avisos.add(lblSemPlataforma, BorderLayout.NORTH);
+        avisos.add(lblSemResultado, BorderLayout.SOUTH);
         JPanel topo = new JPanel(new BorderLayout(0, 6));
         topo.setOpaque(false);
         topo.add(barra, BorderLayout.NORTH);
-        topo.add(lblSemPlataforma, BorderLayout.SOUTH);
+        topo.add(avisos, BorderLayout.SOUTH);
         JPanel p = new JPanel(new BorderLayout(0, 8));
         p.setOpaque(false);
         p.add(topo, BorderLayout.NORTH);
         p.add(new JScrollPane(tabelaItens), BorderLayout.CENTER);
         return comTitulo(SecaoProjeto.FUNCIONALIDADES, null, p);
+    }
+
+    /**
+     * Busca com botão de limpar e Esc: com texto, Esc limpa a busca; vazia, Esc
+     * segue para a janela (que fecha, como nas demais telas).
+     */
+    private void configurarBusca() {
+        txtBuscaFuncionalidades.putClientProperty("JTextField.showClearButton", true);
+        txtBuscaFuncionalidades.getAccessibleContext().setAccessibleName("Buscar funcionalidades");
+        txtBuscaFuncionalidades.getInputMap(JComponent.WHEN_FOCUSED)
+                .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), "limparBusca");
+        txtBuscaFuncionalidades.getActionMap().put("limparBusca", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (!txtBuscaFuncionalidades.getText().isEmpty()) {
+                    txtBuscaFuncionalidades.setText("");
+                    return;
+                }
+                javax.swing.Action fechar = getRootPane().getActionMap().get("fechar");
+                if (fechar != null) {
+                    fechar.actionPerformed(e);
+                }
+            }
+        });
+    }
+
+    /** Aviso abaixo da busca quando o filtro não encontra nada (texto vazio esconde). */
+    public void exibirSemResultado(String texto) {
+        lblSemResultado.setText(texto == null || texto.isBlank() ? " " : texto);
+        lblSemResultado.setVisible(texto != null && !texto.isBlank());
+    }
+
+    public JLabel getLblSemResultado() {
+        return lblSemResultado;
     }
 
     private JPanel montarCustos() {
@@ -273,6 +325,7 @@ public class ProjetoView extends JanelaInterna {
         tabelas.add(bloco("Resumo financeiro", tabelaFinanceiro));
 
         PainelRolavel corpo = new PainelRolavel(new BorderLayout(0, 12));
+        corpo.setPreencherAltura(true); // as tabelas de baixo usam a altura que sobrar
         corpo.add(bloco("Por plataforma", tabelaPlataformas), BorderLayout.NORTH);
         corpo.add(tabelas, BorderLayout.CENTER);
 
@@ -505,6 +558,11 @@ public class ProjetoView extends JanelaInterna {
     public File escolherArquivo(String nomeSugerido) {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Salvar relatório");
+        String extensao = nomeSugerido.contains(".") ? nomeSugerido.substring(nomeSugerido.lastIndexOf('.') + 1) : "";
+        if (!extensao.isEmpty()) {
+            chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                    extensao.toUpperCase() + " (*." + extensao + ")", extensao));
+        }
         chooser.setSelectedFile(new File(nomeSugerido));
         return chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION ? chooser.getSelectedFile() : null;
     }

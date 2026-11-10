@@ -142,7 +142,7 @@ public final class PrincipalProjetoPresenter implements Observer {
                     protegido(() -> Navegador.abrirProjeto(p.getId()))));
         }
         for (Projeto p : projetos.compartilhados()) {
-            noCompartilhados.adicionarFilho(arvoreService.criarNo(p.getNome() + " (Compartilhado por " + p.getDonoNome() + ")",
+            noCompartilhados.adicionarFilho(arvoreService.criarNo(p.getNome() + " · " + p.getDonoNome(),
                     "compartilhar", protegido(() -> Navegador.abrirProjeto(p.getId()))));
         }
 

@@ -45,6 +45,15 @@ public class CadastroUsuarioView extends JFrame {
         setSize(600, 620);
         setResizable(false);
         getRootPane().setDefaultButton(btnSalvar);
+        // Esc fecha (no cadastro, o mesmo que Cancelar), como nas outras janelas
+        getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), "fechar");
+        getRootPane().getActionMap().put("fechar", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                btnCancelar.doClick();
+            }
+        });
     }
 
     public void mostrarErroCampo(JComponent campo, String mensagem) {

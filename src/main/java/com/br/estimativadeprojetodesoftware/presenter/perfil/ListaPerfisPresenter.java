@@ -11,8 +11,6 @@ import com.br.estimativadeprojetodesoftware.presenter.helpers.Navegador;
 import com.br.estimativadeprojetodesoftware.service.PerfilService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.perfil.ListaPerfisView;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -36,14 +34,8 @@ public class ListaPerfisPresenter implements Observer {
         view.getBtnAbrir().addActionListener(e -> abrir());
         view.getBtnExcluir().addActionListener(e -> excluir());
         view.getBtnFechar().addActionListener(e -> view.dispose());
-        view.getTabela().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    abrir();
-                }
-            }
-        });
+        view.getTabela().aoAcionarLinha(this::abrir);
+        view.getTabela().getSelectionModel().addListSelectionListener(e -> atualizarBotoes());
         service.addObserver(this);
         view.addInternalFrameListener(new InternalFrameAdapter() {
             @Override
@@ -76,6 +68,17 @@ public class ListaPerfisPresenter implements Observer {
         if (!linhas.isEmpty()) {
             view.getTabela().setRowSelectionInterval(0, 0);
         }
+        atualizarBotoes();
+    }
+
+    /** O perfil padrão (e o de outro usuário) não pode ser excluído: o botão nem fica ativo. */
+    private void atualizarBotoes() {
+        int linha = view.getTabela().getSelectedRow();
+        Perfil p = linha < 0 ? null : linhas.get(view.getTabela().convertRowIndexToModel(linha));
+        view.getBtnAbrir().setEnabled(p != null);
+        view.getBtnNovo().setEnabled(p != null);
+        view.getBtnExcluir().setEnabled(p != null && service.podeExcluir(p, usuario));
+        view.getBtnExcluir().setToolTipText(p != null && p.isPadrao() ? "O perfil padrão não pode ser excluído" : null);
     }
 
     private Perfil selecionado() {

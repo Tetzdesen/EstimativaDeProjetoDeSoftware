@@ -91,4 +91,27 @@ class TabelaPadraoTest {
         assertTrue(na.getFont().isItalic());
         assertTrue(na.getFont().isBold());
     }
+
+    @Test
+    void enumsDoPerfilAparecemComDescricaoEmVezDoNomeInterno() {
+        assertEquals("Múltipla", TabelaPadrao.formatar(com.br.estimativadeprojetodesoftware.model.TipoSelecao.MULTIPLA,
+                TabelaPadrao.Formato.TEXTO));
+        assertEquals("Percentual", TabelaPadrao.formatar(com.br.estimativadeprojetodesoftware.model.TipoValor.PERCENTUAL,
+                TabelaPadrao.Formato.TEXTO));
+        // o nome gravado no banco continua o mesmo
+        assertEquals("MULTIPLA", com.br.estimativadeprojetodesoftware.model.TipoSelecao.MULTIPLA.toString());
+    }
+
+    @Test
+    void janelaEstreitaRolaNaHorizontalEmVezDeEsconderColunas() {
+        DefaultTableModel m = new DefaultTableModel(new Object[]{"A", "B"}, 1);
+        TabelaPadrao t = new TabelaPadrao(m);
+        t.getColumnModel().getColumn(0).setMinWidth(200);
+        t.getColumnModel().getColumn(1).setMinWidth(200);
+        javax.swing.JScrollPane rolagem = new javax.swing.JScrollPane(t);
+        rolagem.getViewport().setSize(300, 100);
+        assertFalse(t.getScrollableTracksViewportWidth());
+        rolagem.getViewport().setSize(500, 100);
+        assertTrue(t.getScrollableTracksViewportWidth());
+    }
 }

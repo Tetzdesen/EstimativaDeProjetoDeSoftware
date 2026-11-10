@@ -23,6 +23,12 @@ public class BarraAcoes extends JPanel {
     public JButton adicionar(String texto, String icone) {
         JButton b = new JButton(texto, icone == null ? null : IconService.getIcon(icone));
         b.setFocusable(true);
+        if (icone == null) {
+            // sem ícone o botão ficaria mais baixo que os vizinhos: um ícone vazio da mesma altura iguala
+            b.setIcon(new javax.swing.ImageIcon(new java.awt.image.BufferedImage(1, IconService.TAMANHO_PADRAO,
+                    java.awt.image.BufferedImage.TYPE_INT_ARGB)));
+            b.setIconTextGap(0);
+        }
         espacar();
         add(b);
         return b;
@@ -30,7 +36,7 @@ public class BarraAcoes extends JPanel {
 
     /** Botão da ação principal da tela, destacado com a cor do tema. */
     public JButton adicionarPrincipal(String texto, String icone) {
-        JButton b = Estilos.aplicar(adicionar(texto, null), Estilos.BOTAO_PRINCIPAL);
+        JButton b = Estilos.aplicar(adicionar(texto, icone), Estilos.BOTAO_PRINCIPAL);
         if (icone != null) {
             b.setIcon(IconService.getIconContraste(icone, IconService.TAMANHO_PADRAO));
         }
@@ -54,6 +60,12 @@ public class BarraAcoes extends JPanel {
         }
         b.addActionListener(e -> menu.show(b, 0, b.getHeight()));
         b.putClientProperty("menu", menu);
+        // o botão só fica ativo se alguma ação do menu estiver disponível
+        Runnable sincronizar = () -> b.setEnabled(java.util.Arrays.stream(itens).anyMatch(JMenuItem::isEnabled));
+        for (JMenuItem item : itens) {
+            item.addPropertyChangeListener("enabled", e -> sincronizar.run());
+        }
+        sincronizar.run();
         return b;
     }
 
