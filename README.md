@@ -12,7 +12,7 @@ Trabalho final de Projeto de Sistemas de Software (UFES), feito em Java 25 com S
 - **Tela que não trava:** todo acesso ao banco roda fora da thread da interface, numa fila de uma thread só, e Salvar grava em lotes. Contra o banco no Supabase, Salvar caiu de **5,9 s para 0,39 s** (de 152 para 12 idas ao banco).
 - **Três bancos, o mesmo código:** SQLite, H2 ou PostgreSQL (Supabase), escolhidos no `.env`, com JDBC puro e sem framework de persistência.
 - **Banco remoto protegido:** SSL com verificação do certificado, esquema fora da API pública do Supabase, RLS em todas as tabelas e um usuário de banco só para o sistema.
-- **206 testes automatizados**, com 70% de cobertura de linhas medida pelo JaCoCo a cada build.
+- **208 testes automatizados**, com 70% de cobertura de linhas medida pelo JaCoCo a cada build.
 - **Teste final de usabilidade:** todas as telas foram percorridas no app de verdade, com mouse e teclado, em 1366×768 e 1024×600, nos dois temas. O que apareceu foi corrigido (veja [Usabilidade](#usabilidade)).
 
 ## Telas
@@ -177,6 +177,7 @@ Antes da entrega, o sistema passou por um teste de ponta a ponta com as telas re
 | "Compartilhar com o selecionado" ativo sem ninguém selecionado | Só ativa depois de escolher o usuário |
 | "Minha conta" sem botão de fechar e com o resumo em campos que pareciam editáveis | Botão Fechar e resumo sem borda de campo |
 | Lista de projetos sem prazo e preço | Colunas "Prazo (dias)" e "Preço final" |
+| Em 1024×600, o indicador "Média mensal" ficava escondido no rodapé | Numa janela estreita, o detalhe de cada indicador desce para baixo do valor e os quatro cabem |
 
 ## Como o cálculo funciona
 
@@ -219,7 +220,7 @@ O que foi atendido de cada requisito, e onde está no código, está em [`docs/r
 mvn verify
 ```
 
-São 206 testes: o cálculo (com o caso da planilha), a persistência em SQLite e H2, a gravação em lote, a migração entre bancos, a fila de banco, a exportação, o log e os presenters de todas as telas, inclusive login, cadastro, perfis, configuração e dashboard. Os testes rodam numa pasta sem `.env`, então nunca acessam o banco configurado.
+São 208 testes: o cálculo (com o caso da planilha), a persistência em SQLite e H2, a gravação em lote, a migração entre bancos, a fila de banco, a exportação, o log e os presenters de todas as telas, inclusive login, cadastro, perfis, configuração e dashboard. Os testes rodam numa pasta sem `.env`, então nunca acessam o banco configurado.
 
 O `mvn verify` também gera o relatório de cobertura em `target/site/jacoco/index.html` e falha se a cobertura de linhas ficar abaixo de 65%. Hoje ela está em 70%.
 
