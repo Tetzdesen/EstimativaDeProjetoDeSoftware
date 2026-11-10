@@ -6,6 +6,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.br.estimativadeprojetodesoftware.adapter.senha.ValidadorSenhaAdapter;
 import com.br.estimativadeprojetodesoftware.repository.jdbc.JdbcUsuarioRepository;
 import com.br.estimativadeprojetodesoftware.seeder.UsuarioSeeder;
+import com.br.estimativadeprojetodesoftware.command.AplicarTemaCommand;
+import com.br.estimativadeprojetodesoftware.model.Tema;
+import com.br.estimativadeprojetodesoftware.model.Usuario;
+import com.br.estimativadeprojetodesoftware.repository.jdbc.JdbcConfiguracaoRepository;
+import com.br.estimativadeprojetodesoftware.service.PreferenciasService;
 import com.br.estimativadeprojetodesoftware.service.UsuarioService;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.suporte.AmbienteTeste;
@@ -27,6 +32,7 @@ class LoginPresenterTest {
 
     private AmbienteTeste ambiente;
     private UsuarioService usuarios;
+    private PreferenciasService preferencias;
     private LoginView view;
     private final AtomicInteger entradas = new AtomicInteger();
 
@@ -38,18 +44,23 @@ class LoginPresenterTest {
     @BeforeEach
     void preparar() throws Exception {
         ambiente = new AmbienteTeste();
-        usuarios = new UsuarioService(new JdbcUsuarioRepository(BancoTeste.abrir("H2", dir)), new ValidadorSenhaAdapter(),
+        java.sql.Connection conexao = BancoTeste.abrir("H2", dir);
+        usuarios = new UsuarioService(new JdbcUsuarioRepository(conexao), new ValidadorSenhaAdapter(),
                 new AmbienteTeste.Publicador());
+        preferencias = new PreferenciasService(new JdbcConfiguracaoRepository(conexao));
         UsuarioLogadoSingleton.getInstancia().logout();
         naThreadDoSwing(() -> {
             view = new LoginView();
-            new LoginPresenter(view, null, () -> usuarios, entradas::incrementAndGet);
+            new LoginPresenter(view, null, () -> usuarios, entradas::incrementAndGet, () -> preferencias);
         });
     }
 
     @AfterEach
     void limpar() throws Exception {
-        naThreadDoSwing(() -> view.dispose());
+        naThreadDoSwing(() -> {
+            view.dispose();
+            TemaClaro.setup(); // os outros testes esperam o tema claro
+        });
         UsuarioLogadoSingleton.getInstancia().logout();
         ambiente.close();
     }
@@ -85,5 +96,19 @@ class LoginPresenterTest {
         entrar(UsuarioSeeder.EMAIL_ADMIN, "A@#bb");
         assertEquals(1, entradas.get());
         assertEquals(UsuarioSeeder.EMAIL_ADMIN, UsuarioLogadoSingleton.getInstancia().getUsuario().getEmail());
+    }
+
+    @Test
+    void loginAplicaOTemaDoUsuario() throws Exception {
+        Usuario admin = usuarios.buscarPorEmail(UsuarioSeeder.EMAIL_ADMIN).orElseThrow();
+        preferencias.setTema(admin, Tema.ESCURO);
+        naThreadDoSwing(TemaClaro::setup); // outro usuário estava no claro
+
+        entrar(UsuarioSeeder.EMAIL_ADMIN, "A@#bb");
+        naThreadDoSwing(() -> {
+        }); // a troca de tema roda na thread do Swing
+
+        assertEquals(1, entradas.get());
+        assertEquals(Tema.ESCURO, AplicarTemaCommand.temaAtual());
     }
 }

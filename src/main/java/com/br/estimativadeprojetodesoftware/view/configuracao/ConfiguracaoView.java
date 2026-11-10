@@ -36,14 +36,14 @@ public class ConfiguracaoView extends JanelaInterna {
         log.add(rbCsv);
         log.add(rbJson);
 
-        JPanel aparencia = secao("Aparência", "Tema da interface");
+        JPanel aparencia = secao("Aparência", "Tema da interface: vale só para a sua conta e volta quando você entra");
         JPanel temas = new JPanel(new GridLayout(1, 2, 12, 0));
         temas.setOpaque(false);
         temas.add(opcaoTema(rbClaro, "tema-claro"));
         temas.add(opcaoTema(rbEscuro, "tema-escuro"));
         aparencia.add(temas);
 
-        JPanel secaoLog = secao("Log de operações", "Formato do arquivo que registra criação, alteração, exclusão, compartilhamento e exportação");
+        JPanel secaoLog = secao("Log de operações", "Formato do arquivo que registra criação, alteração, exclusão, compartilhamento e exportação (vale para todos os usuários)");
         secaoLog.add(rbCsv);
         secaoLog.add(rbJson);
         secaoLog.add(lblArquivo);

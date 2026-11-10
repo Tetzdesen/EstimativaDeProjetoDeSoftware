@@ -4,7 +4,9 @@ import com.br.estimativadeprojetodesoftware.command.AplicarTemaCommand;
 import com.br.estimativadeprojetodesoftware.command.ExibirMensagemCommand;
 import com.br.estimativadeprojetodesoftware.model.Tema;
 import com.br.estimativadeprojetodesoftware.service.LogService;
+import com.br.estimativadeprojetodesoftware.model.Usuario;
 import com.br.estimativadeprojetodesoftware.service.PreferenciasService;
+import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.configuracao.ConfiguracaoView;
 import com.github.tetzdesen.estimativalog.FormatoLog;
 
@@ -18,12 +20,19 @@ public class ConfiguracaoPresenter {
     private final ConfiguracaoView view;
     private final LogService logService;
     private final PreferenciasService preferencias;
+    private final Usuario usuario;
 
     public ConfiguracaoPresenter() {
         this(new ConfiguracaoView(), LogService.getInstancia(), new PreferenciasService());
     }
 
     public ConfiguracaoPresenter(ConfiguracaoView view, LogService logService, PreferenciasService preferencias) {
+        this(view, logService, preferencias, UsuarioLogadoSingleton.getInstancia().getUsuario());
+    }
+
+    /** @param usuario dono do tema mostrado e salvo (o formato do log vale para todos) */
+    public ConfiguracaoPresenter(ConfiguracaoView view, LogService logService, PreferenciasService preferencias, Usuario usuario) {
+        this.usuario = java.util.Objects.requireNonNull(usuario, "usuário logado");
         this.view = view;
         this.logService = logService;
         this.preferencias = preferencias;
@@ -33,7 +42,7 @@ public class ConfiguracaoPresenter {
     }
 
     private void exibir() {
-        Tema tema = preferencias.getTema();
+        Tema tema = preferencias.getTema(usuario);
         view.getRbClaro().setSelected(tema == Tema.CLARO);
         view.getRbEscuro().setSelected(tema == Tema.ESCURO);
         FormatoLog atual = logService.getFormato();
@@ -47,11 +56,11 @@ public class ConfiguracaoPresenter {
             FormatoLog formato = view.getRbCsv().isSelected() ? FormatoLog.CSV : FormatoLog.JSON;
             Tema tema = view.getRbEscuro().isSelected() ? Tema.ESCURO : Tema.CLARO;
             logService.setFormato(formato);
-            preferencias.setTema(tema);
+            preferencias.setTema(usuario, tema);
             new AplicarTemaCommand(tema).execute();
             exibir();
             ExibirMensagemCommand.sucesso("Configuração salva: tema " + tema.getDescricao().toLowerCase()
-                    + " e log em " + formato + ". A próxima operação já será registrada nesse formato.");
+                    + " para você e log em " + formato + ". A próxima operação já será registrada nesse formato.");
         } catch (RuntimeException ex) {
             ExibirMensagemCommand.erro(ex.getMessage());
         }
