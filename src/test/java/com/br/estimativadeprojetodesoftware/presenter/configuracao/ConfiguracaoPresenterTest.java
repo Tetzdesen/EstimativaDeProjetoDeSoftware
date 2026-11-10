@@ -12,7 +12,10 @@ import com.br.estimativadeprojetodesoftware.suporte.BancoTeste;
 import com.br.estimativadeprojetodesoftware.view.configuracao.ConfiguracaoView;
 import com.br.estimativadeprojetodesoftware.view.tema.TemaClaro;
 import com.github.tetzdesen.estimativalog.FormatoLog;
+import com.br.estimativadeprojetodesoftware.model.Usuario;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import java.sql.Connection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +31,7 @@ class ConfiguracaoPresenterTest {
     private Connection conexao;
     private LogService log;
     private ConfiguracaoView view;
+    private final Usuario ana = new Usuario(UUID.randomUUID(), "Ana", "ana@x.com", "hash", LocalDateTime.now());
 
     @BeforeEach
     void preparar() throws Exception {
@@ -37,7 +41,7 @@ class ConfiguracaoPresenterTest {
         log = new LogService(new JdbcConfiguracaoRepository(conexao), dir.resolve("log"));
         naThreadDoSwing(() -> {
             view = new ConfiguracaoView();
-            new ConfiguracaoPresenter(view, log, new PreferenciasService(new JdbcConfiguracaoRepository(conexao)));
+            new ConfiguracaoPresenter(view, log, new PreferenciasService(new JdbcConfiguracaoRepository(conexao)), ana);
         });
     }
 
@@ -66,7 +70,11 @@ class ConfiguracaoPresenterTest {
         });
         assertTrue(ambiente.erros.isEmpty(), ambiente.erros.toString());
         assertEquals(FormatoLog.JSON, log.getFormato());
-        assertEquals(Tema.ESCURO, new PreferenciasService(new JdbcConfiguracaoRepository(conexao)).getTema(), "guardado no banco");
+        PreferenciasService prefs = new PreferenciasService(new JdbcConfiguracaoRepository(conexao));
+        assertEquals(Tema.ESCURO, prefs.getTema(ana), "guardado para a Ana");
+        Usuario beto = new Usuario(UUID.randomUUID(), "Beto", "beto@x.com", "hash", LocalDateTime.now());
+        prefs.setTema(beto, Tema.CLARO);
+        assertEquals(Tema.ESCURO, prefs.getTema(ana), "outro usuário escolher o claro não muda o da Ana");
         assertTrue(ambiente.sucessos.get(0).contains("JSON"));
     }
 }

@@ -8,6 +8,11 @@ import com.br.estimativadeprojetodesoftware.presenter.helpers.ValidacaoVisual;
 import com.br.estimativadeprojetodesoftware.presenter.window_command.FecharJanelaCommand;
 import com.br.estimativadeprojetodesoftware.singleton.UsuarioLogadoSingleton;
 import com.br.estimativadeprojetodesoftware.view.usuario.LoginView;
+import com.br.estimativadeprojetodesoftware.command.AplicarTemaCommand;
+import com.br.estimativadeprojetodesoftware.model.Tema;
+import com.br.estimativadeprojetodesoftware.model.Usuario;
+import com.br.estimativadeprojetodesoftware.service.PreferenciasService;
+import java.util.Optional;
 import javax.swing.SwingUtilities;
 
 /** Login: valida os campos, autentica e abre a janela principal. */
@@ -17,6 +22,7 @@ public class LoginPresenter {
     private final PrincipalUsuarioPresenter principalUsuarioPresenter;
     private final java.util.function.Supplier<com.br.estimativadeprojetodesoftware.service.UsuarioService> usuarios;
     private final Runnable aoAutenticar;
+    private final java.util.function.Supplier<PreferenciasService> preferencias;
 
     public LoginPresenter(LoginView view, PrincipalUsuarioPresenter principalUsuarioPresenter) {
         this(view, principalUsuarioPresenter, com.br.estimativadeprojetodesoftware.service.UsuarioService::new, null);
@@ -28,6 +34,14 @@ public class LoginPresenter {
      */
     public LoginPresenter(LoginView view, PrincipalUsuarioPresenter principalUsuarioPresenter,
             java.util.function.Supplier<com.br.estimativadeprojetodesoftware.service.UsuarioService> usuarios, Runnable aoAutenticar) {
+        this(view, principalUsuarioPresenter, usuarios, aoAutenticar, PreferenciasService::new);
+    }
+
+    /** @param preferencias de onde vem o tema do usuário, aplicado logo depois do login */
+    public LoginPresenter(LoginView view, PrincipalUsuarioPresenter principalUsuarioPresenter,
+            java.util.function.Supplier<com.br.estimativadeprojetodesoftware.service.UsuarioService> usuarios, Runnable aoAutenticar,
+            java.util.function.Supplier<PreferenciasService> preferencias) {
+        this.preferencias = preferencias;
         this.principalUsuarioPresenter = principalUsuarioPresenter;
         this.usuarios = usuarios;
         this.aoAutenticar = aoAutenticar != null ? aoAutenticar : this::abrirJanelaPrincipal;
@@ -61,9 +75,12 @@ public class LoginPresenter {
         String senha = new String(view.getTxtSenha().getPassword());
         FilaBanco.executar(view, "Entrando…", () -> {
             new RealizarAutenticacaoUsuarioCommand(usuarios.get(), email, senha).execute();
-            return null;
-        }, autenticado -> {
+            Usuario usuario = UsuarioLogadoSingleton.getInstancia().getUsuario();
+            return usuario == null ? Optional.<Tema>empty() : temaDe(usuario);
+        }, tema -> {
             if (UsuarioLogadoSingleton.getInstancia().getUsuario() != null) {
+                // o tema é de cada usuário: a janela principal já abre com o dele
+                tema.ifPresent(t -> new AplicarTemaCommand(t).execute());
                 aoAutenticar.run();
             }
         }, ex -> {
@@ -74,6 +91,16 @@ public class LoginPresenter {
                 view.getTxtSenha().requestFocusInWindow();
             });
         });
+    }
+
+    /** Tema do usuário; se não der para ler, segue com o tema atual (não impede o login). */
+    private Optional<Tema> temaDe(Usuario usuario) {
+        try {
+            return Optional.of(preferencias.get().getTema(usuario));
+        } catch (RuntimeException e) {
+            System.err.println("Não foi possível ler o tema do usuário: " + e.getMessage());
+            return Optional.empty();
+        }
     }
 
     private void abrirJanelaPrincipal() {
